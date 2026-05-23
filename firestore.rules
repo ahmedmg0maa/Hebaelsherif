@@ -105,6 +105,163 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+
+    match /site_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /availability_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /payment_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /seo_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /notification_templates/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /navigation_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /media_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /ai_guide_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /feature_flags/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /integration_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /policy_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /security_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /operations_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /email_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /calendar_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /experiment_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /pricing_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /backup_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /legal_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /academy_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /faqs/{faqId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /articles/{articleId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /journeys/{journeyId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /bundles/{bundleId} {
+      allow read: if resource.data.active == true || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /drive_assets/{assetId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /admin_homepage_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admin_customer_journey_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /admin_theme_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admin_content_ops_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /admin_quality_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /admin_automation_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /admin_commerce_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admin_assessment_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admin_analytics_events_settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+
     match /{document=**} {
       allow read, write: if false;
     }
