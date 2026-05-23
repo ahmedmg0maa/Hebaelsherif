@@ -50,7 +50,7 @@ service cloud.firestore {
       allow read: if isOwner(resource.data.userId) || isAdmin();
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.status == 'pending';
+        && (request.resource.data.status == 'pending' || request.resource.data.status == 'payment_submitted');
       allow update, delete: if isAdmin();
     }
 
@@ -58,7 +58,7 @@ service cloud.firestore {
       allow read: if isOwner(resource.data.userId) || isAdmin();
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.status == 'pending';
+        && (request.resource.data.status == 'pending' || request.resource.data.status == 'payment_submitted');
       allow update, delete: if isAdmin();
     }
 
