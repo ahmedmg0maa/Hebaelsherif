@@ -1,0 +1,10 @@
+{
+  "name": "هبة الشريف",
+  "short_name": "Heba",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBF4EE",
+  "theme_color": "#7A2433",
+  "dir": "rtl",
+  "lang": "ar"
+}

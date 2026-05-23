@@ -1,33 +1,39 @@
 import type { Config } from 'tailwindcss'
 
+const withOpacity = (name: string) => `rgb(var(${name}) / <alpha-value>)`
+
 const config: Config = {
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
       colors: {
-        cream: '#F5F0E7',
-        petrol: '#2F6173',
-        olive: '#6B724E',
-        gold: '#B79B6C',
-        burgundy: '#7A2433',
-        ivory: '#FAF7F2',
-        sand: '#E9E0D2',
-        stone: '#C8C1B6',
-        'warm-gray': '#8A837B',
-        charcoal: '#2A2A2A',
+        cream: withOpacity('--color-cream'),
+        petrol: withOpacity('--color-petrol'),
+        olive: withOpacity('--color-olive'),
+        gold: withOpacity('--color-gold'),
+        burgundy: withOpacity('--color-burgundy'),
+        ivory: withOpacity('--color-ivory'),
+        sand: withOpacity('--color-sand'),
+        stone: withOpacity('--color-stone'),
+        'warm-gray': withOpacity('--color-warm-gray'),
+        charcoal: withOpacity('--color-charcoal'),
+        rose: withOpacity('--color-rose'),
+        mauve: withOpacity('--color-mauve'),
       },
       fontFamily: {
         arabic: ['var(--font-tajawal)', 'Tahoma', 'Arial', 'sans-serif'],
       },
       boxShadow: {
-        premium: '0 24px 80px rgba(42, 42, 42, 0.08)',
-        soft: '0 18px 50px rgba(42, 42, 42, 0.06)',
+        premium: '0 24px 80px rgb(var(--color-shadow) / 0.13)',
+        soft: '0 18px 50px rgb(var(--color-shadow) / 0.08)',
+        glow: '0 20px 70px rgb(var(--color-burgundy) / 0.12)',
       },
       borderRadius: {
         premium: '1.5rem',
       },
       maxWidth: {
-        container: '1200px',
+        container: '1220px',
       },
     },
   },

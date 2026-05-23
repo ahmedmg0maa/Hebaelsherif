@@ -22,15 +22,12 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-
       allow create: if isOwner(userId)
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.role == 'user';
-
       allow update: if isOwner(userId)
         && request.resource.data.uid == resource.data.uid
         && request.resource.data.role == resource.data.role;
-
       allow delete: if false;
     }
 
@@ -51,39 +48,61 @@ service cloud.firestore {
 
     match /orders/{orderId} {
       allow read: if isOwner(resource.data.userId) || isAdmin();
-
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.status == 'pending';
-
       allow update, delete: if isAdmin();
     }
 
     match /bookings/{bookingId} {
       allow read: if isOwner(resource.data.userId) || isAdmin();
-
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.status == 'pending';
-
       allow update, delete: if isAdmin();
     }
 
     match /course_progress/{progressId} {
       allow read: if isOwner(resource.data.userId) || isAdmin();
-
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid;
-
       allow update: if isSignedIn()
         && resource.data.userId == request.auth.uid
         && request.resource.data.userId == resource.data.userId;
-
       allow delete: if isAdmin();
+    }
+
+
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'published' || isAdmin() || isOwner(resource.data.userId);
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
     }
 
     match /protected_content/{contentId} {
       allow read, write: if isAdmin();
+    }
+
+
+    match /admin_logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /contact_messages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
     }
 
     match /{document=**} {
