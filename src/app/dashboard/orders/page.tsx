@@ -86,7 +86,7 @@ export default function DashboardOrdersPage() {
       <PremiumEmptyState
         icon="🧾"
         title="لا توجد طلبات بعد"
-        description="أي طلب شراء دورة أو كتاب سيظهر هنا مع حالته."
+        description="أي طلب شراء كورس أو كتاب سيظهر هنا مع حالته."
         actionLabel="استكشفي المنتجات"
         actionHref="/courses"
       />
@@ -119,7 +119,7 @@ export default function DashboardOrdersPage() {
                 <h3 className="mt-4 text-xl font-black text-charcoal">{order.productTitle}</h3>
 
                 <p className="mt-2 text-sm leading-7 text-warm-gray">
-                  النوع: {order.productType === 'course' ? 'دورة' : 'كتاب'} · تاريخ الطلب:{' '}
+                  النوع: {order.productType === 'course' ? 'كورس' : 'كتاب'} · تاريخ الطلب:{' '}
                   {formatArabicDate(order.createdAt)}
                 </p>
               </div>

@@ -3,8 +3,8 @@ import Footer from '@/components/layout/Footer'
 import PremiumButton from '@/components/ui/PremiumButton'
 
 const programs = [
-  { title: 'مسار الوضوح العاطفي', items: 'دورة + كتاب + جلسة 60 دقيقة', price: 'يحدد من لوحة الإدارة' },
-  { title: 'مسار الحدود الهادئة', items: 'دورة مركزة + worksheets + متابعة', price: 'جاهز كباقة' },
+  { title: 'مسار الوضوح العاطفي', items: 'كورس + كتاب + جلسة 60 دقيقة', price: 'يحدد من لوحة الإدارة' },
+  { title: 'مسار الحدود الهادئة', items: 'كورس مركزة + worksheets + متابعة', price: 'جاهز كباقة' },
   { title: 'مسار التعافي اللطيف', items: 'جلسات + قراءة موجهة + خطة شخصية', price: 'VIP' },
 ]
 

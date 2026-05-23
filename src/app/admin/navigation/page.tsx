@@ -7,7 +7,7 @@ const sections = [
     title: "الهيدر",
     description: "روابط القائمة العلوية.",
     fields: [
-      {key: "headerLinks", label: "روابط الهيدر", type: "lines", defaultValue: "الرئيسية | /\nالخدمات | /services\nالدورات | /courses\nالكتب | /books\nالجلسات | /booking\nالمقالات | /articles\nعن هبة | /about", wide: true},
+      {key: "headerLinks", label: "روابط الهيدر", type: "lines", defaultValue: "الرئيسية | /\nالخدمات | /services\nالكورسات | /courses\nالكتب | /books\nالجلسات | /booking\nالمقالات | /articles\nعن هبة | /about", wide: true},
       {key: "headerPrimaryCta", label: "زر الهيدر الأساسي", type: "text", defaultValue: "ابدئي رحلتك"},
       {key: "headerPrimaryHref", label: "رابط الزر الأساسي", type: "text", defaultValue: "/courses"}
     ],

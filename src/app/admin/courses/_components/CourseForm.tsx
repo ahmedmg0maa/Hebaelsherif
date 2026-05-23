@@ -132,11 +132,11 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
     const safeLessonsCount = Number(lessonsCount || parsedLessons.length)
     const safePrice = Number(price)
 
-    if (!title.trim()) return setError('عنوان الدورة مطلوب.')
-    if (!previewSlug.trim()) return setError('رابط الدورة slug مطلوب.')
-    if (!description.trim()) return setError('وصف الدورة مطلوب.')
+    if (!title.trim()) return setError('عنوان الكورس مطلوب.')
+    if (!previewSlug.trim()) return setError('رابط الكورس slug مطلوب.')
+    if (!description.trim()) return setError('وصف الكورس مطلوب.')
     if (!emotionalPromise.trim()) return setError('الوعد العاطفي مطلوب.')
-    if (!duration.trim()) return setError('مدة الدورة مطلوبة.')
+    if (!duration.trim()) return setError('مدة الكورس مطلوبة.')
     if (!Number.isFinite(safeLessonsCount) || safeLessonsCount < 0) return setError('عدد الدروس يجب أن يكون رقمًا صحيحًا.')
     if (!Number.isFinite(safePrice) || safePrice < 0) return setError('السعر يجب أن يكون رقمًا صحيحًا.')
 
@@ -162,7 +162,7 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
       })
     } catch (submitError) {
       console.error('Course form submit error:', submitError)
-      setError('حدث خطأ أثناء حفظ الدورة. تأكد من البيانات وحاول مرة أخرى.')
+      setError('حدث خطأ أثناء حفظ الكورس. تأكد من البيانات وحاول مرة أخرى.')
     } finally {
       setSubmitting(false)
     }
@@ -172,20 +172,20 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
     <form onSubmit={handleSubmit} className="rounded-3xl border border-sand bg-ivory/90 p-6 shadow-soft backdrop-blur-sm sm:p-8">
       <div className="mb-8">
         <p className="mini-label">Course Builder</p>
-        <h2 className="mt-3 text-2xl font-black text-charcoal">بيانات الدورة والفصول</h2>
+        <h2 className="mt-3 text-2xl font-black text-charcoal">بيانات الكورس والفصول</h2>
         <p className="mt-3 text-sm leading-8 text-warm-gray">
-          يمكن إضافة رابط مجلد Google Drive للدورة، وروابط الدروس داخل كل سطر. روابط المحتوى النهائية لا تظهر للزوار إلا بعد تأكيد الدفع.
+          يمكن إضافة رابط مجلد Google Drive للكورس، وروابط الدروس داخل كل سطر. روابط المحتوى النهائية لا تظهر للزوار إلا بعد تأكيد الدفع.
         </p>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
-        <PremiumFormField label="عنوان الدورة" required>
+        <PremiumFormField label="عنوان الكورس" required>
           <input className="premium-input" value={title} onChange={(event) => handleTitleChange(event.target.value)} placeholder="مثال: رحلة إلى الذات" />
         </PremiumFormField>
-        <PremiumFormField label="رابط الدورة slug" required hint={`الرابط النهائي: /courses/${previewSlug}`}>
+        <PremiumFormField label="رابط الكورس slug" required hint={`الرابط النهائي: /courses/${previewSlug}`}>
           <input className="premium-input" dir="ltr" value={slug} onChange={(event) => setSlug(createSlug(event.target.value))} placeholder="journey-to-self" />
         </PremiumFormField>
-        <PremiumFormField label="مدة الدورة" required>
+        <PremiumFormField label="مدة الكورس" required>
           <input className="premium-input" value={duration} onChange={(event) => setDuration(event.target.value)} placeholder="مثال: ٦ أسابيع" />
         </PremiumFormField>
         <PremiumFormField label="عدد الدروس" required hint="لو تركته فارغًا يتم حسابه من الدروس المكتوبة.">
@@ -197,10 +197,10 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
         <PremiumFormField label="حالة النشر" required>
           <select className="premium-input" value={status} onChange={(event) => setStatus(event.target.value as PublishStatus)}>
             <option value="draft">مسودة</option>
-            <option value="published">منشورة</option>
+            <option value="published">منشور</option>
           </select>
         </PremiumFormField>
-        <PremiumFormField label="مستوى الدورة">
+        <PremiumFormField label="مستوى الكورس">
           <input className="premium-input" value={level} onChange={(event) => setLevel(event.target.value)} placeholder="مناسب لكل المستويات" />
         </PremiumFormField>
         <PremiumFormField label="رابط صورة الغلاف">
@@ -209,23 +209,23 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
         <PremiumFormField label="رابط فيديو تعريفي">
           <input className="premium-input" dir="ltr" value={previewVideoUrl} onChange={(event) => setPreviewVideoUrl(event.target.value)} placeholder="Google Drive / YouTube / Vimeo" />
         </PremiumFormField>
-        <PremiumFormField label="مجلد Google Drive للدورة" hint="رابط المجلد الداخلي للمراجعة أو المحتوى.">
+        <PremiumFormField label="مجلد Google Drive للكورس" hint="رابط المجلد الداخلي للمراجعة أو المحتوى.">
           <input className="premium-input" dir="ltr" value={driveFolderUrl} onChange={(event) => setDriveFolderUrl(event.target.value)} placeholder="https://drive.google.com/..." />
         </PremiumFormField>
       </div>
 
       <div className="mt-5 grid gap-5">
         <PremiumFormField label="الوعد العاطفي" required>
-          <textarea className="premium-input min-h-28 resize-y" value={emotionalPromise} onChange={(event) => setEmotionalPromise(event.target.value)} placeholder="بعد هذه الدورة ستشعرين..." />
+          <textarea className="premium-input min-h-28 resize-y" value={emotionalPromise} onChange={(event) => setEmotionalPromise(event.target.value)} placeholder="بعد هذه الكورس ستشعرين..." />
         </PremiumFormField>
         <PremiumFormField label="الوصف الكامل" required>
-          <textarea className="premium-input min-h-40 resize-y" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="اكتبي وصف الدورة الكامل..." />
+          <textarea className="premium-input min-h-40 resize-y" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="اكتبي وصف الكورس الكامل..." />
         </PremiumFormField>
         <PremiumFormField label="النتائج المتوقعة" hint="كل نتيجة في سطر منفصل.">
           <textarea className="premium-input min-h-32 resize-y" value={outcomesText} onChange={(event) => setOutcomesText(event.target.value)} placeholder={'فهم أعمق للذات\nحدود صحية\nتطبيقات عملية'} />
         </PremiumFormField>
-        <PremiumFormField label="لمن هذه الدورة؟">
-          <textarea className="premium-input min-h-24 resize-y" value={targetAudience} onChange={(event) => setTargetAudience(event.target.value)} placeholder="هذه الدورة مناسبة لمن..." />
+        <PremiumFormField label="لمن هذه الكورس؟">
+          <textarea className="premium-input min-h-24 resize-y" value={targetAudience} onChange={(event) => setTargetAudience(event.target.value)} placeholder="هذه الكورس مناسبة لمن..." />
         </PremiumFormField>
         <PremiumFormField
           label="الفصول والدروس"
@@ -250,7 +250,7 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <PremiumButton type="submit" disabled={loading || submitting}>{submitting ? 'جاري الحفظ...' : submitLabel}</PremiumButton>
-        <PremiumButton href="/admin/courses" variant="outline">العودة للدورات</PremiumButton>
+        <PremiumButton href="/admin/courses" variant="outline">العودة للكورسات</PremiumButton>
       </div>
     </form>
   )

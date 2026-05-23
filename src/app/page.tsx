@@ -28,7 +28,7 @@ const journeys = [
   },
   {
     title: 'أريد كورسًا أبدأ به',
-    label: 'دورات عملية',
+    label: 'كورسات عملية',
     text: 'مسارات تعلم رقمية تساعدك على التحول خطوة بخطوة بإيقاع مرن.',
     href: '/courses',
   },
@@ -49,7 +49,7 @@ const transformations = [
 
 const operatingSystem = [
   'محتوى مدفوع محمي داخل الحساب',
-  'لوحة رحلة تحفظ الدورات والكتب والجلسات',
+  'لوحة رحلة تحفظ الكورسات والكتب والجلسات',
   'حجز جلسات يمنع الأيام السابقة وتكرار الموعد',
   'نظام دفع واضح قابل للتطوير إلى بوابة إلكترونية',
   'لوحة إدارة للتحكم في النصوص، الصور، SEO، الحجز، الدفع، والمقالات',
@@ -74,11 +74,11 @@ export default function HomePage() {
           <MotionReveal className="relative z-10">
             <PremiumBadge variant="petrol">منصة عربية راقية للنمو الشخصي</PremiumBadge>
             <h1 className="mt-7 text-balance text-5xl font-black leading-tight text-charcoal md:text-7xl">
-              هذه ليست دورة سريعة…
+              هذه ليست فكرة عابرة…
               <span className="mt-3 block text-charcoal">هذه رحلة تعيدكِ إلى ذاتك بهدوء واتزان</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-10 text-warm-gray">
-              من خلال جلسات الكوتشنج، الدورات، والكتب العملية، ستجدين مساحة آمنة وعميقة لاتخاذ قرارات أوضح، وبناء حياة أكثر انسجامًا معك.
+              من خلال جلسات الكوتشنج، الكورسات، والكتب العملية، ستجدين مساحة آمنة وعميقة لاتخاذ قرارات أوضح، وبناء حياة أكثر انسجامًا معك.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <PremiumButton href="/booking" size="lg">احجزي جلستك</PremiumButton>

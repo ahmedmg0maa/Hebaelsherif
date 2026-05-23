@@ -21,8 +21,8 @@ const sections = [
     fields: [
       {key: "homeHeroEyebrow", label: "Hero eyebrow", type: "text", defaultValue: "منصة عربية للتحول العاطفي"},
       {key: "homeHeroTitle", label: "عنوان Hero", type: "text", defaultValue: "رحلتك نحو حياة أكثر سلامًا ووعيًا وامتلاءً", wide: true},
-      {key: "homeHeroDescription", label: "وصف Hero", type: "textarea", defaultValue: "دورات، كتب رقمية، وجلسات خاصة تساعدك على فهم نفسك وبناء حدود صحية في تجربة فاخرة وهادئة ومحمية.", wide: true},
-      {key: "primaryCtaLabel", label: "زر أساسي", type: "text", defaultValue: "استكشفي الدورات"},
+      {key: "homeHeroDescription", label: "وصف Hero", type: "textarea", defaultValue: "كورسات، كتب رقمية، وجلسات خاصة تساعدك على فهم نفسك وبناء حدود صحية في تجربة فاخرة وهادئة ومحمية.", wide: true},
+      {key: "primaryCtaLabel", label: "زر أساسي", type: "text", defaultValue: "استكشفي الكورسات"},
       {key: "secondaryCtaLabel", label: "زر ثانوي", type: "text", defaultValue: "احجزي جلستك الآن"},
       {key: "showTestimonials", label: "عرض التقييمات في الرئيسية", type: "toggle", defaultValue: true},
       {key: "showLeadMagnet", label: "عرض نموذج الاشتراك", type: "toggle", defaultValue: true}
@@ -35,7 +35,7 @@ const sections = [
       {key: "heroImageUrl", label: "صورة Hero", type: "url", placeholder: "https://...", wide: true},
       {key: "aboutImageUrl", label: "صورة عن هبة", type: "url", placeholder: "https://...", wide: true},
       {key: "sessionImageUrl", label: "صورة الجلسات", type: "url", placeholder: "https://...", wide: true},
-      {key: "defaultCourseImageUrl", label: "صورة افتراضية للدورات", type: "url", placeholder: "https://...", wide: true},
+      {key: "defaultCourseImageUrl", label: "صورة افتراضية للكورسات", type: "url", placeholder: "https://...", wide: true},
       {key: "defaultBookImageUrl", label: "صورة افتراضية للكتب", type: "url", placeholder: "https://...", wide: true}
     ],
   }

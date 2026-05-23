@@ -42,13 +42,13 @@ export default function NewCoursePage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="mb-2 text-sm font-bold text-gold">إضافة دورة</p>
-        <h2 className="text-3xl font-black text-charcoal">إنشاء دورة جديدة</h2>
+        <p className="mb-2 text-sm font-bold text-gold">إضافة كورس</p>
+        <h2 className="text-3xl font-black text-charcoal">إنشاء كورس جديدة</h2>
         <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
-          أضف بيانات الدورة والفصول وروابط Google Drive في مكان واحد، ثم اربط المحتوى النهائي من صفحة المحتوى المحمي.
+          أضف بيانات الكورس والفصول وروابط Google Drive في مكان واحد، ثم اربط المحتوى النهائي من صفحة المحتوى المحمي.
         </p>
       </div>
-      <CourseForm submitLabel="حفظ الدورة" onSubmit={handleCreateCourse} />
+      <CourseForm submitLabel="حفظ الكورس" onSubmit={handleCreateCourse} />
     </div>
   )
 }

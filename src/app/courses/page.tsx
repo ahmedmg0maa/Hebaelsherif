@@ -24,7 +24,7 @@ export default function CoursesPage() {
         setCourses(publishedCourses)
       } catch (loadError) {
         console.error('Courses page error:', loadError)
-        setError('تعذر تحميل الدورات الآن. حاولي مرة أخرى لاحقًا.')
+        setError('تعذر تحميل الكورسات الآن. حاولي مرة أخرى لاحقًا.')
       } finally {
         setLoading(false)
       }
@@ -40,12 +40,12 @@ export default function CoursesPage() {
         <section className="container-premium relative overflow-hidden py-16 text-center">
           <div className="ambient-orb ambient-orb-rose right-0 top-10 h-56 w-56" />
           <div className="relative mx-auto max-w-3xl">
-            <p className="mini-label mb-3">الدورات</p>
+            <p className="mini-label mb-3">الكورسات</p>
             <h1 className="text-balance text-4xl font-black leading-tight text-charcoal md:text-6xl">
               رحلات تعليمية عميقة للوعي والحدود والعلاقات
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-sm leading-8 text-warm-gray md:text-base">
-              اختاري الدورة المناسبة لمرحلتك الحالية وابدئي تعلمًا منظّمًا داخل حسابك، مع محتوى محمي وتقدم محفوظ.
+              اختاري الكورس المناسب لمرحلتك الحالية وابدئي تعلمًا منظّمًا داخل حسابك، مع محتوى محمي وتقدم محفوظ.
             </p>
           </div>
         </section>
@@ -53,7 +53,7 @@ export default function CoursesPage() {
         <section className="container-premium pb-16">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-sand bg-ivory/80 p-4 shadow-soft backdrop-blur-sm">
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-petrol px-4 py-2 text-xs font-black text-ivory">كل الدورات</span>
+              <span className="rounded-full bg-petrol px-4 py-2 text-xs font-black text-ivory">كل الكورسات</span>
               <span className="rounded-full border border-sand bg-cream px-4 py-2 text-xs font-black text-warm-gray">جديدة</span>
               <span className="rounded-full border border-sand bg-cream px-4 py-2 text-xs font-black text-warm-gray">الأكثر طلبًا</span>
             </div>
@@ -69,11 +69,11 @@ export default function CoursesPage() {
           {!loading && error ? <PremiumEmptyState icon="!" title="حدث خطأ" description={error} actionLabel="العودة للرئيسية" actionHref="/" /> : null}
 
           {!loading && !error && courses.length === 0 ? (
-            <PremiumEmptyState icon="📚" title="لا توجد دورات منشورة حاليًا" description="عند نشر أول دورة من لوحة الإدارة ستظهر هنا تلقائيًا." actionLabel="احجزي جلسة خاصة" actionHref="/booking" />
+            <PremiumEmptyState icon="📚" title="الكورسات قيد الإعداد" description="يتم إعداد مسارات تعليمية جديدة بعناية. عودي قريبًا لتجربة أكثر اكتمالًا." actionLabel="احجزي جلسة خاصة" actionHref="/booking" />
           ) : null}
 
           {!loading && !error && courses.length > 0 ? (
-            <PremiumSection title="الدورات المتاحة" eyebrow="ابدئي الآن">
+            <PremiumSection title="الكورسات المتاحة" eyebrow="ابدئي الآن">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {courses.map((course, index) => <CourseCard key={course.id} course={course} featured={index === 0} />)}
               </div>

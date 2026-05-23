@@ -21,7 +21,7 @@ import type { Book, PublishStatus } from '@/types'
 
 const statusFilters: { label: string; value: 'all' | PublishStatus }[] = [
   { label: 'كل الكتب', value: 'all' },
-  { label: 'منشورة', value: 'published' },
+  { label: 'منشور', value: 'published' },
   { label: 'مسودة', value: 'draft' },
 ]
 

@@ -7,7 +7,7 @@ const sections = [
     title: "نسخ الصفحة الرئيسية",
     description: "اختبري عناوين مختلفة بدون تغيير الكود.",
     fields: [
-      {key: "heroVariant", label: "نسخة الـ Hero", type: "select", options: [{label: "هادئة",value: "calm"},{label: "عميقة",value: "deep"},{label: "جلسات أولًا",value: "sessions_first"},{label: "دورات أولًا",value: "courses_first"}], defaultValue: "calm"},
+      {key: "heroVariant", label: "نسخة الـ Hero", type: "select", options: [{label: "هادئة",value: "calm"},{label: "عميقة",value: "deep"},{label: "جلسات أولًا",value: "sessions_first"},{label: "كورسات أولًا",value: "courses_first"}], defaultValue: "calm"},
       {key: "ctaVariant", label: "نسخة CTA", type: "select", options: [{label: "ابدئي رحلتك",value: "start_journey"},{label: "اختاري المسار",value: "choose_path"},{label: "احجزي جلسة",value: "book_session"}], defaultValue: "choose_path"},
       {key: "homeExperimentNotes", label: "ملاحظات التجارب", type: "textarea", wide: true}
     ],

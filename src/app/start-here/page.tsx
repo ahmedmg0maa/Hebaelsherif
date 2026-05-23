@@ -5,7 +5,7 @@ import PremiumButton from '@/components/ui/PremiumButton'
 
 const steps = [
   { title: 'اختاري إحساسك الآن', text: 'لا تحتاجين وصفًا مثاليًا. فقط اختاري الأقرب لما يحدث داخلك.' },
-  { title: 'خذي ترشيحًا هادئًا', text: 'المساعد يقترح بداية مناسبة: دورة، كتاب، أو جلسة.' },
+  { title: 'خذي ترشيحًا هادئًا', text: 'المساعد يقترح بداية مناسبة: كورس، كتاب، أو جلسة.' },
   { title: 'ابدئي بخطوة واحدة', text: 'الهدف ليس إنجازًا سريعًا، بل وضوح مستمر وخطوة آمنة.' },
 ]
 
@@ -33,7 +33,7 @@ export default function StartHerePage() {
             ))}
           </div>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <PremiumButton href="/courses">الدورات</PremiumButton>
+            <PremiumButton href="/courses">الكورسات</PremiumButton>
             <PremiumButton href="/booking" variant="outline">الجلسات</PremiumButton>
           </div>
         </section>

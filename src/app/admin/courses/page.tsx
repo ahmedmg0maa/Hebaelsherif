@@ -20,8 +20,8 @@ import { formatArabicDate, formatEGP } from '@/lib/utils/formatters'
 import type { Course, PublishStatus } from '@/types'
 
 const statusFilters: { label: string; value: 'all' | PublishStatus }[] = [
-  { label: 'كل الدورات', value: 'all' },
-  { label: 'منشورة', value: 'published' },
+  { label: 'كل الكورسات', value: 'all' },
+  { label: 'منشور', value: 'published' },
   { label: 'مسودة', value: 'draft' },
 ]
 
@@ -95,7 +95,7 @@ export default function AdminCoursesPage() {
 
   async function deleteCourse(course: Course) {
     const confirmed = window.confirm(
-      `هل أنت متأكد من حذف الدورة "${course.title}"؟ هذا الحذف نهائي وقد يؤثر على طلبات مرتبطة بها.`,
+      `هل أنت متأكد من حذف الكورس "${course.title}"؟ هذا الحذف نهائي وقد يؤثر على طلبات مرتبطة بها.`,
     )
 
     if (!confirmed) return
@@ -126,14 +126,14 @@ export default function AdminCoursesPage() {
     <div>
       <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="mb-2 text-sm font-bold text-gold">إدارة الدورات</p>
-          <h2 className="text-3xl font-black text-charcoal">الدورات التعليمية</h2>
+          <p className="mb-2 text-sm font-bold text-gold">إدارة الكورسات</p>
+          <h2 className="text-3xl font-black text-charcoal">الكورسات التعليمية</h2>
           <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
-            من هنا يمكنك إضافة الدورات، تعديل بياناتها العامة، ونشرها أو تحويلها لمسودة.
+            من هنا يمكنك إضافة الكورسات، تعديل بياناتها العامة، ونشرها أو تحويلها لمسودة.
           </p>
         </div>
 
-        <PremiumButton href="/admin/courses/new">إضافة دورة جديدة</PremiumButton>
+        <PremiumButton href="/admin/courses/new">إضافة كورس جديدة</PremiumButton>
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
@@ -156,9 +156,9 @@ export default function AdminCoursesPage() {
       {filteredCourses.length === 0 ? (
         <PremiumEmptyState
           icon="📚"
-          title="لا توجد دورات"
-          description="ابدأ بإضافة أول دورة من زر إضافة دورة جديدة."
-          actionLabel="إضافة دورة"
+          title="لا توجد كورسات"
+          description="ابدأ بإضافة أول كورس من زر إضافة كورس جديدة."
+          actionLabel="إضافة كورس"
           actionHref="/admin/courses/new"
         />
       ) : (
@@ -180,14 +180,14 @@ export default function AdminCoursesPage() {
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-sm font-bold text-warm-gray">
-                      صورة الدورة
+                      صورة الكورس
                     </div>
                   )}
                 </div>
 
                 <div>
                   <PremiumBadge variant={course.status === 'published' ? 'olive' : 'neutral'}>
-                    {course.status === 'published' ? 'منشورة' : 'مسودة'}
+                    {course.status === 'published' ? 'منشور' : 'مسودة'}
                   </PremiumBadge>
 
                   <h3 className="mt-4 text-xl font-black text-charcoal">{course.title}</h3>

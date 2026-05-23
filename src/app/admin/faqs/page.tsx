@@ -5,7 +5,7 @@ import type { AdminControlField } from '@/lib/admin/controlData'
 const fields = [
   {key: "question", label: "السؤال", type: "text", wide: true},
   {key: "answer", label: "الإجابة", type: "textarea", wide: true},
-  {key: "area", label: "مكان الظهور", type: "select", options: [{label: "عام",value: "general"},{label: "الحجز",value: "booking"},{label: "الدورات",value: "courses"},{label: "الكتب",value: "books"},{label: "الدفع",value: "payments"}], defaultValue: "general"},
+  {key: "area", label: "مكان الظهور", type: "select", options: [{label: "عام",value: "general"},{label: "الحجز",value: "booking"},{label: "الكورسات",value: "courses"},{label: "الكتب",value: "books"},{label: "الدفع",value: "payments"}], defaultValue: "general"},
   {key: "order", label: "الترتيب", type: "number", defaultValue: 1},
   {key: "status", label: "الحالة", type: "select", options: [{label: "منشور",value: "published"},{label: "مسودة",value: "draft"}], defaultValue: "published"}
 ] satisfies AdminControlField[]

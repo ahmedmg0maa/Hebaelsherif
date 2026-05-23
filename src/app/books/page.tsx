@@ -60,7 +60,7 @@ export default function BooksPage() {
           {!loading && error ? <PremiumEmptyState icon="!" title="حدث خطأ" description={error} actionLabel="العودة للرئيسية" actionHref="/" /> : null}
 
           {!loading && !error && books.length === 0 ? (
-            <PremiumEmptyState icon="📖" title="لا توجد كتب منشورة حاليًا" description="عند نشر أول كتاب من لوحة الإدارة سيظهر هنا تلقائيًا." actionLabel="احجزي جلسة خاصة" actionHref="/booking" />
+            <PremiumEmptyState icon="📖" title="كتب جديدة تُحضَّر بهدوء" description="سيتم فتح هذا الباب قريبًا بمحتوى مختار بعناية." actionLabel="احجزي جلسة خاصة" actionHref="/booking" />
           ) : null}
 
           {!loading && !error && books.length > 0 ? (

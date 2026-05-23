@@ -16,7 +16,7 @@ const journey = [
 
 export const metadata = {
   title: 'الخدمات والجلسات',
-  description: 'جلسات فردية ومسارات خاصة ودورات رقمية داخل منصة هبة الشريف.',
+  description: 'جلسات فردية ومسارات خاصة وكورسات رقمية داخل منصة هبة الشريف.',
 }
 
 export default function ServicesPage() {
@@ -35,7 +35,7 @@ export default function ServicesPage() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <PremiumButton href="/booking" size="lg">احجزي جلسة</PremiumButton>
-              <PremiumButton href="/courses" variant="outline" size="lg">شاهدي الدورات</PremiumButton>
+              <PremiumButton href="/courses" variant="outline" size="lg">شاهدي الكورسات</PremiumButton>
             </div>
           </div>
           <ImageSlot fallbackSrc={IMAGE_SLOTS.session} alt="جلسة هبة الشريف" ratio="portrait" label="Session image slot" priority />

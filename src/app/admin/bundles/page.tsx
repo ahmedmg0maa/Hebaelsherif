@@ -22,7 +22,7 @@ export default function AdminCollectionPage() {
         collectionName="bundles"
         titleField="title"
         emptyTitle="لا توجد باقات"
-        emptyDescription="أضيفي باقة جديدة للدورات أو الجلسات."
+        emptyDescription="أضيفي باقة جديدة للكورسات أو الجلسات."
         fields={fields}
       />
     </AdminPageShell>

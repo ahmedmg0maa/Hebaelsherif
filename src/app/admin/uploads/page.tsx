@@ -15,7 +15,7 @@ export default function AdminCollectionPage() {
     <AdminPageShell
       eyebrow="روابط Drive"
       title="مركز روابط Google Drive"
-      description="حفظ روابط الملفات والمجلدات للاستخدام داخل الدورات والكتب."
+      description="حفظ روابط الملفات والمجلدات للاستخدام داخل الكورسات والكتب."
     >
       <AdminCollectionManager
         collectionName="drive_assets"

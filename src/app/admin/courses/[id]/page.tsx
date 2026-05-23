@@ -97,16 +97,16 @@ export default function EditCoursePage() {
 
   if (!course) {
     return (
-      <PremiumEmptyState icon="📚" title="الدورة غير موجودة" description="قد تكون الدورة حُذفت أو أن الرابط غير صحيح." actionLabel="العودة للدورات" actionHref="/admin/courses" />
+      <PremiumEmptyState icon="📚" title="الكورس غير موجود" description="قد يكون الكورس حُذف أو أن الرابط غير صحيح." actionLabel="العودة للكورسات" actionHref="/admin/courses" />
     )
   }
 
   return (
     <div>
       <div className="mb-8">
-        <p className="mb-2 text-sm font-bold text-gold">تعديل دورة</p>
+        <p className="mb-2 text-sm font-bold text-gold">تعديل كورس</p>
         <h2 className="text-3xl font-black text-charcoal">{course.title}</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">عدّل بيانات الدورة والفصول وروابط Google Drive.</p>
+        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">عدّل بيانات الكورس والفصول وروابط Google Drive.</p>
       </div>
 
       <CourseForm

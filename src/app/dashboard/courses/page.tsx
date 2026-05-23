@@ -81,9 +81,9 @@ export default function DashboardCoursesPage() {
     return (
       <PremiumEmptyState
         icon="📚"
-        title="لا توجد دورات بعد"
-        description="بعد تأكيد شراء أي دورة، ستظهر هنا ويمكنك متابعة رحلتك منها."
-        actionLabel="استكشفي الدورات"
+        title="كورسات جديدة قيد الإعداد"
+        description="سيتم فتح هذا المسار قريبًا، وعند شراء أي كورس سيظهر هنا تلقائيًا."
+        actionLabel="استكشفي الكورسات"
         actionHref="/courses"
       />
     )
@@ -92,8 +92,8 @@ export default function DashboardCoursesPage() {
   return (
     <div>
       <div className="mb-8">
-        <p className="mb-2 text-sm font-bold text-gold">دوراتي</p>
-        <h2 className="text-3xl font-black text-charcoal">الدورات المتاحة لكِ</h2>
+        <p className="mb-2 text-sm font-bold text-gold">كورساتي</p>
+        <h2 className="text-3xl font-black text-charcoal">الكورسات المتاحة لكِ</h2>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
@@ -114,7 +114,7 @@ export default function DashboardCoursesPage() {
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-sm font-bold text-warm-gray">
-                  صورة الدورة
+                  صورة الكورس
                 </div>
               )}
             </div>

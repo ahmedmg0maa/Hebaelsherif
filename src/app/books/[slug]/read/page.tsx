@@ -9,6 +9,7 @@ import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
 import ProtectedContentNotice from '@/components/ui/ProtectedContentNotice'
+import ContentProtection from '@/components/security/ContentProtection'
 import { useAuth } from '@/hooks/useAuth'
 import { getBookBySlug } from '@/lib/firestore/books'
 import type { Book } from '@/types'
@@ -170,12 +171,12 @@ export default function BookReadPage() {
 
         <section className="container-premium py-10">
           <div className="rounded-[2rem] border border-sand bg-ivory p-5 shadow-soft">
-            <div className="overflow-hidden rounded-3xl border border-sand bg-cream">
+            <ContentProtection userLabel={user?.email || user?.uid || 'حساب خاص'} productTitle={book.title} className="border border-sand bg-cream">
               {contentUrl ? (
                 <iframe
                   src={contentUrl}
                   title={book.title}
-                  className="h-[720px] w-full"
+                  className="h-[720px] w-full rounded-[2rem]"
                   allow="fullscreen"
                 />
               ) : (
@@ -183,16 +184,17 @@ export default function BookReadPage() {
                   رابط الكتاب غير متاح حاليًا.
                 </div>
               )}
-            </div>
+            </ContentProtection>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              {contentUrl ? <PremiumButton href={contentUrl}>فتح في نافذة مستقلة</PremiumButton> : null}
-
               {resourceUrl ? (
                 <PremiumButton href={resourceUrl} variant="outline">
                   فتح المرفقات
                 </PremiumButton>
               ) : null}
+              <p className="rounded-2xl border border-sand bg-cream px-4 py-3 text-xs font-bold leading-6 text-warm-gray">
+                الوصول لهذا المحتوى شخصي ومحمي، ولا يتم عرض الرابط المباشر حفاظًا على حقوق الملكية.
+              </p>
             </div>
           </div>
         </section>

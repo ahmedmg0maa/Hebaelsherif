@@ -43,7 +43,7 @@ function getProtectedContentId(productType: ProductType, productId: string) {
 }
 
 function getProductTypeLabel(productType: ProductType) {
-  return productType === 'course' ? 'دورة' : 'كتاب'
+  return productType === 'course' ? 'كورس' : 'كتاب'
 }
 
 export default function AdminContentPage() {
@@ -147,7 +147,7 @@ export default function AdminContentPage() {
         <p className="mb-2 text-sm font-bold text-gold">المحتوى المحمي</p>
         <h2 className="text-3xl font-black text-charcoal">روابط الوصول المدفوع</h2>
         <p className="mt-3 max-w-3xl text-sm leading-8 text-warm-gray">
-          من هنا يتم ربط كل دورة أو كتاب برابط المحتوى الخاص به. هذه الروابط لا تظهر في صفحات
+          من هنا يتم ربط كل كورس أو كتاب برابط المحتوى الخاص به. هذه الروابط لا تظهر في صفحات
           الزوار، ولا يتم فتحها إلا عبر نظام التحقق من الشراء.
         </p>
       </div>
@@ -174,7 +174,7 @@ export default function AdminContentPage() {
               : 'border border-sand bg-ivory text-warm-gray hover:text-petrol'
           }`}
         >
-          الدورات
+          الكورسات
         </button>
 
         <button
@@ -194,7 +194,7 @@ export default function AdminContentPage() {
         <PremiumEmptyState
           icon="🔒"
           title="لا توجد منتجات"
-          description="أضف دورات أو كتب أولًا حتى تتمكن من ربط المحتوى المحمي."
+          description="أضف كورسات أو كتب أولًا حتى تتمكن من ربط المحتوى المحمي."
         />
       ) : (
         <div className="space-y-4">
@@ -343,7 +343,7 @@ function ProtectedContentModal({
             required
             hint={
               item.productType === 'course'
-                ? 'رابط مجلد الدورة أو مشغل الدروس المحمي.'
+                ? 'رابط مجلد الكورس أو مشغل الدروس المحمي.'
                 : 'رابط ملف الكتاب أو صفحة القراءة المحمية.'
             }
           >

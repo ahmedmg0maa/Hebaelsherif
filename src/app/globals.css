@@ -184,3 +184,16 @@ img, video { max-width: 100%; height: auto; }
 .calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
 .focus-ring { @apply focus:outline-none focus:ring-4 focus:ring-petrol/10 focus:border-petrol; }
 @media (prefers-reduced-motion: reduce) { .reveal-up { animation: none !important; } }
+
+.protected-content-shell iframe,
+.protected-content-shell video,
+.protected-content-shell img {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media print {
+  [data-protected-content="true"] {
+    display: none !important;
+  }
+}

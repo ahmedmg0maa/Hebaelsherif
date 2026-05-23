@@ -142,13 +142,13 @@ export default function AdminDashboardPage() {
         />
 
         <AdminStatCard
-          label="دورات منشورة"
+          label="كورسات منشورة"
           value={stats.publishedCourses}
           href="/admin/courses"
         />
 
         <AdminStatCard
-          label="كتب منشورة"
+          label="كتب منشور"
           value={stats.publishedBooks}
           href="/admin/books"
         />

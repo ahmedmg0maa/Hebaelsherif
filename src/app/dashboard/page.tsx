@@ -70,11 +70,11 @@ export default function DashboardHomePage() {
       <div className="mb-8">
         <p className="mini-label mb-2">لوحة رحلتك</p>
         <h2 className="text-3xl font-black text-charcoal md:text-4xl">كل ما يخصك في مكان واحد</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">تابعي الدورات والكتب والجلسات والطلبات الخاصة بكِ من هنا.</p>
+        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">تابعي الكورسات والكتب والجلسات والطلبات الخاصة بكِ من هنا.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <DashboardStatCard label="دوراتي" value={stats.paidCourses} href="/dashboard/courses" />
+        <DashboardStatCard label="كورساتي" value={stats.paidCourses} href="/dashboard/courses" />
         <DashboardStatCard label="كتبي" value={stats.paidBooks} href="/dashboard/books" />
         <DashboardStatCard label="جلساتي القادمة" value={stats.upcomingSessions} href="/dashboard/sessions" />
         <DashboardStatCard label="طلبات بانتظار التأكيد" value={stats.pendingOrders} href="/dashboard/orders" />
@@ -82,7 +82,7 @@ export default function DashboardHomePage() {
 
       {!hasAnyActivity ? (
         <div className="mt-8">
-          <PremiumEmptyState icon="✦" title="رحلتك لم تبدأ بعد" description="عند شراء دورة أو كتاب أو حجز جلسة، سيظهر كل شيء هنا تلقائياً." actionLabel="استكشفي الدورات" actionHref="/courses" />
+          <PremiumEmptyState icon="✦" title="رحلتك لم تبدأ بعد" description="عند شراء كورس أو كتاب أو حجز جلسة، سيظهر كل شيء هنا تلقائياً." actionLabel="استكشفي الكورسات" actionHref="/courses" />
         </div>
       ) : null}
     </div>

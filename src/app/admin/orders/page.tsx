@@ -135,7 +135,7 @@ export default function AdminOrdersPage() {
       <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="mb-2 text-sm font-bold text-gold">إدارة الطلبات</p>
-          <h2 className="text-3xl font-black text-charcoal">طلبات شراء الدورات والكتب</h2>
+          <h2 className="text-3xl font-black text-charcoal">طلبات شراء الكورسات والكتب</h2>
           <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
             من هنا يتم تأكيد الطلبات المدفوعة أو إلغاء الطلبات غير المكتملة.
           </p>
@@ -188,7 +188,7 @@ export default function AdminOrdersPage() {
                     <p>
                       النوع:{' '}
                       <strong className="text-charcoal">
-                        {order.productType === 'course' ? 'دورة' : 'كتاب'}
+                        {order.productType === 'course' ? 'كورس' : 'كتاب'}
                       </strong>
                     </p>
 

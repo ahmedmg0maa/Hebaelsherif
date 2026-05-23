@@ -90,7 +90,7 @@ function RegisterPageContent() {
   return (
     <AuthShell
       title="إنشاء حساب جديد"
-      description="أنشئي حسابك للوصول إلى الدورات، الكتب، الجلسات، ولوحة رحلتك الخاصة."
+      description="أنشئي حسابك للوصول إلى الكورسات، الكتب، الجلسات، ولوحة رحلتك الخاصة."
       footerText="لديك حساب بالفعل؟"
       footerLinkText="سجلي الدخول"
       footerLinkHref="/auth/login"

@@ -69,7 +69,7 @@ export default function DashboardBooksPage() {
     return (
       <PremiumEmptyState
         icon="📖"
-        title="لا توجد كتب بعد"
+        title="كتب جديدة تُحضَّر بهدوء"
         description="بعد تأكيد شراء أي كتاب، سيظهر هنا ويمكنك الوصول إليه من لوحة حسابك."
         actionLabel="استكشفي الكتب"
         actionHref="/books"

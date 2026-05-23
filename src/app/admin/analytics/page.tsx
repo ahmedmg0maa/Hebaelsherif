@@ -79,9 +79,9 @@ export default function AdminAnalyticsPage() {
     ['طلبات معلقة', stats.pendingOrders, Math.min(stats.pendingOrders * 18, 100)],
     ['الحجوزات', stats.bookings, Math.min(stats.bookings * 14, 100)],
     ['حجوزات مؤكدة', stats.confirmedBookings, Math.min(stats.confirmedBookings * 18, 100)],
-    ['دورات منشورة', stats.courses, Math.min(stats.courses * 25, 100)],
-    ['كتب منشورة', stats.books, Math.min(stats.books * 25, 100)],
-    ['تقييمات منشورة', stats.reviews, Math.min(stats.reviews * 18, 100)],
+    ['كورسات منشورة', stats.courses, Math.min(stats.courses * 25, 100)],
+    ['كتب منشور', stats.books, Math.min(stats.books * 25, 100)],
+    ['تقييمات منشور', stats.reviews, Math.min(stats.reviews * 18, 100)],
   ] as const
 
   return (

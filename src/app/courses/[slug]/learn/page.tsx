@@ -11,6 +11,7 @@ import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumProgressBar from '@/components/ui/PremiumProgressBar'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
 import ProtectedContentNotice from '@/components/ui/ProtectedContentNotice'
+import ContentProtection from '@/components/security/ContentProtection'
 import { useAuth } from '@/hooks/useAuth'
 import { db } from '@/lib/firebase/client'
 import { getCourseBySlug, getCourseLessons } from '@/lib/firestore/courses'
@@ -96,7 +97,7 @@ export default function CourseLearnPage() {
         setProgress(progressSnap.exists() ? (progressSnap.data() as CourseProgress) : null)
       } catch (loadError) {
         console.error('Course learn load error:', loadError)
-        setError('تعذر تحميل محتوى الدورة الآن.')
+        setError('تعذر تحميل محتوى الكورس الآن.')
       } finally {
         setLoading(false)
       }
@@ -158,9 +159,9 @@ export default function CourseLearnPage() {
           <section className="container-premium py-12">
             <PremiumEmptyState
               icon="📚"
-              title="الدورة غير موجودة"
-              description="قد تكون الدورة غير منشورة أو تم تغيير الرابط."
-              actionLabel="عرض الدورات"
+              title="الكورس غير موجود"
+              description="قد يكون الكورس قيد المراجعة أو تم تغيير الرابط."
+              actionLabel="عرض الكورسات"
               actionHref="/courses"
             />
           </section>
@@ -199,13 +200,13 @@ export default function CourseLearnPage() {
               href="/dashboard/courses"
               className="mb-4 inline-block text-sm font-bold text-warm-gray transition hover:text-petrol"
             >
-              ← العودة لدوراتي
+              ← العودة لكورساتي
             </Link>
 
             <h1 className="text-4xl font-black leading-tight text-petrol">{course.title}</h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-8 text-warm-gray">
-              محتوى الدورة متاح لكِ الآن بعد تأكيد الوصول.
+              محتوى الكورس متاح لكِ الآن بعد تأكيد الوصول.
             </p>
 
             <div className="mt-6 max-w-xl">
@@ -216,12 +217,12 @@ export default function CourseLearnPage() {
 
         <section className="container-premium grid gap-8 py-10 lg:grid-cols-[1fr_360px]">
           <div className="rounded-[2rem] border border-sand bg-ivory p-5 shadow-soft">
-            <div className="overflow-hidden rounded-3xl border border-sand bg-cream">
+            <ContentProtection userLabel={user?.email || user?.uid || 'حساب خاص'} productTitle={course.title} className="border border-sand bg-cream">
               {contentUrl ? (
                 <iframe
                   src={contentUrl}
                   title={course.title}
-                  className="h-[520px] w-full"
+                  className="h-[520px] w-full rounded-[2rem]"
                   allow="autoplay; fullscreen; picture-in-picture"
                   allowFullScreen
                 />
@@ -230,7 +231,7 @@ export default function CourseLearnPage() {
                   رابط المحتوى غير متاح حاليًا.
                 </div>
               )}
-            </div>
+            </ContentProtection>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <PremiumButton type="button" onClick={markCourseStarted}>
@@ -246,7 +247,7 @@ export default function CourseLearnPage() {
           </div>
 
           <aside className="h-fit rounded-[2rem] border border-sand bg-ivory p-6 shadow-soft lg:sticky lg:top-28">
-            <p className="mb-3 text-sm font-bold text-gold">دروس الدورة</p>
+            <p className="mb-3 text-sm font-bold text-gold">دروس الكورس</p>
 
             {lessons.length > 0 ? (
               <div className="space-y-3">
@@ -266,7 +267,7 @@ export default function CourseLearnPage() {
               </div>
             ) : (
               <p className="text-sm leading-7 text-warm-gray">
-                لم يتم إضافة دروس لهذه الدورة بعد.
+                لم يتم إضافة دروس لهذه الكورس بعد.
               </p>
             )}
           </aside>

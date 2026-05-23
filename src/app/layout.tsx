@@ -13,11 +13,11 @@ export const metadata: Metadata = {
     template: '%s — هبة الشريف',
   },
   description:
-    'منصة عربية فاخرة للتحوّل العاطفي والنمو الشخصي من خلال الدورات، الكتب، والجلسات الفردية.',
+    'مساحة عربية هادئة للوضوح العاطفي، الكورسات العملية، الكتب الرقمية، وجلسات الكوتشنج الفردية.',
   metadataBase: new URL(appUrl),
   applicationName: 'هبة الشريف',
   authors: [{ name: 'Heba ElSherif' }],
-  keywords: ['هبة الشريف', 'كوتشنج', 'دورات نفسية', 'وعي عاطفي', 'كتب رقمية', 'جلسات فردية'],
+  keywords: ['هبة الشريف', 'كوتشنج', 'كورسات نفسية', 'وعي عاطفي', 'كتب رقمية', 'جلسات فردية'],
   verification: googleVerification ? { google: googleVerification } : undefined,
   openGraph: {
     title: 'هبة الشريف — منصة التحوّل العاطفي',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'هبة الشريف — منصة التحوّل العاطفي',
-    description: 'دورات، كتب، وجلسات فردية في تجربة عربية فاخرة.',
+    description: 'كورسات، كتب، وجلسات فردية في تجربة عربية هادئة.',
   },
   robots: { index: true, follow: true },
   manifest: '/site.webmanifest',
@@ -50,6 +50,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className="font-arabic bg-cream text-charcoal antialiased">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[999] focus:rounded-full focus:bg-petrol focus:px-5 focus:py-3 focus:text-sm focus:font-black focus:text-ivory">تخطي إلى المحتوى</a>
         {children}
         <GlobalExperience />
       </body>

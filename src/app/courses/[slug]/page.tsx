@@ -45,7 +45,7 @@ export default function CourseDetailsPage() {
         setLessons(lessonsData)
       } catch (loadError) {
         console.error('Course details error:', loadError)
-        setError('تعذر تحميل بيانات الدورة الآن. حاولي مرة أخرى لاحقًا.')
+        setError('تعذر تحميل بيانات الكورس الآن. حاولي مرة أخرى لاحقًا.')
       } finally {
         setLoading(false)
       }
@@ -73,7 +73,7 @@ export default function CourseDetailsPage() {
               icon="!"
               title="حدث خطأ"
               description={error}
-              actionLabel="العودة للدورات"
+              actionLabel="العودة للكورسات"
               actionHref="/courses"
             />
           </section>
@@ -83,9 +83,9 @@ export default function CourseDetailsPage() {
           <section className="container-premium py-12">
             <PremiumEmptyState
               icon="📚"
-              title="الدورة غير موجودة"
-              description="قد تكون الدورة غير منشورة أو تم تغيير الرابط."
-              actionLabel="عرض كل الدورات"
+              title="الكورس غير موجود"
+              description="قد يكون الكورس قيد المراجعة أو تم تغيير الرابط."
+              actionLabel="عرض كل الكورسات"
               actionHref="/courses"
             />
           </section>
@@ -96,7 +96,7 @@ export default function CourseDetailsPage() {
             <section className="border-b border-sand bg-ivory/60">
               <div className="container-premium grid gap-10 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                 <div>
-                  <PremiumBadge>دورة</PremiumBadge>
+                  <PremiumBadge>كورس</PremiumBadge>
 
                   <h1 className="mt-6 max-w-3xl text-4xl font-black leading-tight text-petrol md:text-6xl">
                     {course.title}
@@ -134,7 +134,7 @@ export default function CourseDetailsPage() {
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-cream text-warm-gray">
-                        صورة الدورة
+                        صورة الكورس
                       </div>
                     )}
                   </div>
@@ -145,7 +145,7 @@ export default function CourseDetailsPage() {
             <section className="container-premium grid gap-8 py-12 lg:grid-cols-[1fr_380px]">
               <div className="space-y-8">
                 <article className="rounded-3xl border border-sand bg-ivory p-7 shadow-soft">
-                  <h2 className="text-2xl font-black text-charcoal">عن هذه الدورة</h2>
+                  <h2 className="text-2xl font-black text-charcoal">عن هذه الكورس</h2>
 
                   <p className="mt-5 whitespace-pre-line text-sm leading-8 text-warm-gray">
                     {course.description}
@@ -172,7 +172,7 @@ export default function CourseDetailsPage() {
 
                 {course.targetAudience ? (
                   <article className="rounded-3xl border border-sand bg-ivory p-7 shadow-soft">
-                    <h2 className="text-2xl font-black text-charcoal">لمن هذه الدورة؟</h2>
+                    <h2 className="text-2xl font-black text-charcoal">لمن هذه الكورس؟</h2>
 
                     <p className="mt-5 text-sm leading-8 text-warm-gray">
                       {course.targetAudience}
@@ -181,7 +181,7 @@ export default function CourseDetailsPage() {
                 ) : null}
 
                 <article className="rounded-3xl border border-sand bg-ivory p-7 shadow-soft">
-                  <h2 className="text-2xl font-black text-charcoal">محتوى الدورة</h2>
+                  <h2 className="text-2xl font-black text-charcoal">محتوى الكورس</h2>
 
                   {lessons.length > 0 ? (
                     <div className="mt-5 space-y-3">
@@ -237,7 +237,7 @@ export default function CourseDetailsPage() {
 
                 <p className="mt-4 text-sm leading-7 text-warm-gray">
                   بعد إرسال طلب الشراء، ستظهر حالته داخل لوحة المستخدم. عند تأكيد الدفع من الإدارة
-                  يتم فتح محتوى الدورة تلقائيًا.
+                  يتم فتح محتوى الكورس تلقائيًا.
                 </p>
 
                 <PurchaseRequestButton

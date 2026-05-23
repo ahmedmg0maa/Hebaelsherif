@@ -78,7 +78,7 @@ function LoginPageContent() {
   return (
     <AuthShell
       title="تسجيل الدخول"
-      description="ادخلي إلى حسابك لمتابعة رحلتك، دوراتك، كتبك، وجلساتك."
+      description="ادخلي إلى حسابك لمتابعة رحلتك، كورساتك، كتبك، وجلساتك."
       footerText="ليس لديك حساب؟"
       footerLinkText="أنشئي حسابًا جديدًا"
       footerLinkHref="/auth/register"
