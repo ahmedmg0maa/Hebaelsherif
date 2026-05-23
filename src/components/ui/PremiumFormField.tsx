@@ -1,0 +1,32 @@
+import type { ReactNode } from 'react'
+
+interface PremiumFormFieldProps {
+  label: string
+  error?: string
+  required?: boolean
+  children: ReactNode
+  hint?: string
+}
+
+export default function PremiumFormField({
+  label,
+  error,
+  required = false,
+  children,
+  hint,
+}: PremiumFormFieldProps) {
+  return (
+    <div className="space-y-2">
+      <label className="premium-label">
+        {label}
+        {required ? <span className="mr-1 text-burgundy">*</span> : null}
+      </label>
+
+      {children}
+
+      {hint && !error ? <p className="text-xs leading-6 text-warm-gray">{hint}</p> : null}
+
+      {error ? <p className="text-xs font-medium leading-6 text-burgundy">{error}</p> : null}
+    </div>
+  )
+}
