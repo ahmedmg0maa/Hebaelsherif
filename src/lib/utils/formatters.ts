@@ -1,11 +1,38 @@
 import type { FirestoreDate } from '@/types'
 
+export function toEnglishDigits(value: string | number) {
+  const map: Record<string, string> = {
+    '٠': '0',
+    '١': '1',
+    '٢': '2',
+    '٣': '3',
+    '٤': '4',
+    '٥': '5',
+    '٦': '6',
+    '٧': '7',
+    '٨': '8',
+    '٩': '9',
+    '۰': '0',
+    '۱': '1',
+    '۲': '2',
+    '۳': '3',
+    '۴': '4',
+    '۵': '5',
+    '۶': '6',
+    '۷': '7',
+    '۸': '8',
+    '۹': '9',
+  }
+
+  return String(value).replace(/[٠-٩۰-۹]/g, (digit) => map[digit] || digit)
+}
+
+export function formatNumber(value: number) {
+  return new Intl.NumberFormat('en-US').format(value)
+}
+
 export function formatEGP(amount: number) {
-  return new Intl.NumberFormat('ar-EG', {
-    style: 'currency',
-    currency: 'EGP',
-    maximumFractionDigits: 0,
-  }).format(amount)
+  return `${formatNumber(Math.round(amount || 0))} ج.م`
 }
 
 export function formatArabicDate(value: FirestoreDate | string | Date | undefined) {
@@ -25,11 +52,28 @@ export function formatArabicDate(value: FirestoreDate | string | Date | undefine
 
   if (Number.isNaN(date.getTime())) return 'غير محدد'
 
-  return new Intl.DateTimeFormat('ar-EG', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date)
+  return toEnglishDigits(
+    new Intl.DateTimeFormat('ar-EG-u-nu-latn', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(date),
+  )
+}
+
+export function formatArabicDateTime(value: FirestoreDate | string | Date | undefined) {
+  if (!value) return 'غير محدد'
+  const date = typeof value === 'string' ? new Date(value) : value instanceof Date ? value : 'toDate' in value ? value.toDate() : null
+  if (!date || Number.isNaN(date.getTime())) return 'غير محدد'
+  return toEnglishDigits(
+    new Intl.DateTimeFormat('ar-EG-u-nu-latn', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date),
+  )
 }
 
 export function getTodayDateString() {

@@ -1,8 +1,8 @@
 export const TRUST_METRICS = [
-  { value: '12+', label: 'مسار تعلّم قابل للتوسع' },
-  { value: '1:1', label: 'جلسات فردية راقية' },
-  { value: '24/7', label: 'وصول محمي داخل الحساب' },
-  { value: 'AR', label: 'تجربة عربية أصيلة' },
+  { value: '1:1', label: 'جلسات فردية عميقة' },
+  { value: 'عربي', label: 'تجربة عربية هادئة' },
+  { value: 'عن بُعد', label: 'خدمات متاحة من أي مكان' },
+  { value: 'راقي', label: 'تجربة شخصية راقية' },
 ]
 
 export const BRAND_VALUES = [
