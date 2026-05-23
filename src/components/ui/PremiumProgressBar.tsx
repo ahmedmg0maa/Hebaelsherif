@@ -16,7 +16,7 @@ const colors: Record<ProgressVariant, string> = {
 
 export default function PremiumProgressBar({
   value,
-  variant = 'petrol',
+  variant = 'burgundy',
   showLabel = false,
   className = '',
 }: PremiumProgressBarProps) {
@@ -25,13 +25,12 @@ export default function PremiumProgressBar({
   return (
     <div className={className}>
       {showLabel ? (
-        <div className="mb-2 flex items-center justify-between text-xs text-warm-gray">
+        <div className="mb-2 flex items-center justify-between text-xs font-bold text-warm-gray">
           <span>التقدم</span>
           <span>{safeValue}%</span>
         </div>
       ) : null}
-
-      <div className="h-2 w-full overflow-hidden rounded-full bg-sand">
+      <div className="h-2.5 w-full overflow-hidden rounded-full bg-sand/90">
         <div
           className={`h-full rounded-full transition-all duration-700 ease-out ${colors[variant]}`}
           style={{ width: `${safeValue}%` }}

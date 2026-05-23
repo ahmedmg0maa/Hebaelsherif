@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'gold' | 'danger'
+type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'gold' | 'danger' | 'soft'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -13,11 +13,12 @@ interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-petrol text-cream hover:bg-petrol/90',
-  outline: 'border border-petrol text-petrol hover:bg-petrol hover:text-cream',
-  ghost: 'text-petrol hover:bg-petrol/10',
-  gold: 'bg-gold text-cream hover:bg-gold/90',
-  danger: 'bg-burgundy text-cream hover:bg-burgundy/90',
+  primary: 'bg-burgundy text-ivory shadow-[0_14px_32px_rgba(122,36,51,.18)] hover:bg-burgundy/90',
+  outline: 'border border-burgundy/25 bg-ivory/60 text-burgundy hover:border-burgundy hover:bg-burgundy hover:text-ivory',
+  ghost: 'text-burgundy hover:bg-burgundy/10',
+  gold: 'bg-gold text-ivory shadow-[0_14px_32px_rgba(183,155,108,.18)] hover:bg-gold/90',
+  danger: 'bg-burgundy text-ivory hover:bg-burgundy/90',
+  soft: 'border border-sand bg-ivory/80 text-charcoal hover:border-gold/50 hover:bg-cream',
 }
 
 const sizes: Record<ButtonSize, string> = {
@@ -37,8 +38,8 @@ export default function PremiumButton({
   ...props
 }: PremiumButtonProps) {
   const classes = [
-    'inline-flex items-center justify-center rounded-full font-bold transition-all duration-200',
-    'focus-premium disabled:pointer-events-none disabled:opacity-50',
+    'inline-flex items-center justify-center rounded-full font-black transition-all duration-300',
+    'focus-premium disabled:pointer-events-none disabled:opacity-50 hover:-translate-y-0.5',
     variants[variant],
     sizes[size],
     className,

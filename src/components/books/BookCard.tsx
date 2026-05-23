@@ -13,7 +13,7 @@ export default function BookCard({ book, featured = false }: BookCardProps) {
   return (
     <Link
       href={`/books/${book.slug}`}
-      className="group block overflow-hidden rounded-3xl border border-sand bg-ivory shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-premium"
+      className="group premium-glow-border block overflow-hidden rounded-[2rem] border border-sand bg-ivory/90 shadow-soft backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:shadow-premium"
     >
       <div className="relative aspect-[3/4] overflow-hidden bg-sand">
         {book.coverImageUrl ? (
@@ -25,35 +25,19 @@ export default function BookCard({ book, featured = false }: BookCardProps) {
             sizes="(max-width: 768px) 100vw, 25vw"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-cream text-sm font-bold text-warm-gray">
-            غلاف الكتاب
+          <div className="book-art flex h-full items-end p-5">
+            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-burgundy backdrop-blur-md">كتاب رقمي</span>
           </div>
         )}
-
-        {featured ? (
-          <PremiumBadge className="absolute right-4 top-4" variant="olive">
-            مميز
-          </PremiumBadge>
-        ) : null}
+        {featured ? <PremiumBadge className="absolute right-4 top-4" variant="gold">مميز</PremiumBadge> : null}
       </div>
 
       <div className="p-6">
-        <h3 className="text-xl font-black leading-snug text-charcoal">
-          {book.title}
-        </h3>
-
-        <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">
-          {book.shortDescription || book.description}
-        </p>
-
+        <h3 className="text-xl font-black leading-snug text-charcoal transition group-hover:text-burgundy">{book.title}</h3>
+        <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">{book.shortDescription || book.description}</p>
         <div className="mt-6 flex items-center justify-between gap-4">
-          <span className="text-lg font-black text-petrol">
-            {formatEGP(book.price)}
-          </span>
-
-          <span className="rounded-full border border-olive/20 bg-olive/10 px-4 py-2 text-xs font-bold text-olive">
-            التفاصيل
-          </span>
+          <span className="text-lg font-black text-burgundy">{formatEGP(book.price)}</span>
+          <span className="rounded-full border border-burgundy/20 bg-burgundy/10 px-4 py-2 text-xs font-black text-burgundy">التفاصيل</span>
         </div>
       </div>
     </Link>
