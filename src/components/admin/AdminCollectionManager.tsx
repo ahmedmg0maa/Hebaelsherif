@@ -140,7 +140,7 @@ export default function AdminCollectionManager({
   }
 
   async function removeItem(itemId: string) {
-    const confirmed = window.confirm('هل تريد حذف هذا العنصر؟')
+    const confirmed = window.confirm('هل تريد أرشفة هذا العنصر؟ يمكن الاحتفاظ به في السجلات بدل الحذف النهائي.')
     if (!confirmed) return
 
     if (!firebaseUser) return
@@ -151,7 +151,7 @@ export default function AdminCollectionManager({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ id: itemId, action: 'delete' }),
+      body: JSON.stringify({ id: itemId, action: 'archive' }),
     })
     await loadItems()
   }
@@ -245,7 +245,7 @@ export default function AdminCollectionManager({
                   </div>
                   <div className="flex gap-2">
                     <PremiumButton type="button" size="sm" variant="outline" onClick={() => startEdit(item)}>تعديل</PremiumButton>
-                    <PremiumButton type="button" size="sm" variant="danger" onClick={() => removeItem(item.id)}>حذف</PremiumButton>
+                    <PremiumButton type="button" size="sm" variant="danger" onClick={() => removeItem(item.id)}>أرشفة</PremiumButton>
                   </div>
                 </div>
               </article>

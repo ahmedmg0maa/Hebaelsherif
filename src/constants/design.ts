@@ -81,6 +81,7 @@ export const ADMIN_NAV_LINKS = [
   { href: '/admin/emails', label: 'البريد' },
   { href: '/admin/integrations', label: 'التكاملات' },
   { href: '/admin/security', label: 'الأمان' },
+  { href: '/admin/diagnostics', label: 'تشخيص المنصة' },
   { href: '/admin/operations', label: 'التشغيل' },
   { href: '/admin/backups', label: 'النسخ الاحتياطي' },
   { href: '/admin/policies', label: 'السياسات' },
