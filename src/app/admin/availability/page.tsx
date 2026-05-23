@@ -19,8 +19,8 @@ const sections = [
     title: "أنواع الجلسات",
     description: "اكتبي كل نوع جلسة في سطر: الاسم | المدة | السعر | الوصف.",
     fields: [
-      {key: "sessionTypes", label: "أنواع الجلسات", type: "lines", defaultValue: "جلسة وضوح فردية | 60 | 1500 | مناسبة لسؤال عاطفي محدد\nجلسة عميقة | 90 | 2200 | مناسبة لتفكيك نمط متكرر\nباقة ثلاث جلسات | 60 | 4000 | متابعة هادئة خلال شهر", wide: true},
-      {key: "availableTimeSlots", label: "الأوقات المتاحة", type: "lines", defaultValue: "10:00\n11:00\n12:00\n13:00\n14:00\n15:00\n16:00\n17:00\n18:00\n19:00", wide: true},
+      {key: "sessionTypes", label: "أنواع الجلسات", type: "lines", defaultValue: "جلسة كوتشنج 60 دقيقة | 60 | 1200 | مناسبة لسؤال عاطفي محدد\nجلسة كوتشنج عميقة | 90 | 1500 | مناسبة لتفكيك نمط متكرر\nباقة ثلاث جلسات | 60 | 3300 | متابعة هادئة خلال شهر", wide: true},
+      {key: "availableTimeSlots", label: "الأوقات المتاحة", type: "lines", defaultValue: "07:00\n07:30\n08:00\n08:30\n09:00\n09:30\n10:00\n10:30\n11:00\n11:30\n12:00\n12:30\n13:00\n13:30\n14:00\n14:30\n15:00\n15:30\n16:00\n16:30\n17:00\n17:30\n18:00\n18:30\n19:00\n19:30\n20:00", wide: true},
       {key: "blockedWeekDays", label: "أيام غير متاحة بالأرقام", type: "text", defaultValue: "5", hint: "0 الأحد، 1 الإثنين، 5 الجمعة حسب JavaScript Date"},
       {key: "blockedDates", label: "تواريخ محظورة", type: "lines", placeholder: "2026-06-01\n2026-06-02", wide: true}
     ],

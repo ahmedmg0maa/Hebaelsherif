@@ -10,12 +10,13 @@ import {
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-import { formatArabicDate } from '@/lib/utils/formatters'
+import { formatArabicDate, formatEGP, formatTime12h } from '@/lib/utils/formatters'
 import type { Booking, BookingStatus } from '@/types'
 
 const statusOptions: { label: string; value: 'all' | BookingStatus }[] = [
   { label: 'كل الحجوزات', value: 'all' },
   { label: 'بانتظار التأكيد', value: 'pending' },
+  { label: 'بيانات الدفع مرسلة', value: 'payment_submitted' },
   { label: 'مؤكد', value: 'confirmed' },
   { label: 'مكتمل', value: 'completed' },
   { label: 'ملغي', value: 'cancelled' },
@@ -163,12 +164,12 @@ export default function AdminBookingsPage() {
                     </p>
 
                     <p>
-                      الوقت: <strong className="text-charcoal">{booking.time}</strong>
+                      الوقت: <strong className="text-charcoal latin-numerals">{formatTime12h(booking.time)}</strong>
                     </p>
 
                     <p>
                       المدة:{' '}
-                      <strong className="text-charcoal">{booking.duration} دقيقة</strong>
+                      <strong className="text-charcoal latin-numerals">{booking.duration} دقيقة</strong>
                     </p>
 
                     <p>
@@ -177,6 +178,12 @@ export default function AdminBookingsPage() {
                         {formatArabicDate(booking.createdAt)}
                       </strong>
                     </p>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 rounded-2xl border border-sand bg-cream/70 p-4 text-sm md:grid-cols-3">
+                    <p className="font-bold text-warm-gray">الإجمالي<br /><strong className="text-petrol latin-numerals">{formatEGP(booking.finalAmount || booking.price || 0)}</strong></p>
+                    <p className="font-bold text-warm-gray">طريقة الدفع<br /><strong className="text-charcoal">{booking.paymentMethod || 'manual'}</strong></p>
+                    <p className="font-bold text-warm-gray">مرجع الدفع<br /><strong className="text-charcoal latin-numerals">{booking.paymentReference || 'غير مضاف'}</strong></p>
                   </div>
 
                   {booking.notes ? (
