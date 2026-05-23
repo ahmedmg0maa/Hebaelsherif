@@ -39,7 +39,10 @@ export function getTodayDateString() {
 export function getOrderStatusLabel(status: string) {
   const labels: Record<string, string> = {
     pending: 'بانتظار التأكيد',
+    payment_submitted: 'تم إرسال بيانات الدفع',
     paid: 'مدفوع',
+    failed: 'فشل الدفع',
+    refunded: 'مسترد',
     cancelled: 'ملغي',
   }
 
@@ -49,7 +52,10 @@ export function getOrderStatusLabel(status: string) {
 export function getOrderStatusClass(status: string) {
   const classes: Record<string, string> = {
     pending: 'border-gold/20 bg-gold/10 text-gold',
+    payment_submitted: 'border-petrol/20 bg-petrol/10 text-petrol',
     paid: 'border-olive/20 bg-olive/10 text-olive',
+    failed: 'border-burgundy/20 bg-burgundy/10 text-burgundy',
+    refunded: 'border-sand bg-cream text-warm-gray',
     cancelled: 'border-burgundy/20 bg-burgundy/10 text-burgundy',
   }
 

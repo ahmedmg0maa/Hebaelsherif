@@ -4,9 +4,11 @@ export type PublishStatus = 'published' | 'draft'
 
 export type ProductType = 'course' | 'book'
 
-export type OrderStatus = 'pending' | 'paid' | 'cancelled'
+export type OrderStatus = 'pending' | 'payment_submitted' | 'paid' | 'failed' | 'refunded' | 'cancelled'
 
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed'
+export type PaymentMethod = 'instapay' | 'vodafone_cash' | 'bank_transfer' | 'manual'
+
+export type BookingStatus = 'pending' | 'confirmed' | 'reschedule_requested' | 'cancelled' | 'completed'
 
 export type BookingDuration = 60 | 90
 
@@ -35,6 +37,14 @@ export interface Course {
   price: number
   status: PublishStatus
   coverImageUrl: string
+  driveFolderUrl?: string
+  previewVideoUrl?: string
+  heroImageUrl?: string
+  ogImageUrl?: string
+  category?: string
+  level?: string
+  rating?: number
+  studentsCount?: number
   createdAt: FirestoreDate
   updatedAt?: FirestoreDate
 }
@@ -63,6 +73,13 @@ export interface Book {
   price: number
   status: PublishStatus
   coverImageUrl: string
+  driveFileUrl?: string
+  sampleUrl?: string
+  heroImageUrl?: string
+  ogImageUrl?: string
+  category?: string
+  pagesCount?: number
+  rating?: number
   createdAt: FirestoreDate
   updatedAt?: FirestoreDate
 }
@@ -78,6 +95,9 @@ export interface Booking {
   duration: BookingDuration
   status: BookingStatus
   notes?: string
+  sessionType?: string
+  price?: number
+  meetingUrl?: string
   createdAt: FirestoreDate
   updatedAt?: FirestoreDate
 }
@@ -89,6 +109,11 @@ export interface Order {
   productType: ProductType
   amount: number
   status: OrderStatus
+  paymentMethod?: PaymentMethod
+  paymentReference?: string
+  paymentProofUrl?: string
+  couponCode?: string
+  discountAmount?: number
   createdAt: FirestoreDate
   updatedAt?: FirestoreDate
 }
@@ -100,6 +125,20 @@ export interface CourseProgress {
   lastLessonId?: string
   progressPercent: number
   lastViewedAt: FirestoreDate
+}
+
+
+export interface Review {
+  id: string
+  userId: string
+  userName: string
+  productId: string
+  productType: ProductType
+  rating: number
+  content: string
+  status: 'published' | 'pending' | 'hidden'
+  createdAt: FirestoreDate
+  updatedAt?: FirestoreDate
 }
 
 export interface ProtectedContent {
@@ -133,4 +172,32 @@ export interface ApiErrorResponse {
 export interface ApiSuccessResponse<TData = unknown> {
   success: true
   data?: TData
+}
+
+export interface AdminLog {
+  id: string
+  adminId: string
+  action: string
+  targetType: string
+  targetId?: string
+  before?: Record<string, unknown>
+  after?: Record<string, unknown>
+  createdAt: FirestoreDate
+}
+
+export interface Coupon {
+  id: string
+  code: string
+  type: 'percentage' | 'fixed'
+  value: number
+  active: boolean
+  expiresAt?: FirestoreDate
+}
+
+export interface Lead {
+  id: string
+  email: string
+  source: string
+  status: 'new' | 'contacted' | 'converted'
+  createdAt: FirestoreDate
 }

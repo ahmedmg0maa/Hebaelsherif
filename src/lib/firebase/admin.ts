@@ -21,11 +21,7 @@ function getRequiredFirebaseAdminConfig() {
     throw new Error(`Missing Firebase admin environment variables: ${missingKeys.join(', ')}`)
   }
 
-  return {
-    projectId,
-    clientEmail,
-    privateKey,
-  }
+  return { projectId, clientEmail, privateKey }
 }
 
 export function getAdminApp() {
@@ -42,11 +38,7 @@ export function getAdminApp() {
 
   cachedAdminApp = initializeApp(
     {
-      credential: cert({
-        projectId,
-        clientEmail,
-        privateKey,
-      }),
+      credential: cert({ projectId, clientEmail, privateKey }),
     },
     'admin',
   )
