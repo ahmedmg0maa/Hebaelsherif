@@ -5,7 +5,7 @@ interface AdminPageShellProps {
   eyebrow: string
   title: string
   description: string
-  children: ReactNode
+  children?: ReactNode
   actionHref?: string
   actionLabel?: string
 }

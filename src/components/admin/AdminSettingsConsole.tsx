@@ -1,8 +1,7 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
-import { db } from '@/lib/firebase/client'
+import { useAuth } from '@/hooks/useAuth'
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumFormField from '@/components/ui/PremiumFormField'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
@@ -49,6 +48,7 @@ export default function AdminSettingsConsole({
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const { firebaseUser } = useAuth()
 
   const fields = useMemo(() => sections.flatMap((section) => section.fields), [sections])
 
@@ -63,8 +63,18 @@ export default function AdminSettingsConsole({
       }, {})
 
       try {
-        const snap = await getDoc(doc(db, collectionName, documentId))
-        const data = snap.exists() ? snap.data() : {}
+        if (!firebaseUser) {
+          setValues(defaults)
+          return
+        }
+
+        const token = await firebaseUser.getIdToken()
+        const response = await fetch(
+          `/api/admin/settings?collectionName=${encodeURIComponent(collectionName)}&documentId=${encodeURIComponent(documentId)}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        )
+        const payload = (await response.json()) as { data?: Record<string, unknown>; error?: string }
+        const data = response.ok ? payload.data || {} : {}
 
         const nextValues = fields.reduce<Values>((acc, field) => {
           acc[field.key] = normalizeIncomingValue(data[field.key], field)
@@ -72,17 +82,21 @@ export default function AdminSettingsConsole({
         }, defaults)
 
         setValues(nextValues)
+
+        if (!response.ok) {
+          setError('تم فتح القيم الافتراضية مؤقتًا. راجع صلاحيات الأدمن أو Firebase Admin إذا لم يتم الحفظ.')
+        }
       } catch (loadError) {
         console.error('Admin settings load error:', loadError)
         setValues(defaults)
-        setError('تعذر تحميل الإعدادات الآن. يمكنك تعديلها والمحاولة مرة أخرى.')
+        setError('تم فتح القيم الافتراضية مؤقتًا. يمكنك الحفظ بعد التأكد من اتصال Firebase Admin.')
       } finally {
         setLoading(false)
       }
     }
 
     loadSettings()
-  }, [collectionName, documentId, fields])
+  }, [collectionName, documentId, fields, firebaseUser])
 
   function updateValue(key: string, value: SettingValue) {
     setValues((current) => ({ ...current, [key]: value }))
@@ -95,14 +109,28 @@ export default function AdminSettingsConsole({
     setError('')
 
     try {
-      await setDoc(
-        doc(db, collectionName, documentId),
+      if (!firebaseUser) {
+        setError('يلزم تسجيل الدخول كأدمن لحفظ الإعدادات.')
+        return
+      }
+
+      const token = await firebaseUser.getIdToken()
+      const response = await fetch(
+        `/api/admin/settings?collectionName=${encodeURIComponent(collectionName)}&documentId=${encodeURIComponent(documentId)}`,
         {
-          ...values,
-          updatedAt: serverTimestamp(),
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ values }),
         },
-        { merge: true },
       )
+
+      if (!response.ok) {
+        setError('تعذر حفظ الإعدادات. راجع صلاحيات الأدمن أو متغيرات Firebase Admin.')
+        return
+      }
 
       setMessage(successMessage)
     } catch (saveError) {

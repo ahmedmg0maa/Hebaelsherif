@@ -8,23 +8,40 @@ export const BOOKING_RULES = {
   minDaysAhead: 1,
   maxDaysAhead: 30,
   availableHours: {
-    start: 10,
-    end: 20,
+    start: 7,
+    end: 21,
   },
 } as const
 
-export const TIME_SLOTS = [
-  '10:00',
-  '11:00',
-  '12:00',
-  '13:00',
-  '14:00',
-  '15:00',
-  '16:00',
-  '17:00',
-  '18:00',
-  '19:00',
-] as const
+function buildTimeSlots() {
+  const slots: string[] = []
+  const startMinutes = BOOKING_RULES.availableHours.start * 60
+  const endMinutes = BOOKING_RULES.availableHours.end * 60
+
+  for (let minutes = startMinutes; minutes <= endMinutes; minutes += 30) {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    slots.push(`${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`)
+  }
+
+  return slots
+}
+
+export const TIME_SLOTS = buildTimeSlots()
+
+export function getBookableTimeSlots(duration: BookingDuration) {
+  const endMinutes = BOOKING_RULES.availableHours.end * 60
+
+  return TIME_SLOTS.filter((slot) => {
+    const [hours, minutes] = slot.split(':').map(Number)
+    return hours * 60 + minutes + duration <= endMinutes
+  })
+}
+
+export const SESSION_PRICES: Record<BookingDuration, number> = {
+  60: 1200,
+  90: 1500,
+}
 
 export const BOOKING_DURATION_OPTIONS: SelectOption<BookingDuration>[] = [
   {
@@ -39,6 +56,7 @@ export const BOOKING_DURATION_OPTIONS: SelectOption<BookingDuration>[] = [
 
 export const BOOKING_STATUS_LABELS = {
   pending: 'بانتظار التأكيد',
+  payment_submitted: 'تم إرسال بيانات الدفع',
   confirmed: 'مؤكد',
   reschedule_requested: 'طلب تغيير موعد',
   cancelled: 'ملغي',
@@ -47,6 +65,7 @@ export const BOOKING_STATUS_LABELS = {
 
 export const BOOKING_STATUS_STYLES = {
   pending: 'bg-gold/10 text-gold border-gold/20',
+  payment_submitted: 'bg-petrol/10 text-petrol border-petrol/20',
   confirmed: 'bg-olive/10 text-olive border-olive/20',
   reschedule_requested: 'bg-petrol/10 text-petrol border-petrol/20',
   cancelled: 'bg-burgundy/10 text-burgundy border-burgundy/20',

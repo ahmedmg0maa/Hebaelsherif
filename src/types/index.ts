@@ -8,7 +8,7 @@ export type OrderStatus = 'pending' | 'payment_submitted' | 'paid' | 'failed' | 
 
 export type PaymentMethod = 'instapay' | 'vodafone_cash' | 'bank_transfer' | 'manual'
 
-export type BookingStatus = 'pending' | 'confirmed' | 'reschedule_requested' | 'cancelled' | 'completed'
+export type BookingStatus = 'pending' | 'payment_submitted' | 'confirmed' | 'reschedule_requested' | 'cancelled' | 'completed'
 
 export type BookingDuration = 60 | 90
 
@@ -97,6 +97,14 @@ export interface Booking {
   notes?: string
   sessionType?: string
   price?: number
+  originalPrice?: number
+  discountAmount?: number
+  finalAmount?: number
+  couponCode?: string
+  paymentMethod?: PaymentMethod
+  paymentReference?: string
+  paymentNote?: string
+  paymentStatus?: 'not_required' | 'pending' | 'submitted' | 'confirmed' | 'failed'
   meetingUrl?: string
   createdAt: FirestoreDate
   updatedAt?: FirestoreDate
@@ -192,6 +200,12 @@ export interface Coupon {
   value: number
   active: boolean
   expiresAt?: FirestoreDate
+  expiresAtText?: string
+  usageLimit?: number
+  usageCount?: number
+  minAmount?: number
+  scope?: 'all' | 'sessions' | 'courses' | 'books'
+  notes?: string
 }
 
 export interface Lead {

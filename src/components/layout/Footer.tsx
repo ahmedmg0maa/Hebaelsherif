@@ -31,6 +31,32 @@ const footerSections = [
   },
 ]
 
+function SocialIcon({ type }: { type: string }) {
+  if (type === 'instagram') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5">
+        <rect width="16" height="16" x="4" y="4" rx="4.5" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="17" cy="7" r="1" fill="currentColor" />
+      </svg>
+    )
+  }
+
+  if (type === 'tiktok') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5">
+        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M14 4v10.2a4.2 4.2 0 1 1-4.2-4.2c.42 0 .82.06 1.2.18V7.4a7 7 0 1 0 5.8 6.9V8.9c1.05.92 2.37 1.48 3.8 1.57V7.8A5.4 5.4 0 0 1 14 4Z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5">
+      <path fill="currentColor" d="M13.4 21v-7.7h2.6l.4-3h-3V8.4c0-.87.24-1.47 1.5-1.47h1.6V4.26A21.4 21.4 0 0 0 14.16 4c-2.32 0-3.9 1.42-3.9 4.02v2.24H7.63v3h2.62V21h3.15Z" />
+    </svg>
+  )
+}
+
 export default function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-sand bg-ivory/78 backdrop-blur-sm">
@@ -60,7 +86,7 @@ export default function Footer() {
               <div className="flex flex-wrap gap-2">
                 {SOCIAL_LINKS.map((social) => {
                   const active = social.href && social.href !== '#'
-                  const classes = 'inline-flex min-h-11 items-center justify-center rounded-full border border-sand bg-ivory/80 px-4 text-xs font-black text-petrol shadow-soft transition hover:border-petrol/30 hover:bg-cream'
+                  const classes = 'inline-flex h-11 w-11 items-center justify-center rounded-full border border-sand bg-ivory/80 text-petrol shadow-soft transition hover:-translate-y-1 hover:border-gold/50 hover:bg-cream hover:text-gold'
 
                   return active ? (
                     <a
@@ -69,13 +95,14 @@ export default function Footer() {
                       target="_blank"
                       rel="noreferrer"
                       className={classes}
-                      aria-label={social.display}
+                      aria-label={social.label}
+                      title={social.label}
                     >
-                      {social.display}
+                      <SocialIcon type={social.key} />
                     </a>
                   ) : (
-                    <span key={social.key} className={`${classes} opacity-60`} aria-label={`${social.display} سيضاف لاحقًا`}>
-                      {social.display}
+                    <span key={social.key} className={`${classes} opacity-45`} aria-label={`${social.label} سيضاف لاحقًا`} title={`${social.label} سيضاف لاحقًا`}>
+                      <SocialIcon type={social.key} />
                     </span>
                   )
                 })}

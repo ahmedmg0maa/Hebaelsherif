@@ -1,10 +1,32 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
+
+function SunIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" />
+      <path stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" d="M12 2.8v2M12 19.2v2M4.3 4.3l1.4 1.4M18.3 18.3l1.4 1.4M2.8 12h2M19.2 12h2M4.3 19.7l1.4-1.4M18.3 5.7l1.4-1.4" />
+    </svg>
+  )
+}
+
+function MoonIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        d="M20.1 14.3A8.2 8.2 0 0 1 9.7 3.9 8.4 8.4 0 1 0 20.1 14.3Z"
+      />
+    </svg>
+  )
+}
 
 export default function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const [dark, setDark] = useState(false)
-  const labelId = useId()
 
   useEffect(() => {
     const stored = window.localStorage.getItem('heba-theme')
@@ -21,34 +43,16 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
     window.localStorage.setItem('heba-theme', next ? 'dark' : 'light')
   }
 
-  if (compact) {
-    return (
-      <button
-        type="button"
-        onClick={toggleTheme}
-        className="group inline-flex h-10 items-center gap-1 rounded-full border border-sand bg-ivory/88 px-1.5 shadow-soft backdrop-blur-md transition hover:border-petrol/35"
-        aria-label={dark ? 'تفعيل الوضع الهادئ' : 'تفعيل الوضع الليلي'}
-        aria-pressed={dark}
-      >
-        <span className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${!dark ? 'bg-petrol text-ivory shadow-soft' : 'text-warm-gray group-hover:text-petrol'}`}>هادئ</span>
-        <span className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${dark ? 'bg-gold text-charcoal shadow-soft' : 'text-warm-gray group-hover:text-petrol'}`}>ليلي</span>
-      </button>
-    )
-  }
-
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      className="inline-flex w-full items-center justify-between gap-3 rounded-full border border-sand bg-ivory/88 px-3 py-2 text-xs font-black text-charcoal shadow-soft backdrop-blur-md transition hover:border-petrol/35"
-      aria-labelledby={labelId}
+      className={`group inline-flex items-center justify-center rounded-full border border-sand bg-ivory/88 text-petrol shadow-soft backdrop-blur-md transition hover:-translate-y-0.5 hover:border-gold/50 hover:text-gold ${compact ? 'h-10 w-10' : 'h-11 w-11'}`}
+      aria-label={dark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الليلي'}
       aria-pressed={dark}
+      title={dark ? 'الوضع الفاتح' : 'الوضع الليلي'}
     >
-      <span id={labelId}>{dark ? 'الوضع الليلي' : 'الوضع الهادئ'}</span>
-      <span className="inline-flex rounded-full border border-sand bg-cream/75 p-1">
-        <span className={`rounded-full px-3 py-1 transition ${!dark ? 'bg-petrol text-ivory' : 'text-warm-gray'}`}>هادئ</span>
-        <span className={`rounded-full px-3 py-1 transition ${dark ? 'bg-gold text-charcoal' : 'text-warm-gray'}`}>ليلي</span>
-      </span>
+      {dark ? <MoonIcon className="h-5 w-5" /> : <SunIcon className="h-5 w-5" />}
     </button>
   )
 }

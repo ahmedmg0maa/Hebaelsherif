@@ -1,8 +1,7 @@
 'use client'
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore'
-import { db } from '@/lib/firebase/client'
+import { useAuth } from '@/hooks/useAuth'
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumFormField from '@/components/ui/PremiumFormField'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
@@ -44,6 +43,7 @@ export default function AdminCollectionManager({
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const { firebaseUser } = useAuth()
 
   const emptyValues = useMemo(() => {
     return fields.reduce<Record<string, ItemValue>>((acc, field) => {
@@ -59,18 +59,22 @@ export default function AdminCollectionManager({
   const loadItems = useCallback(async function loadItems() {
     setLoading(true)
     try {
-      let snap
-      try {
-        snap = await getDocs(query(collection(db, collectionName), orderBy(sortField, 'desc')))
-      } catch {
-        snap = await getDocs(collection(db, collectionName))
+      if (!firebaseUser) {
+        setItems([])
+        return
       }
 
-      setItems(snap.docs.map((docItem) => ({ id: docItem.id, ...docItem.data() })))
+      const token = await firebaseUser.getIdToken()
+      const response = await fetch(`/api/admin/collection?collectionName=${encodeURIComponent(collectionName)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const payload = (await response.json()) as { items?: ManagedItem[] }
+
+      setItems(response.ok ? payload.items || [] : [])
     } finally {
       setLoading(false)
     }
-  }, [collectionName, sortField])
+  }, [collectionName, firebaseUser])
 
   useEffect(() => {
     loadItems().catch((error) => {
@@ -103,21 +107,27 @@ export default function AdminCollectionManager({
     setMessage('')
 
     try {
-      if (editingId) {
-        await updateDoc(doc(db, collectionName, editingId), {
-          ...values,
-          updatedAt: serverTimestamp(),
-        })
-        setMessage('تم تحديث العنصر بنجاح.')
-      } else {
-        await addDoc(collection(db, collectionName), {
-          ...values,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        })
-        setMessage('تمت إضافة العنصر بنجاح.')
+      if (!firebaseUser) {
+        setMessage('يلزم تسجيل الدخول كأدمن للحفظ.')
+        return
       }
 
+      const token = await firebaseUser.getIdToken()
+      const response = await fetch(`/api/admin/collection?collectionName=${encodeURIComponent(collectionName)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id: editingId, values }),
+      })
+
+      if (!response.ok) {
+        setMessage('تعذر الحفظ. تأكد من صلاحيات الأدمن.')
+        return
+      }
+
+      setMessage(editingId ? 'تم تحديث العنصر بنجاح.' : 'تمت إضافة العنصر بنجاح.')
       setValues(emptyValues)
       setEditingId('')
       await loadItems()
@@ -133,7 +143,16 @@ export default function AdminCollectionManager({
     const confirmed = window.confirm('هل تريد حذف هذا العنصر؟')
     if (!confirmed) return
 
-    await deleteDoc(doc(db, collectionName, itemId))
+    if (!firebaseUser) return
+    const token = await firebaseUser.getIdToken()
+    await fetch(`/api/admin/collection?collectionName=${encodeURIComponent(collectionName)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: itemId, action: 'delete' }),
+    })
     await loadItems()
   }
 

@@ -32,7 +32,26 @@ export function formatNumber(value: number) {
 }
 
 export function formatEGP(amount: number) {
-  return `${formatNumber(Math.round(amount || 0))} ج.م`
+  return `${formatNumber(Math.round(amount || 0))} EGP`
+}
+
+export function formatTime12h(time: string) {
+  const [rawHours, rawMinutes = '00'] = time.split(':')
+  const hours = Number(rawHours)
+  const minutes = Number(rawMinutes)
+
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return time
+
+  const suffix = hours >= 12 ? 'PM' : 'AM'
+  const displayHours = hours % 12 || 12
+  return `${displayHours}:${String(minutes).padStart(2, '0')} ${suffix}`
+}
+
+export function toMinutesFromTime(time: string) {
+  const [rawHours, rawMinutes = '0'] = time.split(':')
+  const hours = Number(rawHours)
+  const minutes = Number(rawMinutes)
+  return hours * 60 + minutes
 }
 
 export function formatArabicDate(value: FirestoreDate | string | Date | undefined) {
