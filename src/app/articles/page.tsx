@@ -15,7 +15,7 @@ export default function ArticlesPage() {
       <Navbar />
       <main className="min-h-screen pt-20">
         <section className="container-premium py-16">
-          <PremiumSection eyebrow="مقالات" title="مكتبة وعي عاطفي قابلة للنمو" description="مقالات SEO جاهزة كبداية ويمكن إضافة المزيد من لوحة محتوى لاحقًا.">
+          <PremiumSection eyebrow="مقالات" title="مكتبة وعي عاطفي قابلة للنمو" description="قراءات هادئة تساعدك على فهم الحدود، التعلق، والعلاقات بلغة واضحة وغير مرهقة.">
             <div className="grid gap-5 md:grid-cols-3">
               {ARTICLES.map((article) => (
                 <Link key={article.slug} href={`/articles/${article.slug}`} className="interactive-lift rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft backdrop-blur-sm">

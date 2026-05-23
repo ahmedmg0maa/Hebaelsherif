@@ -52,13 +52,13 @@ const experiencePreview = [
   { title: 'لوحة رحلتك', text: 'كورساتك، كتبك، جلساتك، وطلباتك في مكان واحد واضح.' },
   { title: 'محتوى محمي', text: 'الوصول للمحتوى يتم داخل الحساب بعد تأكيد الطلب.' },
   { title: 'حجز ذكي', text: 'اختيار التاريخ والوقت بدون مواعيد سابقة أو تكرار.' },
-  { title: 'إدارة مرنة', text: 'لوحة إدارة تتحكم في المحتوى والطلبات والحجوزات بسهولة.' },
+  { title: 'تنظيم واضح', text: 'كل خطوة تظهر في وقتها: المحتوى، الجلسات، الطلبات، والمتابعة.' },
 ]
 
 const testimonials = [
-  'شعرت أنني لا أُدفَع للتغيير، بل أُقاد بلطف نحو فهم أعمق لنفسي.',
-  'اللغة هادئة وناضجة. كل جزء في التجربة كان واضحًا وغير مرهق.',
-  'أكثر ما أحببته أن الرحلة منظمة، لكن دون ضغط أو ضجيج.',
+  'لا نضغط عليكِ لتتغيري بسرعة. نساعدك على رؤية ما يحدث داخلك بهدوء.',
+  'كل خطوة في التجربة مكتوبة بلغة واضحة، إنسانية، وتحترم خصوصيتك.',
+  'الهدف ليس استهلاك محتوى أكثر، بل اختيار خطوة مناسبة لمرحلتك الحالية.',
 ]
 
 export default function HomePage() {
@@ -89,9 +89,9 @@ export default function HomePage() {
 
             <div className="mt-10 grid gap-3 sm:grid-cols-4">
               <MiniMetric value="1:1" label="جلسات فردية" />
-              <MiniMetric value="AR" label="تجربة عربية" />
-              <MiniMetric value="Online" label="من أي مكان" />
-              <MiniMetric value="Calm" label="إيقاع هادئ" />
+              <MiniMetric value="3" label="مسارات بداية" />
+              <MiniMetric value="24/7" label="وصول للحساب" />
+              <MiniMetric value="5+" label="صفحات إرشاد" />
             </div>
           </MotionReveal>
 
@@ -232,17 +232,17 @@ export default function HomePage() {
 
         <section className="container-premium py-16">
           <PremiumSection
-            eyebrow="الثقة"
-            title="كلمات هادئة من تجربة تُبنى بعناية"
-            description="ستظهر هنا لاحقًا تجارب موثقة من عميلات حقيقيات، مع الحفاظ الكامل على الخصوصية."
+            eyebrow="وعد التجربة"
+            title="مساحة تمنحك وضوحًا بدون ضغط"
+            description="إلى أن تُضاف تجارب حقيقية موثقة، يظهر هنا ما نلتزم به في كل جلسة وكورس وكتاب."
           >
             <div className="grid gap-4 md:grid-cols-3">
               {testimonials.map((text, index) => (
                 <MotionReveal key={text} delay={index * 0.06}>
                   <article className="brand-rich-card h-full rounded-[2rem] p-6">
                     <div className="mb-5 h-12 w-12 rounded-full border border-gold/30 bg-gold/10" />
-                    <p className="text-sm leading-8 text-warm-gray">“{text}”</p>
-                    <p className="mt-5 text-xs font-black text-petrol">تجربة موثقة قريبًا</p>
+                    <p className="text-sm leading-8 text-warm-gray">{text}</p>
+                    <p className="mt-5 text-xs font-black text-petrol">التزام هادئ</p>
                   </article>
                 </MotionReveal>
               ))}

@@ -38,12 +38,12 @@ export default function ServicesPage() {
               <PremiumButton href="/courses" variant="outline" size="lg">شاهدي الكورسات</PremiumButton>
             </div>
           </div>
-          <ImageSlot fallbackSrc={IMAGE_SLOTS.session} alt="جلسة هبة الشريف" ratio="portrait" label="Session image slot" priority />
+          <ImageSlot fallbackSrc={IMAGE_SLOTS.session} alt="جلسة هبة الشريف" ratio="portrait" label="مساحة بصرية للجلسات" priority />
         </section>
 
         <section className="border-y border-sand bg-ivory/55">
           <div className="container-premium py-16">
-            <PremiumSection eyebrow="الباقات" title="خدمات قابلة للتوسع" description="اتركنا أماكن الأسعار والتفاصيل قابلة للتعديل من المحتوى لاحقًا.">
+            <PremiumSection eyebrow="الباقات" title="خدمات قابلة للتوسع" description="يمكنكِ البدء بجلسة واحدة أو اختيار مسار أعمق عندما تحتاجين متابعة أكثر تنظيمًا.">
               <div className="grid gap-5 lg:grid-cols-3">
                 {SERVICES.map((service) => (
                   <article key={service.slug} className="interactive-lift rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft backdrop-blur-sm">
