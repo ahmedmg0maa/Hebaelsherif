@@ -3,7 +3,7 @@ export const BRAND = {
   enName: 'Heba ElSherif',
   tagline: 'رحلة هادئة نحو الوضوح العاطفي',
   description:
-    'منصة عربية فاخرة للتحول العاطفي والنمو الشخصي من خلال الدورات، الكتب، والجلسات الفردية.',
+    'منصة عربية فاخرة للتحول العاطفي والنمو الشخصي من خلال الكورسات، الكتب، والجلسات الفردية.',
 } as const
 
 export const COLORS = {
@@ -24,7 +24,7 @@ export const PUBLIC_NAV_LINKS = [
   { href: '/start-here', label: 'ابدئي هنا' },
   { href: '/services', label: 'الخدمات' },
   { href: '/programs', label: 'المسارات' },
-  { href: '/courses', label: 'الدورات' },
+  { href: '/courses', label: 'الكورسات' },
   { href: '/books', label: 'الكتب' },
   { href: '/booking', label: 'الجلسات' },
   { href: '/articles', label: 'المقالات' },
@@ -34,7 +34,7 @@ export const PUBLIC_NAV_LINKS = [
 
 export const DASHBOARD_NAV_LINKS = [
   { href: '/dashboard', label: 'رحلتي' },
-  { href: '/dashboard/courses', label: 'دوراتي' },
+  { href: '/dashboard/courses', label: 'كورساتي' },
   { href: '/dashboard/books', label: 'كتبي' },
   { href: '/dashboard/sessions', label: 'جلساتي' },
   { href: '/dashboard/orders', label: 'طلباتي' },
@@ -59,7 +59,7 @@ export const ADMIN_NAV_LINKS = [
   { href: '/admin/seo', label: 'SEO وGoogle' },
   { href: '/admin/feature-flags', label: 'المميزات' },
   { href: '/admin/ai-guide', label: 'AI Guide' },
-  { href: '/admin/courses', label: 'الدورات' },
+  { href: '/admin/courses', label: 'الكورسات' },
   { href: '/admin/academy', label: 'استوديو التعلم' },
   { href: '/admin/books', label: 'الكتب' },
   { href: '/admin/content', label: 'المحتوى المحمي' },
@@ -88,4 +88,11 @@ export const ADMIN_NAV_LINKS = [
   { href: '/admin/journeys', label: 'المسارات' },
   { href: '/admin/experiments', label: 'التجارب' },
   { href: '/admin/logs', label: 'السجل' },
+] as const
+
+
+export const SOCIAL_LINKS = [
+  { key: 'facebook', label: 'Facebook', href: process.env.NEXT_PUBLIC_FACEBOOK_URL || '#' },
+  { key: 'instagram', label: 'Instagram', href: process.env.NEXT_PUBLIC_INSTAGRAM_URL || '#' },
+  { key: 'tiktok', label: 'TikTok', href: process.env.NEXT_PUBLIC_TIKTOK_URL || '#' },
 ] as const

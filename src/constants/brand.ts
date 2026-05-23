@@ -3,7 +3,7 @@ export const BRAND_KIT = {
     ar: 'هبة الشريف',
     en: 'Heba ElSherif',
   },
-  positioning: 'Luxury Arabic-first emotional learning & coaching platform.',
+  positioning: 'منصة عربية فاخرة للتعلم العاطفي والجلسات الهادئة.',
   promise:
     'A calm premium digital space that helps women gain emotional clarity, self-understanding, and personal transformation through guided learning, books, and coaching.',
   personality: [

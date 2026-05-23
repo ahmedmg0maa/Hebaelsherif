@@ -1,6 +1,6 @@
 export const brandConfig = {
   name: { ar: 'هبة الشريف', en: 'Heba ElSherif' },
-  type: 'Luxury Arabic-first emotional learning & coaching platform',
+  type: 'منصة عربية فاخرة للتعلم العاطفي والجلسات الهادئة',
   promise:
     'مساحة رقمية فاخرة وهادئة تساعد المرأة على الوضوح العاطفي، فهم الذات، والتحول الشخصي من خلال التعلم والكتب والجلسات.',
   archetypes: { primary: 'The Sage', secondary: 'The Caregiver' },
