@@ -38,7 +38,7 @@ export default function AuthShell({
             </h1>
 
             <p className="mt-6 text-sm leading-8 text-warm-gray">
-              من هنا تستطيعين متابعة الدورات، قراءة الكتب، إدارة الجلسات، ومراجعة طلباتك في تجربة
+              من هنا تستطيعين متابعة الكورسات، قراءة الكتب، إدارة الجلسات، ومراجعة طلباتك في تجربة
               عربية فاخرة ومحمية.
             </p>
 
@@ -46,14 +46,14 @@ export default function AuthShell({
               <div className="rounded-2xl border border-sand bg-cream p-4">
                 <strong className="block text-sm text-charcoal">محتوى محمي</strong>
                 <span className="mt-1 block text-xs leading-6 text-warm-gray">
-                  الوصول للدورات والكتب يتم بعد تسجيل الدخول وتأكيد الطلب.
+                  الوصول للكورسات والكتب يتم بعد تسجيل الدخول وتأكيد الطلب.
                 </span>
               </div>
 
               <div className="rounded-2xl border border-sand bg-cream p-4">
                 <strong className="block text-sm text-charcoal">رحلتك محفوظة</strong>
                 <span className="mt-1 block text-xs leading-6 text-warm-gray">
-                  تقدمك في الدورات وجلساتك وطلباتك تظهر داخل لوحة المستخدم.
+                  تقدمك في الكورسات وجلساتك وطلباتك تظهر داخل لوحة المستخدم.
                 </span>
               </div>
             </div>

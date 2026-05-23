@@ -34,7 +34,7 @@ export default function PurchaseRequestButton({ productId, productType, currentP
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  const productTypeLabel = useMemo(() => (productType === 'course' ? 'الدورة' : 'الكتاب'), [productType])
+  const productTypeLabel = useMemo(() => (productType === 'course' ? 'الكورس' : 'الكتاب'), [productType])
   const selectedPayment = PAYMENT_METHODS.find((method) => method.id === paymentMethod) || PAYMENT_METHODS[0]
 
   async function handlePurchaseRequest() {

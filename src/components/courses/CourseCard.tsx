@@ -26,7 +26,7 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
           />
         ) : (
           <div className="course-art flex h-full items-end p-5">
-            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-petrol backdrop-blur-md">دورة</span>
+            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-petrol backdrop-blur-md">كورس</span>
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/20 to-transparent" />

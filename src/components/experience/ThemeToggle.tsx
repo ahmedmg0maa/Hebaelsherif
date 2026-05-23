@@ -51,11 +51,11 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
     >
       <span className="relative h-7 w-12 rounded-full bg-cream ring-1 ring-sand">
         <span
-          className={`absolute top-1 flex h-5 w-5 items-center justify-center rounded-full bg-petrol text-[9px] text-ivory shadow-soft transition-all duration-300 ${
+          className={`absolute top-1 flex h-5 w-5 items-center justify-center rounded-full bg-petrol text-[8px] text-ivory shadow-soft transition-all duration-300 ${
             dark ? 'right-1' : 'right-6'
           }`}
         >
-          {dark ? 'D' : 'L'}
+          {dark ? 'ليل' : 'هدوء'}
         </span>
       </span>
       <span id={labelId}>{dark ? 'الوضع الليلي' : 'الوضع الهادئ'}</span>

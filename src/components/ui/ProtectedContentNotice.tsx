@@ -18,7 +18,7 @@ export default function ProtectedContentNotice({
   backHref = '/dashboard',
   purchaseHref,
 }: ProtectedContentNoticeProps) {
-  const productLabel = productType === 'course' ? 'الدورة' : 'الكتاب'
+  const productLabel = productType === 'course' ? 'الكورس' : 'الكتاب'
 
   return (
     <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center px-4 py-12">

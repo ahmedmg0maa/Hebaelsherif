@@ -7,34 +7,38 @@ const guideTopics = [
   {
     id: 'start',
     label: 'أبدأ منين؟',
-    title: 'ابدئي بالمسار الأقرب لشعورك الآن',
-    answer: 'لو تحتاجين ترتيبًا خطوة بخطوة فابدئي بالدورات. لو تحتاجين تأملًا هادئًا فالكتب أنسب. لو السؤال شخصي أو مرتبط بعلاقة محددة فالجلسة أوضح.',
-    href: '/services',
-    action: 'اختاري مسارك',
+    title: 'ابدئي من السؤال الأقرب لقلبك',
+    answer:
+      'لو تحتاجين ترتيبًا خطوة بخطوة فابدئي بالكورسات. لو تريدين تأملًا هادئًا فالكتب أنسب. لو السؤال شخصي أو مرتبط بعلاقة محددة فالجلسة أوضح.',
+    href: '/start-here',
+    action: 'ابدئي هنا',
   },
   {
     id: 'session',
-    label: 'أحتاج جلسة؟',
+    label: 'جلسة أم محتوى؟',
     title: 'الجلسة مناسبة عندما يكون السؤال شخصيًا',
-    answer: 'اختاري الجلسة إذا كان لديك موقف متكرر، قرار عاطفي، علاقة مرهقة، أو احتياج لفهم أعمق لا يكفي معه محتوى عام.',
+    answer:
+      'اختاري الجلسة إذا كان لديك موقف متكرر، قرار عاطفي، علاقة مرهقة، أو احتياج لفهم أعمق لا يكفي معه محتوى عام.',
     href: '/booking',
     action: 'احجزي جلسة',
   },
   {
     id: 'course',
-    label: 'أنسب دورة؟',
-    title: 'اختاري الدورة حسب المرحلة لا حسب الفضول',
-    answer: 'الدورة الأنسب هي التي تشرح ما تعيشينه الآن: حدود، تشتت، تعلق، أو ضعف اتصال بالذات. اقرئي الوعد العاطفي قبل السعر.',
+    label: 'أنسب كورس؟',
+    title: 'اختاري الكورس حسب المرحلة لا حسب الفضول',
+    answer:
+      'الكورس الأنسب هو الذي يشرح ما تعيشينه الآن: حدود، تشتت، تعلق، أو ضعف اتصال بالذات. اقرئي الوعد العاطفي قبل السعر.',
     href: '/courses',
-    action: 'الدورات',
+    action: 'شاهدي الكورسات',
   },
   {
     id: 'book',
     label: 'أنسب كتاب؟',
     title: 'الكتاب مناسب للهدوء والتأمل',
-    answer: 'لو تريدين بداية لطيفة بلا التزام طويل، ابدئي بكتاب رقمي ثم عودي لتحديد ما إذا كنت تحتاجين دورة أو جلسة.',
+    answer:
+      'لو تريدين بداية لطيفة بلا التزام طويل، ابدئي بكتاب رقمي ثم عودي لتحديد ما إذا كنت تحتاجين كورسًا أو جلسة.',
     href: '/books',
-    action: 'الكتب',
+    action: 'شاهدي الكتب',
   },
 ]
 
@@ -43,17 +47,17 @@ const assessmentQuestions = [
     id: 'clarity',
     question: 'ما الأقرب لاحتياجك الآن؟',
     answers: [
-      { label: 'أحتاج وضوحًا سريعًا', score: 'session' },
-      { label: 'أحتاج تعلمًا منظمًا', score: 'course' },
-      { label: 'أحتاج قراءة هادئة', score: 'book' },
+      { label: 'وضوح شخصي سريع', score: 'session' },
+      { label: 'مسار تعلم منظم', score: 'course' },
+      { label: 'قراءة هادئة', score: 'book' },
     ],
   },
   {
     id: 'pressure',
-    question: 'هل الموضوع شخصي ومحدد؟',
+    question: 'هل الموضوع مرتبط بموقف محدد؟',
     answers: [
-      { label: 'نعم، مرتبط بعلاقة/قرار', score: 'session' },
-      { label: 'لا، أريد فهمًا عامًا', score: 'course' },
+      { label: 'نعم، علاقة أو قرار', score: 'session' },
+      { label: 'لا، أريد فهمًا أوسع', score: 'course' },
       { label: 'أريد مساحة تأمل فقط', score: 'book' },
     ],
   },
@@ -61,15 +65,17 @@ const assessmentQuestions = [
 
 export default function AiGuide() {
   const [open, setOpen] = useState(false)
+  const [mode, setMode] = useState<'guide' | 'assessment'>('guide')
   const [activeId, setActiveId] = useState('start')
   const [scores, setScores] = useState<Record<string, number>>({ session: 0, course: 0, book: 0 })
   const active = useMemo(() => guideTopics.find((item) => item.id === activeId) || guideTopics[0], [activeId])
+  const answeredCount = Object.values(scores).reduce((sum, value) => sum + value, 0)
   const result = useMemo(() => {
     const entries = Object.entries(scores).sort((a, b) => b[1] - a[1])
     const top = entries[0]?.[0] || 'course'
-    if (top === 'session') return { label: 'الجلسة الفردية', href: '/booking', text: 'إجاباتك تشير إلى أن جلسة فردية ستمنحك وضوحًا أسرع.' }
-    if (top === 'book') return { label: 'كتاب رقمي', href: '/books', text: 'إجاباتك تشير إلى أن البداية اللطيفة بكتاب ستكون مناسبة.' }
-    return { label: 'دورة منظمة', href: '/courses', text: 'إجاباتك تشير إلى أن دورة منظمة هي أنسب بداية.' }
+    if (top === 'session') return { label: 'جلسة فردية', href: '/booking', text: 'الأقرب الآن: جلسة فردية تمنحك وضوحًا أسرع.' }
+    if (top === 'book') return { label: 'كتاب رقمي', href: '/books', text: 'الأقرب الآن: كتاب هادئ تبدأين منه دون ضغط.' }
+    return { label: 'كورس منظم', href: '/courses', text: 'الأقرب الآن: كورس منظم يساعدك على بناء الفهم خطوة بخطوة.' }
   }, [scores])
 
   function answer(score: string) {
@@ -77,44 +83,89 @@ export default function AiGuide() {
   }
 
   return (
-    <div className="fixed bottom-5 left-5 z-[90] print:hidden">
+    <div className="fixed bottom-4 left-4 z-[90] print:hidden sm:bottom-5 sm:left-5">
       {open ? (
-        <div className="mb-3 w-[min(92vw,420px)] overflow-hidden rounded-[2rem] border border-sand bg-ivory/95 shadow-premium backdrop-blur-xl">
+        <div className="mb-3 w-[min(94vw,430px)] overflow-hidden rounded-[2rem] border border-sand bg-ivory/96 shadow-premium backdrop-blur-xl">
           <div className="relative overflow-hidden border-b border-sand p-5">
-            <div className="ambient-orb ambient-orb-gold left-6 top-0 h-20 w-20" />
+            <div className="ambient-orb ambient-orb-petrol left-8 top-0 h-20 w-20" />
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black tracking-[0.2em] text-gold">Heba AI Guide</p>
-                <h3 className="mt-2 text-lg font-black text-charcoal">مساعد توجيهي بدون دردشة عشوائية</h3>
+                <p className="mini-label">دليل هبة الهادئ</p>
+                <h3 className="mt-2 text-xl font-black leading-snug text-charcoal">اختاري خطوتك التالية بهدوء</h3>
+                <p className="mt-2 text-xs leading-6 text-warm-gray">ليس دردشة عشوائية. فقط أسئلة منظمة ترشدك إلى البداية المناسبة.</p>
               </div>
-              <button type="button" onClick={() => setOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-sand bg-cream text-lg font-black text-petrol" aria-label="إغلاق المساعد">×</button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 p-4">
-            {guideTopics.map((topic) => (
-              <button key={topic.id} type="button" onClick={() => setActiveId(topic.id)} className={`rounded-2xl border px-3 py-3 text-right text-xs font-black transition ${activeId === topic.id ? 'border-petrol bg-petrol text-ivory' : 'border-sand bg-cream/70 text-charcoal hover:border-gold'}`}>
-                {topic.label}
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-sand bg-cream text-lg font-black text-petrol transition hover:border-petrol/30"
+                aria-label="إغلاق دليل هبة"
+              >
+                ×
               </button>
-            ))}
-          </div>
-
-          <div className="px-5 pb-5">
-            <div className="rounded-[1.5rem] border border-sand bg-cream/60 p-4">
-              <h4 className="text-base font-black text-charcoal">{active.title}</h4>
-              <p className="mt-3 text-sm leading-7 text-warm-gray">{active.answer}</p>
-              <Link href={active.href} className="mt-4 inline-flex rounded-full bg-petrol px-4 py-2 text-xs font-black text-ivory transition hover:bg-gold" onClick={() => setOpen(false)}>{active.action}</Link>
             </div>
 
-            <div className="mt-4 rounded-[1.5rem] border border-sand bg-ivory/80 p-4">
-              <p className="text-xs font-black text-gold">تقييم سريع</p>
-              <div className="mt-3 space-y-3">
-                {assessmentQuestions.map((question) => (
-                  <div key={question.id}>
-                    <p className="text-xs font-black text-charcoal">{question.question}</p>
-                    <div className="mt-2 grid gap-2">
+            <div className="relative mt-5 grid grid-cols-2 gap-2 rounded-full border border-sand bg-cream/70 p-1">
+              <button
+                type="button"
+                onClick={() => setMode('guide')}
+                className={`rounded-full px-4 py-2 text-xs font-black transition ${mode === 'guide' ? 'bg-petrol text-ivory shadow-soft' : 'text-warm-gray hover:text-petrol'}`}
+              >
+                توجيه سريع
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('assessment')}
+                className={`rounded-full px-4 py-2 text-xs font-black transition ${mode === 'assessment' ? 'bg-petrol text-ivory shadow-soft' : 'text-warm-gray hover:text-petrol'}`}
+              >
+                اختبار لطيف
+              </button>
+            </div>
+          </div>
+
+          {mode === 'guide' ? (
+            <div className="p-5">
+              <div className="grid grid-cols-2 gap-2">
+                {guideTopics.map((topic) => (
+                  <button
+                    key={topic.id}
+                    type="button"
+                    onClick={() => setActiveId(topic.id)}
+                    className={`rounded-2xl border px-3 py-3 text-right text-xs font-black transition ${
+                      activeId === topic.id ? 'border-petrol bg-petrol/10 text-petrol' : 'border-sand bg-cream/70 text-charcoal hover:border-gold/40'
+                    }`}
+                  >
+                    {topic.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-4 rounded-[1.5rem] border border-sand bg-cream/60 p-5">
+                <h4 className="text-lg font-black text-charcoal">{active.title}</h4>
+                <p className="mt-3 text-sm leading-8 text-warm-gray">{active.answer}</p>
+                <Link
+                  href={active.href}
+                  className="mt-5 inline-flex rounded-full bg-petrol px-5 py-2.5 text-xs font-black text-ivory transition hover:bg-gold hover:text-charcoal"
+                  onClick={() => setOpen(false)}
+                >
+                  {active.action}
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="p-5">
+              <div className="space-y-4">
+                {assessmentQuestions.map((question, index) => (
+                  <div key={question.id} className="rounded-[1.5rem] border border-sand bg-cream/60 p-4">
+                    <p className="latin-numerals text-[11px] font-black text-gold">0{index + 1}</p>
+                    <p className="mt-1 text-sm font-black text-charcoal">{question.question}</p>
+                    <div className="mt-3 grid gap-2">
                       {question.answers.map((item) => (
-                        <button key={item.label} type="button" onClick={() => answer(item.score)} className="rounded-2xl border border-sand bg-cream/70 px-3 py-2 text-right text-xs font-bold text-warm-gray transition hover:border-petrol hover:text-petrol">
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => answer(item.score)}
+                          className="rounded-2xl border border-sand bg-ivory/80 px-3 py-2.5 text-right text-xs font-bold text-warm-gray transition hover:border-petrol/35 hover:text-petrol"
+                        >
                           {item.label}
                         </button>
                       ))}
@@ -122,16 +173,28 @@ export default function AiGuide() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl bg-petrol/10 p-3">
-                <p className="text-xs leading-6 text-charcoal">{result.text}</p>
-                <Link href={result.href} onClick={() => setOpen(false)} className="mt-2 inline-flex text-xs font-black text-petrol">اذهبي إلى {result.label}</Link>
+              <div className="mt-4 rounded-[1.5rem] border border-petrol/15 bg-petrol/10 p-4">
+                <p className="text-xs font-black text-petrol">النتيجة الهادئة</p>
+                <p className="mt-2 text-sm leading-7 text-charcoal">{answeredCount ? result.text : 'أجيبي عن سؤال أو سؤالين، وسنقترح بداية مناسبة.'}</p>
+                <Link href={result.href} onClick={() => setOpen(false)} className="mt-3 inline-flex text-xs font-black text-petrol hover:text-gold">
+                  اذهبي إلى {result.label}
+                </Link>
               </div>
             </div>
-          </div>
+          )}
         </div>
       ) : null}
 
-      <button type="button" onClick={() => setOpen((current) => !current)} className="premium-glow-border flex h-14 w-14 items-center justify-center rounded-full border border-sand bg-petrol text-2xl text-ivory shadow-premium transition hover:-translate-y-1 hover:bg-gold" aria-label="فتح المساعد الذكي">✦</button>
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="group inline-flex min-h-14 items-center gap-3 rounded-full border border-sand bg-ivory/95 px-4 text-sm font-black text-petrol shadow-premium backdrop-blur-xl transition hover:-translate-y-1 hover:border-petrol/30"
+        aria-label="فتح دليل هبة"
+        aria-expanded={open}
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-petrol text-xs text-ivory transition group-hover:bg-gold group-hover:text-charcoal">دليل</span>
+        <span className="hidden sm:inline">اختاري خطوتك</span>
+      </button>
     </div>
   )
 }
