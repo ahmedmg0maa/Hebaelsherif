@@ -7,58 +7,58 @@ import PremiumSection from '@/components/ui/PremiumSection'
 import ImageSlot from '@/components/ui/ImageSlot'
 import FAQSection from '@/components/marketing/FAQSection'
 import LeadMagnet from '@/components/marketing/LeadMagnet'
-import TrustStrip from '@/components/marketing/TrustStrip'
 import PremiumAssessment from '@/components/marketing/PremiumAssessment'
 import MotionReveal from '@/components/experience/MotionReveal'
-import { brandConfig } from '@/constants/brand.config'
 
-const painPoints = [
-  'تشعرين أن داخلك مزدحم، وتحتاجين نقطة بداية هادئة.',
-  'تتكرر أنماط في علاقاتك وتريدين فهمها بلا لوم.',
-  'تبحثين عن مساحة عربية راقية لا تضغط عليكِ بوعود سريعة.',
-  'تحتاجين طريقًا منظمًا يجمع التعلم، القراءة، والجلسات.',
+const paths = [
+  {
+    title: 'جلسة فردية',
+    label: 'وضوح شخصي',
+    text: 'مساحة مركزة لفهم سؤال محدد، علاقة مرهقة، أو قرار يحتاج هدوءًا ووضوحًا.',
+    href: '/booking',
+    tone: 'bg-petrol text-ivory',
+  },
+  {
+    title: 'كورس منظم',
+    label: 'تعلم عميق',
+    text: 'خطوات تعليمية متدرجة تساعدك على بناء وعي أعمق بنفسك وبعلاقاتك.',
+    href: '/courses',
+    tone: 'bg-gold text-charcoal',
+  },
+  {
+    title: 'كتاب رقمي',
+    label: 'قراءة هادئة',
+    text: 'رفيق عملي للتأمل والكتابة وفهم ما يحدث داخلك في وقتك الخاص.',
+    href: '/books',
+    tone: 'bg-olive text-ivory',
+  },
 ]
 
-const journeys = [
-  {
-    title: 'أحتاج جلسة كوتشنج',
-    label: 'جلسات فردية',
-    text: 'لقاء هادئ لفهم وضعك الحالي وبناء خطوة عملية واضحة.',
-    href: '/booking',
-  },
-  {
-    title: 'أريد كورسًا أبدأ به',
-    label: 'كورسات عملية',
-    text: 'مسارات تعلم رقمية تساعدك على التحول خطوة بخطوة بإيقاع مرن.',
-    href: '/courses',
-  },
-  {
-    title: 'أريد كتابًا يساعدني',
-    label: 'كتب ودلائل',
-    text: 'قراءة هادئة تمنحك لغة وتأملًا وبداية عميقة في وقتك الخاص.',
-    href: '/books',
-  },
+const feelingCards = [
+  'تحتاجين أن تفهمي ما يحدث داخلك بلا ضغط أو أحكام.',
+  'تتكرر أسئلة العلاقات والحدود وتريدين لغة أهدأ للتعامل معها.',
+  'تبحثين عن مسار عربي عميق لا يبيعك وعودًا سريعة.',
+  'تريدين مساحة تجمع التعلم، القراءة، والجلسات في تجربة واحدة.',
 ]
 
 const transformations = [
-  ['من: تشتت داخلي', 'إلى: وضوح واتصال بالذات'],
-  ['من: خوف من الاختيار', 'إلى: قرار نابع من وعي'],
-  ['من: استنزاف علاقات', 'إلى: حدود صحية وحنان'],
-  ['من: ضجيج أفكار', 'إلى: سلام عملي يومي'],
+  { from: 'تشتت داخلي', to: 'وضوح يسهّل الاختيار', accent: 'petrol' },
+  { from: 'استنزاف عاطفي', to: 'حدود أكثر حنانًا', accent: 'olive' },
+  { from: 'ضجيج في التفكير', to: 'خطوة عملية هادئة', accent: 'gold' },
+  { from: 'خوف من البداية', to: 'رحلة منظمة تناسبك', accent: 'burgundy' },
 ]
 
-const operatingSystem = [
-  'محتوى مدفوع محمي داخل الحساب',
-  'لوحة رحلة تحفظ الكورسات والكتب والجلسات',
-  'حجز جلسات يمنع الأيام السابقة وتكرار الموعد',
-  'نظام دفع واضح قابل للتطوير إلى بوابة إلكترونية',
-  'لوحة إدارة للتحكم في النصوص، الصور، SEO، الحجز، الدفع، والمقالات',
+const experiencePreview = [
+  { title: 'لوحة رحلتك', text: 'كورساتك، كتبك، جلساتك، وطلباتك في مكان واحد واضح.' },
+  { title: 'محتوى محمي', text: 'الوصول للمحتوى يتم داخل الحساب بعد تأكيد الطلب.' },
+  { title: 'حجز ذكي', text: 'اختيار التاريخ والوقت بدون مواعيد سابقة أو تكرار.' },
+  { title: 'إدارة مرنة', text: 'لوحة إدارة تتحكم في المحتوى والطلبات والحجوزات بسهولة.' },
 ]
 
 const testimonials = [
-  'خرجت من الجلسة وأنا أعرف السؤال الحقيقي الذي كنت أهرب منه.',
-  'اللغة كانت قريبة وراقية. شعرت أنني أقرأ شيئًا يفتح لي بابًا ألطف.',
-  'تنظيم الرحلة جعلني أعود للمحتوى بسهولة، بدون شعور بالضغط.',
+  'شعرت أنني لا أُدفَع للتغيير، بل أُقاد بلطف نحو فهم أعمق لنفسي.',
+  'اللغة هادئة وناضجة. كل جزء في التجربة كان واضحًا وغير مرهق.',
+  'أكثر ما أحببته أن الرحلة منظمة، لكن دون ضغط أو ضجيج.',
 ]
 
 export default function HomePage() {
@@ -67,48 +67,45 @@ export default function HomePage() {
       <Navbar />
 
       <main id="main-content" className="min-h-screen pt-20">
-        <section className="container-premium relative grid min-h-[calc(100vh-5rem)] items-center gap-12 overflow-hidden py-16 lg:grid-cols-[1.04fr_0.96fr]">
-          <div className="ambient-orb ambient-orb-gold right-0 top-16 h-64 w-64" />
-          <div className="ambient-orb ambient-orb-petrol bottom-10 left-12 h-72 w-72" />
+        <section className="container-premium brand-luxury-veil relative grid min-h-[calc(100vh-5rem)] items-center gap-12 overflow-hidden rounded-b-[2.5rem] py-14 lg:grid-cols-[1.02fr_0.98fr] lg:py-20">
+          <div className="ambient-orb ambient-orb-gold right-0 top-16 h-72 w-72" />
+          <div className="ambient-orb ambient-orb-petrol bottom-10 left-12 h-80 w-80" />
+          <div className="ambient-orb ambient-orb-olive bottom-28 right-1/3 h-56 w-56" />
 
           <MotionReveal className="relative z-10">
-            <PremiumBadge variant="petrol">منصة عربية راقية للنمو الشخصي</PremiumBadge>
+            <div className="brand-accent-line mb-6" />
+            <PremiumBadge variant="gold">مساحة عربية هادئة للوضوح العاطفي</PremiumBadge>
             <h1 className="mt-7 text-balance text-5xl font-black leading-tight text-charcoal md:text-7xl">
-              هذه ليست فكرة عابرة…
-              <span className="mt-3 block text-charcoal">هذه رحلة تعيدكِ إلى ذاتك بهدوء واتزان</span>
+              رحلة ناضجة لفهم نفسك، وتهدئة داخلك، واختيار طريقك بوعي.
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-10 text-warm-gray">
-              من خلال جلسات الكوتشنج، الكورسات، والكتب العملية، ستجدين مساحة آمنة وعميقة لاتخاذ قرارات أوضح، وبناء حياة أكثر انسجامًا معك.
+              هبة الشريف تجمع بين الكوتشنج، الكورسات، والكتب في تجربة رقمية فاخرة تساعدك على بناء وضوح عاطفي حقيقي بلا استعجال أو ضجيج.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <PremiumButton href="/booking" size="lg">احجزي جلستك</PremiumButton>
-              <PremiumButton href="/courses" size="lg" variant="outline">ابدئي رحلتك</PremiumButton>
-              <PremiumButton href="/start-here" size="lg" variant="soft">اختاري المسار الأنسب</PremiumButton>
+              <PremiumButton href="/booking" size="lg" className="mobile-full-cta">احجزي جلسة</PremiumButton>
+              <PremiumButton href="/start-here" size="lg" variant="gold" className="mobile-full-cta">ابدئي من هنا</PremiumButton>
+              <PremiumButton href="/courses" size="lg" variant="outline" className="mobile-full-cta">شاهدي الكورسات</PremiumButton>
             </div>
 
             <div className="mt-10 grid gap-3 sm:grid-cols-4">
-              <MiniMetric value="1:1" label="جلسات فردية عميقة" />
-              <MiniMetric value="عربي" label="تجربة عربية هادئة" />
-              <MiniMetric value="عن بُعد" label="خدمات من أي مكان" />
-              <MiniMetric value="راقي" label="تجربة شخصية راقية" />
+              <MiniMetric value="1:1" label="جلسات فردية" />
+              <MiniMetric value="AR" label="تجربة عربية" />
+              <MiniMetric value="Online" label="من أي مكان" />
+              <MiniMetric value="Calm" label="إيقاع هادئ" />
             </div>
           </MotionReveal>
 
           <MotionReveal delay={0.1} className="relative z-10">
             <div className="premium-glow-border premium-soft-motion luxury-shell rounded-[2.5rem] p-5">
               <div className="relative min-h-[540px] overflow-hidden rounded-[2rem] border border-sand">
-                <ImageSlot
-                  label="مكان صورة هبة الشريف"
-                  hint="أضيفي لاحقًا صورة شخصية أو مشهد سينمائي هادئ بإضاءة طبيعية."
-                  className="absolute inset-0 h-full w-full rounded-none border-0"
-                />
+                <ImageSlot variant="portrait" ratio="free" className="absolute inset-0 h-full w-full rounded-none border-0" priority />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_28%,rgba(255,255,255,.68),transparent_12rem)]" />
                 <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-petrol/22 to-transparent" />
-                <div className="absolute bottom-8 right-8 left-8 rounded-[2rem] border border-white/50 bg-ivory/84 p-5 shadow-premium backdrop-blur-lg">
-                  <p className="text-xs font-black text-petrol">ابدئي رحلتك</p>
-                  <h2 className="mt-2 text-2xl font-black text-charcoal">كل إجابة تبحثين عنها تبدأ من لحظة صدق مع ذاتك.</h2>
+                <div className="absolute bottom-8 right-8 left-8 rounded-[2rem] border border-white/50 bg-ivory/86 p-5 shadow-premium backdrop-blur-lg">
+                  <p className="text-xs font-black text-petrol">تجربة تبدأ بهدوء</p>
+                  <h2 className="mt-2 text-2xl font-black text-charcoal">كل قرار أوضح يبدأ من مساحة آمنة مع الذات.</h2>
                   <p className="mt-3 text-sm leading-7 text-warm-gray">
-                    محتوى منظم، متابعة داخل حسابك، وحجز جلسات بسهولة وخصوصية.
+                    اختبري المسار الأنسب، احجزي جلستك، أو ابدئي بكورس وكتاب يناسبان مرحلتك الحالية.
                   </p>
                 </div>
               </div>
@@ -116,65 +113,59 @@ export default function HomePage() {
           </MotionReveal>
         </section>
 
-        <section className="border-y border-sand bg-ivory/55">
-          <div className="container-premium py-10">
-            <TrustStrip />
+        <section className="container-premium py-14">
+          <div className="grid gap-4 md:grid-cols-4">
+            {feelingCards.map((item, index) => (
+              <MotionReveal key={item} delay={index * 0.05}>
+                <div className="brand-rich-card h-full rounded-[2rem] p-6">
+                  <span className="latin-numerals text-xs font-black text-gold">0{index + 1}</span>
+                  <p className="mt-4 text-sm font-black leading-8 text-charcoal">{item}</p>
+                </div>
+              </MotionReveal>
+            ))}
           </div>
         </section>
 
-        <section className="container-premium py-14">
-          <PremiumSection
-            eyebrow="ابدئي رحلتك"
-            title="اختاري المسار الذي يناسب احتياجك الآن"
-            description="يمكنك البدء من أي نقطة، وسنحافظ على نفس الهدوء والوضوح في كل خطوة."
-          >
-            <div className="grid gap-5 md:grid-cols-3">
-              {journeys.map((journey, index) => (
-                <MotionReveal key={journey.title} delay={index * 0.08}>
-                  <Link
-                    href={journey.href}
-                    className="premium-glow-border interactive-lift group block rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft backdrop-blur-sm"
-                  >
-                    <div className="course-art mb-6 h-44 rounded-[1.5rem] border border-sand">
-                      <div className="flex h-full items-end p-5">
-                        <span className="latin-numerals rounded-full bg-white/60 px-4 py-2 text-xs font-black text-petrol backdrop-blur-md">
-                          {index + 1} / {journey.label}
-                        </span>
+        <section className="brand-quiet-divider border-y border-sand bg-ivory/55">
+          <div className="container-premium py-16">
+            <PremiumSection
+              eyebrow="اختاري مسارك"
+              title="ثلاثة أبواب هادئة. وبداية واحدة مناسبة لكِ."
+              description="لا تحتاجين أن تعرفي كل الطريق الآن. اختاري الباب الأقرب لاحتياجك، والباقي سيظهر خطوة بخطوة."
+            >
+              <div className="grid gap-5 md:grid-cols-3">
+                {paths.map((path, index) => (
+                  <MotionReveal key={path.title} delay={index * 0.08}>
+                    <Link href={path.href} className="group block h-full rounded-[2.2rem] border border-sand bg-ivory/90 p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-premium">
+                      <div className="course-art mb-6 h-48 rounded-[1.75rem] border border-sand p-5">
+                        <span className={`inline-flex rounded-full px-4 py-2 text-xs font-black ${path.tone}`}>{path.label}</span>
                       </div>
-                    </div>
-                    <h3 className="text-2xl font-black text-charcoal transition group-hover:text-petrol">{journey.title}</h3>
-                    <p className="mt-3 text-sm leading-8 text-warm-gray">{journey.text}</p>
-                    <span className="mt-6 inline-flex rounded-full bg-petrol px-5 py-2 text-xs font-black text-ivory transition group-hover:bg-gold group-hover:text-charcoal">
-                      ابدئي من هنا
-                    </span>
-                  </Link>
-                </MotionReveal>
-              ))}
-            </div>
-          </PremiumSection>
+                      <h3 className="text-2xl font-black text-charcoal transition group-hover:text-petrol">{path.title}</h3>
+                      <p className="mt-3 text-sm leading-8 text-warm-gray">{path.text}</p>
+                      <span className="mt-6 inline-flex rounded-full border border-petrol/20 bg-petrol/10 px-5 py-2 text-xs font-black text-petrol transition group-hover:bg-petrol group-hover:text-ivory">ابدئي من هنا</span>
+                    </Link>
+                  </MotionReveal>
+                ))}
+              </div>
+            </PremiumSection>
+          </div>
         </section>
 
-        <section className="container-premium pb-14">
+        <section className="container-premium py-16">
           <PremiumAssessment />
         </section>
 
-        <section className="relative overflow-hidden border-y border-sand bg-ivory/60">
+        <section className="relative overflow-hidden border-y border-sand bg-ivory/62">
           <div className="ambient-orb ambient-orb-gold left-12 top-8 h-56 w-56" />
-          <div className="container-premium relative grid gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div className="container-premium relative grid gap-10 py-16 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
             <MotionReveal>
               <div className="luxury-shell rounded-[2.5rem] p-7">
-                <ImageSlot
-                  label="مكان صورة هبة"
-                  hint="صورة Portrait بإضاءة طبيعية، هادئة، ناضجة، وغير تجارية."
-                  className="mb-5 min-h-[260px]"
-                />
+                <ImageSlot variant="portrait" ratio="portrait" className="mb-5 min-h-[300px]" />
                 <div className="rounded-[2rem] border border-sand bg-cream/70 p-7">
                   <p className="mini-label">من هي هبة</p>
-                  <h2 className="mt-4 text-4xl font-black leading-tight text-charcoal">
-                    مساحة آمنة لفهم النفس واستعادة الاتزان.
-                  </h2>
+                  <h2 className="mt-4 text-4xl font-black leading-tight text-charcoal">حضور هادئ، ووعي عميق، ولغة تمنحك مساحة للتفكير.</h2>
                   <p className="mt-5 text-sm leading-9 text-warm-gray">
-                    هبة الشريف لا تقدم وصفات جاهزة، بل تفتح مساحة واعية تساعدك على رؤية ما يحدث داخلك، فهم رسائل مشاعرك، واختيار خطوات صغيرة لكنها حقيقية نحو حياة أهدأ وأعمق.
+                    هنا لا توجد وصفات جاهزة أو وعود صاخبة. توجد أسئلة ناضجة، مسارات واضحة، ومرافقة تساعدك على رؤية ما يحدث داخلك بحنان وصدق.
                   </p>
                   <PremiumButton href="/about" variant="outline" className="mt-7">اعرفي أكثر عن هبة</PremiumButton>
                 </div>
@@ -182,11 +173,11 @@ export default function HomePage() {
             </MotionReveal>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              {transformations.map(([from, to], index) => (
-                <MotionReveal key={from} delay={index * 0.05}>
-                  <div className="rounded-[2rem] border border-sand bg-ivory/85 p-6 shadow-soft backdrop-blur-sm">
-                    <p className="text-sm font-black text-warm-gray">{from}</p>
-                    <p className="mt-3 text-2xl font-black text-petrol">{to}</p>
+              {transformations.map((item, index) => (
+                <MotionReveal key={item.from} delay={index * 0.05}>
+                  <div className="brand-rich-card rounded-[2rem] p-6">
+                    <p className="text-sm font-black text-warm-gray">من: {item.from}</p>
+                    <p className="mt-3 text-2xl font-black text-petrol">إلى: {item.to}</p>
                   </div>
                 </MotionReveal>
               ))}
@@ -197,64 +188,66 @@ export default function HomePage() {
         <section className="container-premium py-16">
           <PremiumSection
             eyebrow="جلسات الكوتشنج"
-            title="موعد هادئ ومهني يضعك على المسار الصحيح"
-            description="الجلسات تتم بحجز مسبق، مع تحقق كامل من المواعيد وتأكيد واضح داخل حسابك."
+            title="لقاء فردي يضع السؤال في مكانه الصحيح"
+            description="الحجز يتم بخطوات واضحة، مع منع الأيام السابقة وتكرار الموعد، ثم تظهر حالة الجلسة داخل حسابك."
           >
             <div className="grid gap-5 lg:grid-cols-[1fr_0.9fr]">
-              <div className="rounded-[2rem] border border-sand bg-ivory/88 p-7 shadow-soft">
-                <ul className="space-y-4 text-sm leading-8 text-warm-gray">
-                  <li>لا يتم قبول مواعيد سابقة أو خارج أوقات العمل.</li>
-                  <li>المواعيد المتاحة تظهر تلقائيًا حسب اليوم والمدة.</li>
-                  <li>حالة الحجز تبدأ قيد المراجعة حتى التأكيد.</li>
-                </ul>
+              <div className="brand-rich-card rounded-[2rem] p-7">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <SessionFeature title="اختيار التاريخ" text="تقويم واضح لا يسمح بالمواعيد السابقة." />
+                  <SessionFeature title="اختيار الوقت" text="بطاقات وقت بدل القوائم المزدحمة." />
+                  <SessionFeature title="تأكيد هادئ" text="ملخص كامل قبل إرسال الطلب." />
+                </div>
                 <PremiumButton href="/booking" className="mt-7">احجزي جلستك</PremiumButton>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
                 <SessionPrice title="جلسة كوتشنج 60 دقيقة" price="1,200 ج.م" text="مناسبة لتشخيص واضح وخطوة عملية مباشرة." />
-                <SessionPrice title="جلسة كوتشنج 90 دقيقة" price="1,500 ج.م" text="مناسبة للمناقشات الأعمق وخطة أكثر تفصيلًا." />
+                <SessionPrice title="جلسة كوتشنج 90 دقيقة" price="1,500 ج.م" text="مناسبة للأسئلة الأعمق وخطة أكثر تفصيلًا." />
               </div>
             </div>
           </PremiumSection>
         </section>
 
-        <section className="container-premium py-16">
-          <PremiumSection
-            eyebrow="نظام تشغيل هادئ"
-            title="ليس موقعًا فقط. منصة كاملة لإدارة التجربة."
-            description="كل جزء في المنصة مبني ليخدم الثقة، الوضوح، وسهولة الإدارة بدون تعقيد."
-          >
-            <div className="grid gap-4 md:grid-cols-5">
-              {operatingSystem.map((item, index) => (
-                <MotionReveal key={item} delay={index * 0.04}>
-                  <div className="h-full rounded-[1.75rem] border border-sand bg-cream/65 p-5 shadow-soft">
-                    <span className="latin-numerals text-xs font-black text-gold">{String(index + 1).padStart(2, '0')}</span>
-                    <p className="mt-3 text-sm font-black leading-7 text-charcoal">{item}</p>
-                  </div>
-                </MotionReveal>
-              ))}
-            </div>
-          </PremiumSection>
-        </section>
-
-        <section className="border-y border-sand bg-ivory/55">
+        <section className="brand-quiet-divider border-y border-sand bg-ivory/55">
           <div className="container-premium py-16">
             <PremiumSection
-              eyebrow="الثقة"
-              title="كل خطوة في المنصة مصممة لتمنحك راحة ووضوحًا"
-              description="هذا القسم مخصص لرسائل الثقة الرسمية حتى إضافة تجارب موثقة من عميلات حقيقيات لاحقًا."
+              eyebrow="تجربة متكاملة"
+              title="القوة التشغيلية تظهر كرحلة سهلة، لا كتعقيد"
+              description="كل جزء في المنصة يخدم الوضوح: من لحظة البداية حتى الوصول للمحتوى أو حجز الجلسة."
             >
-              <div className="grid gap-4 md:grid-cols-3">
-                {testimonials.map((text, index) => (
-                  <MotionReveal key={text} delay={index * 0.06}>
-                    <article className="rounded-[2rem] border border-sand bg-ivory/85 p-6 shadow-soft">
-                      <p className="text-sm leading-8 text-warm-gray">“{text}”</p>
-                      <p className="mt-5 text-xs font-black text-petrol">تجربة موثقة قريبًا</p>
-                    </article>
+              <div className="grid gap-4 md:grid-cols-4">
+                {experiencePreview.map((item, index) => (
+                  <MotionReveal key={item.title} delay={index * 0.04}>
+                    <div className="brand-rich-card h-full rounded-[1.75rem] p-5">
+                      <span className="latin-numerals text-xs font-black text-gold">0{index + 1}</span>
+                      <h3 className="mt-4 text-xl font-black text-charcoal">{item.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-warm-gray">{item.text}</p>
+                    </div>
                   </MotionReveal>
                 ))}
               </div>
             </PremiumSection>
           </div>
+        </section>
+
+        <section className="container-premium py-16">
+          <PremiumSection
+            eyebrow="الثقة"
+            title="كلمات هادئة من تجربة تُبنى بعناية"
+            description="ستظهر هنا لاحقًا تجارب موثقة من عميلات حقيقيات، مع الحفاظ الكامل على الخصوصية."
+          >
+            <div className="grid gap-4 md:grid-cols-3">
+              {testimonials.map((text, index) => (
+                <MotionReveal key={text} delay={index * 0.06}>
+                  <article className="brand-rich-card h-full rounded-[2rem] p-6">
+                    <div className="mb-5 h-12 w-12 rounded-full border border-gold/30 bg-gold/10" />
+                    <p className="text-sm leading-8 text-warm-gray">“{text}”</p>
+                    <p className="mt-5 text-xs font-black text-petrol">تجربة موثقة قريبًا</p>
+                  </article>
+                </MotionReveal>
+              ))}
+            </div>
+          </PremiumSection>
         </section>
 
         <section className="container-premium py-16">
@@ -270,17 +263,13 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,.12),transparent_56%)]" />
             <div className="relative">
               <p className="mb-3 text-sm font-black tracking-[0.25em] text-gold">خطوتك التالية</p>
-              <h2 className="text-3xl font-black leading-tight md:text-5xl">
-                رحلتكِ لا تحتاج ضجيجًا... تحتاج بداية واضحة الآن.
-              </h2>
+              <h2 className="text-3xl font-black leading-tight md:text-5xl">لا تحتاجين إلى تغيير حياتك دفعة واحدة. ابدئي بخطوة صادقة.</h2>
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-8 text-ivory/78">
-                اختاري ما يناسبك اليوم: جلسة فردية، كورس عملي، أو كتاب يساعدك على فهم أعمق لنفسك. المهم أن تبدأي بخطوة حقيقية.
+                اختاري جلسة، كورسًا، أو كتابًا. المهم أن تكون البداية مناسبة لما تعيشينه الآن.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <PremiumButton href="/booking" variant="gold">احجزي جلستك</PremiumButton>
-                <PremiumButton href="/start-here" variant="outline" className="border-ivory text-ivory hover:bg-ivory hover:text-petrol">
-                  اختاري المسار الأنسب
-                </PremiumButton>
+                <PremiumButton href="/start-here" variant="outline" className="border-ivory text-ivory hover:bg-ivory hover:text-petrol">اختاري المسار الأنسب</PremiumButton>
               </div>
             </div>
           </div>
@@ -294,16 +283,25 @@ export default function HomePage() {
 
 function MiniMetric({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-[1.4rem] border border-sand bg-ivory/78 px-4 py-3 shadow-soft backdrop-blur-sm">
+    <div className="rounded-[1.4rem] border border-sand bg-ivory/82 px-4 py-3 shadow-soft backdrop-blur-sm">
       <strong className="latin-numerals block text-xl font-black text-petrol">{value}</strong>
       <span className="mt-1 block text-xs font-bold leading-5 text-warm-gray">{label}</span>
     </div>
   )
 }
 
+function SessionFeature({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="rounded-[1.5rem] border border-sand bg-cream/70 p-4">
+      <h3 className="text-sm font-black text-charcoal">{title}</h3>
+      <p className="mt-2 text-xs leading-6 text-warm-gray">{text}</p>
+    </div>
+  )
+}
+
 function SessionPrice({ title, price, text }: { title: string; price: string; text: string }) {
   return (
-    <div className="rounded-[2rem] border border-sand bg-cream/65 p-6 shadow-soft">
+    <div className="brand-rich-card rounded-[2rem] p-6">
       <h3 className="text-xl font-black text-charcoal">{title}</h3>
       <strong className="latin-numerals mt-4 block text-3xl font-black text-petrol">{price}</strong>
       <p className="mt-3 text-sm leading-7 text-warm-gray">{text}</p>

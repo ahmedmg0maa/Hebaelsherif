@@ -197,3 +197,89 @@ img, video { max-width: 100%; height: auto; }
     display: none !important;
   }
 }
+
+/* Final luxury rebuild layer: richer brand palette, mobile polish, and calmer public presentation */
+:root {
+  --luxury-ring: 183 155 108;
+  --brand-rose: 161 103 108;
+  --brand-mauve: 177 143 135;
+}
+
+.brand-luxury-veil {
+  background:
+    radial-gradient(circle at 82% 10%, rgb(var(--color-gold) / .18), transparent 26rem),
+    radial-gradient(circle at 18% 18%, rgb(var(--color-petrol) / .09), transparent 28rem),
+    radial-gradient(circle at 76% 86%, rgb(var(--color-olive) / .11), transparent 24rem),
+    radial-gradient(circle at 28% 80%, rgb(var(--brand-rose) / .075), transparent 23rem),
+    rgb(var(--color-ivory) / .76);
+}
+
+.brand-quiet-divider {
+  position: relative;
+}
+.brand-quiet-divider::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--color-gold) / .46), rgb(var(--color-petrol) / .22), transparent);
+}
+
+.brand-rich-card {
+  border: 1px solid rgb(var(--color-sand) / .86);
+  background:
+    linear-gradient(180deg, rgb(var(--color-ivory) / .92), rgb(var(--color-cream) / .72)),
+    radial-gradient(circle at top right, rgb(var(--color-gold) / .10), transparent 18rem);
+  box-shadow: 0 22px 80px rgb(var(--color-shadow) / .09);
+  backdrop-filter: blur(16px);
+}
+
+.brand-accent-line {
+  height: 3px;
+  width: 54px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgb(var(--color-gold)), rgb(var(--color-olive)), rgb(var(--color-petrol)));
+}
+
+.brand-mobile-drawer {
+  max-height: calc(100vh - 6.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.protected-content-shell,
+.reader-secure-surface {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.reader-watermark {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: .07;
+  background-image: repeating-linear-gradient(-32deg, transparent 0 96px, rgb(var(--color-petrol)) 97px 98px, transparent 99px 180px);
+  mix-blend-mode: multiply;
+}
+
+.dark .reader-watermark {
+  opacity: .06;
+  mix-blend-mode: screen;
+}
+
+.dark .brand-rich-card {
+  background:
+    linear-gradient(180deg, rgb(var(--color-ivory) / .90), rgb(var(--color-cream) / .76)),
+    radial-gradient(circle at top right, rgb(var(--color-gold) / .07), transparent 18rem);
+}
+
+@media (max-width: 768px) {
+  .container-premium { width: min(100% - 1.1rem, 1220px); }
+  .mobile-stack { display: grid; gap: 1rem; }
+  .mobile-full-cta { width: 100%; justify-content: center; }
+  .mobile-card-tight { border-radius: 1.65rem; padding: 1.1rem; }
+  body::before { inset: -35%; opacity: .88; }
+  body::after { opacity: .20; background-size: 72px 72px, 72px 72px, 100% 100%; }
+  .ambient-orb { opacity: .16; filter: blur(42px); }
+}
