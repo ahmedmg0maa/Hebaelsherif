@@ -283,3 +283,57 @@ img, video { max-width: 100%; height: auto; }
   body::after { opacity: .20; background-size: 72px 72px, 72px 72px, 100% 100%; }
   .ambient-orb { opacity: .16; filter: blur(42px); }
 }
+
+/* Launch candidate polish: brand-kit distribution and living background */
+body {
+  background:
+    radial-gradient(circle at 84% 8%, rgb(var(--color-gold) / .13), transparent 28rem),
+    radial-gradient(circle at 8% 18%, rgb(var(--color-petrol) / .105), transparent 32rem),
+    radial-gradient(circle at 76% 92%, rgb(var(--color-olive) / .11), transparent 28rem),
+    linear-gradient(135deg, rgb(var(--color-cream)) 0%, rgb(var(--color-ivory)) 44%, rgb(var(--color-sand) / .62) 100%);
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 82% 12%, rgb(var(--color-gold) / 0.20), transparent 34rem),
+    radial-gradient(circle at 14% 16%, rgb(var(--color-petrol) / 0.13), transparent 34rem),
+    radial-gradient(circle at 70% 86%, rgb(var(--color-olive) / 0.12), transparent 30rem),
+    radial-gradient(circle at 28% 76%, rgb(var(--color-burgundy) / 0.035), transparent 24rem),
+    linear-gradient(135deg, rgb(var(--color-cream)) 0%, rgb(var(--color-ivory)) 48%, rgb(var(--color-sand) / 0.48) 100%);
+  animation-duration: 22s;
+}
+
+body::after {
+  opacity: .42;
+  background-image:
+    linear-gradient(rgb(var(--color-petrol) / .032) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-gold) / .032) 1px, transparent 1px),
+    radial-gradient(circle at 50% 42%, rgb(255 255 255 / .42), transparent 36rem);
+  background-size: 84px 84px, 84px 84px, 100% 100%;
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 84% 8%, rgb(var(--color-gold) / .08), transparent 28rem),
+    radial-gradient(circle at 8% 18%, rgb(var(--color-petrol) / .16), transparent 32rem),
+    radial-gradient(circle at 76% 92%, rgb(var(--color-olive) / .10), transparent 28rem),
+    linear-gradient(135deg, rgb(18 21 22) 0%, rgb(var(--color-cream)) 54%, rgb(var(--color-ivory)) 100%);
+}
+
+.brand-rich-card,
+.luxury-shell,
+.premium-card,
+.premium-surface {
+  background:
+    linear-gradient(180deg, rgb(var(--color-ivory) / .92), rgb(var(--color-cream) / .76)),
+    radial-gradient(circle at 88% 10%, rgb(var(--color-gold) / .075), transparent 18rem),
+    radial-gradient(circle at 10% 90%, rgb(var(--color-olive) / .055), transparent 16rem);
+}
+
+.ambient-orb { opacity: .36; }
+.ambient-orb-gold { background: rgb(var(--color-gold) / .32); }
+.ambient-orb-petrol { background: rgb(var(--color-petrol) / .20); }
+.ambient-orb-olive { background: rgb(var(--color-olive) / .18); }
+
+.mobile-full-cta { width: 100%; }
+@media (min-width: 640px) { .mobile-full-cta { width: auto; } }

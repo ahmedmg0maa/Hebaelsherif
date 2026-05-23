@@ -7,6 +7,7 @@ import { BOOKING_STATUS_LABELS, BOOKING_STATUS_STYLES } from '@/constants/bookin
 import { useAuth } from '@/hooks/useAuth'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
+import { formatEGP, formatTime12h } from '@/lib/utils/formatters'
 import type { Booking } from '@/types'
 
 export default function DashboardSessionsPage() {
@@ -92,8 +93,16 @@ export default function DashboardSessionsPage() {
                 <h3 className="mt-4 text-xl font-black text-charcoal">جلسة فردية</h3>
 
                 <p className="mt-2 text-sm leading-7 text-warm-gray">
-                  التاريخ: {booking.date} · الساعة: {booking.time} · المدة: {booking.duration} دقيقة
+                  التاريخ: {booking.date} · الساعة: {formatTime12h(booking.time)} · المدة: <span className="latin-numerals">{booking.duration}</span> دقيقة
                 </p>
+
+                {booking.finalAmount ? (
+                  <p className="mt-2 text-sm font-black text-petrol latin-numerals">الإجمالي: {formatEGP(booking.finalAmount)}</p>
+                ) : null}
+
+                {booking.paymentReference ? (
+                  <p className="mt-2 text-xs font-bold text-warm-gray">مرجع الدفع: <span className="latin-numerals">{booking.paymentReference}</span></p>
+                ) : null}
 
                 {booking.notes ? (
                   <p className="mt-3 text-sm leading-7 text-warm-gray">ملاحظاتك: {booking.notes}</p>

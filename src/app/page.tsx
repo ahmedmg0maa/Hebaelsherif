@@ -201,8 +201,8 @@ export default function HomePage() {
                 <PremiumButton href="/booking" className="mt-7">احجزي جلستك</PremiumButton>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                <SessionPrice title="جلسة كوتشنج 60 دقيقة" price="1,200 ج.م" text="مناسبة لتشخيص واضح وخطوة عملية مباشرة." />
-                <SessionPrice title="جلسة كوتشنج 90 دقيقة" price="1,500 ج.م" text="مناسبة للأسئلة الأعمق وخطة أكثر تفصيلًا." />
+                <SessionPrice title="جلسة كوتشنج 60 دقيقة" price="1,200 EGP" text="مناسبة لتشخيص واضح وخطوة عملية مباشرة." />
+                <SessionPrice title="جلسة كوتشنج 90 دقيقة" price="1,500 EGP" text="مناسبة للأسئلة الأعمق وخطة أكثر تفصيلًا." />
               </div>
             </div>
           </PremiumSection>

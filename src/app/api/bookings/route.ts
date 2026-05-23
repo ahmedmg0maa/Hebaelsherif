@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Timestamp } from 'firebase-admin/firestore'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
-import { BOOKING_RULES, TIME_SLOTS } from '@/constants/booking'
-import type { BookingDuration } from '@/types'
+import { BOOKING_RULES, SESSION_PRICES, getBookableTimeSlots } from '@/constants/booking'
+import type { BookingDuration, PaymentMethod } from '@/types'
 
 function toMinutes(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
@@ -28,11 +28,50 @@ function isAllowedDuration(value: unknown): value is BookingDuration {
   return value === 60 || value === 90
 }
 
+function isAllowedPaymentMethod(value: string): value is PaymentMethod {
+  return value === 'instapay' || value === 'vodafone_cash' || value === 'bank_transfer' || value === 'manual'
+}
+
 function sanitizeText(value: unknown) {
   if (typeof value !== 'string') return ''
   return value.trim()
 }
 
+async function validateCoupon(code: string, amount: number) {
+  if (!code) return { appliedCode: '', discountAmount: 0 }
+
+  const db = getAdminDb()
+  const snap = await db.collection('coupons').where('code', '==', code.toUpperCase()).where('active', '==', true).limit(1).get()
+
+  if (snap.empty) return { appliedCode: '', discountAmount: 0 }
+
+  const coupon = snap.docs[0].data() as {
+    type?: string
+    value?: number
+    scope?: string
+    minAmount?: number
+    expiresAtText?: string
+    usageLimit?: number
+    usageCount?: number
+  }
+
+  if (coupon.scope && coupon.scope !== 'all' && coupon.scope !== 'sessions') return { appliedCode: '', discountAmount: 0 }
+  if (Number(coupon.minAmount || 0) > amount) return { appliedCode: '', discountAmount: 0 }
+  if (coupon.expiresAtText) {
+    const expiresAt = new Date(`${coupon.expiresAtText}T23:59:59`)
+    if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) return { appliedCode: '', discountAmount: 0 }
+  }
+  if (Number(coupon.usageLimit || 0) > 0 && Number(coupon.usageCount || 0) >= Number(coupon.usageLimit)) {
+    return { appliedCode: '', discountAmount: 0 }
+  }
+
+  const value = Number(coupon.value || 0)
+  const rawDiscount = coupon.type === 'percentage' ? Math.round((amount * value) / 100) : value
+  return {
+    appliedCode: code.toUpperCase(),
+    discountAmount: Math.max(0, Math.min(rawDiscount, amount)),
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -47,7 +86,7 @@ export async function GET(req: NextRequest) {
     const bookingsSnap = await adminDb
       .collection('bookings')
       .where('date', '==', date)
-      .where('status', 'in', ['pending', 'confirmed'])
+      .where('status', 'in', ['pending', 'payment_submitted', 'confirmed'])
       .get()
 
     const unavailableSlots = new Set<string>()
@@ -62,7 +101,7 @@ export async function GET(req: NextRequest) {
       const existingStart = toMinutes(existingTime)
       const existingEndWithBuffer = existingStart + existingDuration + BOOKING_RULES.bufferMinutes
 
-      TIME_SLOTS.forEach((slot) => {
+      getBookableTimeSlots(90).forEach((slot) => {
         const slotStart = toMinutes(slot)
         const slotEnd = slotStart + 90 + BOOKING_RULES.bufferMinutes
         if (slotStart < existingEndWithBuffer && existingStart < slotEnd) {
@@ -98,6 +137,11 @@ export async function POST(req: NextRequest) {
       time?: unknown
       duration?: unknown
       notes?: unknown
+      paymentMethod?: unknown
+      paymentReference?: unknown
+      paymentNote?: unknown
+      couponCode?: unknown
+      discountAmount?: unknown
     }
 
     const name = sanitizeText(body.name)
@@ -106,6 +150,10 @@ export async function POST(req: NextRequest) {
     const date = sanitizeText(body.date)
     const time = sanitizeText(body.time)
     const notes = sanitizeText(body.notes)
+    const paymentMethodInput = sanitizeText(body.paymentMethod)
+    const paymentReference = sanitizeText(body.paymentReference)
+    const paymentNote = sanitizeText(body.paymentNote)
+    const couponCode = sanitizeText(body.couponCode).toUpperCase()
     const duration = body.duration
 
     if (!name || !email || !phone || !date || !time || !isAllowedDuration(duration)) {
@@ -116,8 +164,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'تاريخ الحجز غير صحيح.' }, { status: 400 })
     }
 
-    if (!TIME_SLOTS.includes(time as (typeof TIME_SLOTS)[number])) {
-      return NextResponse.json({ error: 'وقت الحجز غير متاح.' }, { status: 400 })
+    const validSlots = getBookableTimeSlots(duration)
+    if (!validSlots.includes(time)) {
+      return NextResponse.json({ error: 'وقت الحجز غير متاح لهذه المدة.' }, { status: 400 })
     }
 
     if (isFriday(date)) {
@@ -128,17 +177,17 @@ export async function POST(req: NextRequest) {
     const maxDate = getDateAfterDays(BOOKING_RULES.maxDaysAhead)
 
     if (date < minDate) {
-      return NextResponse.json(
-        { error: 'لا يمكن حجز جلسة في نفس اليوم أو في الماضي.' },
-        { status: 400 },
-      )
+      return NextResponse.json({ error: 'لا يمكن حجز جلسة في نفس اليوم أو في الماضي.' }, { status: 400 })
     }
 
     if (date > maxDate) {
-      return NextResponse.json(
-        { error: 'لا يمكن الحجز لأكثر من 30 يومًا مقدمًا.' },
-        { status: 400 },
-      )
+      return NextResponse.json({ error: 'لا يمكن الحجز لأكثر من 30 يومًا مقدمًا.' }, { status: 400 })
+    }
+
+    const paymentMethod = isAllowedPaymentMethod(paymentMethodInput) ? paymentMethodInput : 'manual'
+
+    if (!paymentReference) {
+      return NextResponse.json({ error: 'اكتبي رقم العملية أو مرجع الدفع لمراجعة الحجز.' }, { status: 400 })
     }
 
     const newStart = toMinutes(time)
@@ -147,7 +196,7 @@ export async function POST(req: NextRequest) {
     const existingSnap = await adminDb
       .collection('bookings')
       .where('date', '==', date)
-      .where('status', 'in', ['pending', 'confirmed'])
+      .where('status', 'in', ['pending', 'payment_submitted', 'confirmed'])
       .get()
 
     const hasConflict = existingSnap.docs.some((docItem) => {
@@ -158,18 +207,19 @@ export async function POST(req: NextRequest) {
       if (!existingTime.includes(':')) return false
 
       const existingStart = toMinutes(existingTime)
-      const existingEndWithBuffer =
-        existingStart + existingDuration + BOOKING_RULES.bufferMinutes
+      const existingEndWithBuffer = existingStart + existingDuration + BOOKING_RULES.bufferMinutes
 
       return newStart < existingEndWithBuffer && existingStart < newEndWithBuffer
     })
 
     if (hasConflict) {
-      return NextResponse.json(
-        { error: 'هذا الموعد غير متاح بالفعل. اختاري وقتًا آخر.' },
-        { status: 409 },
-      )
+      return NextResponse.json({ error: 'هذا الموعد غير متاح بالفعل. اختاري وقتًا آخر.' }, { status: 409 })
     }
+
+    const originalPrice = SESSION_PRICES[duration]
+    const couponResult = await validateCoupon(couponCode, originalPrice)
+    const discountAmount = couponResult.discountAmount
+    const finalAmount = Math.max(0, originalPrice - discountAmount)
 
     const bookingRef = await adminDb.collection('bookings').add({
       userId: decoded.uid,
@@ -179,7 +229,17 @@ export async function POST(req: NextRequest) {
       date,
       time,
       duration,
-      status: 'pending',
+      status: 'payment_submitted',
+      paymentStatus: 'submitted',
+      sessionType: duration === 90 ? 'deep_session' : 'clarity_session',
+      price: finalAmount,
+      originalPrice,
+      discountAmount,
+      finalAmount,
+      couponCode: couponResult.appliedCode,
+      paymentMethod,
+      paymentReference,
+      paymentNote,
       notes,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -188,9 +248,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, bookingId: bookingRef.id })
   } catch (error) {
     console.error('Booking API error:', error)
-    return NextResponse.json(
-      { error: 'حدث خطأ أثناء إرسال طلب الحجز. حاولي مرة أخرى.' },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: 'حدث خطأ أثناء إرسال طلب الحجز. حاولي مرة أخرى.' }, { status: 500 })
   }
 }
