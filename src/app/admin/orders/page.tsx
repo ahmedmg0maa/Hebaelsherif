@@ -205,6 +205,14 @@ export default function AdminOrdersPage() {
                     </p>
 
                     <p>
+                      طريقة الدفع: <strong className="text-charcoal">{order.paymentMethod || 'manual'}</strong>
+                    </p>
+
+                    <p>
+                      مرجع الدفع: <strong className="text-charcoal">{order.paymentReference || 'غير مضاف'}</strong>
+                    </p>
+
+                    <p>
                       تاريخ الطلب:{' '}
                       <strong className="text-charcoal">{formatArabicDate(order.createdAt)}</strong>
                     </p>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Timestamp } from 'firebase-admin/firestore'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
-import type { ProductType } from '@/types'
+import type { PaymentMethod, ProductType } from '@/types'
 
 interface ExistingOrder {
   id: string
@@ -29,13 +29,9 @@ function getProductCollection(productType: ProductType) {
 async function getAuthenticatedUid(req: NextRequest) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '')
 
-  if (!token) {
-    return null
-  }
+  if (!token) return null
 
-  const adminAuth = getAdminAuth()
-  const decoded = await adminAuth.verifyIdToken(token)
-
+  const decoded = await getAdminAuth().verifyIdToken(token)
   return decoded.uid
 }
 
@@ -48,25 +44,17 @@ export async function GET(req: NextRequest) {
     }
 
     const adminDb = getAdminDb()
-
     const ordersSnap = await adminDb
       .collection('orders')
       .where('userId', '==', uid)
       .orderBy('createdAt', 'desc')
       .get()
 
-    const orders = ordersSnap.docs.map((docItem) => ({
-      id: docItem.id,
-      ...docItem.data(),
-    }))
+    const orders = ordersSnap.docs.map((docItem) => ({ id: docItem.id, ...docItem.data() }))
 
-    return NextResponse.json({
-      success: true,
-      orders,
-    })
+    return NextResponse.json({ success: true, orders })
   } catch (error) {
     console.error('Orders GET API error:', error)
-
     return NextResponse.json({ error: 'تعذر تحميل الطلبات الآن.' }, { status: 500 })
   }
 }
@@ -79,22 +67,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'يجب تسجيل الدخول أولًا.' }, { status: 401 })
     }
 
-    const adminDb = getAdminDb()
-
-    const body = (await req.json()) as {
-      productId?: unknown
-      productType?: unknown
-    }
-
+    const body = (await req.json()) as { productId?: unknown; productType?: unknown; paymentMethod?: unknown; paymentReference?: unknown }
     const productId = sanitizeText(body.productId)
     const productType = body.productType
+    const paymentMethod = sanitizeText(body.paymentMethod) as PaymentMethod
+    const paymentReference = sanitizeText(body.paymentReference)
 
     if (!productId || !isProductType(productType)) {
       return NextResponse.json({ error: 'بيانات المنتج غير صحيحة.' }, { status: 400 })
     }
 
-    const productCollection = getProductCollection(productType)
-    const productSnap = await adminDb.collection(productCollection).doc(productId).get()
+    const adminDb = getAdminDb()
+    const productSnap = await adminDb.collection(getProductCollection(productType)).doc(productId).get()
 
     if (!productSnap.exists) {
       return NextResponse.json({ error: 'المنتج غير موجود.' }, { status: 404 })
@@ -151,18 +135,15 @@ export async function POST(req: NextRequest) {
       productType,
       amount,
       status: 'pending',
+      paymentMethod: paymentMethod || 'manual',
+      paymentReference,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     })
 
-    return NextResponse.json({
-      success: true,
-      orderId: orderRef.id,
-      status: 'pending',
-    })
+    return NextResponse.json({ success: true, orderId: orderRef.id, status: 'pending' })
   } catch (error) {
     console.error('Orders POST API error:', error)
-
     return NextResponse.json({ error: 'تعذر إنشاء طلب الشراء الآن.' }, { status: 500 })
   }
 }

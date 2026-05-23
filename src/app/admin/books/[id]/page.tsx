@@ -116,6 +116,8 @@ export default function EditBookPage() {
           price: book.price,
           status: book.status,
           coverImageUrl: book.coverImageUrl,
+          driveFileUrl: book.driveFileUrl,
+          pagesCount: book.pagesCount,
         }}
         onSubmit={handleUpdateBook}
       />

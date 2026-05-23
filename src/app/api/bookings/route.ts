@@ -33,6 +33,51 @@ function sanitizeText(value: unknown) {
   return value.trim()
 }
 
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const date = sanitizeText(searchParams.get('date'))
+
+    if (!date || !isValidDateString(date)) {
+      return NextResponse.json({ unavailableSlots: [] })
+    }
+
+    const adminDb = getAdminDb()
+    const bookingsSnap = await adminDb
+      .collection('bookings')
+      .where('date', '==', date)
+      .where('status', 'in', ['pending', 'confirmed'])
+      .get()
+
+    const unavailableSlots = new Set<string>()
+
+    bookingsSnap.docs.forEach((docItem) => {
+      const booking = docItem.data()
+      const existingTime = String(booking.time || '')
+      const existingDuration = Number(booking.duration || 60)
+
+      if (!existingTime.includes(':')) return
+
+      const existingStart = toMinutes(existingTime)
+      const existingEndWithBuffer = existingStart + existingDuration + BOOKING_RULES.bufferMinutes
+
+      TIME_SLOTS.forEach((slot) => {
+        const slotStart = toMinutes(slot)
+        const slotEnd = slotStart + 90 + BOOKING_RULES.bufferMinutes
+        if (slotStart < existingEndWithBuffer && existingStart < slotEnd) {
+          unavailableSlots.add(slot)
+        }
+      })
+    })
+
+    return NextResponse.json({ unavailableSlots: Array.from(unavailableSlots) })
+  } catch (error) {
+    console.error('Booking availability API error:', error)
+    return NextResponse.json({ unavailableSlots: [] })
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const token = req.headers.get('authorization')?.replace('Bearer ', '')
@@ -43,7 +88,6 @@ export async function POST(req: NextRequest) {
 
     const adminAuth = getAdminAuth()
     const adminDb = getAdminDb()
-
     const decoded = await adminAuth.verifyIdToken(token)
 
     const body = (await req.json()) as {
@@ -141,13 +185,9 @@ export async function POST(req: NextRequest) {
       updatedAt: Timestamp.now(),
     })
 
-    return NextResponse.json({
-      success: true,
-      bookingId: bookingRef.id,
-    })
+    return NextResponse.json({ success: true, bookingId: bookingRef.id })
   } catch (error) {
     console.error('Booking API error:', error)
-
     return NextResponse.json(
       { error: 'حدث خطأ أثناء إرسال طلب الحجز. حاولي مرة أخرى.' },
       { status: 500 },

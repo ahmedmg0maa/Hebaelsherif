@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
+  addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -15,7 +17,7 @@ import {
 import { db } from '@/lib/firebase/client'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-import type { Course } from '@/types'
+import type { Course, Lesson } from '@/types'
 import CourseForm, { CourseFormValues } from '../_components/CourseForm'
 
 export default function EditCoursePage() {
@@ -25,14 +27,17 @@ export default function EditCoursePage() {
 
   const [loading, setLoading] = useState(true)
   const [course, setCourse] = useState<Course | null>(null)
+  const [lessons, setLessons] = useState<Lesson[]>([])
 
   useEffect(() => {
     if (!courseId) return
 
     async function loadCourse() {
       setLoading(true)
-
-      const courseSnap = await getDoc(doc(db, 'courses', courseId))
+      const [courseSnap, lessonsSnap] = await Promise.all([
+        getDoc(doc(db, 'courses', courseId)),
+        getDocs(query(collection(db, 'course_lessons'), where('courseId', '==', courseId))),
+      ])
 
       if (!courseSnap.exists()) {
         setCourse(null)
@@ -40,11 +45,8 @@ export default function EditCoursePage() {
         return
       }
 
-      setCourse({
-        id: courseSnap.id,
-        ...courseSnap.data(),
-      } as Course)
-
+      setCourse({ id: courseSnap.id, ...courseSnap.data() } as Course)
+      setLessons(lessonsSnap.docs.map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Lesson).sort((a, b) => a.order - b.order))
       setLoading(false)
     }
 
@@ -55,20 +57,30 @@ export default function EditCoursePage() {
   }, [courseId])
 
   async function handleUpdateCourse(values: CourseFormValues) {
-    const duplicateSlugSnap = await getDocs(
-      query(collection(db, 'courses'), where('slug', '==', values.slug)),
-    )
-
+    const duplicateSlugSnap = await getDocs(query(collection(db, 'courses'), where('slug', '==', values.slug)))
     const duplicateDoc = duplicateSlugSnap.docs.find((docItem) => docItem.id !== courseId)
+    if (duplicateDoc) throw new Error('Slug already exists')
 
-    if (duplicateDoc) {
-      throw new Error('Slug already exists')
-    }
+    const { lessons: nextLessons, ...courseValues } = values
 
     await updateDoc(doc(db, 'courses', courseId), {
-      ...values,
+      ...courseValues,
+      lessonsCount: values.lessonsCount || nextLessons.length,
       updatedAt: serverTimestamp(),
     })
+
+    const oldLessonsSnap = await getDocs(query(collection(db, 'course_lessons'), where('courseId', '==', courseId)))
+    await Promise.all(oldLessonsSnap.docs.map((docItem) => deleteDoc(doc(db, 'course_lessons', docItem.id))))
+    await Promise.all(
+      nextLessons.map((lesson) =>
+        addDoc(collection(db, 'course_lessons'), {
+          ...lesson,
+          courseId,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        }),
+      ),
+    )
 
     router.push('/admin/courses')
     router.refresh()
@@ -78,20 +90,14 @@ export default function EditCoursePage() {
     return (
       <div>
         <PremiumSkeleton className="mb-8 h-10 w-72" />
-        <PremiumSkeleton className="h-[720px]" />
+        <PremiumSkeleton className="h-[760px]" />
       </div>
     )
   }
 
   if (!course) {
     return (
-      <PremiumEmptyState
-        icon="📚"
-        title="الدورة غير موجودة"
-        description="قد تكون الدورة حُذفت أو أن الرابط غير صحيح."
-        actionLabel="العودة للدورات"
-        actionHref="/admin/courses"
-      />
+      <PremiumEmptyState icon="📚" title="الدورة غير موجودة" description="قد تكون الدورة حُذفت أو أن الرابط غير صحيح." actionLabel="العودة للدورات" actionHref="/admin/courses" />
     )
   }
 
@@ -100,9 +106,7 @@ export default function EditCoursePage() {
       <div className="mb-8">
         <p className="mb-2 text-sm font-bold text-gold">تعديل دورة</p>
         <h2 className="text-3xl font-black text-charcoal">{course.title}</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
-          عدل بيانات الدورة العامة التي تظهر في صفحة الدورة وقائمة الدورات.
-        </p>
+        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">عدّل بيانات الدورة والفصول وروابط Google Drive.</p>
       </div>
 
       <CourseForm
@@ -119,6 +123,18 @@ export default function EditCoursePage() {
           price: course.price,
           status: course.status,
           coverImageUrl: course.coverImageUrl,
+          driveFolderUrl: course.driveFolderUrl,
+          previewVideoUrl: course.previewVideoUrl,
+          level: course.level,
+          lessons: lessons.map((lesson) => ({
+            stageTitle: lesson.stageTitle,
+            title: lesson.title,
+            description: lesson.description,
+            duration: lesson.duration,
+            contentUrl: lesson.contentUrl,
+            resourceUrl: lesson.resourceUrl,
+            order: lesson.order,
+          })),
         }}
         onSubmit={handleUpdateCourse}
       />

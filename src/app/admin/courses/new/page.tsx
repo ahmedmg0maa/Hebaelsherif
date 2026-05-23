@@ -9,19 +9,31 @@ export default function NewCoursePage() {
   const router = useRouter()
 
   async function handleCreateCourse(values: CourseFormValues) {
-    const duplicateSlugSnap = await getDocs(
-      query(collection(db, 'courses'), where('slug', '==', values.slug)),
-    )
+    const duplicateSlugSnap = await getDocs(query(collection(db, 'courses'), where('slug', '==', values.slug)))
 
-    if (!duplicateSlugSnap.empty) {
-      throw new Error('Slug already exists')
-    }
+    if (!duplicateSlugSnap.empty) throw new Error('Slug already exists')
 
-    await addDoc(collection(db, 'courses'), {
-      ...values,
+    const { lessons, ...courseValues } = values
+
+    const courseRef = await addDoc(collection(db, 'courses'), {
+      ...courseValues,
+      lessonsCount: values.lessonsCount || lessons.length,
+      rating: 5,
+      studentsCount: 0,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
+
+    await Promise.all(
+      lessons.map((lesson) =>
+        addDoc(collection(db, 'course_lessons'), {
+          ...lesson,
+          courseId: courseRef.id,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        }),
+      ),
+    )
 
     router.push('/admin/courses')
     router.refresh()
@@ -33,11 +45,9 @@ export default function NewCoursePage() {
         <p className="mb-2 text-sm font-bold text-gold">إضافة دورة</p>
         <h2 className="text-3xl font-black text-charcoal">إنشاء دورة جديدة</h2>
         <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
-          أضف بيانات الدورة التسويقية العامة. محتوى الدروس وروابط الوصول ستتم إدارتها لاحقًا من
-          نظام المحتوى المحمي.
+          أضف بيانات الدورة والفصول وروابط Google Drive في مكان واحد، ثم اربط المحتوى النهائي من صفحة المحتوى المحمي.
         </p>
       </div>
-
       <CourseForm submitLabel="حفظ الدورة" onSubmit={handleCreateCourse} />
     </div>
   )

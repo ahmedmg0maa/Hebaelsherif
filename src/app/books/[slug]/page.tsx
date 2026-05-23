@@ -9,6 +9,7 @@ import PremiumBadge from '@/components/ui/PremiumBadge'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
 import PurchaseRequestButton from '@/components/products/PurchaseRequestButton'
+import ReviewSection from '@/components/reviews/ReviewSection'
 import { getBookBySlug } from '@/lib/firestore/books'
 import { formatEGP } from '@/lib/utils/formatters'
 import type { Book } from '@/types'
@@ -172,6 +173,10 @@ export default function BookDetailsPage() {
                     </div>
                   </div>
                 </article>
+              </div>
+
+              <div className="lg:col-span-2">
+                <ReviewSection productId={book.id} productType="book" />
               </div>
 
               <aside className="h-fit rounded-3xl border border-sand bg-ivory p-6 shadow-premium lg:sticky lg:top-28">

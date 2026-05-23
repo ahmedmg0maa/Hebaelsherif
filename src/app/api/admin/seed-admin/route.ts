@@ -27,12 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
     }
 
-    const body = (await req.json()) as {
-      email?: unknown
-      name?: unknown
-      phone?: unknown
-    }
-
+    const body = (await req.json()) as { email?: unknown; name?: unknown; phone?: unknown }
     const email = sanitizeText(body.email).toLowerCase()
     const name = sanitizeText(body.name) || 'مدير المنصة'
     const phone = sanitizeText(body.phone)
@@ -43,7 +38,6 @@ export async function POST(req: NextRequest) {
 
     const adminAuth = getAdminAuth()
     const adminDb = getAdminDb()
-
     const userRecord = await adminAuth.getUserByEmail(email)
 
     await adminDb.collection('users').doc(userRecord.uid).set(
@@ -59,19 +53,11 @@ export async function POST(req: NextRequest) {
       { merge: true },
     )
 
-    await adminAuth.setCustomUserClaims(userRecord.uid, {
-      role: 'admin',
-    })
+    await adminAuth.setCustomUserClaims(userRecord.uid, { role: 'admin' })
 
-    return NextResponse.json({
-      success: true,
-      uid: userRecord.uid,
-      email,
-      role: 'admin',
-    })
+    return NextResponse.json({ success: true, uid: userRecord.uid, email, role: 'admin' })
   } catch (error) {
     console.error('Seed admin API error:', error)
-
     return NextResponse.json(
       {
         error:

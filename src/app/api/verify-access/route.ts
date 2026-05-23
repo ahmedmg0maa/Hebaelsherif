@@ -28,14 +28,9 @@ export async function POST(req: NextRequest) {
 
     const adminAuth = getAdminAuth()
     const adminDb = getAdminDb()
-
     const decoded = await adminAuth.verifyIdToken(token)
 
-    const body = (await req.json()) as {
-      productId?: unknown
-      productType?: unknown
-    }
-
+    const body = (await req.json()) as { productId?: unknown; productType?: unknown }
     const productId = sanitizeText(body.productId)
     const productType = body.productType
 
@@ -62,10 +57,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const protectedContentId = getProtectedContentDocumentId(productType, productId)
     const protectedContentSnap = await adminDb
       .collection('protected_content')
-      .doc(protectedContentId)
+      .doc(getProtectedContentDocumentId(productType, productId))
       .get()
 
     if (!protectedContentSnap.exists) {
@@ -76,8 +70,6 @@ export async function POST(req: NextRequest) {
     }
 
     const protectedContent = protectedContentSnap.data() as {
-      productId?: string
-      productType?: ProductType
       contentUrl?: string
       resourceUrl?: string
     } | null
@@ -96,7 +88,6 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error('Verify access API error:', error)
-
     return NextResponse.json(
       { hasAccess: false, error: 'تعذر التحقق من الوصول الآن.' },
       { status: 500 },

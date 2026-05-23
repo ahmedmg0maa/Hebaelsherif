@@ -9,6 +9,7 @@ import PremiumBadge from '@/components/ui/PremiumBadge'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
 import PurchaseRequestButton from '@/components/products/PurchaseRequestButton'
+import ReviewSection from '@/components/reviews/ReviewSection'
 import { getCourseBySlug, getCourseLessons } from '@/lib/firestore/courses'
 import { formatEGP } from '@/lib/utils/formatters'
 import type { Course, Lesson } from '@/types'
@@ -221,6 +222,10 @@ export default function CourseDetailsPage() {
                     </p>
                   )}
                 </article>
+              </div>
+
+              <div className="lg:col-span-2">
+                <ReviewSection productId={course.id} productType="course" />
               </div>
 
               <aside className="h-fit rounded-3xl border border-sand bg-ivory p-6 shadow-premium lg:sticky lg:top-28">
