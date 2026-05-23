@@ -65,13 +65,13 @@ export default function Footer() {
                     target={social.href === '#' ? undefined : '_blank'}
                     rel={social.href === '#' ? undefined : 'noreferrer'}
                     className="inline-flex min-h-11 items-center justify-center rounded-full border border-sand bg-ivory/80 px-4 text-xs font-black text-petrol shadow-soft transition hover:border-petrol/30 hover:bg-cream"
-                    aria-label={social.label}
+                    aria-label={social.display}
                   >
-                    {social.label}
+                    {social.display}
                   </a>
                 ))}
               </div>
-              <p className="mt-3 text-xs leading-6 text-warm-gray">اترك الروابط فارغة الآن، وأضفها لاحقًا من متغيرات البيئة.</p>
+              <p className="mt-3 text-xs leading-6 text-warm-gray">ستظهر الروابط الحقيقية بمجرد إضافتها من إعدادات البيئة أو لوحة الإدارة.</p>
             </div>
           </div>
 
@@ -95,7 +95,7 @@ export default function Footer() {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-sand pt-6 text-xs font-bold text-warm-gray sm:flex-row sm:items-center sm:justify-between">
           <p>© <span className="latin-numerals">{new Date().getFullYear()}</span> {BRAND.arName}. جميع الحقوق محفوظة.</p>
-          <p>رحلة رقمية هادئة للوضوح العاطفي والنمو الشخصي.</p>
+          <p>مساحة عربية هادئة للوعي، الكوتشنج، والتعلم العاطفي.</p>
         </div>
       </div>
     </footer>

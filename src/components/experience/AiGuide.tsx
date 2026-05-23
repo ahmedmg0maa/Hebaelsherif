@@ -83,16 +83,16 @@ export default function AiGuide() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 z-[90] print:hidden sm:bottom-5 sm:left-5">
+    <div className="fixed bottom-4 left-4 z-[90] print:hidden sm:bottom-6 sm:left-6">
       {open ? (
-        <div className="mb-3 w-[min(94vw,430px)] overflow-hidden rounded-[2rem] border border-sand bg-ivory/96 shadow-premium backdrop-blur-xl">
-          <div className="relative overflow-hidden border-b border-sand p-5">
+        <div className="mb-3 w-[min(94vw,450px)] overflow-hidden rounded-[2.25rem] border border-sand bg-ivory/96 shadow-premium backdrop-blur-xl">
+          <div className="brand-luxury-veil relative overflow-hidden border-b border-sand p-5">
             <div className="ambient-orb ambient-orb-petrol left-8 top-0 h-20 w-20" />
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <p className="mini-label">دليل هبة الهادئ</p>
-                <h3 className="mt-2 text-xl font-black leading-snug text-charcoal">اختاري خطوتك التالية بهدوء</h3>
-                <p className="mt-2 text-xs leading-6 text-warm-gray">ليس دردشة عشوائية. فقط أسئلة منظمة ترشدك إلى البداية المناسبة.</p>
+                <p className="mini-label">دليل هبة</p>
+                <h3 className="mt-2 text-xl font-black leading-snug text-charcoal">اختاري البداية الأقرب لكِ</h3>
+                <p className="mt-2 text-xs leading-6 text-warm-gray">أسئلة قصيرة تقترح عليكِ بداية هادئة: جلسة، كورس، أو كتاب.</p>
               </div>
               <button
                 type="button"
@@ -188,12 +188,12 @@ export default function AiGuide() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="group inline-flex min-h-14 items-center gap-3 rounded-full border border-sand bg-ivory/95 px-4 text-sm font-black text-petrol shadow-premium backdrop-blur-xl transition hover:-translate-y-1 hover:border-petrol/30"
+        className="group inline-flex min-h-14 items-center gap-3 rounded-full border border-gold/30 bg-ivory/95 px-4 text-sm font-black text-petrol shadow-premium backdrop-blur-xl transition hover:-translate-y-1 hover:border-petrol/30"
         aria-label="فتح دليل هبة"
         aria-expanded={open}
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-petrol text-xs text-ivory transition group-hover:bg-gold group-hover:text-charcoal">دليل</span>
-        <span className="hidden sm:inline">اختاري خطوتك</span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-petrol text-xs text-ivory transition group-hover:bg-gold group-hover:text-charcoal">هبة</span>
+        <span className="hidden sm:inline">دليل البداية</span>
       </button>
     </div>
   )

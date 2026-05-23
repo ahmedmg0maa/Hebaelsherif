@@ -35,11 +35,11 @@ export default function Navbar() {
       className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
         scrolled
           ? 'border-sand bg-ivory/92 shadow-sm backdrop-blur-xl'
-          : 'border-transparent bg-ivory/70 backdrop-blur-md'
+          : 'border-transparent bg-ivory/78 backdrop-blur-md'
       }`}
     >
       <nav className="container-premium">
-        <div className="flex h-20 items-center justify-between gap-4">
+        <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Link href="/" className="group flex items-center gap-3" aria-label="العودة إلى الرئيسية">
             <span className="flex h-11 w-11 items-center justify-center rounded-full border border-petrol/15 bg-cream text-lg font-black text-petrol shadow-soft transition group-hover:border-gold/50">
               هـ
@@ -49,7 +49,7 @@ export default function Navbar() {
                 {BRAND.arName}
               </span>
               <span className="mt-1 block text-[10px] font-bold tracking-[0.18em] text-warm-gray">
-                HEBA ELSHERIF
+                وعي · كوتشنج · تعلم
               </span>
             </span>
           </Link>
@@ -111,7 +111,7 @@ export default function Navbar() {
 
         {mobileOpen ? (
           <div className="pb-5 lg:hidden">
-            <div className="premium-glow-border rounded-[2rem] border border-sand bg-ivory/95 p-4 shadow-premium backdrop-blur-xl">
+            <div className="premium-glow-border brand-mobile-drawer rounded-[2rem] border border-sand bg-ivory/97 p-4 shadow-premium backdrop-blur-xl">
               <div className="grid gap-2">
                 {PUBLIC_NAV_LINKS.map((item) => {
                   const active = pathname === item.href
