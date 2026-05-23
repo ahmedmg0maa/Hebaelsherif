@@ -58,20 +58,28 @@ export default function Footer() {
             <div className="mt-6">
               <p className="mb-3 text-xs font-black tracking-[0.18em] text-warm-gray">تابعينا</p>
               <div className="flex flex-wrap gap-2">
-                {SOCIAL_LINKS.map((social) => (
-                  <a
-                    key={social.key}
-                    href={social.href}
-                    target={social.href === '#' ? undefined : '_blank'}
-                    rel={social.href === '#' ? undefined : 'noreferrer'}
-                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-sand bg-ivory/80 px-4 text-xs font-black text-petrol shadow-soft transition hover:border-petrol/30 hover:bg-cream"
-                    aria-label={social.display}
-                  >
-                    {social.display}
-                  </a>
-                ))}
+                {SOCIAL_LINKS.map((social) => {
+                  const active = social.href && social.href !== '#'
+                  const classes = 'inline-flex min-h-11 items-center justify-center rounded-full border border-sand bg-ivory/80 px-4 text-xs font-black text-petrol shadow-soft transition hover:border-petrol/30 hover:bg-cream'
+
+                  return active ? (
+                    <a
+                      key={social.key}
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={classes}
+                      aria-label={social.display}
+                    >
+                      {social.display}
+                    </a>
+                  ) : (
+                    <span key={social.key} className={`${classes} opacity-60`} aria-label={`${social.display} سيضاف لاحقًا`}>
+                      {social.display}
+                    </span>
+                  )
+                })}
               </div>
-              <p className="mt-3 text-xs leading-6 text-warm-gray">ستظهر الروابط الحقيقية بمجرد إضافتها من إعدادات البيئة أو لوحة الإدارة.</p>
             </div>
           </div>
 
