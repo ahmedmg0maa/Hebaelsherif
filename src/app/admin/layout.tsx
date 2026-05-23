@@ -36,7 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <main className="min-h-screen bg-cream lg:flex">
-      <aside className="border-b border-sand bg-charcoal text-cream lg:min-h-screen lg:w-72 lg:border-b-0 lg:border-l">
+      <aside className="border-b border-sand bg-charcoal text-cream lg:sticky lg:top-0 lg:h-screen lg:w-80 lg:overflow-y-auto lg:border-b-0 lg:border-l">
         <div className="border-b border-white/10 p-6">
           <Link href="/" className="block">
             <p className="text-2xl font-black text-cream">هبة الشريف</p>
@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </div>
 
-        <nav className="flex gap-2 overflow-x-auto p-4 lg:block lg:space-y-2">
+        <nav className="flex gap-2 overflow-x-auto p-4 lg:block lg:space-y-1">
           {ADMIN_NAV_LINKS.map((item) => {
             const active = pathname === item.href
 
@@ -52,7 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block min-w-max rounded-2xl px-4 py-3 text-sm font-bold transition lg:min-w-0 ${
+                className={`block min-w-max rounded-2xl px-4 py-2.5 text-xs font-bold transition lg:min-w-0 ${
                   active
                     ? 'bg-cream text-charcoal'
                     : 'text-cream/70 hover:bg-white/10 hover:text-cream'
