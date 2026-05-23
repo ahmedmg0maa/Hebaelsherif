@@ -13,12 +13,12 @@ interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-burgundy text-ivory shadow-[0_14px_32px_rgba(122,36,51,.18)] hover:bg-burgundy/90',
-  outline: 'border border-burgundy/25 bg-ivory/60 text-burgundy hover:border-burgundy hover:bg-burgundy hover:text-ivory',
-  ghost: 'text-burgundy hover:bg-burgundy/10',
-  gold: 'bg-gold text-ivory shadow-[0_14px_32px_rgba(183,155,108,.18)] hover:bg-gold/90',
-  danger: 'bg-burgundy text-ivory hover:bg-burgundy/90',
-  soft: 'border border-sand bg-ivory/80 text-charcoal hover:border-gold/50 hover:bg-cream',
+  primary: 'bg-petrol text-ivory shadow-[0_14px_32px_rgba(47,97,115,.17)] hover:bg-petrol/92',
+  outline: 'border border-petrol/28 bg-ivory/64 text-petrol hover:border-petrol hover:bg-petrol hover:text-ivory',
+  ghost: 'text-petrol hover:bg-petrol/10',
+  gold: 'bg-gold text-charcoal shadow-[0_14px_32px_rgba(183,155,108,.16)] hover:bg-gold/88',
+  danger: 'bg-petrol text-ivory hover:bg-petrol/90',
+  soft: 'border border-sand bg-ivory/80 text-charcoal hover:border-petrol/35 hover:bg-cream',
 }
 
 const sizes: Record<ButtonSize, string> = {

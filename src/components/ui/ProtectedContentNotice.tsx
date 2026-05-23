@@ -23,7 +23,7 @@ export default function ProtectedContentNotice({
   return (
     <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center px-4 py-12">
       <div className="premium-glow-border w-full max-w-lg rounded-[2.25rem] border border-sand bg-ivory/95 p-8 text-center shadow-premium backdrop-blur-sm">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-burgundy/10 text-3xl text-burgundy">🔒</div>
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-petrol/10 text-3xl text-petrol">🔒</div>
         <h1 className="text-2xl font-black text-charcoal">{title}</h1>
         <p className="mt-4 text-sm leading-8 text-warm-gray">
           {description ||

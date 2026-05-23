@@ -8,6 +8,10 @@ import { useAuth } from '@/hooks/useAuth'
 import PremiumButton from '@/components/ui/PremiumButton'
 import ThemeToggle from '@/components/experience/ThemeToggle'
 
+const desktopLinks = PUBLIC_NAV_LINKS.filter((item) =>
+  ['/', '/about', '/services', '/courses', '/books', '/articles', '/contact'].includes(item.href),
+)
+
 export default function Navbar() {
   const pathname = usePathname()
   const { user, loading, logout } = useAuth()
@@ -30,18 +34,18 @@ export default function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? 'border-sand bg-ivory/90 shadow-sm backdrop-blur-xl'
-          : 'border-transparent bg-ivory/55 backdrop-blur-md'
+          ? 'border-sand bg-ivory/92 shadow-sm backdrop-blur-xl'
+          : 'border-transparent bg-ivory/70 backdrop-blur-md'
       }`}
     >
       <nav className="container-premium">
         <div className="flex h-20 items-center justify-between gap-4">
-          <Link href="/" className="group flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-burgundy/15 bg-ivory text-xl font-black text-burgundy shadow-soft">
+          <Link href="/" className="group flex items-center gap-3" aria-label="العودة إلى الرئيسية">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-petrol/15 bg-cream text-lg font-black text-petrol shadow-soft transition group-hover:border-gold/50">
               هـ
             </span>
             <span>
-              <span className="block text-lg font-black leading-none text-charcoal transition group-hover:text-burgundy">
+              <span className="block text-lg font-black leading-none text-charcoal transition group-hover:text-petrol">
                 {BRAND.arName}
               </span>
               <span className="mt-1 block text-[10px] font-bold tracking-[0.18em] text-warm-gray">
@@ -50,19 +54,19 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-7 lg:flex">
-            {PUBLIC_NAV_LINKS.map((item) => {
+          <div className="hidden items-center gap-6 lg:flex">
+            {desktopLinks.map((item) => {
               const active = pathname === item.href
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`relative text-sm font-black transition ${
-                    active ? 'text-burgundy' : 'text-warm-gray hover:text-burgundy'
+                    active ? 'text-petrol' : 'text-warm-gray hover:text-petrol'
                   }`}
                 >
                   {item.label}
-                  {active ? <span className="absolute -bottom-2 right-0 h-1 w-full rounded-full bg-burgundy" /> : null}
+                  {active ? <span className="absolute -bottom-2 right-0 h-0.5 w-full rounded-full bg-gold" /> : null}
                 </Link>
               )
             })}
@@ -81,7 +85,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => logout()}
-                  className="rounded-full px-3 py-2 text-xs font-black text-warm-gray transition hover:bg-burgundy/10 hover:text-burgundy"
+                  className="rounded-full px-3 py-2 text-xs font-black text-warm-gray transition hover:bg-petrol/10 hover:text-petrol"
                 >
                   خروج
                 </button>
@@ -89,7 +93,7 @@ export default function Navbar() {
             ) : (
               <>
                 <PremiumButton href="/auth/login" size="sm" variant="outline">تسجيل الدخول</PremiumButton>
-                <PremiumButton href="/booking" size="sm">احجزي الآن</PremiumButton>
+                <PremiumButton href="/booking" size="sm">احجزي جلسة</PremiumButton>
               </>
             )}
           </div>
@@ -97,7 +101,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMobileOpen((current) => !current)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-sand bg-ivory/90 text-burgundy shadow-soft backdrop-blur-sm transition hover:border-burgundy lg:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-sand bg-ivory/90 text-petrol shadow-soft backdrop-blur-sm transition hover:border-petrol/35 lg:hidden"
             aria-label="فتح القائمة"
             aria-expanded={mobileOpen}
           >
@@ -116,7 +120,7 @@ export default function Navbar() {
                       key={item.href}
                       href={item.href}
                       className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
-                        active ? 'bg-burgundy text-ivory' : 'text-warm-gray hover:bg-cream hover:text-burgundy'
+                        active ? 'bg-petrol text-ivory' : 'text-warm-gray hover:bg-cream hover:text-petrol'
                       }`}
                     >
                       {item.label}
@@ -137,7 +141,7 @@ export default function Navbar() {
                 ) : (
                   <>
                     <PremiumButton href="/auth/login" variant="outline" className="w-full">تسجيل الدخول</PremiumButton>
-                    <PremiumButton href="/booking" className="w-full">احجزي الآن</PremiumButton>
+                    <PremiumButton href="/booking" className="w-full">احجزي جلسة</PremiumButton>
                   </>
                 )}
               </div>

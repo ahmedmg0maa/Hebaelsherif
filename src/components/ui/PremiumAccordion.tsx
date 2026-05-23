@@ -23,7 +23,7 @@ export default function PremiumAccordion({ items }: { items: AccordionItem[] }) 
               aria-expanded={open}
             >
               <span className="text-sm font-black text-charcoal">{item.title}</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cream text-burgundy">{open ? '−' : '+'}</span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cream text-petrol">{open ? '−' : '+'}</span>
             </button>
             {open ? <p className="border-t border-sand px-5 py-4 text-sm leading-8 text-warm-gray">{item.content}</p> : null}
           </div>

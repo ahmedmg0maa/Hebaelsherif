@@ -26,18 +26,18 @@ export default function BookCard({ book, featured = false }: BookCardProps) {
           />
         ) : (
           <div className="book-art flex h-full items-end p-5">
-            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-burgundy backdrop-blur-md">كتاب رقمي</span>
+            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-petrol backdrop-blur-md">كتاب رقمي</span>
           </div>
         )}
         {featured ? <PremiumBadge className="absolute right-4 top-4" variant="gold">مميز</PremiumBadge> : null}
       </div>
 
       <div className="p-6">
-        <h3 className="text-xl font-black leading-snug text-charcoal transition group-hover:text-burgundy">{book.title}</h3>
+        <h3 className="text-xl font-black leading-snug text-charcoal transition group-hover:text-petrol">{book.title}</h3>
         <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">{book.shortDescription || book.description}</p>
         <div className="mt-6 flex items-center justify-between gap-4">
-          <span className="text-lg font-black text-burgundy">{formatEGP(book.price)}</span>
-          <span className="rounded-full border border-burgundy/20 bg-burgundy/10 px-4 py-2 text-xs font-black text-burgundy">التفاصيل</span>
+          <span className="text-lg font-black text-petrol">{formatEGP(book.price)}</span>
+          <span className="rounded-full border border-petrol/20 bg-petrol/10 px-4 py-2 text-xs font-black text-petrol">التفاصيل</span>
         </div>
       </div>
     </Link>

@@ -26,7 +26,7 @@ export default function PremiumEmptyState({
         .filter(Boolean)
         .join(' ')}
     >
-      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-burgundy/10 text-3xl text-burgundy">
+      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-petrol/10 text-3xl text-petrol">
         {icon}
       </div>
       <h3 className="mb-3 text-2xl font-black text-charcoal">{title}</h3>

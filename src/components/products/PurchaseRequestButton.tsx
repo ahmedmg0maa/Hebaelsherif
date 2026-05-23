@@ -99,7 +99,7 @@ export default function PurchaseRequestButton({ productId, productType, currentP
               onClick={() => setPaymentMethod(method.id)}
               className={`rounded-2xl border p-3 text-right transition ${
                 paymentMethod === method.id
-                  ? 'border-burgundy bg-burgundy text-ivory'
+                  ? 'border-petrol bg-petrol text-ivory'
                   : 'border-sand bg-ivory/80 text-charcoal hover:border-gold'
               }`}
             >
@@ -131,7 +131,7 @@ export default function PurchaseRequestButton({ productId, productType, currentP
         </div>
       ) : null}
 
-      {error ? <div className="mt-4 rounded-2xl border border-burgundy/20 bg-burgundy/10 px-4 py-3 text-sm leading-7 text-burgundy">{error}</div> : null}
+      {error ? <div className="mt-4 rounded-2xl border border-petrol/20 bg-petrol/10 px-4 py-3 text-sm leading-7 text-petrol">{error}</div> : null}
 
       <p className="mt-3 text-center text-xs leading-6 text-warm-gray">بعد إرسال الطلب، تقوم الإدارة بتأكيد الدفع ثم يتم فتح الوصول تلقائياً داخل حسابك.</p>
     </div>

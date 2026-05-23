@@ -26,7 +26,7 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
           />
         ) : (
           <div className="course-art flex h-full items-end p-5">
-            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-burgundy backdrop-blur-md">دورة</span>
+            <span className="rounded-full bg-white/60 px-4 py-2 text-xs font-black text-petrol backdrop-blur-md">دورة</span>
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/20 to-transparent" />
@@ -34,12 +34,12 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
       </div>
 
       <div className="p-6">
-        <p className="mb-3 text-xs font-black text-burgundy">{course.lessonsCount} درس · {course.duration}</p>
-        <h3 className="text-xl font-black leading-snug text-charcoal transition group-hover:text-burgundy">{course.title}</h3>
+        <p className="mb-3 text-xs font-black text-petrol">{course.lessonsCount} درس · {course.duration}</p>
+        <h3 className="text-xl font-black leading-snug text-charcoal transition group-hover:text-petrol">{course.title}</h3>
         <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">{course.emotionalPromise || course.description}</p>
         <div className="mt-6 flex items-center justify-between gap-4">
-          <span className="text-lg font-black text-burgundy">{formatEGP(course.price)}</span>
-          <span className="rounded-full border border-burgundy/20 bg-burgundy/10 px-4 py-2 text-xs font-black text-burgundy">التفاصيل</span>
+          <span className="text-lg font-black text-petrol">{formatEGP(course.price)}</span>
+          <span className="rounded-full border border-petrol/20 bg-petrol/10 px-4 py-2 text-xs font-black text-petrol">التفاصيل</span>
         </div>
       </div>
     </Link>

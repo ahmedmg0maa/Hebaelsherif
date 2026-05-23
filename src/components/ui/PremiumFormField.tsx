@@ -13,11 +13,11 @@ export default function PremiumFormField({ label, error, required = false, child
     <div className="space-y-2">
       <label className="premium-label">
         {label}
-        {required ? <span className="mr-1 text-burgundy">*</span> : null}
+        {required ? <span className="mr-1 text-petrol">*</span> : null}
       </label>
       {children}
       {hint && !error ? <p className="text-xs leading-6 text-warm-gray">{hint}</p> : null}
-      {error ? <p className="text-xs font-bold leading-6 text-burgundy">{error}</p> : null}
+      {error ? <p className="text-xs font-bold leading-6 text-petrol">{error}</p> : null}
     </div>
   )
 }

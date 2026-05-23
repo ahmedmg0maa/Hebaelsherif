@@ -22,7 +22,7 @@ export default function LeadMagnet() {
         <input className="premium-input" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" />
         <PremiumButton type="submit">أريد الدليل</PremiumButton>
       </div>
-      {message ? <p className="mt-3 text-xs font-black text-burgundy">{message}</p> : null}
+      {message ? <p className="mt-3 text-xs font-black text-petrol">{message}</p> : null}
     </form>
   )
 }

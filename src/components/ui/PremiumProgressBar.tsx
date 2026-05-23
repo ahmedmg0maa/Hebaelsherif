@@ -11,7 +11,7 @@ const colors: Record<ProgressVariant, string> = {
   petrol: 'bg-petrol',
   gold: 'bg-gold',
   olive: 'bg-olive',
-  burgundy: 'bg-burgundy',
+  burgundy: 'bg-petrol',
 }
 
 export default function PremiumProgressBar({

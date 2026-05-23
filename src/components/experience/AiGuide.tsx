@@ -87,13 +87,13 @@ export default function AiGuide() {
                 <p className="text-xs font-black tracking-[0.2em] text-gold">Heba AI Guide</p>
                 <h3 className="mt-2 text-lg font-black text-charcoal">مساعد توجيهي بدون دردشة عشوائية</h3>
               </div>
-              <button type="button" onClick={() => setOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-sand bg-cream text-lg font-black text-burgundy" aria-label="إغلاق المساعد">×</button>
+              <button type="button" onClick={() => setOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-sand bg-cream text-lg font-black text-petrol" aria-label="إغلاق المساعد">×</button>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 p-4">
             {guideTopics.map((topic) => (
-              <button key={topic.id} type="button" onClick={() => setActiveId(topic.id)} className={`rounded-2xl border px-3 py-3 text-right text-xs font-black transition ${activeId === topic.id ? 'border-burgundy bg-burgundy text-ivory' : 'border-sand bg-cream/70 text-charcoal hover:border-gold'}`}>
+              <button key={topic.id} type="button" onClick={() => setActiveId(topic.id)} className={`rounded-2xl border px-3 py-3 text-right text-xs font-black transition ${activeId === topic.id ? 'border-petrol bg-petrol text-ivory' : 'border-sand bg-cream/70 text-charcoal hover:border-gold'}`}>
                 {topic.label}
               </button>
             ))}
@@ -103,7 +103,7 @@ export default function AiGuide() {
             <div className="rounded-[1.5rem] border border-sand bg-cream/60 p-4">
               <h4 className="text-base font-black text-charcoal">{active.title}</h4>
               <p className="mt-3 text-sm leading-7 text-warm-gray">{active.answer}</p>
-              <Link href={active.href} className="mt-4 inline-flex rounded-full bg-burgundy px-4 py-2 text-xs font-black text-ivory transition hover:bg-gold" onClick={() => setOpen(false)}>{active.action}</Link>
+              <Link href={active.href} className="mt-4 inline-flex rounded-full bg-petrol px-4 py-2 text-xs font-black text-ivory transition hover:bg-gold" onClick={() => setOpen(false)}>{active.action}</Link>
             </div>
 
             <div className="mt-4 rounded-[1.5rem] border border-sand bg-ivory/80 p-4">
@@ -114,7 +114,7 @@ export default function AiGuide() {
                     <p className="text-xs font-black text-charcoal">{question.question}</p>
                     <div className="mt-2 grid gap-2">
                       {question.answers.map((item) => (
-                        <button key={item.label} type="button" onClick={() => answer(item.score)} className="rounded-2xl border border-sand bg-cream/70 px-3 py-2 text-right text-xs font-bold text-warm-gray transition hover:border-burgundy hover:text-burgundy">
+                        <button key={item.label} type="button" onClick={() => answer(item.score)} className="rounded-2xl border border-sand bg-cream/70 px-3 py-2 text-right text-xs font-bold text-warm-gray transition hover:border-petrol hover:text-petrol">
                           {item.label}
                         </button>
                       ))}
@@ -122,16 +122,16 @@ export default function AiGuide() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl bg-burgundy/10 p-3">
+              <div className="mt-4 rounded-2xl bg-petrol/10 p-3">
                 <p className="text-xs leading-6 text-charcoal">{result.text}</p>
-                <Link href={result.href} onClick={() => setOpen(false)} className="mt-2 inline-flex text-xs font-black text-burgundy">اذهبي إلى {result.label}</Link>
+                <Link href={result.href} onClick={() => setOpen(false)} className="mt-2 inline-flex text-xs font-black text-petrol">اذهبي إلى {result.label}</Link>
               </div>
             </div>
           </div>
         </div>
       ) : null}
 
-      <button type="button" onClick={() => setOpen((current) => !current)} className="premium-glow-border flex h-14 w-14 items-center justify-center rounded-full border border-sand bg-burgundy text-2xl text-ivory shadow-premium transition hover:-translate-y-1 hover:bg-gold" aria-label="فتح المساعد الذكي">✦</button>
+      <button type="button" onClick={() => setOpen((current) => !current)} className="premium-glow-border flex h-14 w-14 items-center justify-center rounded-full border border-sand bg-petrol text-2xl text-ivory shadow-premium transition hover:-translate-y-1 hover:bg-gold" aria-label="فتح المساعد الذكي">✦</button>
     </div>
   )
 }

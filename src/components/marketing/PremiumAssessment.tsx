@@ -92,8 +92,8 @@ export default function PremiumAssessment() {
                     onClick={() => setAnswers((current) => ({ ...current, [question.key]: option.score as ResultKey }))}
                     className={`rounded-2xl border px-4 py-3 text-right text-sm font-bold transition ${
                       active
-                        ? 'border-burgundy bg-burgundy text-ivory shadow-soft'
-                        : 'border-sand bg-ivory/75 text-charcoal hover:border-gold hover:text-burgundy'
+                        ? 'border-petrol bg-petrol text-ivory shadow-soft'
+                        : 'border-sand bg-ivory/75 text-charcoal hover:border-petrol/40 hover:text-petrol'
                     }`}
                   >
                     {option.label}
