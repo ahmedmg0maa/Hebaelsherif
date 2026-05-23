@@ -29,7 +29,7 @@ export const PUBLIC_NAV_LINKS = [
   { href: '/booking', label: 'الجلسات' },
   { href: '/articles', label: 'المقالات' },
   { href: '/about', label: 'عن هبة' },
-  { href: '/trust-safety', label: 'الثقة' },
+  { href: '/trust-safety', label: 'الأمان والثقة' },
 ] as const
 
 export const DASHBOARD_NAV_LINKS = [
@@ -92,7 +92,7 @@ export const ADMIN_NAV_LINKS = [
 
 
 export const SOCIAL_LINKS = [
-  { key: 'facebook', label: 'Facebook', href: process.env.NEXT_PUBLIC_FACEBOOK_URL || '#' },
-  { key: 'instagram', label: 'Instagram', href: process.env.NEXT_PUBLIC_INSTAGRAM_URL || '#' },
-  { key: 'tiktok', label: 'TikTok', href: process.env.NEXT_PUBLIC_TIKTOK_URL || '#' },
+  { key: 'facebook', label: 'Facebook', display: 'فيسبوك', href: process.env.NEXT_PUBLIC_FACEBOOK_URL || '#' },
+  { key: 'instagram', label: 'Instagram', display: 'إنستغرام', href: process.env.NEXT_PUBLIC_INSTAGRAM_URL || '#' },
+  { key: 'tiktok', label: 'TikTok', display: 'تيك توك', href: process.env.NEXT_PUBLIC_TIKTOK_URL || '#' },
 ] as const
