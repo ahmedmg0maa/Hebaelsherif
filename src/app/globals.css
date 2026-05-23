@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --color-cream: 251 244 238;
-  --color-ivory: 255 250 246;
+  --color-cream: 245 240 231;
+  --color-ivory: 250 247 242;
   --color-rose: 141 61 93;
   --color-mauve: 181 130 148;
-  --color-sand: 234 219 208;
-  --color-stone: 204 184 174;
-  --color-warm-gray: 140 119 112;
-  --color-charcoal: 51 38 37;
-  --color-gold: 198 154 105;
+  --color-sand: 233 224 210;
+  --color-stone: 200 193 182;
+  --color-warm-gray: 138 131 123;
+  --color-charcoal: 42 42 42;
+  --color-gold: 183 155 108;
   --color-petrol: 47 97 115;
   --color-olive: 107 114 78;
   --color-burgundy: 122 36 51;
