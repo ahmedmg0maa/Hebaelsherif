@@ -51,7 +51,9 @@ export async function GET(req: NextRequest) {
 
     const db = getAdminDb()
     const snap = await db.collection(collectionName).limit(100).get()
-    const items = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    const items = snap.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .filter((item) => !item.archived)
 
     return NextResponse.json({ success: true, items })
   } catch (error) {
@@ -74,8 +76,25 @@ export async function POST(req: NextRequest) {
     const values = body.values && typeof body.values === 'object' ? body.values : {}
     const db = getAdminDb()
 
-    if (action === 'delete' && id) {
-      await db.collection(collectionName).doc(id).delete()
+    if ((action === 'delete' || action === 'archive') && id) {
+      await db.collection(collectionName).doc(id).set(
+        {
+          archived: true,
+          active: false,
+          status: 'archived',
+          archivedAt: Timestamp.now(),
+          archivedBy: adminId,
+          updatedAt: Timestamp.now(),
+        },
+        { merge: true },
+      )
+      await db.collection('admin_logs').add({
+        adminId,
+        action: 'collection_item_archived',
+        targetType: collectionName,
+        targetId: id,
+        createdAt: Timestamp.now(),
+      })
       return NextResponse.json({ success: true })
     }
 

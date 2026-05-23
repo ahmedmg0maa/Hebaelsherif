@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Timestamp } from 'firebase-admin/firestore'
+import { FieldValue, Timestamp } from 'firebase-admin/firestore'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
 import { BOOKING_RULES, SESSION_PRICES, getBookableTimeSlots } from '@/constants/booking'
 import type { BookingDuration, PaymentMethod } from '@/types'
@@ -38,12 +38,12 @@ function sanitizeText(value: unknown) {
 }
 
 async function validateCoupon(code: string, amount: number) {
-  if (!code) return { appliedCode: '', discountAmount: 0 }
+  if (!code) return { appliedCode: '', discountAmount: 0, couponId: '' }
 
   const db = getAdminDb()
   const snap = await db.collection('coupons').where('code', '==', code.toUpperCase()).where('active', '==', true).limit(1).get()
 
-  if (snap.empty) return { appliedCode: '', discountAmount: 0 }
+  if (snap.empty) return { appliedCode: '', discountAmount: 0, couponId: '' }
 
   const coupon = snap.docs[0].data() as {
     type?: string
@@ -55,14 +55,14 @@ async function validateCoupon(code: string, amount: number) {
     usageCount?: number
   }
 
-  if (coupon.scope && coupon.scope !== 'all' && coupon.scope !== 'sessions') return { appliedCode: '', discountAmount: 0 }
-  if (Number(coupon.minAmount || 0) > amount) return { appliedCode: '', discountAmount: 0 }
+  if (coupon.scope && coupon.scope !== 'all' && coupon.scope !== 'sessions') return { appliedCode: '', discountAmount: 0, couponId: '' }
+  if (Number(coupon.minAmount || 0) > amount) return { appliedCode: '', discountAmount: 0, couponId: '' }
   if (coupon.expiresAtText) {
     const expiresAt = new Date(`${coupon.expiresAtText}T23:59:59`)
-    if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) return { appliedCode: '', discountAmount: 0 }
+    if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) return { appliedCode: '', discountAmount: 0, couponId: '' }
   }
   if (Number(coupon.usageLimit || 0) > 0 && Number(coupon.usageCount || 0) >= Number(coupon.usageLimit)) {
-    return { appliedCode: '', discountAmount: 0 }
+    return { appliedCode: '', discountAmount: 0, couponId: '' }
   }
 
   const value = Number(coupon.value || 0)
@@ -70,6 +70,7 @@ async function validateCoupon(code: string, amount: number) {
   return {
     appliedCode: code.toUpperCase(),
     discountAmount: Math.max(0, Math.min(rawDiscount, amount)),
+    couponId: snap.docs[0].id,
   }
 }
 
@@ -77,6 +78,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const date = sanitizeText(searchParams.get('date'))
+    const durationInput = Number(searchParams.get('duration') || 60)
+    const duration = isAllowedDuration(durationInput) ? durationInput : 60
 
     if (!date || !isValidDateString(date)) {
       return NextResponse.json({ unavailableSlots: [] })
@@ -101,10 +104,10 @@ export async function GET(req: NextRequest) {
       const existingStart = toMinutes(existingTime)
       const existingEndWithBuffer = existingStart + existingDuration + BOOKING_RULES.bufferMinutes
 
-      getBookableTimeSlots(90).forEach((slot) => {
+      getBookableTimeSlots(duration).forEach((slot) => {
         const slotStart = toMinutes(slot)
-        const slotEnd = slotStart + 90 + BOOKING_RULES.bufferMinutes
-        if (slotStart < existingEndWithBuffer && existingStart < slotEnd) {
+        const slotEndWithBuffer = slotStart + duration + BOOKING_RULES.bufferMinutes
+        if (slotStart < existingEndWithBuffer && existingStart < slotEndWithBuffer) {
           unavailableSlots.add(slot)
         }
       })
@@ -220,6 +223,16 @@ export async function POST(req: NextRequest) {
     const couponResult = await validateCoupon(couponCode, originalPrice)
     const discountAmount = couponResult.discountAmount
     const finalAmount = Math.max(0, originalPrice - discountAmount)
+
+    if (couponResult.couponId && discountAmount > 0) {
+      await adminDb.collection('coupons').doc(couponResult.couponId).set(
+        {
+          usageCount: FieldValue.increment(1),
+          updatedAt: Timestamp.now(),
+        },
+        { merge: true },
+      )
+    }
 
     const bookingRef = await adminDb.collection('bookings').add({
       userId: decoded.uid,

@@ -119,7 +119,7 @@ export default function BookingPage() {
       setAvailabilityLoading(true)
       setTime('')
       try {
-        const response = await fetch(`/api/bookings?date=${encodeURIComponent(date)}`)
+        const response = await fetch(`/api/bookings?date=${encodeURIComponent(date)}&duration=${encodeURIComponent(String(duration))}`)
         const data = (await response.json()) as { unavailableSlots?: string[] }
         if (!cancelled) setUnavailableSlots(data.unavailableSlots || [])
       } catch (availabilityError) {
@@ -135,7 +135,7 @@ export default function BookingPage() {
     return () => {
       cancelled = true
     }
-  }, [date])
+  }, [date, duration])
 
   useEffect(() => {
     if (!bookableSlots.includes(time)) {
