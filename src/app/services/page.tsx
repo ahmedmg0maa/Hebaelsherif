@@ -50,7 +50,7 @@ export default function ServicesPage() {
                     <p className="text-xs font-black text-gold">{service.duration}</p>
                     <h2 className="mt-3 text-2xl font-black text-charcoal">{service.title}</h2>
                     <p className="mt-3 text-sm leading-8 text-warm-gray">{service.description}</p>
-                    <strong className="mt-5 block text-lg font-black text-burgundy">{service.priceLabel}</strong>
+                    <strong className="mt-5 block text-lg font-black text-petrol">{service.priceLabel}</strong>
                     <ul className="mt-5 space-y-3">
                       {service.features.map((feature) => (
                         <li key={feature} className="rounded-2xl border border-sand bg-cream/60 px-4 py-3 text-sm font-bold text-charcoal">✦ {feature}</li>

@@ -30,7 +30,7 @@ export default function AboutPage() {
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {values.map((value) => (
-                <div key={value} className="rounded-2xl border border-sand bg-ivory/80 p-4 font-black text-burgundy shadow-soft">
+                <div key={value} className="rounded-2xl border border-sand bg-ivory/80 p-4 font-black text-petrol shadow-soft">
                   ✦ {value}
                 </div>
               ))}

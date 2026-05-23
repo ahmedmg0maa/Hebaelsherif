@@ -22,7 +22,7 @@ export default function ArticlesPage() {
                   <p className="text-xs font-black text-gold">{article.category} · {article.readingTime}</p>
                   <h2 className="mt-4 text-2xl font-black leading-tight text-charcoal">{article.title}</h2>
                   <p className="mt-4 text-sm leading-8 text-warm-gray">{article.excerpt}</p>
-                  <span className="mt-6 inline-flex rounded-full bg-burgundy px-5 py-2 text-xs font-black text-ivory">قراءة المقال</span>
+                  <span className="mt-6 inline-flex rounded-full bg-petrol px-5 py-2 text-xs font-black text-ivory">قراءة المقال</span>
                 </Link>
               ))}
             </div>

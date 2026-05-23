@@ -80,7 +80,7 @@ export default function DashboardProfilePage() {
             </select>
           </PremiumFormField>
         </div>
-        {message ? <p className="mt-5 text-sm font-black text-burgundy">{message}</p> : null}
+        {message ? <p className="mt-5 text-sm font-black text-petrol">{message}</p> : null}
         <PremiumButton type="submit" disabled={saving} className="mt-7">{saving ? 'جاري الحفظ...' : 'حفظ البيانات'}</PremiumButton>
       </form>
     </div>

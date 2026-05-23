@@ -53,7 +53,7 @@ export default function CoursesPage() {
         <section className="container-premium pb-16">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-sand bg-ivory/80 p-4 shadow-soft backdrop-blur-sm">
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-burgundy px-4 py-2 text-xs font-black text-ivory">كل الدورات</span>
+              <span className="rounded-full bg-petrol px-4 py-2 text-xs font-black text-ivory">كل الدورات</span>
               <span className="rounded-full border border-sand bg-cream px-4 py-2 text-xs font-black text-warm-gray">جديدة</span>
               <span className="rounded-full border border-sand bg-cream px-4 py-2 text-xs font-black text-warm-gray">الأكثر طلبًا</span>
             </div>

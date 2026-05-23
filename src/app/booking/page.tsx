@@ -19,7 +19,7 @@ function getDateAfterDays(days: number) {
 
 function getDateLabel(value: string) {
   const date = new Date(`${value}T12:00:00`)
-  return new Intl.DateTimeFormat('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' }).format(date)
+  return new Intl.DateTimeFormat('ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' }).format(date)
 }
 
 function isFriday(dateValue: string) {
@@ -221,7 +221,7 @@ export default function BookingPage() {
                         onClick={() => setDate(item.value)}
                         className={`rounded-2xl border p-4 text-right transition ${
                           date === item.value
-                            ? 'border-burgundy bg-burgundy text-ivory shadow-soft'
+                            ? 'border-petrol bg-petrol text-ivory shadow-soft'
                             : item.disabled
                               ? 'cursor-not-allowed border-sand bg-sand/40 text-warm-gray opacity-50'
                               : 'border-sand bg-cream/60 text-charcoal hover:border-gold hover:bg-ivory'
@@ -247,7 +247,7 @@ export default function BookingPage() {
                         key={option.value}
                         type="button"
                         onClick={() => setDuration(option.value)}
-                        className={`rounded-2xl border p-4 text-right text-sm font-black transition ${duration === option.value ? 'border-burgundy bg-burgundy text-ivory' : 'border-sand bg-cream/60 text-charcoal hover:border-gold'}`}
+                        className={`rounded-2xl border p-4 text-right text-sm font-black transition ${duration === option.value ? 'border-petrol bg-petrol text-ivory' : 'border-sand bg-cream/60 text-charcoal hover:border-gold'}`}
                       >
                         {option.label}
                       </button>
@@ -265,7 +265,7 @@ export default function BookingPage() {
                           onClick={() => setTime(slot)}
                           className={`rounded-2xl border px-4 py-4 text-center font-black transition ${
                             time === slot
-                              ? 'border-burgundy bg-burgundy text-ivory shadow-soft'
+                              ? 'border-petrol bg-petrol text-ivory shadow-soft'
                               : unavailable
                                 ? 'cursor-not-allowed border-sand bg-sand/40 text-warm-gray opacity-55 line-through'
                                 : 'border-sand bg-cream/60 text-charcoal hover:border-gold hover:bg-ivory'
@@ -302,7 +302,7 @@ export default function BookingPage() {
                 </div>
               ) : null}
 
-              {error ? <div className="mt-6 rounded-2xl border border-burgundy/20 bg-burgundy/10 px-4 py-3 text-sm leading-7 text-burgundy">{error}</div> : null}
+              {error ? <div className="mt-6 rounded-2xl border border-petrol/20 bg-petrol/10 px-4 py-3 text-sm leading-7 text-petrol">{error}</div> : null}
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
                 {step > 1 ? <PremiumButton type="button" variant="outline" onClick={() => setStep((current) => (current - 1) as BookingStep)}>السابق</PremiumButton> : <span />}
@@ -324,7 +324,7 @@ export default function BookingPage() {
 
 function StepBadge({ number, title, active, done }: { number: number; title: string; active: boolean; done: boolean }) {
   return (
-    <div className={`flex items-center gap-3 rounded-2xl border p-4 ${active ? 'border-burgundy bg-burgundy text-ivory' : done ? 'border-olive/30 bg-olive/10 text-olive' : 'border-sand bg-cream/55 text-warm-gray'}`}>
+    <div className={`flex items-center gap-3 rounded-2xl border p-4 ${active ? 'border-petrol bg-petrol text-ivory' : done ? 'border-olive/30 bg-olive/10 text-olive' : 'border-sand bg-cream/55 text-warm-gray'}`}>
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ivory/20 text-sm font-black">{done ? '✓' : number}</span>
       <span className="text-sm font-black">{title}</span>
     </div>

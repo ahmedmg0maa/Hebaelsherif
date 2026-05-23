@@ -93,7 +93,7 @@ function DashboardStatCard({ label, value, href }: { label: string; value: numbe
   return (
     <Link href={href} className="premium-glow-border rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-premium">
       <p className="text-sm font-black text-warm-gray">{label}</p>
-      <strong className="mt-3 block text-4xl font-black text-burgundy">{value}</strong>
+      <strong className="mt-3 block text-4xl font-black text-petrol">{value}</strong>
       <span className="mt-4 block text-xs font-black text-gold">عرض التفاصيل</span>
     </Link>
   )

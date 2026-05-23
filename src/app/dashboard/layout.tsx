@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className="border-b border-sand bg-ivory/80 backdrop-blur-xl lg:sticky lg:top-0 lg:min-h-screen lg:w-72 lg:border-b-0 lg:border-l">
         <div className="border-b border-sand p-6">
           <Link href="/" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-burgundy text-lg font-black text-ivory">هـ</span>
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-petrol text-lg font-black text-ivory">هـ</span>
             <span>
               <span className="block text-xl font-black text-charcoal">هبة الشريف</span>
               <span className="mt-1 block text-xs font-bold text-warm-gray">لوحة الرحلة</span>
@@ -43,7 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 key={item.href}
                 href={item.href}
                 className={`block min-w-max rounded-2xl px-4 py-3 text-sm font-black transition lg:min-w-0 ${
-                  active ? 'bg-burgundy text-ivory shadow-soft' : 'text-warm-gray hover:bg-cream hover:text-burgundy'
+                  active ? 'bg-petrol text-ivory shadow-soft' : 'text-warm-gray hover:bg-cream hover:text-petrol'
                 }`}
               >
                 {item.label}
