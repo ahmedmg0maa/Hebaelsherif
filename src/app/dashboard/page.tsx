@@ -299,7 +299,7 @@ export default function DashboardHomePage() {
             </Panel>
           </div>
 
-          <section className="premium-glow-border overflow-hidden rounded-[2.25rem] border border-sand bg-petrol p-6 text-ivory shadow-premium lg:p-7">
+          <section className="premium-glow-border overflow-hidden rounded-[2.25rem] border border-sand bg-petrol on-dark p-6 text-ivory shadow-premium lg:p-7">
             <div className="grid gap-6 lg:grid-cols-[1fr_270px] lg:items-center">
               <div>
                 <p className="text-xs font-black tracking-[.22em] text-gold">لحظة مراجعة</p>
@@ -338,7 +338,7 @@ export default function DashboardHomePage() {
             </div>
           </div>
 
-          <div className="premium-glow-border rounded-[2.25rem] border border-sand bg-petrol p-6 text-ivory shadow-premium">
+          <div className="premium-glow-border rounded-[2.25rem] border border-sand bg-petrol on-dark p-6 text-ivory shadow-premium">
             <p className="text-xs font-black tracking-[.22em] text-gold">ملخص الاستثمار</p>
             <strong className="mt-4 block text-4xl font-black latin-numerals">{formatEGP(data.stats.totalInvestment)}</strong>
             <p className="mt-3 text-sm leading-7 text-ivory/72">

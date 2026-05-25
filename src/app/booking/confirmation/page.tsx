@@ -81,7 +81,7 @@ function BookingConfirmationContent() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-petrol/15 bg-petrol p-6 text-ivory shadow-botanical">
+        <div className="rounded-[2rem] border border-petrol/15 bg-petrol on-dark p-6 text-ivory shadow-botanical">
           <p className="text-sm font-black text-gold">رحلتك تستحق الهدوء</p>
           <p className="mt-3 text-sm leading-7 text-ivory/80">
             اكتبي قبل الجلسة أهم سؤال تريدين فهمه، وأحضري مساحة هادئة تساعدك على الإصغاء لنفسك.

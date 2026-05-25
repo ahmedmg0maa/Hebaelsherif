@@ -123,7 +123,7 @@ export default function DashboardProfilePage() {
         </form>
 
         <aside className="space-y-6">
-          <div className="rounded-[2rem] border border-sand bg-petrol p-6 text-ivory shadow-premium">
+          <div className="rounded-[2rem] border border-sand bg-petrol on-dark p-6 text-ivory shadow-premium">
             <p className="text-xs font-black tracking-[.22em] text-gold">بطاقة الرحلة</p>
             <h3 className="mt-4 text-2xl font-black">{name || user.name}</h3>
             <p className="mt-2 break-words text-sm leading-7 text-ivory/72">{user.email}</p>

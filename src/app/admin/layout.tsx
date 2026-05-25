@@ -131,15 +131,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!user || !isAdmin) return null
 
   return (
-    <main className="min-h-screen bg-cream lg:flex">
-      <aside className="hidden border-l border-gold/15 bg-deepTeal text-ivory lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[21rem] lg:overflow-y-auto">
+    <main className="admin-shell min-h-screen lg:flex">
+      <aside className="admin-sidebar hidden border-l border-gold/25 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[21rem] lg:overflow-y-auto">
         <div className="paper-texture relative overflow-hidden border-b border-white/10 p-6">
           <div className="absolute -left-16 -top-16 h-44 w-44 rounded-full bg-gold/10 blur-3xl" />
           <div className="relative">
             <Link href="/admin" className="block">
-              <BrandMark size="md" className="[&_.text-charcoal]:text-ivory [&_.text-warm-gray]:text-ivory/55" />
+              <BrandMark size="md" className="[&_.text-charcoal]:text-ivory" />
             </Link>
-            <p className="mt-5 text-xs font-bold leading-6 text-ivory/55">
+            <p className="mt-5 text-xs font-bold leading-6 admin-soft-text">
               مركز قيادة البراند: المحتوى، التجارة، الحجوزات، وتجربة العميلة في مساحة واحدة.
             </p>
             <BrandDivider className="mt-5" />
@@ -151,7 +151,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <section key={group.title}>
               <div className="mb-3 px-2">
                 <p className="text-[11px] font-black text-gold">{group.title}</p>
-                <p className="mt-1 text-[11px] leading-5 text-ivory/45">{group.hint}</p>
+                <p className="mt-1 text-[11px] leading-5 admin-soft-text">{group.hint}</p>
               </div>
 
               <div className="space-y-1">
@@ -164,8 +164,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       href={item.href}
                       className={`group flex items-center justify-between rounded-2xl px-4 py-3 text-xs font-bold transition ${
                         active
-                          ? 'bg-ivory text-deepTeal shadow-soft'
-                          : 'text-ivory/68 hover:bg-white/8 hover:text-ivory'
+                          ? 'admin-nav-item-active shadow-soft'
+                          : 'admin-nav-item hover:bg-white/8'
                       }`}
                     >
                       <span>{item.label}</span>
@@ -201,7 +201,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       <section className="min-w-0 flex-1">
-        <header className="sticky top-0 z-40 border-b border-sand/80 bg-cream/88 backdrop-blur-xl">
+        <header className="admin-header sticky top-0 z-40 border-b backdrop-blur-xl">
           <div className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-8">
             <div className="flex items-center gap-4">
               <button

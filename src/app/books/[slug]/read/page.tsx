@@ -167,7 +167,7 @@ export default function BookReadPage() {
       <Navbar />
 
       <main className="min-h-screen pt-20">
-        <section className="paper-texture relative overflow-hidden border-b border-gold/15 bg-deepTeal text-ivory">
+        <section className="paper-texture relative overflow-hidden border-b border-gold/15 bg-deepTeal text-ivory on-dark">
           <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-gold/18 blur-3xl" />
           <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-aqua/10 blur-3xl" />
           <div className="container-premium relative grid gap-8 py-10 lg:grid-cols-[1fr_260px] lg:items-center">

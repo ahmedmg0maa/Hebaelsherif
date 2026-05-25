@@ -88,9 +88,9 @@ export default function AdminDynamicSectionPage({ params }: { params: { section:
 
   return (
     <AdminPageShell
-      eyebrow="مركز تشغيل V2"
+      eyebrow="مركز تشغيل V3.3"
       title={label}
-      description={customDescriptions[section] || 'قسم إداري جاهز للتطوير والتخصيص ضمن نظام التحكم الموحد.'}
+      description={customDescriptions[section] || 'قسم إداري تشغيلي ضمن مركز التحكم الموحد.'}
     >
       <AdminSettingsConsole
         collectionName={`admin_${section.replace(/-/g, '_')}_settings`}

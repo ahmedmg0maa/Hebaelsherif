@@ -288,7 +288,7 @@ export default function CoursesPage() {
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-[2rem] border border-sand bg-petrol text-ivory shadow-premium">
+              <div className="overflow-hidden rounded-[2rem] border border-sand bg-petrol text-ivory on-dark shadow-premium">
                 <ImageSlot
                   ratio="square"
                   variant="brand"

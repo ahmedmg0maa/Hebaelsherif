@@ -380,3 +380,175 @@ img, video { max-width: 100%; height: auto; }
 .dark .premium-label, .dark .premium-muted { color: rgb(var(--color-charcoal)); }
 .dark .brand-title, .dark .brand-subtitle { color: rgb(var(--color-charcoal)); }
 .visitor-only-copy { color: rgb(var(--color-warm-gray)); }
+
+
+/* V3.3.1 readability hardening: premium must stay readable before it is decorative. */
+.on-dark,
+.on-dark .text-ivory,
+.on-dark .text-cream,
+.on-dark .text-white,
+.dark .on-dark,
+.dark .on-dark .text-ivory,
+.dark .on-dark .text-cream,
+.dark .on-dark .text-white,
+.dark .on-dark .text-ivory\/55,
+.dark .on-dark .text-ivory\/60,
+.dark .on-dark .text-ivory\/65,
+.dark .on-dark .text-ivory\/70,
+.dark .on-dark .text-ivory\/72,
+.dark .on-dark .text-ivory\/75,
+.dark .on-dark .text-ivory\/78,
+.dark .on-dark .text-ivory\/80,
+.dark .on-dark .text-cream\/75,
+.dark .on-dark .text-cream\/80 {
+  color: #F5F0E7 !important;
+}
+.dark .on-dark .text-warm-gray,
+.dark .on-dark .text-warm-gray\/70 {
+  color: #E4D7C7 !important;
+}
+.on-dark.bg-petrol, .on-dark .bg-petrol { background-color: #2F6173 !important; }
+.on-dark.bg-deepTeal, .on-dark .bg-deepTeal { background-color: #0F3237 !important; }
+.on-dark .text-gold,
+.dark .on-dark .text-gold { color: #B79B60 !important; }
+.on-dark .text-deepTeal,
+.dark .on-dark .text-deepTeal { color: #0F3237 !important; }
+
+/* Admin receives an operational design system separate from the public poetic UI. */
+.admin-shell {
+  background:
+    radial-gradient(circle at 86% 8%, rgba(183,155,96,.13), transparent 28rem),
+    radial-gradient(circle at 12% 18%, rgba(47,97,115,.10), transparent 30rem),
+    #F5F0E7;
+  color: #0F3237;
+}
+.dark .admin-shell {
+  background:
+    radial-gradient(circle at 84% 8%, rgba(183,155,96,.12), transparent 30rem),
+    radial-gradient(circle at 10% 16%, rgba(47,97,115,.20), transparent 32rem),
+    linear-gradient(135deg, #0F3237 0%, #123F45 100%);
+  color: #F5F0E7;
+}
+.admin-shell .admin-sidebar {
+  background: #0F3237 !important;
+  color: #F5F0E7 !important;
+  scrollbar-width: none;
+}
+.admin-shell .admin-sidebar::-webkit-scrollbar { width: 0; height: 0; }
+.admin-shell .admin-header {
+  background: rgba(245,240,231,.94) !important;
+  border-color: rgba(183,155,96,.28) !important;
+}
+.dark .admin-shell .admin-header {
+  background: rgba(15,50,55,.94) !important;
+  border-color: rgba(183,155,96,.35) !important;
+}
+.admin-shell .admin-card,
+.admin-shell .brand-rich-card,
+.admin-shell .glass-panel,
+.admin-shell .luxury-shell,
+.admin-shell .premium-card,
+.admin-shell [class*="bg-ivory/"] {
+  background: rgba(255,253,247,.94) !important;
+  border-color: rgba(228,215,199,.92) !important;
+  color: #0F3237 !important;
+}
+.dark .admin-shell .admin-card,
+.dark .admin-shell .brand-rich-card,
+.dark .admin-shell .glass-panel,
+.dark .admin-shell .luxury-shell,
+.dark .admin-shell .premium-card,
+.dark .admin-shell [class*="bg-ivory/"],
+.dark .admin-shell [class*="bg-cream/"] {
+  background: rgba(18,63,69,.92) !important;
+  border-color: rgba(183,155,96,.30) !important;
+  color: #F5F0E7 !important;
+}
+.admin-shell .bg-cream,
+.admin-shell [class*="bg-cream/"] {
+  background-color: rgba(245,240,231,.82) !important;
+}
+.dark .admin-shell .bg-cream,
+.dark .admin-shell [class*="bg-cream/"] {
+  background-color: rgba(15,50,55,.58) !important;
+}
+.admin-shell .bg-petrol,
+.admin-shell [class*="bg-petrol/"] {
+  background-color: #2F6173 !important;
+}
+.dark .admin-shell .bg-petrol,
+.dark .admin-shell [class*="bg-petrol/"] {
+  background-color: #16484F !important;
+}
+.admin-shell .bg-deepTeal,
+.admin-shell .bg-deep-teal,
+.admin-shell [class*="bg-deep-teal/"] {
+  background-color: #0F3237 !important;
+}
+.admin-shell .text-charcoal,
+.admin-shell .brand-title { color: #0F3237 !important; }
+.admin-shell .text-warm-gray,
+.admin-shell .premium-muted { color: #6F6A2F !important; }
+.admin-shell .text-petrol { color: #2F6173 !important; }
+.admin-shell .text-gold { color: #B79B60 !important; }
+.admin-shell .text-ivory,
+.admin-shell .text-cream { color: #F5F0E7 !important; }
+.dark .admin-shell .text-charcoal,
+.dark .admin-shell .brand-title,
+.dark .admin-shell .premium-label { color: #F5F0E7 !important; }
+.dark .admin-shell .text-warm-gray,
+.dark .admin-shell .premium-muted { color: #E4D7C7 !important; }
+.dark .admin-shell .text-petrol { color: #9ECDD4 !important; }
+.dark .admin-shell .text-ivory,
+.dark .admin-shell .text-cream { color: #F5F0E7 !important; }
+.admin-shell .premium-input,
+.dark .admin-shell .premium-input,
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select,
+.dark .admin-shell input,
+.dark .admin-shell textarea,
+.dark .admin-shell select {
+  background: rgba(255,253,247,.96) !important;
+  color: #0F3237 !important;
+  border-color: rgba(183,155,96,.36) !important;
+}
+.admin-shell .premium-input::placeholder,
+.dark .admin-shell .premium-input::placeholder { color: rgba(47,97,115,.62) !important; }
+.admin-shell .admin-hero {
+  background:
+    radial-gradient(circle at 82% 10%, rgba(183,155,96,.20), transparent 24rem),
+    linear-gradient(135deg, #0F3237 0%, #16484F 100%) !important;
+  color: #F5F0E7 !important;
+  border-color: rgba(183,155,96,.42) !important;
+}
+.admin-shell .admin-hero .text-charcoal,
+.admin-shell .admin-hero .text-warm-gray,
+.admin-shell .admin-hero .text-ivory,
+.admin-shell .admin-hero .text-cream,
+.admin-shell .admin-hero .brand-title { color: #F5F0E7 !important; }
+.admin-shell .admin-hero .text-gold { color: #B79B60 !important; }
+.admin-shell .admin-nav-item { color: rgba(245,240,231,.82) !important; }
+.admin-shell .admin-nav-item:hover { color: #F5F0E7 !important; background: rgba(245,240,231,.08) !important; }
+.admin-shell .admin-nav-item-active {
+  background: rgba(183,155,96,.18) !important;
+  border: 1px solid rgba(183,155,96,.38) !important;
+  color: #F5F0E7 !important;
+}
+.admin-shell .admin-soft-text { color: rgba(245,240,231,.72) !important; }
+.admin-shell .admin-sidebar .text-warm-gray { color: rgba(245,240,231,.72) !important; }
+.admin-shell .admin-sidebar .text-charcoal { color: #F5F0E7 !important; }
+.admin-shell .admin-section-title { color: #B79B60 !important; }
+.admin-shell .mini-label { color: #B79B60 !important; letter-spacing: .08em; }
+.dark .admin-shell .shadow-premium,
+.dark .admin-shell .shadow-soft,
+.dark .admin-shell .shadow-botanical { box-shadow: 0 22px 62px rgba(0,0,0,.22) !important; }
+
+/* Public dark-mode readability pass for panels that intentionally use the deep teal brand color. */
+.dark .bg-deepTeal.text-ivory,
+.dark .bg-deepTeal .text-ivory,
+.dark .bg-deepTeal .text-ivory\/72,
+.dark .bg-deepTeal .text-ivory\/75,
+.dark .bg-deepTeal .text-ivory\/80,
+.dark .bg-deep-teal.text-ivory,
+.dark .bg-deep-teal .text-ivory { color: #F5F0E7 !important; }

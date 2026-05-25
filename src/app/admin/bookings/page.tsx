@@ -290,7 +290,7 @@ export default function AdminBookingsPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-petrol/15 bg-petrol p-6 text-ivory shadow-botanical">
+          <div className="rounded-[2rem] border border-petrol/15 bg-petrol on-dark p-6 text-ivory shadow-botanical">
             <p className="text-sm font-black text-gold">تذكير إداري</p>
             <p className="mt-3 text-sm leading-7 text-ivory/80">
               لا تؤكدي أي حجز قبل مطابقة مرجع الدفع. بعد التأكيد تظهر الجلسة للمستخدم كموعد مثبت.

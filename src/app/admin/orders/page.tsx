@@ -179,12 +179,12 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-8">
-      <section className="paper-texture relative overflow-hidden rounded-[2.5rem] border border-gold/18 bg-petrol p-7 text-ivory shadow-botanical md:p-9">
+      <section className="paper-texture relative overflow-hidden admin-hero on-dark rounded-[2.5rem] border p-7 shadow-botanical md:p-9">
         <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-gold/18 blur-3xl" />
         <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-aqua/10 blur-3xl" />
         <div className="relative grid gap-8 xl:grid-cols-[1fr_390px] xl:items-end">
           <div>
-            <PremiumBadge variant="gold">Orders Command</PremiumBadge>
+            <PremiumBadge variant="gold">مركز الطلبات</PremiumBadge>
             <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight md:text-5xl">
               تأكيد المدفوعات وفتح الوصول بدون ارتباك.
             </h2>
@@ -193,7 +193,7 @@ export default function AdminOrdersPage() {
             </p>
           </div>
 
-          <div className="grid gap-3 rounded-[2rem] border border-white/10 bg-white/8 p-5 backdrop-blur-sm sm:grid-cols-2">
+          <div className="grid gap-3 rounded-[2rem] border border-[#F5F0E7]/15 bg-[#F5F0E7]/8 p-5 backdrop-blur-sm sm:grid-cols-2">
             <Metric label="إيرادات مؤكدة" value={formatEGP(stats.revenue)} />
             <Metric label="طلبات مدفوعة" value={stats.paid} />
             <Metric label="بيانات دفع" value={stats.submitted} />
@@ -390,7 +390,7 @@ function getTime(value: { toDate: () => Date } | Date) {
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/7 px-4 py-3">
-      <p className="text-[11px] font-bold text-ivory/58">{label}</p>
+      <p className="text-[11px] font-bold text-[#E4D7C7]">{label}</p>
       <p className="mt-1 text-2xl font-black text-gold">{value}</p>
     </div>
   )

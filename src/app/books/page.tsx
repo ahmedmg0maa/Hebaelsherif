@@ -210,7 +210,7 @@ export default function BooksPage() {
             </PremiumSection>
           ) : null}
 
-          <div className="mt-16 rounded-[2rem] border border-sand bg-petrol p-8 text-cream shadow-premium md:p-10">
+          <div className="mt-16 rounded-[2rem] border border-sand bg-petrol on-dark p-8 text-cream shadow-premium md:p-10">
             <BrandDivider className="mb-5 text-gold" />
             <div className="grid gap-8 lg:grid-cols-[1fr_320px] lg:items-center">
               <div>
