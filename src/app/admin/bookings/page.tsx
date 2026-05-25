@@ -2,12 +2,9 @@
 
 export const dynamic = 'force-dynamic'
 import { useEffect, useMemo, useState } from 'react'
-import { collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
-import {
-  BOOKING_STATUS_LABELS,
-  BOOKING_STATUS_STYLES,
-} from '@/constants/booking'
+import { BOOKING_STATUS_LABELS, BOOKING_STATUS_STYLES } from '@/constants/booking'
 import BrandDivider from '@/components/brand/BrandDivider'
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
@@ -29,6 +26,7 @@ export default function AdminBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [activeStatus, setActiveStatus] = useState<'all' | BookingStatus>('all')
   const [updatingId, setUpdatingId] = useState('')
+  const [actionError, setActionError] = useState('')
 
   async function loadBookings() {
     setLoading(true)
@@ -79,13 +77,29 @@ export default function AdminBookingsPage() {
 
   async function updateBookingStatus(bookingId: string, status: BookingStatus) {
     setUpdatingId(bookingId)
+    setActionError('')
+
+    const paymentStatus = getPaymentStatusForBookingStatus(status)
 
     try {
       await updateDoc(doc(db, 'bookings', bookingId), {
         status,
-        paymentStatus: status === 'confirmed' ? 'confirmed' : undefined,
+        paymentStatus,
         updatedAt: serverTimestamp(),
       })
+
+      try {
+        await addDoc(collection(db, 'admin_logs'), {
+          action: 'booking_status_updated',
+          targetType: 'booking',
+          targetId: bookingId,
+          status,
+          paymentStatus,
+          createdAt: serverTimestamp(),
+        })
+      } catch (logError) {
+        console.warn('Booking status updated, but admin log was not saved:', logError)
+      }
 
       setBookings((current) =>
         current.map((booking) =>
@@ -93,13 +107,16 @@ export default function AdminBookingsPage() {
             ? {
                 ...booking,
                 status,
-                paymentStatus: status === 'confirmed' ? 'confirmed' : booking.paymentStatus,
+                paymentStatus,
               }
             : booking,
         ),
       )
     } catch (error) {
       console.error('Update booking status error:', error)
+      setActionError(
+        'لم يتم تحديث حالة الحجز. تأكدي من صلاحيات الأدمن واتصال Firebase ثم حاولي مرة أخرى.',
+      )
     } finally {
       setUpdatingId('')
     }
@@ -145,6 +162,12 @@ export default function AdminBookingsPage() {
 
       <div className="grid gap-8 xl:grid-cols-[1fr_340px] xl:items-start">
         <section>
+          {actionError ? (
+            <div className="mb-5 rounded-2xl border border-burgundy/25 bg-burgundy/8 px-5 py-4 text-sm font-bold leading-7 text-burgundy">
+              {actionError}
+            </div>
+          ) : null}
+
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap gap-2">
               {statusOptions.map((option) => (
@@ -202,12 +225,21 @@ export default function AdminBookingsPage() {
                         <Info label="البريد" value={booking.email} ltr />
                         <Info label="تاريخ الطلب" value={formatArabicDate(booking.createdAt)} />
                         <Info label="المدة" value={`${booking.duration} دقيقة`} ltr />
-                        <Info label="الإجمالي" value={formatEGP(booking.finalAmount || booking.price || 0)} ltr accent />
+                        <Info
+                          label="الإجمالي"
+                          value={formatEGP(booking.finalAmount || booking.price || 0)}
+                          ltr
+                          accent
+                        />
                       </div>
 
                       <div className="mt-5 grid gap-3 rounded-2xl border border-sand bg-cream/70 p-4 text-sm md:grid-cols-3">
                         <Info label="طريقة الدفع" value={booking.paymentMethod || 'manual'} />
-                        <Info label="مرجع الدفع" value={booking.paymentReference || 'غير مضاف'} ltr />
+                        <Info
+                          label="مرجع الدفع"
+                          value={booking.paymentReference || 'غير مضاف'}
+                          ltr
+                        />
                         <Info label="كود الخصم" value={booking.couponCode || 'بدون'} />
                       </div>
 
@@ -239,7 +271,9 @@ export default function AdminBookingsPage() {
                         size="sm"
                         variant="outline"
                         className="w-full"
-                        disabled={updatingId === booking.id || booking.status === 'payment_submitted'}
+                        disabled={
+                          updatingId === booking.id || booking.status === 'payment_submitted'
+                        }
                         onClick={() => updateBookingStatus(booking.id, 'payment_submitted')}
                       >
                         بانتظار مراجعة الدفع
@@ -278,14 +312,22 @@ export default function AdminBookingsPage() {
           <div className="rounded-[2rem] border border-sand bg-ivory/88 p-5 shadow-soft backdrop-blur-sm">
             <p className="mini-label">الجلسات القادمة</p>
             <div className="mt-5 space-y-3">
-              {upcomingBookings.length > 0 ? upcomingBookings.map((booking) => (
-                <div key={booking.id} className="rounded-2xl border border-sand bg-cream/65 p-4">
-                  <p className="text-sm font-black text-charcoal">{booking.name}</p>
-                  <p className="mt-2 text-xs font-bold text-warm-gray latin-numerals">{booking.date} · {formatTime12h(booking.time)}</p>
-                  <p className="mt-2 text-xs font-bold text-petrol">{BOOKING_STATUS_LABELS[booking.status]}</p>
-                </div>
-              )) : (
-                <p className="rounded-2xl border border-sand bg-cream/65 p-4 text-sm leading-7 text-warm-gray">لا توجد جلسات قادمة حاليًا.</p>
+              {upcomingBookings.length > 0 ? (
+                upcomingBookings.map((booking) => (
+                  <div key={booking.id} className="rounded-2xl border border-sand bg-cream/65 p-4">
+                    <p className="text-sm font-black text-charcoal">{booking.name}</p>
+                    <p className="mt-2 text-xs font-bold text-warm-gray latin-numerals">
+                      {booking.date} · {formatTime12h(booking.time)}
+                    </p>
+                    <p className="mt-2 text-xs font-bold text-petrol">
+                      {BOOKING_STATUS_LABELS[booking.status]}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="rounded-2xl border border-sand bg-cream/65 p-4 text-sm leading-7 text-warm-gray">
+                  لا توجد جلسات قادمة حاليًا.
+                </p>
               )}
             </div>
           </div>
@@ -302,6 +344,13 @@ export default function AdminBookingsPage() {
   )
 }
 
+function getPaymentStatusForBookingStatus(status: BookingStatus): Booking['paymentStatus'] {
+  if (status === 'confirmed' || status === 'completed') return 'confirmed'
+  if (status === 'payment_submitted') return 'submitted'
+  if (status === 'cancelled') return 'failed'
+  return 'pending'
+}
+
 function AdminStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-sand bg-cream/60 p-4">
@@ -311,20 +360,47 @@ function AdminStat({ label, value }: { label: string; value: number }) {
   )
 }
 
-function AdminMetric({ label, value, ltr = false }: { label: string; value: string; ltr?: boolean }) {
+function AdminMetric({
+  label,
+  value,
+  ltr = false,
+}: {
+  label: string
+  value: string
+  ltr?: boolean
+}) {
   return (
     <div className="rounded-[1.5rem] border border-sand bg-cream/55 p-5 text-center">
       <p className="text-xs font-bold text-warm-gray">{label}</p>
-      <strong className={`mt-2 block text-2xl font-black text-charcoal ${ltr ? 'latin-numerals' : ''}`}>{value}</strong>
+      <strong
+        className={`mt-2 block text-2xl font-black text-charcoal ${ltr ? 'latin-numerals' : ''}`}
+      >
+        {value}
+      </strong>
     </div>
   )
 }
 
-function Info({ label, value, ltr = false, accent = false }: { label: string; value: string; ltr?: boolean; accent?: boolean }) {
+function Info({
+  label,
+  value,
+  ltr = false,
+  accent = false,
+}: {
+  label: string
+  value: string
+  ltr?: boolean
+  accent?: boolean
+}) {
   return (
     <p className="font-bold text-warm-gray">
-      {label}<br />
-      <strong className={`${accent ? 'text-petrol' : 'text-charcoal'} ${ltr ? 'latin-numerals' : ''}`}>{value}</strong>
+      {label}
+      <br />
+      <strong
+        className={`${accent ? 'text-petrol' : 'text-charcoal'} ${ltr ? 'latin-numerals' : ''}`}
+      >
+        {value}
+      </strong>
     </p>
   )
 }
