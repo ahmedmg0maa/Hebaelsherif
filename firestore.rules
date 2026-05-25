@@ -37,7 +37,9 @@ service cloud.firestore {
     }
 
     match /course_lessons/{lessonId} {
-      allow read: if true;
+      // Lesson documents may contain protected URLs. Public curriculum is served through
+      // /api/courses/[courseId]/lessons with sensitive fields stripped.
+      allow read: if isAdmin();
       allow create, update, delete: if isAdmin();
     }
 
