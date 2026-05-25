@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, orders })
   } catch (error) {
     console.error('Orders GET API error:', error)
-    return NextResponse.json({ error: 'تعذر تحميل الطلبات الآن.' }, { status: 500 })
+    return NextResponse.json({ error: 'لم نتمكن من تحميل الطلبات الآن.' }, { status: 500 })
   }
 }
 
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
     }))
 
     const paidOrder = existingOrders.find((order) => order.status === 'paid')
-    const pendingOrder = existingOrders.find((order) => order.status === 'pending')
+    const pendingOrder = existingOrders.find((order) => ['pending', 'awaiting_payment', 'payment_submitted'].includes(order.status || ''))
 
     if (paidOrder) {
       return NextResponse.json({
@@ -134,14 +134,15 @@ export async function POST(req: NextRequest) {
       productId,
       productType,
       amount,
-      status: 'pending',
+      status: paymentReference ? 'payment_submitted' : 'awaiting_payment',
+      paymentStatus: paymentReference ? 'submitted' : 'pending',
       paymentMethod: paymentMethod || 'manual',
       paymentReference,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     })
 
-    return NextResponse.json({ success: true, orderId: orderRef.id, status: 'pending' })
+    return NextResponse.json({ success: true, orderId: orderRef.id, status: paymentReference ? 'payment_submitted' : 'awaiting_payment' })
   } catch (error) {
     console.error('Orders POST API error:', error)
     return NextResponse.json({ error: 'تعذر إنشاء طلب الشراء الآن.' }, { status: 500 })

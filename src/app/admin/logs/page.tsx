@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 export default function AdminLogsPage() {
   const plannedLogs = [
     'تغيير حالة الطلب',

@@ -1,5 +1,6 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useEffect, useMemo, useState } from 'react'
 import { collection, doc, getDocs, updateDoc } from 'firebase/firestore'
 import AdminPageShell from '@/components/admin/AdminPageShell'

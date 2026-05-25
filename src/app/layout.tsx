@@ -13,27 +13,40 @@ export const metadata: Metadata = {
     template: '%s — هبة الشريف',
   },
   description:
-    'مساحة عربية هادئة للوضوح العاطفي، الكورسات العملية، الكتب الرقمية، وجلسات الكوتشنج الفردية.',
+    'رحلة وعي تعيدك إلى ذاتك عبر كورسات عملية، كتب رقمية، وجلسات كوتشنج فردية في مساحة عربية فاخرة وهادئة.',
   metadataBase: new URL(appUrl),
   applicationName: 'هبة الشريف',
   authors: [{ name: 'Heba ElSherif' }],
-  keywords: ['هبة الشريف', 'كوتشنج', 'كورسات نفسية', 'وعي عاطفي', 'كتب رقمية', 'جلسات فردية'],
+  keywords: ['هبة الشريف', 'نقطة وعي', 'كوتشنج', 'وعي بالذات', 'وعي عاطفي', 'كتب رقمية', 'جلسات فردية'],
   verification: googleVerification ? { google: googleVerification } : undefined,
   openGraph: {
     title: 'هبة الشريف — منصة التحوّل العاطفي',
-    description: 'رحلة عربية هادئة وعميقة نحو الوعي العاطفي، العلاقات الصحية، والنمو الشخصي.',
+    description: 'نقطة وعي عربية فاخرة للكوتشنج، الوعي بالذات، الكتب، والجلسات الهادئة.',
     url: appUrl,
     siteName: 'هبة الشريف',
     locale: 'ar_EG',
     type: 'website',
+    images: [
+      {
+        url: '/images/brand/og-brand.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'هبة الشريف — منصة التحوّل العاطفي',
-    description: 'كورسات، كتب، وجلسات فردية في تجربة عربية هادئة.',
+    description: 'كورسات، كتب، وجلسات فردية في تجربة عربية فاخرة وهادئة.',
+    images: ['/images/brand/og-brand.jpg'],
   },
   robots: { index: true, follow: true },
   manifest: '/site.webmanifest',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
@@ -41,8 +54,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FBF4EE' },
-    { media: '(prefers-color-scheme: dark)', color: '#181418' },
+    { media: '(prefers-color-scheme: light)', color: '#F5F0E7' },
+    { media: '(prefers-color-scheme: dark)', color: '#0F3237' },
   ],
 }
 

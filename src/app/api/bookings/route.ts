@@ -261,6 +261,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, bookingId: bookingRef.id })
   } catch (error) {
     console.error('Booking API error:', error)
-    return NextResponse.json({ error: 'حدث خطأ أثناء إرسال طلب الحجز. حاولي مرة أخرى.' }, { status: 500 })
+    return NextResponse.json({ error: 'لم نتمكن من إرسال طلب الحجز الآن. حاولي مرة أخرى.' }, { status: 500 })
   }
 }

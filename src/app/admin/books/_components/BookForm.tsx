@@ -87,7 +87,7 @@ export default function BookForm({ initialValues, submitLabel, loading = false, 
       })
     } catch (submitError) {
       console.error('Book form submit error:', submitError)
-      setError('حدث خطأ أثناء حفظ الكتاب. تأكد من البيانات وحاول مرة أخرى.')
+      setError('لم يتم حفظ الكتاب الآن. راجعي البيانات وحاولي مرة أخرى.')
     } finally {
       setSubmitting(false)
     }
@@ -99,7 +99,7 @@ export default function BookForm({ initialValues, submitLabel, loading = false, 
         <p className="mini-label">Book Builder</p>
         <h2 className="mt-3 text-2xl font-black text-charcoal">بيانات الكتاب</h2>
         <p className="mt-3 text-sm leading-8 text-warm-gray">
-          أضف بيانات الكتاب العامة ورابط Google Drive الداخلي. رابط فتح الكتاب النهائي يمكن ربطه من صفحة المحتوى المحمي.
+          أضيفي بيانات الكتاب العامة ورابط Google Drive الداخلي. رابط فتح الكتاب النهائي يمكن ربطه من صفحة المحتوى المحمي.
         </p>
       </div>
 
@@ -123,7 +123,7 @@ export default function BookForm({ initialValues, submitLabel, loading = false, 
           <input className="premium-input" type="number" min={0} value={pagesCount} onChange={(event) => setPagesCount(event.target.value)} placeholder="120" />
         </PremiumFormField>
         <PremiumFormField label="رابط صورة الغلاف">
-          <input className="premium-input" dir="ltr" value={coverImageUrl} onChange={(event) => setCoverImageUrl(event.target.value)} placeholder="https://..." />
+          <input className="premium-input" dir="ltr" value={coverImageUrl} onChange={(event) => setCoverImageUrl(event.target.value)} placeholder="رابط غلاف حقيقي أو اتركيه فارغًا لظهور placeholder فاخر" />
         </PremiumFormField>
         <PremiumFormField label="رابط ملف Google Drive" hint="رابط داخلي للنسخة الأصلية أو ملف القراءة.">
           <input className="premium-input" dir="ltr" value={driveFileUrl} onChange={(event) => setDriveFileUrl(event.target.value)} placeholder="https://drive.google.com/..." />

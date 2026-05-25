@@ -4,9 +4,8 @@ import Footer from '@/components/layout/Footer'
 import PremiumButton from '@/components/ui/PremiumButton'
 import { ARTICLES } from '@/constants/content'
 
-export function generateStaticParams() {
-  return ARTICLES.map((article) => ({ slug: article.slug }))
-}
+export const dynamic = 'force-dynamic'
+
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const article = ARTICLES.find((item) => item.slug === params.slug)

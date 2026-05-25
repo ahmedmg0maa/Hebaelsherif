@@ -1,5 +1,6 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -10,6 +11,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  setDoc,
   where,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
@@ -25,6 +27,7 @@ export default function EditBookPage() {
 
   const [loading, setLoading] = useState(true)
   const [book, setBook] = useState<Book | null>(null)
+  const [protectedContentUrl, setProtectedContentUrl] = useState('')
 
   useEffect(() => {
     if (!bookId) return
@@ -32,7 +35,10 @@ export default function EditBookPage() {
     async function loadBook() {
       setLoading(true)
 
-      const bookSnap = await getDoc(doc(db, 'books', bookId))
+      const [bookSnap, protectedSnap] = await Promise.all([
+        getDoc(doc(db, 'books', bookId)),
+        getDoc(doc(db, 'protected_content', `book_${bookId}`)),
+      ])
 
       if (!bookSnap.exists()) {
         setBook(null)
@@ -44,6 +50,7 @@ export default function EditBookPage() {
         id: bookSnap.id,
         ...bookSnap.data(),
       } as Book)
+      setProtectedContentUrl(protectedSnap.exists() ? String(protectedSnap.data().contentUrl || '') : '')
 
       setLoading(false)
     }
@@ -65,10 +72,21 @@ export default function EditBookPage() {
       throw new Error('Slug already exists')
     }
 
+    const { driveFileUrl, ...bookValues } = values
+
     await updateDoc(doc(db, 'books', bookId), {
-      ...values,
+      ...bookValues,
       updatedAt: serverTimestamp(),
     })
+
+    if (driveFileUrl) {
+      await setDoc(doc(db, 'protected_content', `book_${bookId}`), {
+        productId: bookId,
+        productType: 'book',
+        contentUrl: driveFileUrl,
+        updatedAt: serverTimestamp(),
+      }, { merge: true })
+    }
 
     router.push('/admin/books')
     router.refresh()
@@ -116,7 +134,7 @@ export default function EditBookPage() {
           price: book.price,
           status: book.status,
           coverImageUrl: book.coverImageUrl,
-          driveFileUrl: book.driveFileUrl,
+          driveFileUrl: protectedContentUrl,
           pagesCount: book.pagesCount,
         }}
         onSubmit={handleUpdateBook}

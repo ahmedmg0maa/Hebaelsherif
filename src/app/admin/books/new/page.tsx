@@ -1,7 +1,8 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useRouter } from 'next/navigation'
-import { addDoc, collection, getDocs, query, serverTimestamp, where } from 'firebase/firestore'
+import { addDoc, collection, doc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
 import BookForm, { BookFormValues } from '../_components/BookForm'
 
@@ -17,12 +18,23 @@ export default function NewBookPage() {
       throw new Error('Slug already exists')
     }
 
-    await addDoc(collection(db, 'books'), {
-      ...values,
-      rating: 5,
+    const { driveFileUrl, ...bookValues } = values
+
+    const bookRef = await addDoc(collection(db, 'books'), {
+      ...bookValues,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
+
+    if (driveFileUrl) {
+      await setDoc(doc(db, 'protected_content', `book_${bookRef.id}`), {
+        productId: bookRef.id,
+        productType: 'book',
+        contentUrl: driveFileUrl,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
+    }
 
     router.push('/admin/books')
     router.refresh()
@@ -34,8 +46,8 @@ export default function NewBookPage() {
         <p className="mb-2 text-sm font-bold text-gold">إضافة كتاب</p>
         <h2 className="text-3xl font-black text-charcoal">إنشاء كتاب جديد</h2>
         <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
-          أضف بيانات الكتاب العامة التي تظهر في صفحات الزوار. رابط ملف الكتاب نفسه سيتم إدارته
-          لاحقًا من نظام المحتوى المحمي.
+          أضيفي بيانات الكتاب العامة التي تظهر في صفحات الزوار. رابط ملف الكتاب نفسه سيتم إدارته
+          من نظام المحتوى المحمي عند اكتمال الإعداد.
         </p>
       </div>
 

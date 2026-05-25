@@ -1,33 +1,30 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
-import { db } from '@/lib/firebase/client'
-import { useAuth } from '@/hooks/useAuth'
+import BrandOrnament from '@/components/brand/BrandOrnament'
+import ImageSlot from '@/components/ui/ImageSlot'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
+import { db } from '@/lib/firebase/client'
+import { useAuth } from '@/hooks/useAuth'
 import type { Book, Order } from '@/types'
 
 export default function DashboardBooksPage() {
   const { user } = useAuth()
-
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState<Book[]>([])
 
   useEffect(() => {
     const userId = user?.uid
-
     if (!userId) return
 
     async function loadBooks() {
       setLoading(true)
 
-      const ordersSnap = await getDocs(
-        query(collection(db, 'orders'), where('userId', '==', userId)),
-      )
-
+      const ordersSnap = await getDocs(query(collection(db, 'orders'), where('userId', '==', userId)))
       const paidBookOrders = ordersSnap.docs
         .map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Order)
         .filter((order) => order.productType === 'book' && order.status === 'paid')
@@ -35,13 +32,8 @@ export default function DashboardBooksPage() {
       const ownedBooks = await Promise.all(
         paidBookOrders.map(async (order) => {
           const bookSnap = await getDoc(doc(db, 'books', order.productId))
-
           if (!bookSnap.exists()) return null
-
-          return {
-            id: bookSnap.id,
-            ...bookSnap.data(),
-          } as Book
+          return { id: bookSnap.id, ...bookSnap.data() } as Book
         }),
       )
 
@@ -68,9 +60,9 @@ export default function DashboardBooksPage() {
   if (books.length === 0) {
     return (
       <PremiumEmptyState
-        icon="📖"
-        title="كتب جديدة تُحضَّر بهدوء"
-        description="بعد تأكيد شراء أي كتاب، سيظهر هنا ويمكنك الوصول إليه من لوحة حسابك."
+        icon="☾"
+        title="مكتبتك الهادئة تنتظر أول كتاب"
+        description="بعد تأكيد شراء أي كتاب، سيظهر هنا ويمكنك فتحه من مساحة القراءة الخاصة بك."
         actionLabel="استكشفي الكتب"
         actionHref="/books"
       />
@@ -78,45 +70,39 @@ export default function DashboardBooksPage() {
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <p className="mb-2 text-sm font-bold text-gold">كتبي</p>
-        <h2 className="text-3xl font-black text-charcoal">الكتب المتاحة لكِ</h2>
-      </div>
+    <div className="space-y-8">
+      <section className="premium-glow-border rounded-[2.5rem] border border-sand bg-ivory/90 p-6 shadow-premium backdrop-blur-sm lg:p-8">
+        <BrandOrnament className="mb-5" />
+        <p className="mini-label mb-3">كتبي</p>
+        <h2 className="text-4xl font-black leading-tight text-petrol md:text-5xl">مكتبة وعي شخصية</h2>
+        <p className="mt-4 max-w-2xl text-sm leading-8 text-warm-gray">
+          كل كتاب مؤكد يظهر هنا كمساحة قراءة محفوظة يمكنك العودة إليها وقتما أردتِ.
+        </p>
+      </section>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {books.map((book) => (
           <Link
             key={book.id}
             href={`/books/${book.slug}/read`}
-            className="group overflow-hidden rounded-3xl border border-sand bg-ivory shadow-soft transition hover:-translate-y-1 hover:shadow-premium"
+            className="group rounded-[2.25rem] border border-sand bg-ivory/90 p-4 shadow-soft backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-premium"
           >
-            <div className="relative aspect-[3/4] bg-sand">
-              {book.coverImageUrl ? (
-                <Image
-                  src={book.coverImageUrl}
-                  alt={book.title}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-sm font-bold text-warm-gray">
-                  غلاف الكتاب
-                </div>
-              )}
-            </div>
-
-            <div className="p-5">
-              <h3 className="text-lg font-black text-charcoal">{book.title}</h3>
-
-              <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">
-                {book.shortDescription}
-              </p>
-
-              <span className="mt-5 inline-block text-sm font-bold text-petrol">
-                افتحي الكتاب ←
+            <ImageSlot
+              src={book.coverImageUrl}
+              alt={book.title}
+              ratio="book"
+              variant="book"
+              label="غلاف الكتاب"
+              hint="غلاف الكتاب الحقيقي يظهر هنا."
+              className="mx-auto max-w-[260px]"
+            />
+            <div className="p-3 pt-5">
+              <span className="rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-xs font-black text-gold">
+                {book.pagesCount ? `${book.pagesCount} صفحة` : book.category || 'كتاب رقمي'}
               </span>
+              <h3 className="mt-4 text-xl font-black text-charcoal transition group-hover:text-petrol">{book.title}</h3>
+              <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">{book.shortDescription}</p>
+              <span className="mt-5 inline-block text-sm font-black text-petrol">افتحي الكتاب ←</span>
             </div>
           </Link>
         ))}

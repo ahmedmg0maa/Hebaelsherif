@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       paymentProofUrl,
       paymentNote: note,
       status: 'payment_submitted',
+      paymentStatus: 'submitted',
       updatedAt: Timestamp.now(),
     })
 
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
       action: 'payment_proof_submitted',
       targetType: 'order',
       targetId: orderId,
-      after: { paymentReference, paymentProofUrl },
+      after: { paymentReference, paymentProofUrl, status: 'payment_submitted' },
       createdAt: Timestamp.now(),
     })
 

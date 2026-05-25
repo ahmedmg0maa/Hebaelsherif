@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Timestamp } from 'firebase-admin/firestore'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
 
+export const dynamic = 'force-dynamic'
+
 function clean(value: unknown) {
   return typeof value === 'string' ? value.trim() : ''
 }

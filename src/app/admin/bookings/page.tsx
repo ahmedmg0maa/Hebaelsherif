@@ -1,5 +1,6 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useEffect, useMemo, useState } from 'react'
 import { collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
@@ -7,6 +8,7 @@ import {
   BOOKING_STATUS_LABELS,
   BOOKING_STATUS_STYLES,
 } from '@/constants/booking'
+import BrandDivider from '@/components/brand/BrandDivider'
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
@@ -51,6 +53,25 @@ export default function AdminBookingsPage() {
     })
   }, [])
 
+  const stats = useMemo(() => {
+    return {
+      total: bookings.length,
+      submitted: bookings.filter((booking) => booking.status === 'payment_submitted').length,
+      confirmed: bookings.filter((booking) => booking.status === 'confirmed').length,
+      revenue: bookings
+        .filter((booking) => booking.status === 'confirmed' || booking.status === 'completed')
+        .reduce((sum, booking) => sum + Number(booking.finalAmount || booking.price || 0), 0),
+    }
+  }, [bookings])
+
+  const upcomingBookings = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10)
+    return bookings
+      .filter((booking) => booking.status !== 'cancelled' && booking.date >= today)
+      .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
+      .slice(0, 5)
+  }, [bookings])
+
   const filteredBookings = useMemo(() => {
     if (activeStatus === 'all') return bookings
     return bookings.filter((booking) => booking.status === activeStatus)
@@ -62,6 +83,7 @@ export default function AdminBookingsPage() {
     try {
       await updateDoc(doc(db, 'bookings', bookingId), {
         status,
+        paymentStatus: status === 'confirmed' ? 'confirmed' : undefined,
         updatedAt: serverTimestamp(),
       })
 
@@ -71,6 +93,7 @@ export default function AdminBookingsPage() {
             ? {
                 ...booking,
                 status,
+                paymentStatus: status === 'confirmed' ? 'confirmed' : booking.paymentStatus,
               }
             : booking,
         ),
@@ -94,155 +117,223 @@ export default function AdminBookingsPage() {
 
   return (
     <div>
-      <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="mb-2 text-sm font-bold text-gold">إدارة الحجوزات</p>
-          <h2 className="text-3xl font-black text-charcoal">طلبات حجز الجلسات</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">
-            من هنا يتم تأكيد الجلسات، إلغاؤها، أو تحديدها كمكتملة.
-          </p>
+      <div className="mb-8 overflow-hidden rounded-[2.75rem] border border-sand bg-ivory/82 p-6 shadow-premium backdrop-blur-sm md:p-8">
+        <div className="grid gap-6 xl:grid-cols-[1fr_360px] xl:items-center">
+          <div>
+            <p className="mini-label">إدارة الحجوزات</p>
+            <h2 className="mt-3 text-4xl font-black text-charcoal">جلسات هبة الخاصة</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-8 text-warm-gray">
+              راجعي بيانات الدفع، ثبتي المواعيد، وتابعي الجلسات القادمة من مكان واحد بنظام واضح.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+            <AdminStat label="إجمالي الحجوزات" value={stats.total} />
+            <AdminStat label="بانتظار مراجعة الدفع" value={stats.submitted} />
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {statusOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setActiveStatus(option.value)}
-              className={`rounded-full px-4 py-2 text-xs font-bold transition ${
-                activeStatus === option.value
-                  ? 'bg-petrol text-cream'
-                  : 'border border-sand bg-ivory text-warm-gray hover:text-petrol'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
+        <BrandDivider className="my-7" />
+
+        <div className="grid gap-4 md:grid-cols-4">
+          <AdminMetric label="كل الطلبات" value={stats.total.toString()} />
+          <AdminMetric label="تحتاج مراجعة" value={stats.submitted.toString()} />
+          <AdminMetric label="مؤكدة" value={stats.confirmed.toString()} />
+          <AdminMetric label="إيراد مؤكد" value={formatEGP(stats.revenue)} ltr />
         </div>
       </div>
 
-      {filteredBookings.length === 0 ? (
-        <PremiumEmptyState
-          icon="📅"
-          title="لا توجد حجوزات"
-          description="عندما يرسل المستخدم طلب حجز جلسة، سيظهر هنا."
-        />
-      ) : (
-        <div className="space-y-4">
-          {filteredBookings.map((booking) => (
-            <article
-              key={booking.id}
-              className="rounded-3xl border border-sand bg-ivory p-6 shadow-soft"
-            >
-              <div className="grid gap-6 xl:grid-cols-[1fr_260px] xl:items-center">
-                <div>
-                  <span
-                    className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${
-                      BOOKING_STATUS_STYLES[booking.status]
-                    }`}
-                  >
-                    {BOOKING_STATUS_LABELS[booking.status]}
-                  </span>
+      <div className="grid gap-8 xl:grid-cols-[1fr_340px] xl:items-start">
+        <section>
+          <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {statusOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setActiveStatus(option.value)}
+                  className={`rounded-full px-4 py-2 text-xs font-black transition ${
+                    activeStatus === option.value
+                      ? 'bg-petrol text-ivory'
+                      : 'border border-sand bg-ivory text-warm-gray hover:text-petrol'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-                  <h3 className="mt-4 text-xl font-black text-charcoal">جلسة فردية</h3>
+          {filteredBookings.length === 0 ? (
+            <PremiumEmptyState
+              icon="📅"
+              title="لا توجد حجوزات"
+              description="عندما يرسل المستخدم طلب حجز جلسة، سيظهر هنا."
+            />
+          ) : (
+            <div className="space-y-4">
+              {filteredBookings.map((booking) => (
+                <article
+                  key={booking.id}
+                  className="rounded-[2rem] border border-sand bg-ivory/88 p-6 shadow-soft backdrop-blur-sm transition hover:-translate-y-0.5 hover:shadow-premium"
+                >
+                  <div className="grid gap-6 2xl:grid-cols-[1fr_240px] 2xl:items-center">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span
+                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${
+                            BOOKING_STATUS_STYLES[booking.status]
+                          }`}
+                        >
+                          {BOOKING_STATUS_LABELS[booking.status]}
+                        </span>
+                        <span className="rounded-full border border-sand bg-cream/70 px-3 py-1 text-xs font-bold text-warm-gray latin-numerals">
+                          {booking.date} · {formatTime12h(booking.time)}
+                        </span>
+                      </div>
 
-                  <div className="mt-3 grid gap-2 text-sm leading-7 text-warm-gray md:grid-cols-2">
-                    <p>
-                      العميل: <strong className="text-charcoal">{booking.name}</strong>
-                    </p>
+                      <h3 className="mt-4 text-2xl font-black text-charcoal">
+                        {booking.duration === 90 ? 'جلسة عميقة 90 دقيقة' : 'جلسة فردية 60 دقيقة'}
+                      </h3>
 
-                    <p>
-                      الهاتف: <strong className="text-charcoal">{booking.phone}</strong>
-                    </p>
+                      <div className="mt-4 grid gap-3 text-sm leading-7 text-warm-gray md:grid-cols-2 xl:grid-cols-3">
+                        <Info label="العميل" value={booking.name} />
+                        <Info label="الهاتف" value={booking.phone} ltr />
+                        <Info label="البريد" value={booking.email} ltr />
+                        <Info label="تاريخ الطلب" value={formatArabicDate(booking.createdAt)} />
+                        <Info label="المدة" value={`${booking.duration} دقيقة`} ltr />
+                        <Info label="الإجمالي" value={formatEGP(booking.finalAmount || booking.price || 0)} ltr accent />
+                      </div>
 
-                    <p>
-                      البريد: <strong className="text-charcoal">{booking.email}</strong>
-                    </p>
+                      <div className="mt-5 grid gap-3 rounded-2xl border border-sand bg-cream/70 p-4 text-sm md:grid-cols-3">
+                        <Info label="طريقة الدفع" value={booking.paymentMethod || 'manual'} />
+                        <Info label="مرجع الدفع" value={booking.paymentReference || 'غير مضاف'} ltr />
+                        <Info label="كود الخصم" value={booking.couponCode || 'بدون'} />
+                      </div>
 
-                    <p>
-                      التاريخ: <strong className="text-charcoal">{booking.date}</strong>
-                    </p>
-
-                    <p>
-                      الوقت: <strong className="text-charcoal latin-numerals">{formatTime12h(booking.time)}</strong>
-                    </p>
-
-                    <p>
-                      المدة:{' '}
-                      <strong className="text-charcoal latin-numerals">{booking.duration} دقيقة</strong>
-                    </p>
-
-                    <p>
-                      تاريخ الطلب:{' '}
-                      <strong className="text-charcoal">
-                        {formatArabicDate(booking.createdAt)}
-                      </strong>
-                    </p>
-                  </div>
-
-                  <div className="mt-4 grid gap-3 rounded-2xl border border-sand bg-cream/70 p-4 text-sm md:grid-cols-3">
-                    <p className="font-bold text-warm-gray">الإجمالي<br /><strong className="text-petrol latin-numerals">{formatEGP(booking.finalAmount || booking.price || 0)}</strong></p>
-                    <p className="font-bold text-warm-gray">طريقة الدفع<br /><strong className="text-charcoal">{booking.paymentMethod || 'manual'}</strong></p>
-                    <p className="font-bold text-warm-gray">مرجع الدفع<br /><strong className="text-charcoal latin-numerals">{booking.paymentReference || 'غير مضاف'}</strong></p>
-                  </div>
-
-                  {booking.notes ? (
-                    <div className="mt-4 rounded-2xl border border-sand bg-cream px-4 py-3">
-                      <p className="text-xs font-bold text-warm-gray">ملاحظات العميل</p>
-                      <p className="mt-2 text-sm leading-7 text-charcoal">{booking.notes}</p>
+                      {booking.notes || booking.paymentNote ? (
+                        <div className="mt-4 grid gap-3 md:grid-cols-2">
+                          {booking.notes ? (
+                            <NoteBox title="ملاحظات العميل" text={booking.notes} />
+                          ) : null}
+                          {booking.paymentNote ? (
+                            <NoteBox title="ملاحظة الدفع" text={booking.paymentNote} />
+                          ) : null}
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
+
+                    <div className="grid gap-2">
+                      <PremiumButton
+                        type="button"
+                        size="sm"
+                        className="w-full"
+                        disabled={updatingId === booking.id || booking.status === 'confirmed'}
+                        onClick={() => updateBookingStatus(booking.id, 'confirmed')}
+                      >
+                        تأكيد الحجز
+                      </PremiumButton>
+
+                      <PremiumButton
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="w-full"
+                        disabled={updatingId === booking.id || booking.status === 'payment_submitted'}
+                        onClick={() => updateBookingStatus(booking.id, 'payment_submitted')}
+                      >
+                        بانتظار مراجعة الدفع
+                      </PremiumButton>
+
+                      <PremiumButton
+                        type="button"
+                        size="sm"
+                        variant="gold"
+                        className="w-full"
+                        disabled={updatingId === booking.id || booking.status === 'completed'}
+                        onClick={() => updateBookingStatus(booking.id, 'completed')}
+                      >
+                        تحديد كمكتملة
+                      </PremiumButton>
+
+                      <PremiumButton
+                        type="button"
+                        size="sm"
+                        variant="danger"
+                        className="w-full"
+                        disabled={updatingId === booking.id || booking.status === 'cancelled'}
+                        onClick={() => updateBookingStatus(booking.id, 'cancelled')}
+                      >
+                        إلغاء الحجز
+                      </PremiumButton>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <aside className="space-y-5 xl:sticky xl:top-28">
+          <div className="rounded-[2rem] border border-sand bg-ivory/88 p-5 shadow-soft backdrop-blur-sm">
+            <p className="mini-label">الجلسات القادمة</p>
+            <div className="mt-5 space-y-3">
+              {upcomingBookings.length > 0 ? upcomingBookings.map((booking) => (
+                <div key={booking.id} className="rounded-2xl border border-sand bg-cream/65 p-4">
+                  <p className="text-sm font-black text-charcoal">{booking.name}</p>
+                  <p className="mt-2 text-xs font-bold text-warm-gray latin-numerals">{booking.date} · {formatTime12h(booking.time)}</p>
+                  <p className="mt-2 text-xs font-bold text-petrol">{BOOKING_STATUS_LABELS[booking.status]}</p>
                 </div>
+              )) : (
+                <p className="rounded-2xl border border-sand bg-cream/65 p-4 text-sm leading-7 text-warm-gray">لا توجد جلسات قادمة حاليًا.</p>
+              )}
+            </div>
+          </div>
 
-                <div className="grid gap-2">
-                  <PremiumButton
-                    type="button"
-                    size="sm"
-                    className="w-full"
-                    disabled={updatingId === booking.id || booking.status === 'confirmed'}
-                    onClick={() => updateBookingStatus(booking.id, 'confirmed')}
-                  >
-                    تأكيد الحجز
-                  </PremiumButton>
+          <div className="rounded-[2rem] border border-petrol/15 bg-petrol p-6 text-ivory shadow-botanical">
+            <p className="text-sm font-black text-gold">تذكير إداري</p>
+            <p className="mt-3 text-sm leading-7 text-ivory/80">
+              لا تؤكدي أي حجز قبل مطابقة مرجع الدفع. بعد التأكيد تظهر الجلسة للمستخدم كموعد مثبت.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
 
-                  <PremiumButton
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    className="w-full"
-                    disabled={updatingId === booking.id || booking.status === 'pending'}
-                    onClick={() => updateBookingStatus(booking.id, 'pending')}
-                  >
-                    إرجاع لانتظار التأكيد
-                  </PremiumButton>
+function AdminStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border border-sand bg-cream/60 p-4">
+      <p className="text-xs font-bold text-warm-gray">{label}</p>
+      <strong className="mt-2 block text-3xl font-black text-petrol latin-numerals">{value}</strong>
+    </div>
+  )
+}
 
-                  <PremiumButton
-                    type="button"
-                    size="sm"
-                    variant="gold"
-                    className="w-full"
-                    disabled={updatingId === booking.id || booking.status === 'completed'}
-                    onClick={() => updateBookingStatus(booking.id, 'completed')}
-                  >
-                    تحديد كمكتملة
-                  </PremiumButton>
+function AdminMetric({ label, value, ltr = false }: { label: string; value: string; ltr?: boolean }) {
+  return (
+    <div className="rounded-[1.5rem] border border-sand bg-cream/55 p-5 text-center">
+      <p className="text-xs font-bold text-warm-gray">{label}</p>
+      <strong className={`mt-2 block text-2xl font-black text-charcoal ${ltr ? 'latin-numerals' : ''}`}>{value}</strong>
+    </div>
+  )
+}
 
-                  <PremiumButton
-                    type="button"
-                    size="sm"
-                    variant="danger"
-                    className="w-full"
-                    disabled={updatingId === booking.id || booking.status === 'cancelled'}
-                    onClick={() => updateBookingStatus(booking.id, 'cancelled')}
-                  >
-                    إلغاء الحجز
-                  </PremiumButton>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
+function Info({ label, value, ltr = false, accent = false }: { label: string; value: string; ltr?: boolean; accent?: boolean }) {
+  return (
+    <p className="font-bold text-warm-gray">
+      {label}<br />
+      <strong className={`${accent ? 'text-petrol' : 'text-charcoal'} ${ltr ? 'latin-numerals' : ''}`}>{value}</strong>
+    </p>
+  )
+}
+
+function NoteBox({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="rounded-2xl border border-sand bg-cream px-4 py-3">
+      <p className="text-xs font-bold text-warm-gray">{title}</p>
+      <p className="mt-2 text-sm leading-7 text-charcoal">{text}</p>
     </div>
   )
 }

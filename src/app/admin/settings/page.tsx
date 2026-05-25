@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import AdminPageShell from '@/components/admin/AdminPageShell'
 import AdminSettingsConsole from '@/components/admin/AdminSettingsConsole'
 import type { AdminControlSection } from '@/lib/admin/controlData'
@@ -30,7 +31,7 @@ const sections = [
   },
   {
     title: "أماكن الصور",
-    description: "اتركيها فارغة الآن، وأضيفي روابط الصور لاحقًا من Drive أو CDN أو Firebase Storage.",
+    description: "اتركيها فارغة حتى تتوفر روابط صور معتمدة من Drive أو CDN أو Firebase Storage.",
     fields: [
       {key: "heroImageUrl", label: "صورة Hero", type: "url", placeholder: "https://...", wide: true},
       {key: "aboutImageUrl", label: "صورة عن هبة", type: "url", placeholder: "https://...", wide: true},

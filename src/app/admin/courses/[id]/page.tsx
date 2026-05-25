@@ -1,5 +1,6 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -12,6 +13,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  setDoc,
   where,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
@@ -28,15 +30,17 @@ export default function EditCoursePage() {
   const [loading, setLoading] = useState(true)
   const [course, setCourse] = useState<Course | null>(null)
   const [lessons, setLessons] = useState<Lesson[]>([])
+  const [protectedContentUrl, setProtectedContentUrl] = useState('')
 
   useEffect(() => {
     if (!courseId) return
 
     async function loadCourse() {
       setLoading(true)
-      const [courseSnap, lessonsSnap] = await Promise.all([
+      const [courseSnap, lessonsSnap, protectedSnap] = await Promise.all([
         getDoc(doc(db, 'courses', courseId)),
         getDocs(query(collection(db, 'course_lessons'), where('courseId', '==', courseId))),
+        getDoc(doc(db, 'protected_content', `course_${courseId}`)),
       ])
 
       if (!courseSnap.exists()) {
@@ -47,6 +51,7 @@ export default function EditCoursePage() {
 
       setCourse({ id: courseSnap.id, ...courseSnap.data() } as Course)
       setLessons(lessonsSnap.docs.map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Lesson).sort((a, b) => a.order - b.order))
+      setProtectedContentUrl(protectedSnap.exists() ? String(protectedSnap.data().contentUrl || '') : '')
       setLoading(false)
     }
 
@@ -61,13 +66,22 @@ export default function EditCoursePage() {
     const duplicateDoc = duplicateSlugSnap.docs.find((docItem) => docItem.id !== courseId)
     if (duplicateDoc) throw new Error('Slug already exists')
 
-    const { lessons: nextLessons, ...courseValues } = values
+    const { lessons: nextLessons, driveFolderUrl, ...courseValues } = values
 
     await updateDoc(doc(db, 'courses', courseId), {
       ...courseValues,
       lessonsCount: values.lessonsCount || nextLessons.length,
       updatedAt: serverTimestamp(),
     })
+
+    if (driveFolderUrl) {
+      await setDoc(doc(db, 'protected_content', `course_${courseId}`), {
+        productId: courseId,
+        productType: 'course',
+        contentUrl: driveFolderUrl,
+        updatedAt: serverTimestamp(),
+      }, { merge: true })
+    }
 
     const oldLessonsSnap = await getDocs(query(collection(db, 'course_lessons'), where('courseId', '==', courseId)))
     await Promise.all(oldLessonsSnap.docs.map((docItem) => deleteDoc(doc(db, 'course_lessons', docItem.id))))
@@ -123,7 +137,7 @@ export default function EditCoursePage() {
           price: course.price,
           status: course.status,
           coverImageUrl: course.coverImageUrl,
-          driveFolderUrl: course.driveFolderUrl,
+          driveFolderUrl: protectedContentUrl,
           previewVideoUrl: course.previewVideoUrl,
           level: course.level,
           lessons: lessons.map((lesson) => ({

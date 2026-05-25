@@ -1,5 +1,6 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { FormEvent, useState } from 'react'
 import { FirebaseError } from 'firebase/app'
 import AuthShell from '@/components/auth/AuthShell'
@@ -9,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth'
 
 function getArabicFirebaseError(error: unknown) {
   if (!(error instanceof FirebaseError)) {
-    return 'حدث خطأ غير متوقع. حاولي مرة أخرى.'
+    return 'لم تكتمل العملية الآن. حاولي مرة أخرى.'
   }
 
   const messages: Record<string, string> = {
