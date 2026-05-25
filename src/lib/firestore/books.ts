@@ -9,6 +9,24 @@ import {
 import { db } from '@/lib/firebase/client'
 import type { Book } from '@/types'
 
+type BookDocumentData = Record<string, unknown>
+
+function serializePublicBook(id: string, data: BookDocumentData): Book {
+  const {
+    driveFileUrl: _driveFileUrl,
+    contentUrl: _contentUrl,
+    resourceUrl: _resourceUrl,
+    privateUrl: _privateUrl,
+    protectedUrl: _protectedUrl,
+    ...publicData
+  } = data
+
+  return {
+    id,
+    ...publicData,
+  } as Book
+}
+
 export async function getPublishedBooks(): Promise<Book[]> {
   const booksQuery = query(
     collection(db, 'books'),
@@ -18,10 +36,7 @@ export async function getPublishedBooks(): Promise<Book[]> {
 
   const snapshot = await getDocs(booksQuery)
 
-  return snapshot.docs.map((docItem) => ({
-    id: docItem.id,
-    ...docItem.data(),
-  })) as Book[]
+  return snapshot.docs.map((docItem) => serializePublicBook(docItem.id, docItem.data()))
 }
 
 export async function getFeaturedBooks(maxCount = 3): Promise<Book[]> {
@@ -34,10 +49,7 @@ export async function getFeaturedBooks(maxCount = 3): Promise<Book[]> {
 
   const snapshot = await getDocs(booksQuery)
 
-  return snapshot.docs.map((docItem) => ({
-    id: docItem.id,
-    ...docItem.data(),
-  })) as Book[]
+  return snapshot.docs.map((docItem) => serializePublicBook(docItem.id, docItem.data()))
 }
 
 export async function getBookBySlug(slug: string): Promise<Book | null> {
@@ -54,8 +66,5 @@ export async function getBookBySlug(slug: string): Promise<Book | null> {
 
   const firstDoc = snapshot.docs[0]
 
-  return {
-    id: firstDoc.id,
-    ...firstDoc.data(),
-  } as Book
+  return serializePublicBook(firstDoc.id, firstDoc.data())
 }

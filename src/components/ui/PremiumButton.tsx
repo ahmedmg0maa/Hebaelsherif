@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'gold' | 'danger' | 'soft'
+type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'gold' | 'danger' | 'soft' | 'burgundy'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -13,12 +13,15 @@ interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-petrol text-ivory shadow-[0_14px_32px_rgba(47,97,115,.17)] hover:bg-petrol/92',
-  outline: 'border border-petrol/28 bg-ivory/64 text-petrol hover:border-petrol hover:bg-petrol hover:text-ivory',
+  primary:
+    'teal-gradient text-ivory shadow-[0_16px_34px_rgb(var(--color-petrol)/.20)] hover:shadow-[0_20px_44px_rgb(var(--color-petrol)/.24)]',
+  outline:
+    'border border-petrol/30 bg-ivory/70 text-petrol hover:border-petrol hover:bg-petrol hover:text-ivory',
   ghost: 'text-petrol hover:bg-petrol/10',
-  gold: 'bg-gold text-charcoal shadow-[0_14px_32px_rgba(183,155,108,.16)] hover:bg-gold/88',
-  danger: 'bg-petrol text-ivory hover:bg-petrol/90',
-  soft: 'border border-sand bg-ivory/80 text-charcoal hover:border-petrol/35 hover:bg-cream',
+  gold: 'bg-gold text-deep-teal shadow-[0_16px_34px_rgb(var(--color-gold)/.18)] hover:bg-gold/90',
+  danger: 'bg-burgundy text-ivory hover:bg-burgundy/90',
+  burgundy: 'bg-burgundy text-ivory shadow-[0_16px_34px_rgb(var(--color-burgundy)/.18)] hover:bg-burgundy/90',
+  soft: 'border border-sand bg-ivory/80 text-charcoal hover:border-petrol/35 hover:bg-cream hover:text-petrol',
 }
 
 const sizes: Record<ButtonSize, string> = {
@@ -40,6 +43,7 @@ export default function PremiumButton({
   const classes = [
     'inline-flex items-center justify-center rounded-full font-black transition-all duration-300',
     'focus-premium disabled:pointer-events-none disabled:opacity-50 hover:-translate-y-0.5',
+    'relative overflow-hidden',
     variants[variant],
     sizes[size],
     className,

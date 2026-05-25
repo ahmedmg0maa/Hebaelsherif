@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 const guideTopics = [
@@ -90,7 +91,7 @@ export default function AiGuide() {
             <div className="ambient-orb ambient-orb-petrol left-8 top-0 h-20 w-20" />
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <p className="mini-label">دليل هبة</p>
+                <p className="mini-label">دليل البداية</p>
                 <h3 className="mt-2 text-xl font-black leading-snug text-charcoal">اختاري البداية الأقرب لكِ</h3>
                 <p className="mt-2 text-xs leading-6 text-warm-gray">أسئلة قصيرة تقترح عليكِ بداية هادئة: جلسة، كورس، أو كتاب.</p>
               </div>
@@ -98,7 +99,7 @@ export default function AiGuide() {
                 type="button"
                 onClick={() => setOpen(false)}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-sand bg-cream text-lg font-black text-petrol transition hover:border-petrol/30"
-                aria-label="إغلاق دليل هبة"
+                aria-label="إغلاق دليل البداية"
               >
                 ×
               </button>
@@ -188,12 +189,13 @@ export default function AiGuide() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="group inline-flex min-h-14 items-center gap-3 rounded-full border border-gold/30 bg-ivory/95 px-4 text-sm font-black text-petrol shadow-premium backdrop-blur-xl transition hover:-translate-y-1 hover:border-petrol/30"
-        aria-label="فتح دليل هبة"
+        className="group relative inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-gold/35 bg-ivory/95 text-petrol shadow-premium backdrop-blur-xl transition hover:-translate-y-1 hover:border-petrol/30 dark:bg-cream/95"
+        aria-label="فتح دليل البداية"
         aria-expanded={open}
+        title="دليل البداية"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-petrol text-xs text-ivory transition group-hover:bg-gold group-hover:text-charcoal">هبة</span>
-        <span className="hidden sm:inline">دليل البداية</span>
+        <span className="absolute inset-0 bg-[radial-gradient(circle_at_35%_20%,rgb(var(--color-gold)/.18),transparent_45%),radial-gradient(circle_at_80%_80%,rgb(var(--color-petrol)/.14),transparent_45%)]" />
+        <Image src="/images/brand/logo-symbol.png" alt="" fill className="object-contain p-2.5" sizes="56px" />
       </button>
     </div>
   )

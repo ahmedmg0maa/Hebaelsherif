@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react'
 
-type PremiumBadgeVariant = 'gold' | 'petrol' | 'olive' | 'burgundy' | 'neutral' | 'rose'
+type PremiumBadgeVariant = 'gold' | 'petrol' | 'olive' | 'burgundy' | 'neutral' | 'rose' | 'aqua'
 
 interface PremiumBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode
@@ -8,11 +8,12 @@ interface PremiumBadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const variants: Record<PremiumBadgeVariant, string> = {
-  gold: 'border-gold/24 bg-gold/9 text-gold',
-  petrol: 'border-petrol/20 bg-petrol/9 text-petrol',
-  olive: 'border-olive/18 bg-olive/9 text-olive',
-  burgundy: 'border-petrol/18 bg-petrol/8 text-petrol',
-  rose: 'border-stone/40 bg-cream/65 text-charcoal',
+  gold: 'border-gold/25 bg-gold/10 text-gold',
+  petrol: 'border-petrol/20 bg-petrol/10 text-petrol',
+  olive: 'border-olive/20 bg-olive/10 text-olive',
+  burgundy: 'border-burgundy/20 bg-burgundy/10 text-burgundy',
+  rose: 'border-mauve/25 bg-mauve/10 text-burgundy',
+  aqua: 'border-aqua/25 bg-aqua/10 text-petrol',
   neutral: 'border-sand bg-cream text-warm-gray',
 }
 
@@ -20,7 +21,7 @@ export default function PremiumBadge({ children, variant = 'petrol', className =
   return (
     <span
       className={[
-        'inline-flex items-center rounded-full border px-3.5 py-1.5 text-xs font-black',
+        'inline-flex items-center rounded-full border px-3.5 py-1.5 text-xs font-black backdrop-blur-sm',
         variants[variant],
         className,
       ]

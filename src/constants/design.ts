@@ -1,35 +1,61 @@
 export const BRAND = {
   arName: 'هبة الشريف',
   enName: 'Heba ElSherif',
-  tagline: 'رحلة هادئة نحو الوضوح العاطفي',
+  tagline: 'نقطة وعي تعيدك إلى ذاتك',
+  shortTagline: 'رحلة وعي تعيدك إلى ذاتك',
   description:
-    'منصة عربية فاخرة للتحول العاطفي والنمو الشخصي من خلال الكورسات، الكتب، والجلسات الفردية.',
+    'مساحة عربية فاخرة للكوتشنج، التعلم العاطفي، الكتب الرقمية، والجلسات الفردية؛ تساعدك على فهم نفسك بعمق وبناء حياة أكثر وعيًا واتزانًا.',
+  credentials: 'لايف كوتش معتمدة ICF | مدربة وعي بالذات | كاتبة وروائية',
+  promise:
+    'أدعم رحلة فهم النفس بأمان من خلال تواصل أعمق مع الذات، لاكتشاف رسالتك، واختيار طريقك بوعي، وعيش حياة تشبهك بحرية واتزان.',
 } as const
 
 export const COLORS = {
   cream: '#F5F0E7',
+  warmBeige: '#E4D7C7',
   petrol: '#2F6173',
-  olive: '#6B724E',
-  gold: '#B79B6C',
+  deepTeal: '#0F3237',
+  aqua: '#2F6173',
+  gold: '#B79B60',
+  olive: '#6F6A2F',
   burgundy: '#7A2433',
-  ivory: '#FAF7F2',
-  sand: '#E9E0D2',
-  stone: '#C8C1B6',
-  warmGray: '#8A837B',
-  charcoal: '#2A2A2A',
+  ivory: '#F5F0E7',
+  paper: '#F5F0E7',
+  sand: '#E4D7C7',
+  softSand: '#E4D7C7',
+  stone: '#B79B60',
+  leafGray: '#6F6A2F',
+  warmGray: '#6F6A2F',
+  charcoal: '#0F3237',
+} as const
+
+export const BRAND_TOKENS = {
+  identityWords: ['وعي', 'بصيرة', 'نور داخلي', 'رسالة', 'اتزان'],
+  visualLanguage: [
+    'زخارف نباتية هادئة',
+    'خطوط ذهبية رفيعة',
+    'خلفيات ورقية دافئة',
+    'أقواس ومنحنيات عربية',
+    'مساحات تنفس كبيرة',
+  ],
+  designPrinciples: [
+    'الهدوء قبل الانبهار',
+    'الوضوح قبل كثرة العناصر',
+    'الفخامة من التفاصيل الصغيرة',
+    'الألوان البترولية هي القيادة والبورغندي accent فقط',
+    'كل صورة لها إطار براند واضح حتى قبل إضافة الصورة الحقيقية',
+  ],
 } as const
 
 export const PUBLIC_NAV_LINKS = [
   { href: '/', label: 'الرئيسية' },
-  { href: '/start-here', label: 'ابدئي هنا' },
   { href: '/services', label: 'الخدمات' },
-  { href: '/programs', label: 'المسارات' },
   { href: '/courses', label: 'الكورسات' },
   { href: '/books', label: 'الكتب' },
   { href: '/booking', label: 'الجلسات' },
   { href: '/articles', label: 'المقالات' },
   { href: '/about', label: 'عن هبة' },
-  { href: '/trust-safety', label: 'الأمان والثقة' },
+  { href: '/contact', label: 'تواصل' },
 ] as const
 
 export const DASHBOARD_NAV_LINKS = [
@@ -58,7 +84,7 @@ export const ADMIN_NAV_LINKS = [
   { href: '/admin/navigation', label: 'القوائم' },
   { href: '/admin/seo', label: 'SEO وGoogle' },
   { href: '/admin/feature-flags', label: 'المميزات' },
-  { href: '/admin/ai-guide', label: 'AI Guide' },
+  { href: '/admin/ai-guide', label: 'دليل البداية' },
   { href: '/admin/courses', label: 'الكورسات' },
   { href: '/admin/academy', label: 'استوديو التعلم' },
   { href: '/admin/books', label: 'الكتب' },
@@ -90,7 +116,6 @@ export const ADMIN_NAV_LINKS = [
   { href: '/admin/experiments', label: 'التجارب' },
   { href: '/admin/logs', label: 'السجل' },
 ] as const
-
 
 export const SOCIAL_LINKS = [
   { key: 'facebook', label: 'Facebook', display: 'فيسبوك', href: process.env.NEXT_PUBLIC_FACEBOOK_URL || '#' },

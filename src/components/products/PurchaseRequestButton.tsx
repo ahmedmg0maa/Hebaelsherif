@@ -18,7 +18,7 @@ interface PurchaseRequestButtonProps {
 interface CreateOrderResponse {
   success?: boolean
   orderId?: string
-  status?: 'pending' | 'paid' | 'cancelled'
+  status?: 'pending' | 'awaiting_payment' | 'payment_submitted' | 'paid' | 'access_granted' | 'cancelled' | 'rejected'
   alreadyPaid?: boolean
   alreadyPending?: boolean
   error?: string
@@ -78,7 +78,7 @@ export default function PurchaseRequestButton({ productId, productType, currentP
         return
       }
 
-      setMessage(`تم إرسال طلب شراء ${productTypeLabel} بنجاح. طريقة الدفع المختارة: ${selectedPayment.title}. ستراجع الإدارة الطلب وتفتح الوصول بعد التأكيد.`)
+      setMessage(`تم إنشاء طلب ${productTypeLabel}. يمكنكِ إرسال إثبات الدفع الآن أو من صفحة طلباتي. طريقة الدفع المختارة: ${selectedPayment.title}.`)
     } catch (requestError) {
       console.error('Purchase request error:', requestError)
       setError('تعذر إرسال طلب الشراء الآن. حاولي مرة أخرى.')
@@ -114,7 +114,7 @@ export default function PurchaseRequestButton({ productId, productType, currentP
           className="premium-input mt-3"
           value={paymentReference}
           onChange={(event) => setPaymentReference(event.target.value)}
-          placeholder="رقم العملية أو ملاحظة الدفع - اختياري"
+          placeholder="رقم العملية أو رابط/ملاحظة إثبات الدفع"
         />
       </div>
 
@@ -133,7 +133,7 @@ export default function PurchaseRequestButton({ productId, productType, currentP
 
       {error ? <div className="mt-4 rounded-2xl border border-petrol/20 bg-petrol/10 px-4 py-3 text-sm leading-7 text-petrol">{error}</div> : null}
 
-      <p className="mt-3 text-center text-xs leading-6 text-warm-gray">بعد إرسال الطلب، تقوم الإدارة بتأكيد الدفع ثم يتم فتح الوصول تلقائياً داخل حسابك.</p>
+      <p className="mt-3 text-center text-xs leading-6 text-warm-gray">بعد إنشاء الطلب، أرسلي إثبات الدفع من صفحة طلباتي. عند التأكيد، يفتح المحتوى داخل حسابك.</p>
     </div>
   )
 }

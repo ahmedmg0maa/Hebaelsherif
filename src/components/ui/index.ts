@@ -12,3 +12,4 @@ export { BookCardSkeleton, CourseCardSkeleton, PageSkeleton } from './PremiumSke
 export { default as ImageSlot } from './ImageSlot'
 export { default as PremiumAccordion } from './PremiumAccordion'
 export { default as PremiumTimeline } from './PremiumTimeline'
+export { default as PremiumImageSlot } from './ImageSlot'

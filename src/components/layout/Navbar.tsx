@@ -3,13 +3,14 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { BRAND, PUBLIC_NAV_LINKS } from '@/constants/design'
+import { PUBLIC_NAV_LINKS } from '@/constants/design'
 import { useAuth } from '@/hooks/useAuth'
 import PremiumButton from '@/components/ui/PremiumButton'
 import ThemeToggle from '@/components/experience/ThemeToggle'
+import BrandMark from '@/components/brand/BrandMark'
 
 const desktopLinks = PUBLIC_NAV_LINKS.filter((item) =>
-  ['/', '/about', '/services', '/courses', '/books', '/articles', '/contact'].includes(item.href),
+  ['/', '/services', '/courses', '/books', '/booking', '/about', '/contact'].includes(item.href),
 )
 
 export default function Navbar() {
@@ -34,25 +35,13 @@ export default function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? 'border-sand bg-ivory/92 shadow-sm backdrop-blur-xl'
-          : 'border-transparent bg-ivory/78 backdrop-blur-md'
+          ? 'border-sand bg-ivory/95 shadow-sm backdrop-blur-xl'
+          : 'border-transparent bg-ivory/82 backdrop-blur-md'
       }`}
     >
-      <nav className="container-premium">
-        <div className="flex h-[4.5rem] items-center justify-between gap-4">
-          <Link href="/" className="group flex items-center gap-3" aria-label="العودة إلى الرئيسية">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-petrol/15 bg-cream text-lg font-black text-petrol shadow-soft transition group-hover:border-gold/50">
-              هـ
-            </span>
-            <span>
-              <span className="block text-lg font-black leading-none text-charcoal transition group-hover:text-petrol">
-                {BRAND.arName}
-              </span>
-              <span className="mt-1 block text-[10px] font-bold tracking-[0.18em] text-warm-gray">
-                وعي · كوتشنج · تعلم
-              </span>
-            </span>
-          </Link>
+      <nav className="container-wide">
+        <div className="flex h-[4.75rem] items-center justify-between gap-4">
+          <BrandMark size="md" />
 
           <div className="hidden items-center gap-6 lg:flex">
             {desktopLinks.map((item) => {
@@ -93,7 +82,7 @@ export default function Navbar() {
             ) : (
               <>
                 <PremiumButton href="/auth/login" size="sm" variant="outline">تسجيل الدخول</PremiumButton>
-                <PremiumButton href="/booking" size="sm">احجزي جلسة</PremiumButton>
+                <PremiumButton href="/booking" size="sm">احجزي الآن</PremiumButton>
               </>
             )}
           </div>
@@ -111,7 +100,14 @@ export default function Navbar() {
 
         {mobileOpen ? (
           <div className="pb-5 lg:hidden">
-            <div className="premium-glow-border brand-mobile-drawer rounded-[2rem] border border-sand bg-ivory/97 p-4 shadow-premium backdrop-blur-xl">
+            <div className="premium-glow-border brand-mobile-drawer rounded-[2rem] border border-sand bg-ivory/95 p-4 shadow-premium backdrop-blur-xl">
+              <div className="mb-4 rounded-[1.5rem] border border-gold/20 bg-cream/70 p-4">
+                <BrandMark size="sm" />
+                <p className="mt-3 text-xs font-bold leading-6 text-warm-gray">
+                  رحلة وعي تعيدك إلى ذاتك، في مساحة هادئة وواضحة.
+                </p>
+              </div>
+
               <div className="grid gap-2">
                 {PUBLIC_NAV_LINKS.map((item) => {
                   const active = pathname === item.href

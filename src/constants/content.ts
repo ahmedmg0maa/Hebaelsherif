@@ -81,7 +81,7 @@ export const ARTICLES = [
     content: [
       'الحدود لا تعني القسوة، بل تعني أن تعرفي أين تبدأين وأين ينتهي ضغط الآخرين عليكِ. البداية ليست بإعلان كبير، بل بجملة صغيرة صادقة.',
       'اسألي نفسك: ما الشيء الذي أوافق عليه خوفًا لا رغبة؟ وما الطلب الذي يترك داخلي ثقلًا بعد قبوله؟ الإجابة هنا هي أول خريطة للحدود.',
-      'ابدئي بحد واحد قابل للتطبيق هذا الأسبوع، واكتبيه بلغة هادئة: أحتاج وقتًا للتفكير، لا أستطيع اليوم، سأرد لاحقًا. الاتساق أهم من القوة.',
+      'ابدئي بحد واحد قابل للتطبيق هذا الأسبوع، واكتبيه بلغة هادئة: أحتاج وقتًا للتفكير، لا أستطيع اليوم، سأرد عندما أكون مستعدة. الاتساق أهم من القوة.',
     ],
   },
   {
@@ -110,31 +110,23 @@ export const ARTICLES = [
   },
 ]
 
-export const TESTIMONIALS = [
-  {
-    name: 'مشاركة في جلسة فردية',
-    role: 'جلسة وضوح',
-    content: 'خرجت من الجلسة وأنا أعرف السؤال الحقيقي الذي كنت أهرب منه. الهدوء والوضوح كانا أهم من أي نصيحة مباشرة.',
-  },
-  {
-    name: 'قارئة كتاب رقمي',
-    role: 'كتاب تأملي',
-    content: 'اللغة كانت قريبة وراقية. شعرت أنني أقرأ شيئًا لا يدفعني للتغيير بعنف، بل يفتح لي بابًا ألطف.',
-  },
-  {
-    name: 'طالبة كورس',
-    role: 'كورس وعي عاطفي',
-    content: 'تنظيم الدروس جعلني أعود للمحتوى بسهولة. كنت أحتاج رحلة واضحة لا مجرد فيديوهات متفرقة.',
-  },
-]
+export const TESTIMONIALS: { name: string; role: string; content: string }[] = []
 
 export const IMAGE_SLOTS = {
-  hero: '/images/brand/hero-placeholder.svg',
-  about: '/images/brand/about-placeholder.svg',
-  session: '/images/brand/session-placeholder.svg',
-  course: '/images/courses/course-placeholder.svg',
-  book: '/images/books/book-placeholder.svg',
-  avatar: '/images/testimonials/avatar-placeholder.svg',
+  hero: '',
+  about: '',
+  profile: '',
+  session: '',
+  course: '',
+  book: '',
+  avatar: '',
+  journal: '',
+  brandBackground: '/images/brand/brand-background.jpg',
+  brandPattern: '/images/brand/brand-pattern.jpg',
+  ogHome: '/images/brand/og-brand.jpg',
+  ogCourses: '/images/social/og-courses.jpg',
+  ogBooks: '/images/social/og-books.jpg',
+  ogBooking: '/images/social/og-booking.jpg',
 }
 
 export const LEGAL_PAGES = {
@@ -171,7 +163,7 @@ export const LEGAL_PAGES = {
     description: 'تنظيم الحجز، التأكيد، إعادة الجدولة، وحدود الجلسة.',
     sections: [
       ['تأكيد الموعد', 'الموعد يظل بانتظار التأكيد حتى تراجعه الإدارة.'],
-      ['إعادة الجدولة', 'يمكن طلب إعادة جدولة قبل الموعد بفترة مناسبة حسب التوفر.'],
+      ['إعادة الجدولة', 'يمكن طلب إعادة جدولة قبل الموعد بفترة مناسبة وفق المواعيد المتاحة.'],
       ['حدود الخدمة', 'الجلسات ليست علاجًا نفسيًا أو تشخيصًا طبيًا.'],
     ],
   },

@@ -1,7 +1,7 @@
-import { getApps, initializeApp } from 'firebase/app'
+import { getApps, initializeApp, type FirebaseApp } from 'firebase/app'
 import { getAnalytics, isSupported } from 'firebase/analytics'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getAuth, type Auth } from 'firebase/auth'
+import { getFirestore, type Firestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -32,21 +32,33 @@ function assertFirebaseClientConfig() {
   }
 }
 
-assertFirebaseClientConfig()
+function createFirebaseClientApp() {
+  assertFirebaseClientConfig()
+  return getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig)
+}
 
-const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig)
+const isBrowser = typeof window !== 'undefined'
+const app: FirebaseApp | null = isBrowser ? createFirebaseClientApp() : null
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
+export const auth = (app ? getAuth(app) : null) as Auth
+export const db = (app ? getFirestore(app) : null) as Firestore
 
 export async function getFirebaseAnalytics() {
-  if (typeof window === 'undefined') return null
+  if (!app || typeof window === 'undefined') return null
 
   const supported = await isSupported()
 
   if (!supported) return null
 
   return getAnalytics(app)
+}
+
+export function getFirebaseClientApp() {
+  if (!isBrowser) {
+    throw new Error('Firebase client app can only be initialized in the browser.')
+  }
+
+  return createFirebaseClientApp()
 }
 
 export default app

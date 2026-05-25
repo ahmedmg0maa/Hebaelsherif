@@ -4,7 +4,7 @@ export type PublishStatus = 'published' | 'draft'
 
 export type ProductType = 'course' | 'book'
 
-export type OrderStatus = 'pending' | 'payment_submitted' | 'paid' | 'failed' | 'refunded' | 'cancelled'
+export type OrderStatus = 'pending' | 'awaiting_payment' | 'payment_submitted' | 'paid' | 'access_granted' | 'rejected' | 'failed' | 'refunded' | 'cancelled'
 
 export type PaymentMethod = 'instapay' | 'vodafone_cash' | 'bank_transfer' | 'manual'
 
@@ -120,6 +120,8 @@ export interface Order {
   paymentMethod?: PaymentMethod
   paymentReference?: string
   paymentProofUrl?: string
+  paymentNote?: string
+  adminNote?: string
   couponCode?: string
   discountAmount?: number
   createdAt: FirestoreDate

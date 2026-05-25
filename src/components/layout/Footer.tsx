@@ -1,8 +1,13 @@
 import Link from 'next/link'
 import { BRAND, PUBLIC_NAV_LINKS, SOCIAL_LINKS } from '@/constants/design'
+import BrandMark from '@/components/brand/BrandMark'
+import BrandDivider from '@/components/brand/BrandDivider'
 
 const footerSections = [
-  { title: 'المنصة', links: PUBLIC_NAV_LINKS.filter((link) => ['/', '/about', '/services', '/courses', '/books', '/articles'].includes(link.href)) },
+  {
+    title: 'المنصة',
+    links: PUBLIC_NAV_LINKS.filter((link) => ['/', '/about', '/services', '/courses', '/books', '/articles'].includes(link.href)),
+  },
   {
     title: 'الحساب',
     links: [
@@ -59,25 +64,28 @@ function SocialIcon({ type }: { type: string }) {
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-sand bg-ivory/78 backdrop-blur-sm">
+    <footer className="botanical-frame paper-texture relative overflow-hidden border-t border-sand bg-ivory/82 backdrop-blur-sm">
       <div className="ambient-orb ambient-orb-gold -right-10 top-10 h-44 w-44" />
       <div className="ambient-orb ambient-orb-petrol bottom-0 left-10 h-56 w-56" />
 
-      <div className="container-premium relative py-14">
+      <div className="container-wide relative py-14">
+        <div className="mb-10 rounded-[2.25rem] border border-gold/20 bg-cream/62 p-6 text-center shadow-soft backdrop-blur-sm">
+          <BrandMark href="/" size="lg" className="justify-center" />
+          <BrandDivider className="mt-5" />
+          <p className="mx-auto mt-5 max-w-2xl text-sm font-bold leading-8 text-warm-gray">
+            {BRAND.promise}
+          </p>
+        </div>
+
         <div className="grid gap-10 lg:grid-cols-[1.15fr_2fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-petrol/15 bg-cream text-xl font-black text-petrol shadow-soft">هـ</span>
-              <span>
-                <span className="block text-2xl font-black text-charcoal">{BRAND.arName}</span>
-                <span className="mt-1 block text-xs font-bold tracking-[.22em] text-warm-gray">{BRAND.enName}</span>
-              </span>
-            </Link>
+            <p className="mini-label">{BRAND.credentials}</p>
+            <h2 className="mt-4 text-3xl font-black leading-tight text-petrol">{BRAND.tagline}</h2>
             <p className="mt-5 max-w-md text-sm leading-8 text-warm-gray">{BRAND.description}</p>
             <div className="mt-6 rounded-[2rem] border border-sand bg-cream/70 p-5 backdrop-blur-sm">
-              <p className="mini-label">مساحة آمنة للنمو</p>
+              <p className="mini-label">نقطة وعي</p>
               <p className="mt-3 text-xs leading-6 text-warm-gray">
-                تجربة عربية هادئة تجمع الجلسات، الكورسات، والكتب في مسار واضح لا يضغط عليك ولا يشتت انتباهك.
+                رمز للوعي والبصيرة والنور الداخلي؛ تجربة عربية هادئة لا تضغط عليك ولا تشتت انتباهك.
               </p>
             </div>
 
@@ -101,7 +109,7 @@ export default function Footer() {
                       <SocialIcon type={social.key} />
                     </a>
                   ) : (
-                    <span key={social.key} className={`${classes} opacity-45`} aria-label={`${social.label} سيضاف لاحقًا`} title={`${social.label} سيضاف لاحقًا`}>
+                    <span key={social.key} className={`${classes} opacity-45`} aria-label={`${social.label} غير مفعّل حاليًا`} title={`${social.label} غير مفعّل حاليًا`}>
                       <SocialIcon type={social.key} />
                     </span>
                   )
@@ -130,7 +138,7 @@ export default function Footer() {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-sand pt-6 text-xs font-bold text-warm-gray sm:flex-row sm:items-center sm:justify-between">
           <p>© <span className="latin-numerals">{new Date().getFullYear()}</span> {BRAND.arName}. جميع الحقوق محفوظة.</p>
-          <p>مساحة عربية هادئة للوعي، الكوتشنج، والتعلم العاطفي.</p>
+          <p>وعي · بصيرة · نور داخلي · حياة هادفة</p>
         </div>
       </div>
     </footer>

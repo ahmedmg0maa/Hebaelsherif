@@ -47,7 +47,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
     <button
       type="button"
       onClick={toggleTheme}
-      className={`group inline-flex items-center justify-center rounded-full border border-sand bg-ivory/88 text-petrol shadow-soft backdrop-blur-md transition hover:-translate-y-0.5 hover:border-gold/50 hover:text-gold ${compact ? 'h-10 w-10' : 'h-11 w-11'}`}
+      className={`group inline-flex items-center justify-center rounded-full border border-gold/25 bg-ivory/88 text-petrol shadow-soft backdrop-blur-md transition hover:-translate-y-0.5 hover:border-gold/60 hover:bg-cream hover:text-gold ${compact ? 'h-10 w-10' : 'h-11 w-11'}`}
       aria-label={dark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الليلي'}
       aria-pressed={dark}
       title={dark ? 'الوضع الفاتح' : 'الوضع الليلي'}

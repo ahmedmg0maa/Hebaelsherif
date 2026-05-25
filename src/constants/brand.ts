@@ -1,21 +1,24 @@
+import { BRAND, BRAND_TOKENS, COLORS } from './design'
+
 export const BRAND_KIT = {
   name: {
-    ar: 'هبة الشريف',
-    en: 'Heba ElSherif',
+    ar: BRAND.arName,
+    en: BRAND.enName,
   },
-  positioning: 'منصة عربية فاخرة للتعلم العاطفي والجلسات الهادئة.',
-  promise:
-    'A calm premium digital space that helps women gain emotional clarity, self-understanding, and personal transformation through guided learning, books, and coaching.',
+  tagline: BRAND.tagline,
+  positioning: 'براند عربي فاخر للكوتشنج، الوعي بالذات، الكتب، والتعلم العاطفي.',
+  promise: BRAND.promise,
+  credentials: BRAND.credentials,
   personality: [
     'Calm',
     'Elegant',
+    'Spiritually aware without exaggeration',
     'Emotionally intelligent',
     'Trustworthy',
     'Warm',
     'Feminine but mature',
     'Deep',
     'Intentional',
-    'Minimal',
     'Premium',
   ],
   archetypes: {
@@ -31,10 +34,10 @@ export const BRAND_KIT = {
       'Never aggressive',
       'Never loud',
       'Never salesy',
-      'Never motivational guru energy',
+      'No fake urgency',
     ],
     writingStyle: [
-      'Short elegant sentences',
+      'Short elegant Arabic sentences',
       'Emotion-first communication',
       'Calm reassurance',
       'Guided language',
@@ -42,31 +45,23 @@ export const BRAND_KIT = {
     ],
     avoid: [
       'Hype language',
-      'Fake urgency',
       'Cheap marketing language',
       'Corporate coldness',
       'Over-explaining',
       'Emotional manipulation',
+      'Therapy/medical claims',
     ],
   },
-  colors: {
-    warmCream: '#F5F0E7',
-    petrolBlue: '#2F6173',
-    softOlive: '#6B724E',
-    mutedGold: '#B79B6C',
-    agedBurgundy: '#7A2433',
-    softIvory: '#FAF7F2',
-    lightSand: '#E9E0D2',
-    mutedStone: '#C8C1B6',
-    warmGray: '#8A837B',
-    deepCharcoal: '#2A2A2A',
-  },
+  colors: COLORS,
+  tokens: BRAND_TOKENS,
   imagery: {
     use: [
       'soft natural lighting',
-      'cinematic composition',
-      'neutral warm colors',
-      'emotional realism',
+      'botanical details',
+      'warm paper textures',
+      'teal/gold identity accents',
+      'subtle Arabic ornamental lines',
+      'quiet cinematic composition',
       'elegant minimal scenes',
     ],
     avoid: [
@@ -74,6 +69,7 @@ export const BRAND_KIT = {
       'flashy poses',
       'over-saturated colors',
       'harsh contrast',
+      'pink-heavy generic coaching visuals',
       'tech startup visuals',
     ],
   },
@@ -95,5 +91,14 @@ export const IMAGE_SLOT_KEYS = [
   'og.books',
   'og.booking',
 ] as const
+
+export const BRAND_ASSET_REFERENCES = {
+  banner: '/images/brand/og-brand.jpg',
+  logoTagline: '/images/brand/logo-official.jpeg',
+  logoMeaning: '/images/brand/logo-symbol.png',
+  brandBoard: '/images/brand/logo-navbar.png',
+  bookSilentBloom: '/images/books/book-default.jpg',
+  bookJourney: '/images/books/book-default.jpg',
+} as const
 
 export type ImageSlotKey = (typeof IMAGE_SLOT_KEYS)[number]
