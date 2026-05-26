@@ -174,7 +174,7 @@ export default function BookReadPage() {
             <div>
               <Link
                 href="/dashboard/books"
-                className="mb-5 inline-flex rounded-full border border-white/15 bg-white/8 px-4 py-2 text-xs font-bold text-ivory/75 transition hover:text-gold"
+                className="mb-5 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-ivory/75 transition hover:text-gold"
               >
                 ← العودة لكتبي
               </Link>

@@ -9,92 +9,37 @@ import { PageSkeleton } from '@/components/ui/PremiumSkeleton'
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumBadge from '@/components/ui/PremiumBadge'
 import BrandMark from '@/components/brand/BrandMark'
-import BrandDivider from '@/components/brand/BrandDivider'
 
-const primaryHrefs = new Set([
-  '/admin',
-  '/admin/analytics',
-  '/admin/orders',
-  '/admin/bookings',
-  '/admin/courses',
-  '/admin/books',
-  '/admin/content',
-  '/admin/reviews',
-])
-
-const contentHrefs = new Set([
-  '/admin/academy',
-  '/admin/articles',
-  '/admin/faqs',
-  '/admin/media',
-  '/admin/uploads',
-  '/admin/content-ops',
-  '/admin/homepage',
-  '/admin/navigation',
-  '/admin/seo',
-])
-
-const commerceHrefs = new Set([
-  '/admin/payments',
-  '/admin/coupons',
-  '/admin/pricing',
-  '/admin/bundles',
-  '/admin/commerce',
-  '/admin/leads',
-  '/admin/users',
-  '/admin/calendar',
-  '/admin/availability',
-])
-
-const systemHrefs = new Set([
-  '/admin/settings',
-  '/admin/theme',
-  '/admin/security',
-  '/admin/diagnostics',
-  '/admin/integrations',
-  '/admin/notifications',
-  '/admin/emails',
-  '/admin/automation',
-  '/admin/operations',
-  '/admin/backups',
-  '/admin/policies',
-  '/admin/legal',
-  '/admin/logs',
-  '/admin/feature-flags',
-  '/admin/analytics-events',
-  '/admin/customer-journey',
-  '/admin/quality',
-  '/admin/assessment',
-  '/admin/journeys',
-  '/admin/experiments',
-  '/admin/ai-guide',
-])
+const groupDefinitions = [
+  {
+    title: 'التشغيل اليومي',
+    hint: 'المبيعات والحجوزات والمتابعة',
+    links: ['/admin', '/admin/orders', '/admin/bookings', '/admin/messages'],
+  },
+  {
+    title: 'المنتجات والحماية',
+    hint: 'الكورسات والكتب والمحتوى المدفوع',
+    links: ['/admin/courses', '/admin/books', '/admin/content'],
+  },
+  {
+    title: 'العملاء والثقة',
+    hint: 'العملاء، التقييمات، والتحليلات',
+    links: ['/admin/users', '/admin/reviews', '/admin/analytics'],
+  },
+  {
+    title: 'النظام',
+    hint: 'السجلات والإعدادات الأساسية',
+    links: ['/admin/logs', '/admin/settings'],
+  },
+]
 
 function groupLinks() {
   const all = [...ADMIN_NAV_LINKS]
 
-  return [
-    {
-      title: 'القيادة اليومية',
-      hint: 'الطلبات والحجوزات والمحتوى الأساسي',
-      links: all.filter((item) => primaryHrefs.has(item.href)),
-    },
-    {
-      title: 'المحتوى والظهور',
-      hint: 'الصفحات، المقالات، SEO، والميديا',
-      links: all.filter((item) => contentHrefs.has(item.href)),
-    },
-    {
-      title: 'التجارة والعملاء',
-      hint: 'الدفع، الكوبونات، المستخدمون، والتوفر',
-      links: all.filter((item) => commerceHrefs.has(item.href)),
-    },
-    {
-      title: 'النظام والجودة',
-      hint: 'الأمان، الإعدادات، القياس، والتشغيل',
-      links: all.filter((item) => systemHrefs.has(item.href)),
-    },
-  ]
+  return groupDefinitions.map((group) => ({
+    ...group,
+    links: group.links.map((href) => all.find((item) => item.href === href)).filter(Boolean) as Array<(typeof ADMIN_NAV_LINKS)[number]>,
+  }))
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -130,19 +75,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!user || !isAdmin) return null
 
+  const flatLinks = groups.flatMap((group) => group.links)
+
   return (
     <main className="admin-shell min-h-screen lg:flex">
-      <aside className="admin-sidebar hidden border-l border-gold/25 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[21rem] lg:overflow-y-auto">
-        <div className="paper-texture relative overflow-hidden border-b border-white/10 p-6">
+      <aside className="admin-sidebar hidden border-l border-gold/25 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[20rem] lg:overflow-y-auto">
+        <div className="relative overflow-hidden border-b border-white/10 p-6">
           <div className="absolute -left-16 -top-16 h-44 w-44 rounded-full bg-gold/10 blur-3xl" />
-          <div className="relative">
-            <Link href="/admin" className="block">
-              <BrandMark size="md" className="[&_.text-charcoal]:text-ivory" />
-            </Link>
-            <p className="mt-5 text-xs font-bold leading-6 admin-soft-text">
-              مركز قيادة البراند: المحتوى، التجارة، الحجوزات، وتجربة العميلة في مساحة واحدة.
+          <Link href="/admin" className="relative block">
+            <BrandMark size="md" className="[&_.text-charcoal]:text-ivory" />
+          </Link>
+          <div className="relative mt-5 rounded-2xl border border-gold/25 bg-gold/10 p-4">
+            <p className="text-xs font-black text-gold">Heba Operations Center</p>
+            <p className="mt-2 text-xs font-bold leading-6 admin-soft-text">
+              غرفة تشغيل واضحة لإدارة الطلبات، الحجوزات، المحتوى، العملاء، والتحليلات الصادقة.
             </p>
-            <BrandDivider className="mt-5" />
           </div>
         </div>
 
@@ -154,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <p className="mt-1 text-[11px] leading-5 admin-soft-text">{group.hint}</p>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {group.links.map((item) => {
                   const active = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(`${item.href}/`))
 
@@ -162,10 +109,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`group flex items-center justify-between rounded-2xl px-4 py-3 text-xs font-bold transition ${
-                        active
-                          ? 'admin-nav-item-active shadow-soft'
-                          : 'admin-nav-item hover:bg-white/8'
+                      className={`group flex items-center justify-between rounded-2xl px-4 py-3 text-xs font-black transition ${
+                        active ? 'admin-nav-item-active shadow-soft' : 'admin-nav-item hover:bg-white/10'
                       }`}
                     >
                       <span>{item.label}</span>
@@ -186,13 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <PremiumButton href="/" variant="gold" size="sm" className="w-full">
                 عرض الموقع
               </PremiumButton>
-              <PremiumButton
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="w-full text-ivory hover:bg-white/10"
-                onClick={() => logout()}
-              >
+              <PremiumButton type="button" variant="ghost" size="sm" className="w-full text-ivory hover:bg-white/10" onClick={() => logout()}>
                 تسجيل الخروج
               </PremiumButton>
             </div>
@@ -215,40 +154,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </button>
 
               <div>
-                <p className="mini-label">إدارة المنصة</p>
-                <h1 className="brand-title mt-1 text-2xl font-black text-petrol">لوحة قيادة هبة الشريف</h1>
+                <p className="mini-label">مركز التشغيل</p>
+                <h1 className="brand-title mt-1 text-2xl font-black text-petrol">لوحة تشغيل هبة الشريف</h1>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <PremiumBadge variant="gold">V3.3 Launch</PremiumBadge>
-              <PremiumButton href="/" variant="outline" size="sm">
-                عرض الموقع
+              <PremiumBadge variant="gold">V3.4 Operations</PremiumBadge>
+              <PremiumButton href="/admin/orders" variant="outline" size="sm">
+                مراجعة الطلبات
               </PremiumButton>
-              <PremiumButton
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="lg:hidden"
-                onClick={() => logout()}
-              >
-                خروج
+              <PremiumButton href="/admin/bookings" variant="outline" size="sm">
+                مراجعة الحجوزات
+              </PremiumButton>
+              <PremiumButton href="/" variant="ghost" size="sm">
+                عرض الموقع
               </PremiumButton>
             </div>
           </div>
 
           {mobileOpen ? (
-            <div className="border-t border-sand bg-ivory/95 px-5 py-4 shadow-soft lg:hidden">
+            <div className="border-t border-sand bg-ivory/95 px-5 py-4 shadow-soft lg:hidden dark:bg-deepTeal">
               <div className="grid max-h-[60vh] gap-2 overflow-y-auto">
-                {groups.flatMap((group) => group.links).map((item) => {
+                {flatLinks.map((item) => {
                   const active = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(`${item.href}/`))
 
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`rounded-2xl px-4 py-3 text-xs font-bold transition ${
-                        active ? 'bg-petrol text-ivory' : 'border border-sand bg-cream text-warm-gray'
+                      className={`rounded-2xl px-4 py-3 text-xs font-black transition ${
+                        active ? 'bg-petrol text-ivory' : 'border border-sand bg-cream text-warm-gray dark:border-gold/25 dark:bg-white/10 dark:text-cream'
                       }`}
                     >
                       {item.label}

@@ -1,415 +1,260 @@
 'use client'
 
 export const dynamic = 'force-dynamic'
+
 import { useEffect, useMemo, useState } from 'react'
 import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
-import { BOOKING_STATUS_LABELS, BOOKING_STATUS_STYLES } from '@/constants/booking'
-import BrandDivider from '@/components/brand/BrandDivider'
-import PremiumButton from '@/components/ui/PremiumButton'
-import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
+import type { Booking } from '@/types'
+import { formatArabicDateTime, formatEGP, formatNumber } from '@/lib/utils/formatters'
+import { bookingStatusMeta, getAmount, getCustomerName, isToday, paymentStatusMeta, toMillis } from '@/lib/admin/operations'
+import { AdminActionButton, AdminPageHeader, AdminPanel, EmptyState, Field, inputClass, MetricCard, StatusBadge, ToneBadge } from '@/components/admin/OperationsUI'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-import { formatArabicDate, formatEGP, formatTime12h } from '@/lib/utils/formatters'
-import type { Booking, BookingStatus } from '@/types'
 
-const statusOptions: { label: string; value: 'all' | BookingStatus }[] = [
-  { label: 'كل الحجوزات', value: 'all' },
-  { label: 'بانتظار التأكيد', value: 'pending' },
-  { label: 'بيانات الدفع مرسلة', value: 'payment_submitted' },
-  { label: 'مؤكد', value: 'confirmed' },
-  { label: 'مكتمل', value: 'completed' },
-  { label: 'ملغي', value: 'cancelled' },
-]
+interface BookingItem extends Booking {
+  userEmail?: string
+  userName?: string
+  customerName?: string
+  customerEmail?: string
+  customerPhone?: string
+  adminNotes?: string
+  completedAt?: unknown
+  confirmedAt?: unknown
+  cancelledAt?: unknown
+  rejectionReason?: string
+}
+
+function mapBookings(snapshot: Awaited<ReturnType<typeof getDocs>>) {
+  return snapshot.docs.map((docItem) => ({ id: docItem.id, ...(docItem.data() as Record<string, unknown>) })) as BookingItem[]
+}
 
 export default function AdminBookingsPage() {
+  const [bookings, setBookings] = useState<BookingItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [activeStatus, setActiveStatus] = useState<'all' | BookingStatus>('all')
-  const [updatingId, setUpdatingId] = useState('')
-  const [actionError, setActionError] = useState('')
+  const [savingId, setSavingId] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [search, setSearch] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   async function loadBookings() {
     setLoading(true)
-
-    const bookingsSnap = await getDocs(collection(db, 'bookings'))
-
-    const loadedBookings = bookingsSnap.docs.map((docItem) => ({
-      id: docItem.id,
-      ...docItem.data(),
-    })) as Booking[]
-
-    loadedBookings.sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))
-
-    setBookings(loadedBookings)
-    setLoading(false)
+    setError('')
+    try {
+      const snap = await getDocs(collection(db, 'bookings'))
+      setBookings(mapBookings(snap).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)))
+    } catch (loadError) {
+      console.error('Admin bookings load error:', loadError)
+      setError('تعذر تحميل الحجوزات. راجع صلاحيات الأدمن واتصال Firebase.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    loadBookings().catch((error) => {
-      console.error('Admin bookings load error:', error)
-      setLoading(false)
-    })
+    loadBookings()
   }, [])
 
-  const stats = useMemo(() => {
-    return {
-      total: bookings.length,
-      submitted: bookings.filter((booking) => booking.status === 'payment_submitted').length,
-      confirmed: bookings.filter((booking) => booking.status === 'confirmed').length,
-      revenue: bookings
-        .filter((booking) => booking.status === 'confirmed' || booking.status === 'completed')
-        .reduce((sum, booking) => sum + Number(booking.finalAmount || booking.price || 0), 0),
-    }
-  }, [bookings])
-
-  const upcomingBookings = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10)
-    return bookings
-      .filter((booking) => booking.status !== 'cancelled' && booking.date >= today)
-      .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
-      .slice(0, 5)
-  }, [bookings])
-
-  const filteredBookings = useMemo(() => {
-    if (activeStatus === 'all') return bookings
-    return bookings.filter((booking) => booking.status === activeStatus)
-  }, [activeStatus, bookings])
-
-  async function updateBookingStatus(bookingId: string, status: BookingStatus) {
-    setUpdatingId(bookingId)
-    setActionError('')
-
-    const paymentStatus = getPaymentStatusForBookingStatus(status)
-
+  async function writeLog(action: string, booking: BookingItem, after: Record<string, unknown>) {
     try {
-      await updateDoc(doc(db, 'bookings', bookingId), {
-        status,
-        paymentStatus,
-        updatedAt: serverTimestamp(),
+      await addDoc(collection(db, 'admin_logs'), {
+        action,
+        targetType: 'bookings',
+        targetId: booking.id,
+        before: { status: booking.status, paymentStatus: booking.paymentStatus },
+        after,
+        message: `${action} - ${getCustomerName(booking)}`,
+        createdAt: serverTimestamp(),
       })
-
-      try {
-        await addDoc(collection(db, 'admin_logs'), {
-          action: 'booking_status_updated',
-          targetType: 'booking',
-          targetId: bookingId,
-          status,
-          paymentStatus,
-          createdAt: serverTimestamp(),
-        })
-      } catch (logError) {
-        console.warn('Booking status updated, but admin log was not saved:', logError)
-      }
-
-      setBookings((current) =>
-        current.map((booking) =>
-          booking.id === bookingId
-            ? {
-                ...booking,
-                status,
-                paymentStatus,
-              }
-            : booking,
-        ),
-      )
-    } catch (error) {
-      console.error('Update booking status error:', error)
-      setActionError(
-        'لم يتم تحديث حالة الحجز. تأكدي من صلاحيات الأدمن واتصال Firebase ثم حاولي مرة أخرى.',
-      )
-    } finally {
-      setUpdatingId('')
+    } catch (logError) {
+      console.warn('Booking log failed:', logError)
     }
   }
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <PremiumSkeleton className="h-36" />
-        <PremiumSkeleton className="h-36" />
-        <PremiumSkeleton className="h-36" />
-      </div>
+  async function updateBooking(booking: BookingItem, action: string, values: Record<string, unknown>, confirmMessage: string) {
+    if (!window.confirm(confirmMessage)) return
+    setSavingId(booking.id)
+    setMessage('')
+    setError('')
+
+    try {
+      const nextValues = { ...values, updatedAt: serverTimestamp() }
+      await updateDoc(doc(db, 'bookings', booking.id), nextValues)
+      await writeLog(action, booking, nextValues)
+      setBookings((current) => current.map((item) => (item.id === booking.id ? { ...item, ...values } as BookingItem : item)))
+      setMessage('تم تحديث الحجز بنجاح.')
+    } catch (updateError) {
+      console.error('Admin booking update error:', updateError)
+      setError('تعذر تحديث الحجز. تأكد من الصلاحيات وحاول مرة أخرى.')
+    } finally {
+      setSavingId('')
+    }
+  }
+
+  function addMeetingLink(booking: BookingItem) {
+    const meetingUrl = window.prompt('أضف رابط الجلسة أو وسيلة التواصل:', booking.meetingUrl || '')
+    if (!meetingUrl) return
+    updateBooking(booking, 'booking_meeting_link_added', { meetingUrl }, 'حفظ رابط الجلسة؟')
+  }
+
+  function addAdminNote(booking: BookingItem) {
+    const adminNotes = window.prompt('اكتب ملاحظة إدارية للحجز:', booking.adminNotes || '')
+    if (!adminNotes) return
+    updateBooking(booking, 'booking_note_added', { adminNotes }, 'حفظ الملاحظة؟')
+  }
+
+  function cancelBooking(booking: BookingItem) {
+    const reason = window.prompt('اكتب سبب الإلغاء:')
+    if (!reason) return
+    updateBooking(
+      booking,
+      'booking_cancelled',
+      { status: 'cancelled', cancellationReason: reason, cancelledAt: serverTimestamp() },
+      'إلغاء هذا الحجز؟',
     )
   }
 
+  const filteredBookings = useMemo(() => {
+    const queryText = search.trim().toLowerCase()
+    return bookings.filter((booking) => {
+      const matchesStatus = statusFilter === 'all' || booking.status === statusFilter || booking.paymentStatus === statusFilter
+      const haystack = [getCustomerName(booking), booking.email, booking.userEmail, booking.phone, booking.customerPhone, booking.sessionType, booking.paymentReference, booking.date]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+      const matchesSearch = !queryText || haystack.includes(queryText)
+      return matchesStatus && matchesSearch
+    })
+  }, [bookings, search, statusFilter])
+
+  const stats = useMemo(() => {
+    const confirmedRevenue = bookings
+      .filter((booking) => booking.paymentStatus === 'confirmed' || booking.status === 'completed')
+      .reduce((sum, booking) => sum + getAmount(booking), 0)
+    return {
+      total: bookings.length,
+      today: bookings.filter((booking) => isToday(booking.date)).length,
+      pending: bookings.filter((booking) => booking.status === 'pending').length,
+      paymentSubmitted: bookings.filter((booking) => booking.paymentStatus === 'submitted' || booking.status === 'payment_submitted').length,
+      confirmed: bookings.filter((booking) => booking.status === 'confirmed').length,
+      completed: bookings.filter((booking) => booking.status === 'completed').length,
+      revenue: confirmedRevenue,
+    }
+  }, [bookings])
+
+  if (loading) return <PremiumSkeleton className="h-[32rem]" />
+
   return (
-    <div>
-      <div className="mb-8 overflow-hidden rounded-[2.75rem] border border-sand bg-ivory/82 p-6 shadow-premium backdrop-blur-sm md:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1fr_360px] xl:items-center">
-          <div>
-            <p className="mini-label">إدارة الحجوزات</p>
-            <h2 className="mt-3 text-4xl font-black text-charcoal">جلسات هبة الخاصة</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-8 text-warm-gray">
-              راجعي بيانات الدفع، ثبتي المواعيد، وتابعي الجلسات القادمة من مكان واحد بنظام واضح.
-            </p>
-          </div>
+    <div className="space-y-8">
+      <AdminPageHeader
+        title="إدارة الحجوزات والجلسات"
+        description="تشغيل واضح للحجز: تأكيد الموعد منفصل عن تأكيد الدفع، مع رابط جلسة وملاحظات وسجل إجراءات."
+      />
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-            <AdminStat label="إجمالي الحجوزات" value={stats.total} />
-            <AdminStat label="بانتظار مراجعة الدفع" value={stats.submitted} />
-          </div>
-        </div>
+      {message ? <div className="rounded-2xl border border-olive/25 bg-olive/10 p-4 text-sm font-black text-olive dark:text-ivory">{message}</div> : null}
+      {error ? <div className="rounded-2xl border border-burgundy/25 bg-burgundy/10 p-4 text-sm font-black text-burgundy dark:text-ivory">{error}</div> : null}
 
-        <BrandDivider className="my-7" />
-
-        <div className="grid gap-4 md:grid-cols-4">
-          <AdminMetric label="كل الطلبات" value={stats.total.toString()} />
-          <AdminMetric label="تحتاج مراجعة" value={stats.submitted.toString()} />
-          <AdminMetric label="مؤكدة" value={stats.confirmed.toString()} />
-          <AdminMetric label="إيراد مؤكد" value={formatEGP(stats.revenue)} ltr />
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+        <MetricCard label="كل الحجوزات" value={formatNumber(stats.total)} tone="muted" />
+        <MetricCard label="اليوم" value={formatNumber(stats.today)} tone="gold" />
+        <MetricCard label="بانتظار التأكيد" value={formatNumber(stats.pending)} tone="warning" />
+        <MetricCard label="إثبات دفع" value={formatNumber(stats.paymentSubmitted)} tone="petrol" />
+        <MetricCard label="مؤكدة" value={formatNumber(stats.confirmed)} tone="success" />
+        <MetricCard label="مكتملة" value={formatNumber(stats.completed)} tone="olive" />
+        <MetricCard label="إيرادات الجلسات" value={formatEGP(stats.revenue)} tone="gold" />
       </div>
 
-      <div className="grid gap-8 xl:grid-cols-[1fr_340px] xl:items-start">
-        <section>
-          {actionError ? (
-            <div className="mb-5 rounded-2xl border border-burgundy/25 bg-burgundy/8 px-5 py-4 text-sm font-bold leading-7 text-burgundy">
-              {actionError}
-            </div>
-          ) : null}
-
-          <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-wrap gap-2">
-              {statusOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setActiveStatus(option.value)}
-                  className={`rounded-full px-4 py-2 text-xs font-black transition ${
-                    activeStatus === option.value
-                      ? 'bg-petrol text-ivory'
-                      : 'border border-sand bg-ivory text-warm-gray hover:text-petrol'
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+      <AdminPanel title="فلترة الحجوزات" description="اعرضي حجوزات اليوم أو الحالات التي تحتاج إجراء.">
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field label="الحالة">
+            <select className={inputClass} value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <option value="all">كل الحالات</option>
+              <option value="pending">طلبات جديدة</option>
+              <option value="submitted">إثبات دفع مرسل</option>
+              <option value="payment_submitted">إثبات دفع مرسل</option>
+              <option value="confirmed">مؤكدة</option>
+              <option value="completed">مكتملة</option>
+              <option value="cancelled">ملغية</option>
+            </select>
+          </Field>
+          <div className="md:col-span-2">
+            <Field label="بحث">
+              <input className={inputClass} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="اسم، هاتف، بريد، تاريخ، مرجع دفع..." />
+            </Field>
           </div>
+        </div>
+      </AdminPanel>
 
-          {filteredBookings.length === 0 ? (
-            <PremiumEmptyState
-              icon="📅"
-              title="لا توجد حجوزات"
-              description="عندما يرسل المستخدم طلب حجز جلسة، سيظهر هنا."
-            />
-          ) : (
-            <div className="space-y-4">
-              {filteredBookings.map((booking) => (
-                <article
-                  key={booking.id}
-                  className="rounded-[2rem] border border-sand bg-ivory/88 p-6 shadow-soft backdrop-blur-sm transition hover:-translate-y-0.5 hover:shadow-premium"
-                >
-                  <div className="grid gap-6 2xl:grid-cols-[1fr_240px] 2xl:items-center">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-3">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${
-                            BOOKING_STATUS_STYLES[booking.status]
-                          }`}
-                        >
-                          {BOOKING_STATUS_LABELS[booking.status]}
-                        </span>
-                        <span className="rounded-full border border-sand bg-cream/70 px-3 py-1 text-xs font-bold text-warm-gray latin-numerals">
-                          {booking.date} · {formatTime12h(booking.time)}
-                        </span>
-                      </div>
+      <AdminPanel title="قائمة الحجوزات" description="كل إجراء يحدث تحديثًا فعليًا ويُسجل في السجلات.">
+        {filteredBookings.length === 0 ? (
+          <EmptyState title="لا توجد حجوزات مطابقة" description="عند وصول طلب حجز أو تغيير الفلاتر ستظهر الحجوزات هنا لإدارتها." />
+        ) : (
+          <div className="space-y-4">
+            {filteredBookings.map((booking) => (
+              <article key={booking.id} className="rounded-[1.75rem] border border-sand bg-cream/80 p-5 shadow-soft dark:border-gold/25 dark:bg-white/10">
+                <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="text-xl font-black text-charcoal dark:text-ivory">{getCustomerName(booking)}</h3>
+                      <StatusBadge meta={bookingStatusMeta[String(booking.status)]} fallback={String(booking.status)} />
+                      <StatusBadge meta={paymentStatusMeta[String(booking.paymentStatus || 'pending')]} fallback={String(booking.paymentStatus || 'pending')} />
+                      {booking.meetingUrl ? <ToneBadge tone="success">رابط جلسة موجود</ToneBadge> : <ToneBadge tone="warning">بدون رابط جلسة</ToneBadge>}
+                    </div>
+                    <div className="mt-4 grid gap-3 text-sm font-bold text-warm-gray dark:text-cream md:grid-cols-2">
+                      <p>البريد: <span className="text-charcoal dark:text-ivory">{booking.email || booking.userEmail || booking.customerEmail || 'غير متوفر'}</span></p>
+                      <p>الهاتف: <span className="text-charcoal dark:text-ivory">{booking.phone || booking.customerPhone || 'غير متوفر'}</span></p>
+                      <p>النوع: <span className="text-charcoal dark:text-ivory">{booking.sessionType || 'جلسة فردية'}</span></p>
+                      <p>الموعد: <span className="text-charcoal dark:text-ivory">{booking.date || 'غير محدد'} · {booking.time || ''}</span></p>
+                      <p>المدة: <span className="text-charcoal dark:text-ivory">{booking.duration || 60} دقيقة</span></p>
+                      <p>المبلغ: <span className="text-charcoal dark:text-ivory">{formatEGP(getAmount(booking))}</span></p>
+                      <p>طريقة الدفع: <span className="text-charcoal dark:text-ivory">{booking.paymentMethod || 'غير محددة'}</span></p>
+                      <p>مرجع الدفع: <span className="text-charcoal dark:text-ivory">{booking.paymentReference || 'غير متوفر'}</span></p>
+                    </div>
+                    {booking.notes ? <p className="mt-4 rounded-2xl border border-gold/25 bg-gold/10 p-3 text-sm font-bold text-deepTeal dark:text-ivory">ملاحظة العميلة: {booking.notes}</p> : null}
+                    {booking.adminNotes ? <p className="mt-4 rounded-2xl border border-petrol/25 bg-petrol/10 p-3 text-sm font-bold text-petrol dark:text-ivory">ملاحظة إدارية: {booking.adminNotes}</p> : null}
+                    {booking.meetingUrl ? <p className="mt-4 break-all rounded-2xl border border-olive/25 bg-olive/10 p-3 text-sm font-bold text-olive dark:text-ivory">رابط الجلسة: {booking.meetingUrl}</p> : null}
+                  </div>
 
-                      <h3 className="mt-4 text-2xl font-black text-charcoal">
-                        {booking.duration === 90 ? 'جلسة عميقة 90 دقيقة' : 'جلسة فردية 60 دقيقة'}
-                      </h3>
-
-                      <div className="mt-4 grid gap-3 text-sm leading-7 text-warm-gray md:grid-cols-2 xl:grid-cols-3">
-                        <Info label="العميل" value={booking.name} />
-                        <Info label="الهاتف" value={booking.phone} ltr />
-                        <Info label="البريد" value={booking.email} ltr />
-                        <Info label="تاريخ الطلب" value={formatArabicDate(booking.createdAt)} />
-                        <Info label="المدة" value={`${booking.duration} دقيقة`} ltr />
-                        <Info
-                          label="الإجمالي"
-                          value={formatEGP(booking.finalAmount || booking.price || 0)}
-                          ltr
-                          accent
-                        />
-                      </div>
-
-                      <div className="mt-5 grid gap-3 rounded-2xl border border-sand bg-cream/70 p-4 text-sm md:grid-cols-3">
-                        <Info label="طريقة الدفع" value={booking.paymentMethod || 'manual'} />
-                        <Info
-                          label="مرجع الدفع"
-                          value={booking.paymentReference || 'غير مضاف'}
-                          ltr
-                        />
-                        <Info label="كود الخصم" value={booking.couponCode || 'بدون'} />
-                      </div>
-
-                      {booking.notes || booking.paymentNote ? (
-                        <div className="mt-4 grid gap-3 md:grid-cols-2">
-                          {booking.notes ? (
-                            <NoteBox title="ملاحظات العميل" text={booking.notes} />
-                          ) : null}
-                          {booking.paymentNote ? (
-                            <NoteBox title="ملاحظة الدفع" text={booking.paymentNote} />
-                          ) : null}
-                        </div>
-                      ) : null}
+                  <div className="rounded-[1.5rem] border border-sand bg-ivory/80 p-4 dark:border-gold/25 dark:bg-deepTeal/60">
+                    <p className="mb-3 text-xs font-black text-petrol dark:text-gold">إجراءات الحجز</p>
+                    <div className="flex flex-wrap gap-2">
+                      <AdminActionButton disabled={savingId === booking.id} tone="success" onClick={() => updateBooking(booking, 'booking_confirmed', { status: 'confirmed', confirmedAt: serverTimestamp() }, 'تأكيد موعد الحجز؟')}>
+                        تأكيد الموعد
+                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="petrol" onClick={() => updateBooking(booking, 'booking_payment_confirmed', { paymentStatus: 'confirmed', status: booking.status === 'pending' ? 'confirmed' : booking.status }, 'تأكيد الدفع لهذا الحجز؟')}>
+                        تأكيد الدفع
+                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="gold" onClick={() => addMeetingLink(booking)}>
+                        رابط الجلسة
+                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="olive" onClick={() => updateBooking(booking, 'booking_completed', { status: 'completed', completedAt: serverTimestamp() }, 'تحديد الحجز كمكتمل؟')}>
+                        مكتملة
+                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="warning" onClick={() => updateBooking(booking, 'booking_reschedule_requested', { status: 'reschedule_requested' }, 'تحديد الحجز كطلب إعادة جدولة؟')}>
+                        إعادة جدولة
+                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="danger" onClick={() => cancelBooking(booking)}>
+                        إلغاء
+                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="muted" onClick={() => addAdminNote(booking)}>
+                        ملاحظة
+                      </AdminActionButton>
                     </div>
 
-                    <div className="grid gap-2">
-                      <PremiumButton
-                        type="button"
-                        size="sm"
-                        className="w-full"
-                        disabled={updatingId === booking.id || booking.status === 'confirmed'}
-                        onClick={() => updateBookingStatus(booking.id, 'confirmed')}
-                      >
-                        تأكيد الحجز
-                      </PremiumButton>
-
-                      <PremiumButton
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        className="w-full"
-                        disabled={
-                          updatingId === booking.id || booking.status === 'payment_submitted'
-                        }
-                        onClick={() => updateBookingStatus(booking.id, 'payment_submitted')}
-                      >
-                        بانتظار مراجعة الدفع
-                      </PremiumButton>
-
-                      <PremiumButton
-                        type="button"
-                        size="sm"
-                        variant="gold"
-                        className="w-full"
-                        disabled={updatingId === booking.id || booking.status === 'completed'}
-                        onClick={() => updateBookingStatus(booking.id, 'completed')}
-                      >
-                        تحديد كمكتملة
-                      </PremiumButton>
-
-                      <PremiumButton
-                        type="button"
-                        size="sm"
-                        variant="danger"
-                        className="w-full"
-                        disabled={updatingId === booking.id || booking.status === 'cancelled'}
-                        onClick={() => updateBookingStatus(booking.id, 'cancelled')}
-                      >
-                        إلغاء الحجز
-                      </PremiumButton>
+                    <div className="mt-5 space-y-2 border-t border-sand pt-4 text-xs font-bold text-warm-gray dark:border-gold/25 dark:text-cream">
+                      <p>1. طلب الحجز</p>
+                      <p>2. مراجعة الدفع</p>
+                      <p>3. تأكيد الموعد</p>
+                      <p>4. رابط الجلسة</p>
+                      <p>5. مكتملة</p>
                     </div>
                   </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <aside className="space-y-5 xl:sticky xl:top-28">
-          <div className="rounded-[2rem] border border-sand bg-ivory/88 p-5 shadow-soft backdrop-blur-sm">
-            <p className="mini-label">الجلسات القادمة</p>
-            <div className="mt-5 space-y-3">
-              {upcomingBookings.length > 0 ? (
-                upcomingBookings.map((booking) => (
-                  <div key={booking.id} className="rounded-2xl border border-sand bg-cream/65 p-4">
-                    <p className="text-sm font-black text-charcoal">{booking.name}</p>
-                    <p className="mt-2 text-xs font-bold text-warm-gray latin-numerals">
-                      {booking.date} · {formatTime12h(booking.time)}
-                    </p>
-                    <p className="mt-2 text-xs font-bold text-petrol">
-                      {BOOKING_STATUS_LABELS[booking.status]}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="rounded-2xl border border-sand bg-cream/65 p-4 text-sm leading-7 text-warm-gray">
-                  لا توجد جلسات قادمة حاليًا.
-                </p>
-              )}
-            </div>
+                </div>
+              </article>
+            ))}
           </div>
-
-          <div className="rounded-[2rem] border border-petrol/15 bg-petrol on-dark p-6 text-ivory shadow-botanical">
-            <p className="text-sm font-black text-gold">تذكير إداري</p>
-            <p className="mt-3 text-sm leading-7 text-ivory/80">
-              لا تؤكدي أي حجز قبل مطابقة مرجع الدفع. بعد التأكيد تظهر الجلسة للمستخدم كموعد مثبت.
-            </p>
-          </div>
-        </aside>
-      </div>
-    </div>
-  )
-}
-
-function getPaymentStatusForBookingStatus(status: BookingStatus): Booking['paymentStatus'] {
-  if (status === 'confirmed' || status === 'completed') return 'confirmed'
-  if (status === 'payment_submitted') return 'submitted'
-  if (status === 'cancelled') return 'failed'
-  return 'pending'
-}
-
-function AdminStat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl border border-sand bg-cream/60 p-4">
-      <p className="text-xs font-bold text-warm-gray">{label}</p>
-      <strong className="mt-2 block text-3xl font-black text-petrol latin-numerals">{value}</strong>
-    </div>
-  )
-}
-
-function AdminMetric({
-  label,
-  value,
-  ltr = false,
-}: {
-  label: string
-  value: string
-  ltr?: boolean
-}) {
-  return (
-    <div className="rounded-[1.5rem] border border-sand bg-cream/55 p-5 text-center">
-      <p className="text-xs font-bold text-warm-gray">{label}</p>
-      <strong
-        className={`mt-2 block text-2xl font-black text-charcoal ${ltr ? 'latin-numerals' : ''}`}
-      >
-        {value}
-      </strong>
-    </div>
-  )
-}
-
-function Info({
-  label,
-  value,
-  ltr = false,
-  accent = false,
-}: {
-  label: string
-  value: string
-  ltr?: boolean
-  accent?: boolean
-}) {
-  return (
-    <p className="font-bold text-warm-gray">
-      {label}
-      <br />
-      <strong
-        className={`${accent ? 'text-petrol' : 'text-charcoal'} ${ltr ? 'latin-numerals' : ''}`}
-      >
-        {value}
-      </strong>
-    </p>
-  )
-}
-
-function NoteBox({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="rounded-2xl border border-sand bg-cream px-4 py-3">
-      <p className="text-xs font-bold text-warm-gray">{title}</p>
-      <p className="mt-2 text-sm leading-7 text-charcoal">{text}</p>
+        )}
+      </AdminPanel>
     </div>
   )
 }

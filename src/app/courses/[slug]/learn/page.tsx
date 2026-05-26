@@ -249,7 +249,7 @@ export default function CourseLearnPage() {
           <div className="container-premium relative py-10">
             <Link
               href="/dashboard/courses"
-              className="mb-5 inline-flex rounded-full border border-white/15 bg-white/8 px-4 py-2 text-xs font-bold text-ivory/75 transition hover:text-gold"
+              className="mb-5 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-ivory/75 transition hover:text-gold"
             >
               ← العودة لكورساتي
             </Link>
@@ -263,7 +263,7 @@ export default function CourseLearnPage() {
                 </p>
               </div>
 
-              <PremiumCard className="border-white/10 bg-white/8 p-5 text-ivory">
+              <PremiumCard className="border-white/10 bg-white/10 p-5 text-ivory">
                 <p className="text-xs font-bold text-ivory/55">نسبة التقدم</p>
                 <strong className="mt-2 block text-5xl font-black text-gold">{safeProgress}%</strong>
                 <div className="mt-5">
