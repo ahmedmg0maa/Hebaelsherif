@@ -1,6 +1,6 @@
 export type UserRole = 'user' | 'admin'
 
-export type PublishStatus = 'published' | 'draft'
+export type PublishStatus = 'published' | 'draft' | 'review' | 'coming_soon' | 'hidden' | 'archived'
 
 export type ProductType = 'course' | 'book'
 
@@ -8,7 +8,7 @@ export type OrderStatus = 'pending' | 'awaiting_payment' | 'payment_submitted' |
 
 export type PaymentMethod = 'instapay' | 'vodafone_cash' | 'bank_transfer' | 'manual'
 
-export type BookingStatus = 'pending' | 'payment_submitted' | 'confirmed' | 'reschedule_requested' | 'cancelled' | 'completed'
+export type BookingStatus = 'pending' | 'awaiting_payment' | 'payment_submitted' | 'confirmed' | 'reschedule_requested' | 'cancelled' | 'completed' | 'no_show'
 
 export type BookingDuration = 60 | 90
 
@@ -146,7 +146,7 @@ export interface Review {
   productType: ProductType
   rating: number
   content: string
-  status: 'published' | 'pending' | 'hidden'
+  status: 'published' | 'approved' | 'pending' | 'rejected' | 'hidden'
   createdAt: FirestoreDate
   updatedAt?: FirestoreDate
 }
@@ -214,6 +214,6 @@ export interface Lead {
   id: string
   email: string
   source: string
-  status: 'new' | 'contacted' | 'converted'
+  status: 'new' | 'read' | 'replied' | 'important' | 'archived' | 'contacted' | 'converted'
   createdAt: FirestoreDate
 }

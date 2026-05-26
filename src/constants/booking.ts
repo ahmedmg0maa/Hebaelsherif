@@ -56,18 +56,22 @@ export const BOOKING_DURATION_OPTIONS: SelectOption<BookingDuration>[] = [
 
 export const BOOKING_STATUS_LABELS = {
   pending: 'بانتظار التأكيد',
+  awaiting_payment: 'بانتظار الدفع',
   payment_submitted: 'تم إرسال بيانات الدفع',
   confirmed: 'مؤكد',
   reschedule_requested: 'طلب تغيير موعد',
   cancelled: 'ملغي',
   completed: 'مكتمل',
+  no_show: 'لم يحضر',
 } as const
 
 export const BOOKING_STATUS_STYLES = {
   pending: 'bg-gold/10 text-gold border-gold/20',
+  awaiting_payment: 'bg-gold/10 text-gold border-gold/20',
   payment_submitted: 'bg-petrol/10 text-petrol border-petrol/20',
   confirmed: 'bg-olive/10 text-olive border-olive/20',
   reschedule_requested: 'bg-petrol/10 text-petrol border-petrol/20',
   cancelled: 'bg-burgundy/10 text-burgundy border-burgundy/20',
   completed: 'bg-petrol/10 text-petrol border-petrol/20',
+  no_show: 'bg-burgundy/10 text-burgundy border-burgundy/20',
 } as const
