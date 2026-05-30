@@ -9,12 +9,14 @@ import { PageSkeleton } from '@/components/ui/PremiumSkeleton'
 import PremiumButton from '@/components/ui/PremiumButton'
 import PremiumBadge from '@/components/ui/PremiumBadge'
 import BrandMark from '@/components/brand/BrandMark'
+import NotificationBell from '@/components/admin/NotificationBell'
+import CommandPalette from '@/components/admin/CommandPalette'
 
 const groupDefinitions = [
   {
     title: 'التشغيل اليومي',
     hint: 'المبيعات والحجوزات والمتابعة',
-    links: ['/admin', '/admin/orders', '/admin/bookings', '/admin/messages'],
+    links: ['/admin', '/admin/action-queue', '/admin/orders', '/admin/bookings', '/admin/messages', '/admin/tasks'],
   },
   {
     title: 'المنتجات والحماية',
@@ -24,12 +26,12 @@ const groupDefinitions = [
   {
     title: 'العملاء والثقة',
     hint: 'العملاء، التقييمات، والتحليلات',
-    links: ['/admin/users', '/admin/reviews', '/admin/analytics'],
+    links: ['/admin/users', '/admin/reviews', '/admin/analytics', '/admin/campaigns'],
   },
   {
     title: 'النظام',
     hint: 'السجلات والإعدادات الأساسية',
-    links: ['/admin/logs', '/admin/settings'],
+    links: ['/admin/system-health', '/admin/notifications', '/admin/templates', '/admin/exports', '/admin/logs', '/admin/settings'],
   },
 ]
 
@@ -86,9 +88,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <BrandMark size="md" className="[&_.text-charcoal]:text-ivory" />
           </Link>
           <div className="relative mt-5 rounded-2xl border border-gold/25 bg-gold/10 p-4">
-            <p className="text-xs font-black text-gold">Heba Operations Center</p>
+            <p className="text-xs font-black text-gold">Heba Global Operations Center</p>
             <p className="mt-2 text-xs font-bold leading-6 admin-soft-text">
-              غرفة تشغيل واضحة لإدارة الطلبات، الحجوزات، المحتوى، العملاء، والتحليلات الصادقة.
+              غرفة تشغيل عالمية لإدارة المتابعة اليومية، الطلبات، الحجوزات، المحتوى، العملاء، والتحليلات الصادقة.
             </p>
           </div>
         </div>
@@ -160,7 +162,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <PremiumBadge variant="gold">V3.4 Operations</PremiumBadge>
+              <PremiumBadge variant="gold">V4.0 Global</PremiumBadge>
+              <CommandPalette />
+              <NotificationBell />
+              <PremiumButton href="/admin/action-queue" variant="outline" size="sm">
+                قائمة المتابعة
+              </PremiumButton>
               <PremiumButton href="/admin/orders" variant="outline" size="sm">
                 مراجعة الطلبات
               </PremiumButton>

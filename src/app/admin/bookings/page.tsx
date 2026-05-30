@@ -3,25 +3,22 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useMemo, useState } from 'react'
-import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
+import { useAuth } from '@/hooks/useAuth'
 import type { Booking } from '@/types'
-import { formatArabicDateTime, formatEGP, formatNumber } from '@/lib/utils/formatters'
+import { formatEGP, formatNumber } from '@/lib/utils/formatters'
 import { bookingStatusMeta, getAmount, getCustomerName, isToday, paymentStatusMeta, toMillis } from '@/lib/admin/operations'
 import { AdminActionButton, AdminPageHeader, AdminPanel, EmptyState, Field, inputClass, MetricCard, StatusBadge, ToneBadge } from '@/components/admin/OperationsUI'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
 
 interface BookingItem extends Booking {
   userEmail?: string
-  userName?: string
-  customerName?: string
   customerEmail?: string
   customerPhone?: string
+  customerName?: string
   adminNotes?: string
-  completedAt?: unknown
-  confirmedAt?: unknown
-  cancelledAt?: unknown
-  rejectionReason?: string
+  cancellationReason?: string
 }
 
 function mapBookings(snapshot: Awaited<ReturnType<typeof getDocs>>) {
@@ -29,6 +26,7 @@ function mapBookings(snapshot: Awaited<ReturnType<typeof getDocs>>) {
 }
 
 export default function AdminBookingsPage() {
+  const { firebaseUser } = useAuth()
   const [bookings, setBookings] = useState<BookingItem[]>([])
   const [loading, setLoading] = useState(true)
   const [savingId, setSavingId] = useState('')
@@ -55,82 +53,67 @@ export default function AdminBookingsPage() {
     loadBookings()
   }, [])
 
-  async function writeLog(action: string, booking: BookingItem, after: Record<string, unknown>) {
-    try {
-      await addDoc(collection(db, 'admin_logs'), {
-        action,
-        targetType: 'bookings',
-        targetId: booking.id,
-        before: { status: booking.status, paymentStatus: booking.paymentStatus },
-        after,
-        message: `${action} - ${getCustomerName(booking)}`,
-        createdAt: serverTimestamp(),
-      })
-    } catch (logError) {
-      console.warn('Booking log failed:', logError)
+  async function runBookingAction(booking: BookingItem, action: string, payload: Record<string, unknown>, confirmMessage: string) {
+    if (!firebaseUser) {
+      setError('انتهت جلسة الدخول. أعد تسجيل الدخول كأدمن.')
+      return
     }
-  }
-
-  async function updateBooking(booking: BookingItem, action: string, values: Record<string, unknown>, confirmMessage: string) {
     if (!window.confirm(confirmMessage)) return
+
     setSavingId(booking.id)
     setMessage('')
     setError('')
-
     try {
-      const nextValues = { ...values, updatedAt: serverTimestamp() }
-      await updateDoc(doc(db, 'bookings', booking.id), nextValues)
-      await writeLog(action, booking, nextValues)
-      setBookings((current) => current.map((item) => (item.id === booking.id ? { ...item, ...values } as BookingItem : item)))
-      setMessage('تم تحديث الحجز بنجاح.')
+      const token = await firebaseUser.getIdToken()
+      const response = await fetch(`/api/admin/bookings/${booking.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action, ...payload }),
+      })
+      const data = (await response.json()) as { success?: boolean; error?: string }
+      if (!response.ok || !data.success) {
+        setError(data.error || 'تعذر تنفيذ الإجراء.')
+        return
+      }
+      await loadBookings()
+      setMessage('تم تنفيذ الإجراء وتسجيله وإرسال الإشعار المناسب.')
     } catch (updateError) {
-      console.error('Admin booking update error:', updateError)
-      setError('تعذر تحديث الحجز. تأكد من الصلاحيات وحاول مرة أخرى.')
+      console.error('Admin booking action error:', updateError)
+      setError('تعذر تنفيذ الإجراء. تأكد من الصلاحيات وحاول مرة أخرى.')
     } finally {
       setSavingId('')
     }
   }
 
   function addMeetingLink(booking: BookingItem) {
-    const meetingUrl = window.prompt('أضف رابط الجلسة أو وسيلة التواصل:', booking.meetingUrl || '')
+    const meetingUrl = window.prompt('أضيفي رابط الجلسة:', booking.meetingUrl || '')
     if (!meetingUrl) return
-    updateBooking(booking, 'booking_meeting_link_added', { meetingUrl }, 'حفظ رابط الجلسة؟')
+    runBookingAction(booking, 'add_meeting_link', { meetingUrl }, 'حفظ رابط الجلسة وإشعار العميلة؟')
   }
 
   function addAdminNote(booking: BookingItem) {
-    const adminNotes = window.prompt('اكتب ملاحظة إدارية للحجز:', booking.adminNotes || '')
-    if (!adminNotes) return
-    updateBooking(booking, 'booking_note_added', { adminNotes }, 'حفظ الملاحظة؟')
+    const note = window.prompt('اكتب ملاحظة داخلية للحجز:', booking.adminNotes || '')
+    if (!note) return
+    runBookingAction(booking, 'note', { note }, 'حفظ الملاحظة؟')
   }
 
   function cancelBooking(booking: BookingItem) {
-    const reason = window.prompt('اكتب سبب الإلغاء:')
-    if (!reason) return
-    updateBooking(
-      booking,
-      'booking_cancelled',
-      { status: 'cancelled', cancellationReason: reason, cancelledAt: serverTimestamp() },
-      'إلغاء هذا الحجز؟',
-    )
+    const reason = window.prompt('سبب الإلغاء اختياري:') || ''
+    runBookingAction(booking, 'cancel_booking', { reason }, 'إلغاء هذا الحجز؟')
   }
 
   const filteredBookings = useMemo(() => {
     const queryText = search.trim().toLowerCase()
     return bookings.filter((booking) => {
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter || booking.paymentStatus === statusFilter
-      const haystack = [getCustomerName(booking), booking.email, booking.userEmail, booking.phone, booking.customerPhone, booking.sessionType, booking.paymentReference, booking.date]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
+      const haystack = [getCustomerName(booking), booking.email, booking.userEmail, booking.phone, booking.customerPhone, booking.sessionType, booking.paymentReference, booking.date].filter(Boolean).join(' ').toLowerCase()
       const matchesSearch = !queryText || haystack.includes(queryText)
       return matchesStatus && matchesSearch
     })
   }, [bookings, search, statusFilter])
 
   const stats = useMemo(() => {
-    const confirmedRevenue = bookings
-      .filter((booking) => booking.paymentStatus === 'confirmed' || booking.status === 'completed')
-      .reduce((sum, booking) => sum + getAmount(booking), 0)
+    const confirmedRevenue = bookings.filter((booking) => booking.paymentStatus === 'confirmed' || booking.status === 'completed').reduce((sum, booking) => sum + getAmount(booking), 0)
     return {
       total: bookings.length,
       today: bookings.filter((booking) => isToday(booking.date)).length,
@@ -146,10 +129,7 @@ export default function AdminBookingsPage() {
 
   return (
     <div className="space-y-8">
-      <AdminPageHeader
-        title="إدارة الحجوزات والجلسات"
-        description="تشغيل واضح للحجز: تأكيد الموعد منفصل عن تأكيد الدفع، مع رابط جلسة وملاحظات وسجل إجراءات."
-      />
+      <AdminPageHeader title="إدارة الحجوزات والجلسات" description="تشغيل الجلسات من السيرفر: تأكيد الموعد منفصل عن تأكيد الدفع، مع رابط جلسة وملاحظات وسجل إجراءات." />
 
       {message ? <div className="rounded-2xl border border-olive/25 bg-olive/10 p-4 text-sm font-black text-olive dark:text-ivory">{message}</div> : null}
       {error ? <div className="rounded-2xl border border-burgundy/25 bg-burgundy/10 p-4 text-sm font-black text-burgundy dark:text-ivory">{error}</div> : null}
@@ -185,7 +165,7 @@ export default function AdminBookingsPage() {
         </div>
       </AdminPanel>
 
-      <AdminPanel title="قائمة الحجوزات" description="كل إجراء يحدث تحديثًا فعليًا ويُسجل في السجلات.">
+      <AdminPanel title="قائمة الحجوزات" description="كل إجراء يحدث تحديثًا فعليًا ويُسجل في السجلات ويُرسل إشعارًا عند الحاجة.">
         {filteredBookings.length === 0 ? (
           <EmptyState title="لا توجد حجوزات مطابقة" description="عند وصول طلب حجز أو تغيير الفلاتر ستظهر الحجوزات هنا لإدارتها." />
         ) : (
@@ -218,29 +198,14 @@ export default function AdminBookingsPage() {
                   <div className="rounded-[1.5rem] border border-sand bg-ivory/80 p-4 dark:border-gold/25 dark:bg-deepTeal/60">
                     <p className="mb-3 text-xs font-black text-petrol dark:text-gold">إجراءات الحجز</p>
                     <div className="flex flex-wrap gap-2">
-                      <AdminActionButton disabled={savingId === booking.id} tone="success" onClick={() => updateBooking(booking, 'booking_confirmed', { status: 'confirmed', confirmedAt: serverTimestamp() }, 'تأكيد موعد الحجز؟')}>
-                        تأكيد الموعد
-                      </AdminActionButton>
-                      <AdminActionButton disabled={savingId === booking.id} tone="petrol" onClick={() => updateBooking(booking, 'booking_payment_confirmed', { paymentStatus: 'confirmed', status: booking.status === 'pending' ? 'confirmed' : booking.status }, 'تأكيد الدفع لهذا الحجز؟')}>
-                        تأكيد الدفع
-                      </AdminActionButton>
-                      <AdminActionButton disabled={savingId === booking.id} tone="gold" onClick={() => addMeetingLink(booking)}>
-                        رابط الجلسة
-                      </AdminActionButton>
-                      <AdminActionButton disabled={savingId === booking.id} tone="olive" onClick={() => updateBooking(booking, 'booking_completed', { status: 'completed', completedAt: serverTimestamp() }, 'تحديد الحجز كمكتمل؟')}>
-                        مكتملة
-                      </AdminActionButton>
-                      <AdminActionButton disabled={savingId === booking.id} tone="warning" onClick={() => updateBooking(booking, 'booking_reschedule_requested', { status: 'reschedule_requested' }, 'تحديد الحجز كطلب إعادة جدولة؟')}>
-                        إعادة جدولة
-                      </AdminActionButton>
-                      <AdminActionButton disabled={savingId === booking.id} tone="danger" onClick={() => cancelBooking(booking)}>
-                        إلغاء
-                      </AdminActionButton>
-                      <AdminActionButton disabled={savingId === booking.id} tone="muted" onClick={() => addAdminNote(booking)}>
-                        ملاحظة
-                      </AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="success" onClick={() => runBookingAction(booking, 'confirm_booking', {}, 'تأكيد موعد الحجز؟')}>تأكيد الموعد</AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="petrol" onClick={() => runBookingAction(booking, 'confirm_payment', {}, 'تأكيد الدفع لهذا الحجز؟')}>تأكيد الدفع</AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="gold" onClick={() => addMeetingLink(booking)}>رابط الجلسة</AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="olive" onClick={() => runBookingAction(booking, 'complete_booking', {}, 'تحديد الحجز كمكتمل؟')}>مكتملة</AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="warning" onClick={() => runBookingAction(booking, 'request_reschedule', {}, 'تحديد الحجز كطلب إعادة جدولة؟')}>إعادة جدولة</AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="danger" onClick={() => cancelBooking(booking)}>إلغاء</AdminActionButton>
+                      <AdminActionButton disabled={savingId === booking.id} tone="muted" onClick={() => addAdminNote(booking)}>ملاحظة</AdminActionButton>
                     </div>
-
                     <div className="mt-5 space-y-2 border-t border-sand pt-4 text-xs font-bold text-warm-gray dark:border-gold/25 dark:text-cream">
                       <p>1. طلب الحجز</p>
                       <p>2. مراجعة الدفع</p>

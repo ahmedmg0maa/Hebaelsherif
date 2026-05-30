@@ -10,8 +10,6 @@ export interface CourseLessonFormValue {
   title: string
   description: string
   duration: number
-  contentUrl?: string
-  resourceUrl?: string
   order: number
 }
 
@@ -63,16 +61,7 @@ function textToOutcomes(value: string) {
 function lessonsToText(lessons?: CourseLessonFormValue[]) {
   return (lessons || [])
     .sort((a, b) => a.order - b.order)
-    .map((lesson) =>
-      [
-        lesson.stageTitle,
-        lesson.title,
-        lesson.description,
-        lesson.duration,
-        lesson.contentUrl || '',
-        lesson.resourceUrl || '',
-      ].join(' | '),
-    )
+    .map((lesson) => [lesson.stageTitle, lesson.title, lesson.description, lesson.duration].join(' | '))
     .join('\n')
 }
 
@@ -82,7 +71,7 @@ function textToLessons(value: string): CourseLessonFormValue[] {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line, index) => {
-      const [stageTitle, title, description, duration, contentUrl, resourceUrl] = line
+      const [stageTitle, title, description, duration] = line
         .split('|')
         .map((item) => item.trim())
 
@@ -91,12 +80,11 @@ function textToLessons(value: string): CourseLessonFormValue[] {
         title: title || `الدرس ${index + 1}`,
         description: description || 'وصف مختصر للدرس.',
         duration: Number(duration || 20),
-        contentUrl: contentUrl || '',
-        resourceUrl: resourceUrl || '',
         order: index + 1,
       }
     })
 }
+
 
 export default function CourseForm({ initialValues, submitLabel, loading = false, onSubmit }: CourseFormProps) {
   const [title, setTitle] = useState(initialValues?.title || '')
@@ -174,7 +162,7 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
         <p className="mini-label">Course Builder</p>
         <h2 className="mt-3 text-2xl font-black text-charcoal">بيانات الكورس والفصول</h2>
         <p className="mt-3 text-sm leading-8 text-warm-gray">
-          يمكن إضافة رابط مجلد Google Drive للكورس، وروابط الدروس داخل كل سطر. روابط المحتوى النهائية لا تظهر للزوار إلا بعد تأكيد الدفع.
+          بيانات الدروس هنا للعرض والتنظيم فقط. روابط المحتوى المدفوع تحفظ في protected_content ولا تُكتب داخل بيانات الكورس أو الدروس العامة.
         </p>
       </div>
 
@@ -209,7 +197,7 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
         <PremiumFormField label="رابط فيديو تعريفي">
           <input className="premium-input" dir="ltr" value={previewVideoUrl} onChange={(event) => setPreviewVideoUrl(event.target.value)} placeholder="Google Drive / YouTube / Vimeo" />
         </PremiumFormField>
-        <PremiumFormField label="مجلد Google Drive للكورس" hint="رابط المجلد الداخلي للمراجعة أو المحتوى.">
+        <PremiumFormField label="مجلد Google Drive للكورس" hint="يحفظ في protected_content فقط ولا يضاف إلى وثيقة الكورس العامة.">
           <input className="premium-input" dir="ltr" value={driveFolderUrl} onChange={(event) => setDriveFolderUrl(event.target.value)} placeholder="https://drive.google.com/..." />
         </PremiumFormField>
       </div>
@@ -229,14 +217,14 @@ export default function CourseForm({ initialValues, submitLabel, loading = false
         </PremiumFormField>
         <PremiumFormField
           label="الفصول والدروس"
-          hint="كل درس في سطر: الفصل | عنوان الدرس | الوصف | المدة بالدقائق | رابط الدرس من Drive | رابط الموارد"
+          hint="كل درس في سطر: الفصل | عنوان الدرس | الوصف | المدة بالدقائق. لا تضيفي روابط خاصة هنا."
         >
           <textarea
             className="premium-input min-h-52 resize-y font-mono text-xs leading-7"
             dir="rtl"
             value={lessonsText}
             onChange={(event) => setLessonsText(event.target.value)}
-            placeholder={'الفصل الأول: الوعي | الدرس الأول: لماذا أكرر نفس النمط؟ | فهم أولي للنمط العاطفي | 22 | https://drive.google.com/... | https://drive.google.com/...\nالفصل الأول: الوعي | الدرس الثاني: خريطة الاحتياج | تطبيق عملي لفهم الاحتياج | 18 | |'}
+            placeholder={'الفصل الأول: الوعي | الدرس الأول: لماذا أكرر نفس النمط؟ | فهم أولي للنمط العاطفي | 22\nالفصل الأول: الوعي | الدرس الثاني: خريطة الاحتياج | تطبيق عملي لفهم الاحتياج | 18'}
           />
         </PremiumFormField>
       </div>

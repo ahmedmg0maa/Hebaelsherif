@@ -120,7 +120,7 @@ export default function EditCoursePage() {
       <div className="mb-8">
         <p className="mb-2 text-sm font-bold text-gold">تعديل كورس</p>
         <h2 className="text-3xl font-black text-charcoal">{course.title}</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">عدّل بيانات الكورس والفصول وروابط Google Drive.</p>
+        <p className="mt-3 max-w-2xl text-sm leading-8 text-warm-gray">عدّل بيانات الكورس والفصول. روابط المحتوى تحفظ فقط داخل protected_content.</p>
       </div>
 
       <CourseForm
@@ -145,8 +145,6 @@ export default function EditCoursePage() {
             title: lesson.title,
             description: lesson.description,
             duration: lesson.duration,
-            contentUrl: lesson.contentUrl,
-            resourceUrl: lesson.resourceUrl,
             order: lesson.order,
           })),
         }}
