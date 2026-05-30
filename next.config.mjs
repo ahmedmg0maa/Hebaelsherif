@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  outputFileTracing: false,
   staticPageGenerationTimeout: 20,
   images: {
     remotePatterns: [
@@ -19,6 +20,7 @@ const nextConfig = {
   },
   experimental: {
     cpus: 1,
+    webpackBuildWorker: false,
   },
 }
 

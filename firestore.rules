@@ -2,267 +2,269 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isSignedIn() {
+    function signedIn() {
       return request.auth != null;
     }
 
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function userDoc() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function role() {
+      return signedIn() && exists(userDoc()) ? get(userDoc()).data.role : 'user';
     }
 
     function isAdmin() {
-      return isSignedIn()
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return role() in ['owner', 'super_admin', 'admin', 'support', 'content_manager', 'finance', 'viewer'];
+    }
+
+    function canWriteAdmin() {
+      return role() in ['owner', 'super_admin', 'admin', 'support', 'content_manager', 'finance'];
+    }
+
+    function canManageFinance() {
+      return role() in ['owner', 'super_admin', 'admin', 'finance'];
+    }
+
+    function canManageContent() {
+      return role() in ['owner', 'super_admin', 'admin', 'content_manager'];
     }
 
     function isPublished() {
-      return resource.data.status == 'published';
+      return resource.data.status == 'published' || resource.data.isPublished == true || resource.data.published == true;
+    }
+
+    function validCurrency() {
+      return !('currency' in request.resource.data) || request.resource.data.currency == 'EGP';
+    }
+
+    function noPrivateFields() {
+      return !request.resource.data.keys().hasAny([
+        'contentUrl', 'contentURL', 'protectedUrl', 'protectedURL', 'downloadUrl', 'downloadURL',
+        'fileUrl', 'fileURL', 'driveUrl', 'driveURL', 'driveFileUrl', 'driveFileURL',
+        'driveFolderUrl', 'driveFolderURL', 'googleDriveUrl', 'googleDriveURL',
+        'resourceUrl', 'resourceURL', 'videoUrl', 'videoURL', 'pdfUrl', 'pdfURL',
+        'secretUrl', 'secretURL', 'privateUrl', 'privateURL', 'accessUrl', 'accessURL'
+      ]);
     }
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId)
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.role == 'user';
-      allow update: if isOwner(userId)
+        && (!('role' in request.resource.data) || request.resource.data.role == 'user');
+      allow update: if canWriteAdmin() || (isOwner(userId)
         && request.resource.data.uid == resource.data.uid
-        && request.resource.data.role == resource.data.role;
-      allow delete: if false;
+        && request.resource.data.role == resource.data.role);
+      allow delete: if role() in ['owner', 'super_admin'];
     }
 
     match /courses/{courseId} {
       allow read: if isPublished() || isAdmin();
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /course_lessons/{lessonId} {
-      // Lesson documents may contain protected URLs. Public curriculum is served through
-      // /api/courses/[courseId]/lessons with sensitive fields stripped.
-      allow read: if isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create, update: if canManageContent() && noPrivateFields() && validCurrency();
+      allow delete: if role() in ['owner', 'super_admin', 'admin'];
     }
 
     match /books/{bookId} {
       allow read: if isPublished() || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create, update: if canManageContent() && noPrivateFields() && validCurrency();
+      allow delete: if role() in ['owner', 'super_admin', 'admin'];
     }
 
-    match /orders/{orderId} {
-      allow read: if isOwner(resource.data.userId) || isAdmin();
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && (request.resource.data.status == 'pending' || request.resource.data.status == 'payment_submitted');
-      allow update, delete: if isAdmin();
-    }
-
-    match /bookings/{bookingId} {
-      allow read: if isOwner(resource.data.userId) || isAdmin();
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && (request.resource.data.status == 'pending' || request.resource.data.status == 'payment_submitted');
-      allow update, delete: if isAdmin();
-    }
-
-    match /course_progress/{progressId} {
-      allow read: if isOwner(resource.data.userId) || isAdmin();
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid;
-      allow update: if isSignedIn()
-        && resource.data.userId == request.auth.uid
-        && request.resource.data.userId == resource.data.userId;
-      allow delete: if isAdmin();
-    }
-
-
-    match /reviews/{reviewId} {
-      allow read: if resource.data.status == 'published' || isAdmin() || isOwner(resource.data.userId);
-      allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.status == 'pending';
-      allow update, delete: if isAdmin();
+    match /course_lessons/{lessonId} {
+      allow read: if isAdmin();
+      allow create, update: if canManageContent() && noPrivateFields();
+      allow delete: if canManageContent();
     }
 
     match /protected_content/{contentId} {
+      allow read, write: if canManageContent();
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.currency == 'EGP'
+        && request.resource.data.status in ['pending', 'awaiting_payment', 'payment_submitted'];
+      allow update: if canManageFinance()
+        || (signedIn()
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['paymentMethod', 'paymentReference', 'paymentProofUrl', 'paymentNote', 'paymentStatus', 'status', 'updatedAt'])
+          && request.resource.data.status in ['pending', 'awaiting_payment', 'payment_submitted']);
+      allow delete: if role() in ['owner', 'super_admin', 'admin'];
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.currency == 'EGP'
+        && request.resource.data.status in ['pending', 'awaiting_payment', 'payment_submitted'];
+      allow update: if canWriteAdmin()
+        || (signedIn()
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['paymentMethod', 'paymentReference', 'paymentProofUrl', 'paymentNote', 'paymentStatus', 'status', 'notes', 'updatedAt'])
+          && request.resource.data.status in ['pending', 'awaiting_payment', 'payment_submitted', 'reschedule_requested']);
+      allow delete: if role() in ['owner', 'super_admin', 'admin'];
+    }
+
+    match /course_progress/{progressId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if signedIn() && resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId;
+      allow delete: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if isAdmin() || resource.data.status in ['published', 'approved'] || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow update, delete: if canWriteAdmin();
+    }
+
+    match /leads/{leadId} {
+      allow create: if request.resource.data.email is string && request.resource.data.email.size() >= 5;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /contact_messages/{messageId} {
+      allow create: if request.resource.data.email is string && request.resource.data.message is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /newsletter_subscribers/{subscriberId} {
+      allow create: if request.resource.data.email is string && request.resource.data.email.size() >= 5;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow create: if canWriteAdmin();
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid) || resource.data.audience == 'all';
+      allow update: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    match /admin_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if canWriteAdmin();
+      allow update, delete: if false;
+    }
+
+    match /admin_tasks/{taskId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if canWriteAdmin();
+    }
+
+    match /customer_notes/{noteId} {
+      allow read, create, update, delete: if isAdmin();
+    }
+
+    match /payment_attempts/{attemptId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create, update, delete: if canManageFinance();
+    }
+
+    match /access_records/{recordId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create, update, delete: if canManageFinance() || canManageContent();
+    }
+
+    match /analytics_events/{eventId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /events/{eventId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /notification_templates/{templateId} {
       allow read, write: if isAdmin();
     }
 
-
-    match /admin_logs/{logId} {
+    match /email_templates/{templateId} {
       allow read, write: if isAdmin();
     }
 
     match /coupons/{couponId} {
       allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /leads/{leadId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-
-    match /contact_messages/{messageId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-
-
-    match /site_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /availability_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /payment_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /seo_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /notification_templates/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /navigation_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /media_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /ai_guide_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /feature_flags/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /integration_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /policy_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /security_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /operations_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /email_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /calendar_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /experiment_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /pricing_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /backup_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /legal_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /academy_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /faqs/{faqId} {
-      allow read: if resource.data.status == 'published' || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if canManageFinance();
     }
 
     match /articles/{articleId} {
       allow read: if resource.data.status == 'published' || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if canManageContent();
+    }
+
+    match /faqs/{faqId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if canManageContent();
     }
 
     match /journeys/{journeyId} {
       allow read: if resource.data.status == 'published' || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if canManageContent();
     }
 
     match /bundles/{bundleId} {
       allow read: if resource.data.active == true || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if canManageFinance() || canManageContent();
     }
 
     match /drive_assets/{assetId} {
+      allow read, write: if canManageContent();
+    }
+
+    match /settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /site_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /availability_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /payment_settings/{docId} { allow read: if true; allow write: if canManageFinance(); }
+    match /seo_settings/{docId} { allow read: if true; allow write: if canManageContent(); }
+    match /navigation_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /feature_flags/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /integration_settings/{docId} { allow read, write: if isAdmin(); }
+    match /policy_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /security_settings/{docId} { allow read, write: if role() in ['owner', 'super_admin', 'admin']; }
+    match /operations_settings/{docId} { allow read, write: if isAdmin(); }
+    match /calendar_settings/{docId} { allow read, write: if isAdmin(); }
+    match /pricing_settings/{docId} { allow read: if true; allow write: if canManageFinance(); }
+    match /legal_settings/{docId} { allow read: if true; allow write: if isAdmin(); }
+    match /academy_settings/{docId} { allow read, write: if canManageContent(); }
+
+
+    match /campaigns/{campaignId} {
+      allow read, write: if canManageFinance() || canManageContent();
+    }
+
+    match /content_calendar/{itemId} {
+      allow read, write: if canManageContent();
+    }
+
+    match /workshops/{workshopId} {
+      allow read: if resource.data.status == 'published' || resource.data.active == true || isAdmin();
+      allow create, update, delete: if canManageContent() || canManageFinance();
+    }
+
+    match /admin_tasks/{taskId} {
       allow read, write: if isAdmin();
     }
 
-    match /admin_homepage_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /admin_customer_journey_settings/{docId} {
+    match /customer_notes/{noteId} {
       allow read, write: if isAdmin();
     }
 
-    match /admin_theme_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /admin_content_ops_settings/{docId} {
+    match /saved_views/{viewId} {
       allow read, write: if isAdmin();
     }
-
-    match /admin_quality_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /admin_automation_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /admin_commerce_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /admin_assessment_settings/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /admin_analytics_events_settings/{docId} {
-      allow read, write: if isAdmin();
-    }
-
 
     match /{document=**} {
       allow read, write: if false;
