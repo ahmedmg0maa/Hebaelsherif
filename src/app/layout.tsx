@@ -1,29 +1,67 @@
 import type { Metadata, Viewport } from 'next'
+import type { ReactNode } from 'react'
+
 import GlobalExperience from '@/components/experience/GlobalExperience'
 import ConversionEvents from '@/components/marketing/ConversionEvents'
-import StructuredData, { buildOrganizationSchema, buildWebsiteSchema } from '@/components/seo/StructuredData'
+import StructuredData, {
+  buildOrganizationSchema,
+  buildWebsiteSchema,
+} from '@/components/seo/StructuredData'
+
 import './globals.css'
 
 export const dynamic = 'force-dynamic'
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://hebaelsherif.com'
-const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+function getSafeAppUrl() {
+  const fallback = 'https://hebaelsherif.com'
+  const rawValue = process.env.NEXT_PUBLIC_APP_URL || fallback
+
+  const cleanedValue = rawValue
+    .trim()
+    .replace(/^["']|["']$/g, '')
+    .replace(/\/+$/g, '')
+
+  const normalizedValue = /^https?:\/\//i.test(cleanedValue)
+    ? cleanedValue
+    : `https://${cleanedValue}`
+
+  try {
+    return new URL(normalizedValue).toString().replace(/\/+$/g, '')
+  } catch {
+    return fallback
+  }
+}
+
+const appUrl = getSafeAppUrl()
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim()
 
 export const metadata: Metadata = {
   title: {
-    default: 'هبة الشريف — منصة التحوّل العاطفي',
+    default: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
     template: '%s — هبة الشريف',
   },
   description:
-    'رحلة وعي تعيدك إلى ذاتك عبر كورسات عملية، كتب رقمية، وجلسات كوتشنج فردية في مساحة عربية فاخرة وهادئة.',
+    'منصة عربية فاخرة لهبة الشريف تجمع بين الجلسات الفردية، المسارات التعليمية، الكتب الرقمية، وتجربة وعي هادئة تعيدك إلى ذاتك.',
   metadataBase: new URL(appUrl),
   applicationName: 'هبة الشريف',
   authors: [{ name: 'Heba ElSherif' }],
-  keywords: ['هبة الشريف', 'نقطة وعي', 'كوتشنج', 'وعي بالذات', 'وعي عاطفي', 'كتب رقمية', 'جلسات فردية'],
+  creator: 'Heba ElSherif',
+  publisher: 'Heba ElSherif',
+  keywords: [
+    'هبة الشريف',
+    'رحلة وعي',
+    'وعي ذاتي',
+    'وعي عاطفي',
+    'جلسات فردية',
+    'كوتشنج',
+    'كتب رقمية',
+    'مسارات تعليمية',
+  ],
   verification: googleVerification ? { google: googleVerification } : undefined,
   openGraph: {
-    title: 'هبة الشريف — منصة التحوّل العاطفي',
-    description: 'نقطة وعي عربية فاخرة للكوتشنج، الوعي بالذات، الكتب، والجلسات الهادئة.',
+    title: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
+    description:
+      'جلسات فردية، مسارات تعليمية، كتب رقمية، ومحتوى عربي هادئ يساعدك على فهم ذاتك بخطوات أوضح.',
     url: appUrl,
     siteName: 'هبة الشريف',
     locale: 'ar_EG',
@@ -39,14 +77,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'هبة الشريف — منصة التحوّل العاطفي',
-    description: 'كورسات، كتب، وجلسات فردية في تجربة عربية فاخرة وهادئة.',
+    title: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
+    description:
+      'جلسات فردية، مسارات تعليمية، وكتب رقمية في تجربة عربية فاخرة وهادئة.',
     images: ['/images/brand/og-brand.jpg'],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+  },
   manifest: '/site.webmanifest',
   icons: {
-    icon: '/favicon.png',
+    icon: [
+      { url: '/favicon.ico', type: 'image/x-icon' },
+      { url: '/favicon.png', type: 'image/png' },
+    ],
     apple: '/apple-icon.png',
   },
 }
@@ -61,14 +106,29 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: ReactNode
+}>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className="font-arabic bg-cream text-charcoal antialiased">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[999] focus:rounded-full focus:bg-petrol focus:px-5 focus:py-3 focus:text-sm focus:font-black focus:text-ivory">تخطي إلى المحتوى</a>
-        <StructuredData data={[buildWebsiteSchema(appUrl), buildOrganizationSchema(appUrl)]} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[999] focus:rounded-full focus:bg-petrol focus:px-5 focus:py-3 focus:text-sm focus:font-black focus:text-ivory"
+        >
+          تخطي إلى المحتوى
+        </a>
+
+        <StructuredData
+          data={[buildWebsiteSchema(appUrl), buildOrganizationSchema(appUrl)]}
+        />
+
         <ConversionEvents />
+
         {children}
+
         <GlobalExperience />
       </body>
     </html>
