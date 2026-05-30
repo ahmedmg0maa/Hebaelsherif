@@ -6,7 +6,7 @@ import './globals.css'
 
 export const dynamic = 'force-dynamic'
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://hebaelsherif.com/'
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
 
 export const metadata: Metadata = {
