@@ -10,6 +10,8 @@ interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize
   children: ReactNode
   className?: string
+  target?: string
+  rel?: string
 }
 
 const variants: Record<ButtonVariant, string> = {
@@ -36,6 +38,8 @@ export default function PremiumButton({
   size = 'md',
   children,
   className = '',
+  target,
+  rel,
   disabled,
   type = 'button',
   ...props
@@ -53,7 +57,7 @@ export default function PremiumButton({
 
   if (href && !disabled) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} target={target} rel={rel}>
         {children}
       </Link>
     )
