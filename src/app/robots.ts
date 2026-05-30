@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+import { buildAbsoluteUrl } from '@/lib/runtime/site-url'
 
+export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
@@ -24,6 +24,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/dashboard', '/api', '/auth/reset-password'],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: buildAbsoluteUrl('/sitemap.xml'),
   }
 }

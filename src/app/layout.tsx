@@ -7,33 +7,14 @@ import StructuredData, {
   buildOrganizationSchema,
   buildWebsiteSchema,
 } from '@/components/seo/StructuredData'
+import { cleanOptionalEnvValue, getSafeSiteUrl } from '@/lib/runtime/site-url'
 
 import './globals.css'
 
-export const dynamic = 'force-dynamic'
-
-function getSafeAppUrl() {
-  const fallback = 'https://hebaelsherif.com'
-  const rawValue = process.env.NEXT_PUBLIC_APP_URL || fallback
-
-  const cleanedValue = rawValue
-    .trim()
-    .replace(/^["']|["']$/g, '')
-    .replace(/\/+$/g, '')
-
-  const normalizedValue = /^https?:\/\//i.test(cleanedValue)
-    ? cleanedValue
-    : `https://${cleanedValue}`
-
-  try {
-    return new URL(normalizedValue).toString().replace(/\/+$/g, '')
-  } catch {
-    return fallback
-  }
-}
-
-const appUrl = getSafeAppUrl()
-const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim()
+const appUrl = getSafeSiteUrl()
+const googleVerification = cleanOptionalEnvValue(
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+)
 
 export const metadata: Metadata = {
   title: {

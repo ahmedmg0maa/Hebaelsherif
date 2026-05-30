@@ -1,12 +1,28 @@
 import type { MetadataRoute } from 'next'
-import { ARTICLES } from '@/constants/content'
-import { getAdminDb } from '@/lib/firebase/admin'
 
-async function getPublishedEntries(collectionName: 'courses' | 'books', baseUrl: string): Promise<MetadataRoute.Sitemap> {
+import { ARTICLES } from '@/constants/content'
+import { tryGetAdminDb } from '@/lib/firebase/admin'
+import { getSafeSiteUrl } from '@/lib/runtime/site-url'
+
+async function getPublishedEntries(
+  collectionName: 'courses' | 'books',
+  baseUrl: string,
+): Promise<MetadataRoute.Sitemap> {
   try {
-    const snap = await getAdminDb().collection(collectionName).where('status', '==', 'published').limit(250).get()
+    const db = tryGetAdminDb()
+    if (!db) return []
+
+    const snap = await db
+      .collection(collectionName)
+      .where('status', '==', 'published')
+      .limit(250)
+      .get()
+
     return snap.docs
-      .map((doc) => ({ id: doc.id, ...(doc.data() as { slug?: string; updatedAt?: { toDate?: () => Date } }) }))
+      .map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as { slug?: string; updatedAt?: { toDate?: () => Date } }),
+      }))
       .filter((item) => item.slug)
       .map((item) => ({
         url: `${baseUrl}/${collectionName}/${item.slug}`,
@@ -14,13 +30,17 @@ async function getPublishedEntries(collectionName: 'courses' | 'books', baseUrl:
         changeFrequency: 'weekly' as const,
         priority: collectionName === 'courses' ? 0.86 : 0.82,
       }))
-  } catch {
+  } catch (error) {
+    console.warn(
+      `[sitemap] Skipped dynamic ${collectionName} entries:`,
+      error instanceof Error ? error.message : 'unknown error',
+    )
     return []
   }
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl = getSafeSiteUrl()
   const staticRoutes = [
     '',
     '/start-here',
@@ -45,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === '' ? 'weekly' : 'monthly',
+    changeFrequency: route === '' ? ('weekly' as const) : ('monthly' as const),
     priority: route === '' ? 1 : route.includes('policy') || route.includes('terms') ? 0.45 : 0.82,
   })) satisfies MetadataRoute.Sitemap
 
