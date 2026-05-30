@@ -69,17 +69,24 @@ export const DASHBOARD_NAV_LINKS = [
 
 export const ADMIN_NAV_LINKS = [
   { href: '/admin', label: 'لوحة التشغيل' },
+  { href: '/admin/action-queue', label: 'قائمة المتابعة' },
+  { href: '/admin/notifications', label: 'الإشعارات' },
   { href: '/admin/orders', label: 'الطلبات' },
   { href: '/admin/bookings', label: 'الحجوزات' },
+  { href: '/admin/messages', label: 'الرسائل' },
+  { href: '/admin/tasks', label: 'المهام' },
   { href: '/admin/courses', label: 'الكورسات' },
   { href: '/admin/books', label: 'الكتب' },
   { href: '/admin/content', label: 'المحتوى المحمي' },
   { href: '/admin/users', label: 'العملاء' },
-  { href: '/admin/messages', label: 'الرسائل' },
   { href: '/admin/reviews', label: 'التقييمات' },
   { href: '/admin/analytics', label: 'التحليلات' },
+  { href: '/admin/campaigns', label: 'الحملات' },
+  { href: '/admin/system-health', label: 'صحة النظام' },
+  { href: '/admin/templates', label: 'قوالب الرسائل' },
   { href: '/admin/logs', label: 'السجلات' },
   { href: '/admin/settings', label: 'الإعدادات' },
+  { href: '/admin/exports', label: 'التصدير' },
 ] as const
 
 export const SOCIAL_LINKS = [

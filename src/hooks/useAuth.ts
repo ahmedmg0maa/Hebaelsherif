@@ -120,7 +120,7 @@ export function useAuth() {
   }, [])
 
   const isAuthenticated = Boolean(state.user)
-  const isAdmin = state.user?.role === 'admin'
+  const isAdmin = Boolean(state.user && ['owner', 'admin', 'super_admin', 'support', 'content_manager', 'finance', 'viewer'].includes(state.user.role))
 
   const actions = useMemo(
     () => ({
