@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       .where('userId', '==', decoded.uid)
       .where('productId', '==', productId)
       .where('productType', '==', productType)
-      .where('status', '==', 'paid')
+      .where('status', 'in', ['paid', 'access_granted'])
       .limit(1)
       .get()
 

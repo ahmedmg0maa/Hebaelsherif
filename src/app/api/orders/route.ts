@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Timestamp } from 'firebase-admin/firestore'
+import { createNotification, trackServerEvent } from '@/lib/admin/api'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
 import type { PaymentMethod, ProductType } from '@/types'
 
@@ -11,6 +12,8 @@ interface ExistingOrder {
 interface ProductData {
   status?: string
   price?: number
+  title?: string
+  slug?: string
 }
 
 function sanitizeText(value: unknown) {
@@ -102,7 +105,7 @@ export async function POST(req: NextRequest) {
       status: String(docItem.data().status || ''),
     }))
 
-    const paidOrder = existingOrders.find((order) => order.status === 'paid')
+    const paidOrder = existingOrders.find((order) => order.status === 'paid' || order.status === 'access_granted')
     const pendingOrder = existingOrders.find((order) => ['pending', 'awaiting_payment', 'payment_submitted'].includes(order.status || ''))
 
     if (paidOrder) {
@@ -110,7 +113,7 @@ export async function POST(req: NextRequest) {
         success: true,
         alreadyPaid: true,
         orderId: paidOrder.id,
-        status: 'paid',
+        status: paidOrder.status === 'access_granted' ? 'access_granted' : 'paid',
       })
     }
 
@@ -129,10 +132,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'سعر المنتج غير صحيح.' }, { status: 400 })
     }
 
+    const userSnap = await adminDb.collection('users').doc(uid).get()
+    const userData = userSnap.data() || {}
+
     const orderRef = await adminDb.collection('orders').add({
       userId: uid,
+      userEmail: String(userData.email || ''),
+      userName: String(userData.name || userData.displayName || ''),
       productId,
+      productSlug: String(product?.slug || productId),
+      productTitle: String(product?.title || productId),
       productType,
+      currency: 'EGP',
       amount,
       status: paymentReference ? 'payment_submitted' : 'awaiting_payment',
       paymentStatus: paymentReference ? 'submitted' : 'pending',
@@ -141,6 +152,33 @@ export async function POST(req: NextRequest) {
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     })
+
+    await adminDb.collection('payment_attempts').add({
+      orderId: orderRef.id,
+      userId: uid,
+      productId,
+      productType,
+      amount,
+      currency: 'EGP',
+      method: paymentMethod || 'manual',
+      reference: paymentReference,
+      status: paymentReference ? 'submitted' : 'pending',
+      provider: 'manual',
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    })
+
+    await createNotification({
+      db: adminDb,
+      type: 'order_created',
+      title: paymentReference ? 'إثبات دفع جديد' : 'طلب شراء جديد',
+      body: `${String(product?.title || productId)} - ${paymentReference ? 'يحتاج مراجعة الدفع' : 'بانتظار الدفع'}`,
+      audience: 'admin',
+      href: '/admin/orders',
+      priority: paymentReference ? 'high' : 'normal',
+    })
+
+    await trackServerEvent({ db: adminDb, type: 'order_created', userId: uid, entityType: 'order', entityId: orderRef.id, source: 'orders_api', metadata: { productId, productType, amount } })
 
     return NextResponse.json({ success: true, orderId: orderRef.id, status: paymentReference ? 'payment_submitted' : 'awaiting_payment' })
   } catch (error) {

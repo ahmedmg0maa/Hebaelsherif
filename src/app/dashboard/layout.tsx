@@ -7,6 +7,7 @@ import BrandDivider from '@/components/brand/BrandDivider'
 import BrandMark from '@/components/brand/BrandMark'
 import BrandOrnament from '@/components/brand/BrandOrnament'
 import ThemeToggle from '@/components/experience/ThemeToggle'
+import NotificationBell from '@/components/experience/NotificationBell'
 import PremiumButton from '@/components/ui/PremiumButton'
 import { PageSkeleton } from '@/components/ui/PremiumSkeleton'
 import { BRAND, DASHBOARD_NAV_LINKS } from '@/constants/design'
@@ -95,7 +96,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <p className="mt-1 break-words text-xs font-bold text-warm-gray">{user.email}</p>
             <BrandDivider className="my-5 scale-75" />
             <div className="grid gap-2">
-              {user.role === 'admin' ? (
+              {['owner', 'admin', 'support', 'content_manager', 'finance', 'viewer'].includes(String(user.role)) ? (
                 <PremiumButton href="/admin" size="sm" className="w-full">
                   لوحة الإدارة
                 </PremiumButton>
@@ -122,11 +123,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <h1 className="text-2xl font-black text-charcoal md:text-3xl">مرحبًا، {user.name}</h1>
             </div>
             <div className="flex flex-wrap items-center gap-3">
+              <NotificationBell />
               <ThemeToggle />
               <PremiumButton href="/" variant="outline" size="sm">
                 الرئيسية
               </PremiumButton>
-              {user.role === 'admin' ? (
+              {['owner', 'admin', 'support', 'content_manager', 'finance', 'viewer'].includes(String(user.role)) ? (
                 <PremiumButton href="/admin" size="sm">
                   الإدارة
                 </PremiumButton>

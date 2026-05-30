@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import GlobalExperience from '@/components/experience/GlobalExperience'
+import ConversionEvents from '@/components/marketing/ConversionEvents'
+import StructuredData, { buildOrganizationSchema, buildWebsiteSchema } from '@/components/seo/StructuredData'
 import './globals.css'
 
 export const dynamic = 'force-dynamic'
@@ -64,6 +66,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className="font-arabic bg-cream text-charcoal antialiased">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[999] focus:rounded-full focus:bg-petrol focus:px-5 focus:py-3 focus:text-sm focus:font-black focus:text-ivory">تخطي إلى المحتوى</a>
+        <StructuredData data={[buildWebsiteSchema(appUrl), buildOrganizationSchema(appUrl)]} />
+        <ConversionEvents />
         {children}
         <GlobalExperience />
       </body>

@@ -30,6 +30,13 @@ const allowedCollections = new Set([
   'bundles',
   'journeys',
   'drive_assets',
+  'admin_tasks',
+  'campaigns',
+  'content_calendar',
+  'email_templates',
+  'workshops',
+  'customer_notes',
+  'saved_views',
 ])
 
 async function assertAdmin(req: NextRequest) {

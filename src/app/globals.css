@@ -375,14 +375,14 @@ img, video { max-width: 100%; height: auto; }
 }
 
 
-/* V3.3 brand hardening */
+/* Brand hardening */
 .dark .premium-input, .dark input, .dark textarea, .dark select { color: rgb(var(--color-charcoal)); background-color: rgb(var(--color-ivory) / .78); border-color: rgb(var(--color-gold) / .24); }
 .dark .premium-label, .dark .premium-muted { color: rgb(var(--color-charcoal)); }
 .dark .brand-title, .dark .brand-subtitle { color: rgb(var(--color-charcoal)); }
 .visitor-only-copy { color: rgb(var(--color-warm-gray)); }
 
 
-/* V3.3.1 readability hardening: premium must stay readable before it is decorative. */
+/* Readability hardening: premium must stay readable before it is decorative. */
 .on-dark,
 .on-dark .text-ivory,
 .on-dark .text-cream,

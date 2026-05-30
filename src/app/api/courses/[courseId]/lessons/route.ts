@@ -11,8 +11,6 @@ interface LessonData {
   title?: string
   description?: string
   duration?: number
-  contentUrl?: string
-  resourceUrl?: string
   order?: number
   createdAt?: unknown
   updatedAt?: unknown
@@ -29,7 +27,7 @@ async function hasPaidAccess(req: NextRequest, courseId: string) {
       .where('userId', '==', decoded.uid)
       .where('productId', '==', courseId)
       .where('productType', '==', 'course')
-      .where('status', '==', 'paid')
+      .where('status', 'in', ['paid', 'access_granted'])
       .limit(1)
       .get()
 
@@ -50,11 +48,6 @@ function serializeLesson(id: string, data: LessonData, includeProtected: boolean
     duration: Number(data.duration || 0),
     order: Number(data.order || 0),
   } as LessonData & { id: string }
-
-  if (includeProtected) {
-    lesson.contentUrl = data.contentUrl || ''
-    lesson.resourceUrl = data.resourceUrl || ''
-  }
 
   return lesson
 }

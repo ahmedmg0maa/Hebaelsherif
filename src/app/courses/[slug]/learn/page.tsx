@@ -1,437 +1,198 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { useParams } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
+import { collection, getDocs, limit, query, where } from 'firebase/firestore'
+import { db } from '@/lib/firebase/client'
+import { useAuth } from '@/hooks/useAuth'
+import type { Course } from '@/types'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import BrandDivider from '@/components/brand/BrandDivider'
-import PremiumBadge from '@/components/ui/PremiumBadge'
-import PremiumButton from '@/components/ui/PremiumButton'
-import PremiumCard from '@/components/ui/PremiumCard'
 import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
-import PremiumProgressBar from '@/components/ui/PremiumProgressBar'
 import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-import ProtectedContentNotice from '@/components/ui/ProtectedContentNotice'
-import ContentProtection from '@/components/security/ContentProtection'
-import { useAuth } from '@/hooks/useAuth'
-import { db } from '@/lib/firebase/client'
-import { getCourseBySlug, getCourseLessons } from '@/lib/firestore/courses'
-import type { Course, CourseProgress, Lesson } from '@/types'
-import type { User as FirebaseUser } from 'firebase/auth'
+import PremiumButton from '@/components/ui/PremiumButton'
+import PremiumBadge from '@/components/ui/PremiumBadge'
+import BrandMark from '@/components/brand/BrandMark'
+import { trackConversionEvent } from '@/lib/marketing/events'
 
-interface VerifyAccessResponse {
+interface LessonPayload {
+  id: string
+  title: string
+  description?: string
+  duration?: number
+  order?: number
+  stageTitle?: string
+  contentUrl?: string
+  resourceUrl?: string
+}
+
+interface LearningPayload {
   hasAccess: boolean
+  lessons: LessonPayload[]
   contentUrl?: string
   resourceUrl?: string
   error?: string
 }
 
-interface LessonGroup {
-  title: string
-  lessons: Lesson[]
-}
-
-export default function CourseLearnPage() {
+export default function CourseLearningPage() {
   const params = useParams<{ slug: string }>()
-  const slug = params.slug
-  const router = useRouter()
-
-  const { user, firebaseUser, loading: authLoading } = useAuth()
-
+  const slug = decodeURIComponent(params.slug || '')
+  const { firebaseUser, loading: authLoading } = useAuth()
   const [course, setCourse] = useState<Course | null>(null)
-  const [lessons, setLessons] = useState<Lesson[]>([])
-  const [progress, setProgress] = useState<CourseProgress | null>(null)
-  const [contentUrl, setContentUrl] = useState('')
-  const [resourceUrl, setResourceUrl] = useState('')
-  const [activeLessonId, setActiveLessonId] = useState('')
+  const [payload, setPayload] = useState<LearningPayload | null>(null)
   const [loading, setLoading] = useState(true)
-  const [accessDenied, setAccessDenied] = useState(false)
+  const [activeLessonId, setActiveLessonId] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (authLoading) return
-
-    if (!user || !firebaseUser) {
-      router.push(`/auth/login?next=${encodeURIComponent(`/courses/${slug}/learn`)}`)
-      return
-    }
-
-    async function loadProtectedCourse(authUser: FirebaseUser, userId: string) {
+    let mounted = true
+    async function load() {
+      if (authLoading) return
+      setLoading(true)
+      setError('')
       try {
-        setLoading(true)
-        setAccessDenied(false)
-        setError('')
+        const courseSnap = await getDocs(query(collection(db, 'courses'), where('slug', '==', slug), limit(1)))
+        if (courseSnap.empty) {
+          if (mounted) setCourse(null)
+          return
+        }
+        const nextCourse = { id: courseSnap.docs[0].id, ...(courseSnap.docs[0].data() as Record<string, unknown>) } as Course
+        if (mounted) setCourse(nextCourse)
 
-        const courseData = await getCourseBySlug(slug)
-
-        if (!courseData) {
-          setCourse(null)
+        if (!firebaseUser) {
+          if (mounted) setError('يجب تسجيل الدخول لفتح مساحة التعلم.')
           return
         }
 
-        const token = await authUser.getIdToken()
-
-        const accessResponse = await fetch('/api/verify-access', {
+        const token = await firebaseUser.getIdToken()
+        const response = await fetch('/api/learning/course', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: courseData.id,
-            productType: 'course',
-          }),
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ productId: nextCourse.id }),
         })
-
-        const accessData = (await accessResponse.json()) as VerifyAccessResponse
-
-        if (!accessResponse.ok || !accessData.hasAccess) {
-          setCourse(courseData)
-          setAccessDenied(true)
-          setError(accessData.error || 'لا يوجد وصول لهذا المحتوى.')
+        const data = (await response.json()) as LearningPayload
+        if (!response.ok) {
+          if (mounted) setError(data.error || 'لا يوجد وصول لهذا الكورس.')
           return
         }
-
-        const [lessonsData, progressSnap] = await Promise.all([
-          getCourseLessons(courseData.id, token),
-          getDoc(doc(db, 'course_progress', `${userId}_${courseData.id}`)),
-        ])
-
-        const loadedProgress = progressSnap.exists() ? (progressSnap.data() as CourseProgress) : null
-        const initialLessonId = loadedProgress?.lastLessonId || lessonsData[0]?.id || ''
-
-        setCourse(courseData)
-        setLessons(lessonsData)
-        setContentUrl(accessData.contentUrl || '')
-        setResourceUrl(accessData.resourceUrl || '')
-        setProgress(loadedProgress)
-        setActiveLessonId(initialLessonId)
+        if (mounted) {
+          setPayload(data)
+          setActiveLessonId(data.lessons[0]?.id || '')
+          trackConversionEvent({ name: 'access_content', source: 'course_learning', metadata: { productId: nextCourse.id, slug } })
+        }
       } catch (loadError) {
-        console.error('Course learn load error:', loadError)
-        setError('المحتوى غير متاح الآن. راجعي حالة الطلب من لوحة حسابك أو تواصلي معنا.')
+        console.error('Course learning load error:', loadError)
+        if (mounted) setError('مساحة التعلم غير متاحة الآن. أعيدي المحاولة بعد قليل أو راجعي حالة الطلب من لوحة حسابك.')
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
+    load()
+    return () => { mounted = false }
+  }, [authLoading, firebaseUser, slug])
 
-    loadProtectedCourse(firebaseUser, user.uid)
-  }, [authLoading, firebaseUser, router, slug, user])
+  const activeLesson = useMemo(() => payload?.lessons.find((lesson) => lesson.id === activeLessonId) || payload?.lessons[0], [activeLessonId, payload])
 
-  const completedLessonIds = useMemo(() => progress?.completedLessonIds || [], [progress])
-  const activeLesson = useMemo(
-    () => lessons.find((lesson) => lesson.id === activeLessonId) || lessons[0] || null,
-    [activeLessonId, lessons],
-  )
-  const lessonGroups = useMemo(() => groupLessonsByStage(lessons), [lessons])
-  const safeProgress = lessons.length > 0 ? Math.round((completedLessonIds.length / lessons.length) * 100) : progress?.progressPercent || 0
-  const activeContentUrl = activeLesson?.contentUrl || contentUrl
-  const activeResourceUrl = activeLesson?.resourceUrl || resourceUrl
-
-  async function persistProgress(nextCompletedLessonIds: string[], lastLessonId: string) {
-    if (!user || !course) return
-
-    const progressPercent = lessons.length > 0 ? Math.round((nextCompletedLessonIds.length / lessons.length) * 100) : 0
-
-    await setDoc(
-      doc(db, 'course_progress', `${user.uid}_${course.id}`),
-      {
-        userId: user.uid,
-        courseId: course.id,
-        completedLessonIds: nextCompletedLessonIds,
-        lastLessonId,
-        progressPercent,
-        lastViewedAt: serverTimestamp(),
-      },
-      { merge: true },
-    )
-
-    setProgress({
-      userId: user.uid,
-      courseId: course.id,
-      completedLessonIds: nextCompletedLessonIds,
-      lastLessonId,
-      progressPercent,
-      lastViewedAt: new Date(),
-    })
-  }
-
-  async function handleSelectLesson(lessonId: string) {
-    setActiveLessonId(lessonId)
-    await persistProgress(completedLessonIds, lessonId)
-  }
-
-  async function markActiveLessonComplete() {
-    if (!activeLesson) return
-
-    const nextCompleted = completedLessonIds.includes(activeLesson.id)
-      ? completedLessonIds
-      : [...completedLessonIds, activeLesson.id]
-
-    await persistProgress(nextCompleted, activeLesson.id)
-  }
-
-  async function goToRelativeLesson(direction: 'next' | 'previous') {
-    if (!activeLesson) return
-
-    const currentIndex = lessons.findIndex((lesson) => lesson.id === activeLesson.id)
-    const nextIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1
-    const nextLesson = lessons[nextIndex]
-
-    if (!nextLesson) return
-    await handleSelectLesson(nextLesson.id)
-  }
-
-  if (authLoading || loading) {
-    return (
-      <>
-        <Navbar />
-        <main className="min-h-screen pt-20">
-          <section className="container-premium py-12">
-            <PremiumSkeleton className="mb-6 h-10 w-72" />
-            <PremiumSkeleton className="mb-5 h-96" />
-            <PremiumSkeleton className="h-32" />
-          </section>
-        </main>
-        <Footer />
-      </>
-    )
-  }
-
-  if (!course) {
-    return (
-      <>
-        <Navbar />
-        <main className="min-h-screen pt-20">
-          <section className="container-premium py-12">
-            <PremiumEmptyState
-              icon="📚"
-              title="الكورس غير موجود"
-              description="قد يكون الكورس قيد المراجعة أو تم تغيير الرابط."
-              actionLabel="عرض الكورسات"
-              actionHref="/courses"
-            />
-          </section>
-        </main>
-        <Footer />
-      </>
-    )
-  }
-
-  if (accessDenied) {
-    return (
-      <>
-        <Navbar />
-        <main className="min-h-screen pt-20">
-          <ProtectedContentNotice
-            productTitle={course.title}
-            productType="course"
-            description={error}
-            purchaseHref={`/courses/${course.slug}`}
-            backHref="/dashboard/courses"
-          />
-        </main>
-        <Footer />
-      </>
-    )
+  async function markComplete() {
+    if (!firebaseUser || !course || !activeLesson) return
+    try {
+      const token = await firebaseUser.getIdToken()
+      const completedCount = payload?.lessons.findIndex((lesson) => lesson.id === activeLesson.id) ?? 0
+      const percent = payload?.lessons.length ? Math.round(((completedCount + 1) / payload.lessons.length) * 100) : 0
+      await fetch('/api/learning/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ courseId: course.id, lessonId: activeLesson.id, progressPercent: percent }),
+      })
+      trackConversionEvent({ name: 'complete_lesson', source: 'course_learning', metadata: { courseId: course.id, lessonId: activeLesson.id } })
+    } catch (progressError) {
+      console.warn('Progress update failed:', progressError)
+    }
   }
 
   return (
     <>
       <Navbar />
-
       <main className="min-h-screen pt-20">
-        <section className="paper-texture relative overflow-hidden border-b border-gold/15 bg-petrol text-ivory on-dark">
-          <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-gold/18 blur-3xl" />
-          <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-aqua/10 blur-3xl" />
-          <div className="container-premium relative py-10">
-            <Link
-              href="/dashboard/courses"
-              className="mb-5 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-ivory/75 transition hover:text-gold"
-            >
-              ← العودة لكورساتي
-            </Link>
+        {loading ? <section className="container-premium py-12"><PremiumSkeleton className="h-[30rem]" /></section> : null}
 
-            <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+        {!loading && (!course || error) ? (
+          <section className="container-premium py-12">
+            <PremiumEmptyState
+              icon="◇"
+              title={course ? 'مساحة التعلم غير متاحة الآن' : 'الكورس غير موجود'}
+              description={error || 'قد يكون الكورس غير منشور أو تم تغيير الرابط.'}
+              actionLabel={firebaseUser ? 'العودة لكورساتي' : 'تسجيل الدخول'}
+              actionHref={firebaseUser ? '/dashboard/courses' : `/auth/login?next=${encodeURIComponent(`/courses/${slug}/learn`)}`}
+            />
+          </section>
+        ) : null}
+
+        {!loading && course && !error ? (
+          <section className="container-premium py-10">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <PremiumBadge variant="gold">مساحة تعلم محمية</PremiumBadge>
-                <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight md:text-6xl">{course.title}</h1>
-                <p className="mt-5 max-w-2xl text-sm font-bold leading-8 text-ivory/72">
-                  اختاري الدرس، شاهدي المحتوى، واحفظي تقدمك خطوة بخطوة داخل مساحة شخصية محمية.
-                </p>
+                <p className="mini-label">مساحة تعلم محمية</p>
+                <h1 className="brand-title mt-2 text-3xl font-black text-petrol md:text-5xl">{course.title}</h1>
+                <p className="mt-3 max-w-2xl text-sm font-bold leading-7 text-warm-gray">تابعي المحتوى من حسابك فقط. لا تشاركي روابط الوصول المدفوع.</p>
               </div>
-
-              <PremiumCard className="border-white/10 bg-white/10 p-5 text-ivory">
-                <p className="text-xs font-bold text-ivory/55">نسبة التقدم</p>
-                <strong className="mt-2 block text-5xl font-black text-gold">{safeProgress}%</strong>
-                <div className="mt-5">
-                  <PremiumProgressBar value={safeProgress} variant="gold" />
-                </div>
-                <p className="mt-4 text-xs font-bold leading-6 text-ivory/60">
-                  {completedLessonIds.length} من {lessons.length || course.lessonsCount || 0} درس مكتمل
-                </p>
-              </PremiumCard>
+              <PremiumButton href="/dashboard/courses" variant="outline">كورساتي</PremiumButton>
             </div>
-          </div>
-        </section>
 
-        <section className="container-premium grid gap-8 py-10 xl:grid-cols-[1fr_380px]">
-          <div className="space-y-6">
-            <PremiumCard className="overflow-hidden p-0">
-              <div className="border-b border-sand bg-cream/70 px-6 py-5">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+              <aside className="rounded-[2rem] border border-sand bg-ivory p-5 shadow-soft dark:border-gold/25 dark:bg-white/10">
+                <div className="mb-5 flex items-center gap-3">
+                  <BrandMark size="sm" />
                   <div>
-                    <p className="mini-label">الدرس الحالي</p>
-                    <h2 className="brand-title mt-2 text-2xl font-black text-charcoal">
-                      {activeLesson?.title || 'محتوى الكورس'}
-                    </h2>
-                    {activeLesson ? (
-                      <p className="mt-2 text-sm font-bold text-warm-gray">
-                        {activeLesson.stageTitle} · {activeLesson.duration} دقيقة
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <PremiumButton type="button" variant="outline" size="sm" onClick={() => goToRelativeLesson('previous')} disabled={!activeLesson || lessons.findIndex((lesson) => lesson.id === activeLesson.id) <= 0}>
-                      السابق
-                    </PremiumButton>
-                    <PremiumButton type="button" size="sm" onClick={() => goToRelativeLesson('next')} disabled={!activeLesson || lessons.findIndex((lesson) => lesson.id === activeLesson.id) >= lessons.length - 1}>
-                      التالي
-                    </PremiumButton>
+                    <p className="text-sm font-black text-charcoal dark:text-ivory">خريطة الدروس</p>
+                    <p className="text-xs font-bold text-warm-gray dark:text-cream">اختاري الدرس ثم حددي التقدم.</p>
                   </div>
                 </div>
-              </div>
-
-              <div className="p-4 md:p-5">
-                <ContentProtection userLabel={user?.email || user?.uid || 'حساب خاص'} productTitle={course.title} className="border border-sand bg-cream">
-                  {activeContentUrl ? (
-                    <iframe
-                      src={activeContentUrl}
-                      title={activeLesson?.title || course.title}
-                      className="h-[560px] w-full rounded-[2rem]"
-                      allow="autoplay; fullscreen; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div className="flex h-[460px] items-center justify-center rounded-[2rem] border border-dashed border-sand bg-cream/70 px-6 text-center text-sm font-bold leading-7 text-warm-gray">
-                      رابط هذا الدرس غير متاح حاليًا. يمكن للأدمن إضافته من Course Builder أو Google Drive.
-                    </div>
-                  )}
-                </ContentProtection>
-
-                <div className="mt-5 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-                  <div className="rounded-2xl border border-sand bg-cream/70 px-4 py-3 text-xs font-bold leading-6 text-warm-gray">
-                    يتم حفظ آخر مشاهدة والتقدم داخل حسابك. الوصول شخصي ومحمي للحفاظ على حقوق المحتوى.
+                {payload?.lessons.length ? (
+                  <div className="space-y-2">
+                    {payload.lessons.map((lesson, index) => (
+                      <button
+                        key={lesson.id}
+                        type="button"
+                        onClick={() => setActiveLessonId(lesson.id)}
+                        className={`w-full rounded-2xl border px-4 py-3 text-right text-sm font-black transition ${activeLesson?.id === lesson.id ? 'border-gold bg-gold/15 text-deepTeal dark:text-ivory' : 'border-sand bg-cream text-warm-gray hover:border-gold dark:border-gold/20 dark:bg-white/10 dark:text-cream'}`}
+                      >
+                        <span className="block text-xs text-gold">الدرس {index + 1}</span>
+                        {lesson.title}
+                      </button>
+                    ))}
                   </div>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-gold/40 bg-gold/10 p-5 text-sm font-bold leading-7 text-warm-gray dark:text-cream">
+                    الدروس التفصيلية ستظهر هنا عند إضافتها من الإدارة. استخدمي رابط مساحة التعلم الرئيسي لحين تجهيز الدروس.
+                  </div>
+                )}
+              </aside>
 
-                  <div className="flex flex-wrap gap-2 md:justify-end">
-                    <PremiumButton type="button" onClick={markActiveLessonComplete} disabled={!activeLesson}>
-                      إكمال الدرس
-                    </PremiumButton>
+              <article className="rounded-[2rem] border border-sand bg-ivory p-6 shadow-premium dark:border-gold/25 dark:bg-white/10">
+                <div className="flex flex-wrap items-center gap-2">
+                  <PremiumBadge variant="gold">وصول مدفوع</PremiumBadge>
+                  <PremiumBadge variant="petrol">حساب محمي</PremiumBadge>
+                </div>
+                <h2 className="mt-5 text-2xl font-black text-charcoal dark:text-ivory">{activeLesson?.title || 'مساحة الكورس'}</h2>
+                {activeLesson?.description ? <p className="mt-3 text-sm font-bold leading-8 text-warm-gray dark:text-cream">{activeLesson.description}</p> : null}
 
-                    {activeResourceUrl ? (
-                      <PremiumButton href={activeResourceUrl} variant="outline">
-                        فتح الموارد
-                      </PremiumButton>
-                    ) : null}
+                <div className="mt-6 rounded-[1.75rem] border border-gold/25 bg-gold/10 p-5">
+                  <p className="text-sm font-black text-deepTeal dark:text-ivory">رابط المحتوى المحمي</p>
+                  <p className="mt-2 text-xs font-bold leading-6 text-warm-gray dark:text-cream">يفتح الرابط فقط بعد تحقق الوصول من الخادم. إذا تغيّر الرابط من الإدارة سيظهر تلقائيًا هنا.</p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    {(activeLesson?.contentUrl || payload?.contentUrl) ? <PremiumButton href={activeLesson?.contentUrl || payload?.contentUrl || '#'} variant="primary" target="_blank">فتح الدرس</PremiumButton> : null}
+                    {(activeLesson?.resourceUrl || payload?.resourceUrl) ? <PremiumButton href={activeLesson?.resourceUrl || payload?.resourceUrl || '#'} variant="outline" target="_blank">المرفقات</PremiumButton> : null}
+                    <PremiumButton type="button" variant="gold" onClick={markComplete}>تحديد كمكتمل</PremiumButton>
                   </div>
                 </div>
-              </div>
-            </PremiumCard>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <MiniLearningCard title="ملاحظاتك" value="اكتبي تأملاتك في دفتر الرحلة الخاص بكِ." />
-              <MiniLearningCard title="الموارد" value={activeResourceUrl ? 'يوجد مورد متاح لهذا الدرس.' : 'لا توجد موارد مضافة لهذا الدرس.'} />
-              <MiniLearningCard title="الشهادة" value="تظهر شهادة الإكمال بعد إنهاء جميع الدروس." />
+              </article>
             </div>
-          </div>
-
-          <aside className="h-fit rounded-[2rem] border border-sand bg-ivory/90 p-5 shadow-soft backdrop-blur-sm xl:sticky xl:top-28">
-            <div className="mb-5">
-              <p className="mini-label">منهج الكورس</p>
-              <h3 className="brand-title mt-2 text-2xl font-black text-charcoal">الفصول والدروس</h3>
-              <BrandDivider className="mt-4 justify-start" />
-            </div>
-
-            {lessonGroups.length > 0 ? (
-              <div className="space-y-4">
-                {lessonGroups.map((group, groupIndex) => (
-                  <div key={group.title} className="rounded-[1.5rem] border border-sand bg-cream/70 p-3">
-                    <p className="mb-3 px-2 text-xs font-black text-gold">
-                      الفصل {groupIndex + 1}: {group.title}
-                    </p>
-                    <div className="space-y-2">
-                      {group.lessons.map((lesson, index) => {
-                        const active = activeLesson?.id === lesson.id
-                        const completed = completedLessonIds.includes(lesson.id)
-
-                        return (
-                          <button
-                            key={lesson.id}
-                            type="button"
-                            onClick={() => handleSelectLesson(lesson.id)}
-                            className={`w-full rounded-2xl border px-4 py-3 text-right transition ${
-                              active
-                                ? 'border-petrol/25 bg-petrol text-ivory shadow-soft'
-                                : 'border-sand bg-ivory/80 text-charcoal hover:border-gold/35'
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${completed ? 'bg-gold text-deepTeal' : active ? 'bg-ivory/18 text-ivory' : 'bg-petrol/10 text-petrol'}`}>
-                                {completed ? '✓' : index + 1}
-                              </span>
-                              <span className="min-w-0">
-                                <span className="block text-sm font-black">{lesson.title}</span>
-                                <span className={`mt-1 block text-[11px] font-bold ${active ? 'text-ivory/65' : 'text-warm-gray'}`}>
-                                  {lesson.duration} دقيقة · {lesson.resourceUrl ? 'مورد مرفق' : 'درس'}
-                                </span>
-                              </span>
-                            </div>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="rounded-2xl border border-dashed border-sand bg-cream/70 p-5 text-sm font-bold leading-7 text-warm-gray">
-                لم يتم إضافة دروس لهذا الكورس بعد.
-              </p>
-            )}
-          </aside>
-        </section>
+          </section>
+        ) : null}
       </main>
-
       <Footer />
     </>
-  )
-}
-
-function groupLessonsByStage(lessons: Lesson[]): LessonGroup[] {
-  const groups = new Map<string, Lesson[]>()
-
-  lessons.forEach((lesson) => {
-    const key = lesson.stageTitle || 'الرحلة الأساسية'
-    const current = groups.get(key) || []
-    current.push(lesson)
-    groups.set(key, current)
-  })
-
-  return Array.from(groups.entries()).map(([title, groupLessons]) => ({
-    title,
-    lessons: [...groupLessons].sort((a, b) => Number(a.order || 0) - Number(b.order || 0)),
-  }))
-}
-
-function MiniLearningCard({ title, value }: { title: string; value: string }) {
-  return (
-    <PremiumCard className="p-5">
-      <p className="text-xs font-black text-gold">{title}</p>
-      <p className="mt-3 text-sm font-bold leading-7 text-warm-gray">{value}</p>
-    </PremiumCard>
   )
 }

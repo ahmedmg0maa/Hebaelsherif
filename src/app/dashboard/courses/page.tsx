@@ -34,7 +34,7 @@ export default function DashboardCoursesPage() {
       const ordersSnap = await getDocs(query(collection(db, 'orders'), where('userId', '==', userId)))
       const paidCourseOrders = ordersSnap.docs
         .map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Order)
-        .filter((order) => order.productType === 'course' && order.status === 'paid')
+        .filter((order) => order.productType === 'course' && (order.status === 'paid' || order.status === 'access_granted'))
 
       const courses = await Promise.all(
         paidCourseOrders.map(async (order) => {

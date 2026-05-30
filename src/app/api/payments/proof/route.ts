@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Timestamp } from 'firebase-admin/firestore'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
+import { createNotification, trackServerEvent } from '@/lib/admin/api'
 
 function clean(value: unknown) {
   return typeof value === 'string' ? value.trim() : ''
@@ -47,6 +48,18 @@ export async function POST(req: NextRequest) {
       after: { paymentReference, paymentProofUrl, status: 'payment_submitted' },
       createdAt: Timestamp.now(),
     })
+
+    await createNotification({
+      db,
+      type: 'payment_proof_submitted',
+      title: 'إثبات دفع طلب جديد',
+      body: paymentReference || paymentProofUrl || 'إثبات دفع يحتاج مراجعة.',
+      audience: 'admin',
+      href: '/admin/orders',
+      priority: 'high',
+    })
+
+    await trackServerEvent({ db, type: 'payment_proof_submitted', userId: decoded.uid, entityType: 'order', entityId: orderId, source: 'proof_api' })
 
     return NextResponse.json({ success: true })
   } catch (error) {

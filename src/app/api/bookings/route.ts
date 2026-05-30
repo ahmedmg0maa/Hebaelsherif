@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { FieldValue, Timestamp } from 'firebase-admin/firestore'
 import { getAdminAuth, getAdminDb } from '@/lib/firebase/admin'
+import { createNotification, trackServerEvent } from '@/lib/admin/api'
 import { BOOKING_RULES, SESSION_PRICES, getBookableTimeSlots } from '@/constants/booking'
 import type { BookingDuration, PaymentMethod } from '@/types'
 
@@ -189,9 +190,6 @@ export async function POST(req: NextRequest) {
 
     const paymentMethod = isAllowedPaymentMethod(paymentMethodInput) ? paymentMethodInput : 'manual'
 
-    if (!paymentReference) {
-      return NextResponse.json({ error: 'اكتبي رقم العملية أو مرجع الدفع لمراجعة الحجز.' }, { status: 400 })
-    }
 
     const newStart = toMinutes(time)
     const newEndWithBuffer = newStart + duration + BOOKING_RULES.bufferMinutes
@@ -236,14 +234,16 @@ export async function POST(req: NextRequest) {
 
     const bookingRef = await adminDb.collection('bookings').add({
       userId: decoded.uid,
+      userEmail: decoded.email || email,
+      userName: name,
       name,
       email,
       phone,
       date,
       time,
       duration,
-      status: 'payment_submitted',
-      paymentStatus: 'submitted',
+      status: paymentReference ? 'payment_submitted' : 'awaiting_payment',
+      paymentStatus: paymentReference ? 'submitted' : 'pending',
       sessionType: duration === 90 ? 'deep_session' : 'clarity_session',
       price: finalAmount,
       originalPrice,
@@ -257,6 +257,31 @@ export async function POST(req: NextRequest) {
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     })
+
+    await adminDb.collection('payment_attempts').add({
+      bookingId: bookingRef.id,
+      userId: decoded.uid,
+      amount: finalAmount,
+      currency: 'EGP',
+      method: paymentMethod,
+      reference: paymentReference,
+      status: paymentReference ? 'submitted' : 'pending',
+      provider: 'manual',
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    })
+
+    await createNotification({
+      db: adminDb,
+      type: 'booking_created',
+      title: paymentReference ? 'حجز جديد مع إثبات دفع' : 'طلب حجز جديد',
+      body: `${name} - ${date} ${time}`,
+      audience: 'admin',
+      href: '/admin/bookings',
+      priority: 'high',
+    })
+
+    await trackServerEvent({ db: adminDb, type: 'booking_created', userId: decoded.uid, entityType: 'booking', entityId: bookingRef.id, source: 'booking_api', metadata: { date, time, duration, finalAmount } })
 
     return NextResponse.json({ success: true, bookingId: bookingRef.id })
   } catch (error) {

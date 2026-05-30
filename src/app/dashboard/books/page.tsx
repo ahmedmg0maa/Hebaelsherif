@@ -27,7 +27,7 @@ export default function DashboardBooksPage() {
       const ordersSnap = await getDocs(query(collection(db, 'orders'), where('userId', '==', userId)))
       const paidBookOrders = ordersSnap.docs
         .map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Order)
-        .filter((order) => order.productType === 'book' && order.status === 'paid')
+        .filter((order) => order.productType === 'book' && (order.status === 'paid' || order.status === 'access_granted'))
 
       const ownedBooks = await Promise.all(
         paidBookOrders.map(async (order) => {

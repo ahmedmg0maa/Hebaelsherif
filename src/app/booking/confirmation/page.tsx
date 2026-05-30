@@ -34,7 +34,7 @@ function BookingConfirmationContent() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-8 text-warm-gray md:text-base">
-            تم استلام بيانات الحجز والدفع. ستراجع الإدارة المرجع، وبعد التأكيد ستظهر الجلسة داخل لوحة حسابك في صفحة “جلساتي”.
+            تم استلام طلب الحجز. إذا أرسلتِ بيانات الدفع ستراجعها الإدارة، وإذا لم ترسليها الآن يمكنكِ إضافة الإثبات لاحقًا من صفحة “جلساتي”.
           </p>
 
           {bookingId ? (
@@ -46,7 +46,7 @@ function BookingConfirmationContent() {
           <BrandDivider className="my-8" />
 
           <div className="mx-auto grid max-w-2xl gap-3 sm:grid-cols-3">
-            <NextStepCard title="1. المراجعة" text="مراجعة مرجع الدفع والموعد." />
+            <NextStepCard title="1. المراجعة" text="مراجعة الموعد وبيانات الدفع إن وُجدت." />
             <NextStepCard title="2. التأكيد" text="تأكيد الجلسة داخل حسابك." />
             <NextStepCard title="3. الاستعداد" text="يصلك الموعد النهائي والمتابعة." />
           </div>
@@ -75,7 +75,7 @@ function BookingConfirmationContent() {
         <div className="rounded-[2rem] border border-sand bg-ivory/82 p-6 shadow-soft backdrop-blur-sm">
           <p className="mini-label">ما الذي يحدث الآن؟</p>
           <div className="mt-5 space-y-3">
-            <InfoItem title="الطلب تحت المراجعة" text="لن يتم تثبيت الجلسة نهائيًا قبل مراجعة الدفع." />
+            <InfoItem title="الطلب تحت المراجعة" text="لن يتم تثبيت الجلسة نهائيًا قبل مراجعة الموعد وحالة الدفع." />
             <InfoItem title="التحديث داخل حسابك" text="ستظهر الحالة الجديدة داخل صفحة جلساتي." />
             <InfoItem title="تواصل واضح" text="احتفظي برقم الحجز لتسهيل المتابعة عند الحاجة." />
           </div>

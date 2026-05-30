@@ -398,11 +398,6 @@ export default function BookingPage() {
       return
     }
 
-    if (!paymentReference.trim()) {
-      setError('اكتبي رقم العملية أو مرجع الدفع حتى تتم مراجعة الحجز.')
-      setStep(5)
-      return
-    }
 
     setSubmitting(true)
 
@@ -744,14 +739,17 @@ export default function BookingPage() {
                     ) : null}
                   </div>
 
+                  <div className="mt-5 rounded-2xl border border-gold/20 bg-gold/10 p-4 text-sm font-bold leading-7 text-deepTeal dark:text-ivory">
+                    يمكنكِ إرسال مرجع الدفع الآن لتسريع المراجعة، أو تأكيد طلب الحجز أولًا ثم إرسال الإثبات لاحقًا من صفحة جلساتي.
+                  </div>
+
                   <div className="mt-5 grid gap-5 md:grid-cols-2">
-                    <PremiumFormField label="رقم العملية / مرجع الدفع" required>
+                    <PremiumFormField label="رقم العملية / مرجع الدفع">
                       <input
                         className="premium-input"
                         value={paymentReference}
                         onChange={(event) => setPaymentReference(event.target.value)}
-                        placeholder="مثال: رقم العملية أو آخر 4 أرقام"
-                        required
+                        placeholder="مثال: رقم العملية أو آخر 4 أرقام — يمكنكِ تركه وإرساله لاحقًا من جلساتي"
                       />
                     </PremiumFormField>
                     <PremiumFormField label="ملاحظة الدفع">
