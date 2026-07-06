@@ -3,6 +3,29 @@ export const dynamic = 'force-dynamic'
 import { NextRequest } from 'next/server'
 import { cleanText, jsonError, jsonSuccess, now, requireUser, trackEvent } from '@/lib/server/admin-guard'
 
+async function hasCourseAccess(user: Awaited<ReturnType<typeof requireUser>>, courseId: string) {
+  if (user instanceof Response) return false
+  const [orderSnap, accessSnap] = await Promise.all([
+    user.db
+      .collection('orders')
+      .where('userId', '==', user.uid)
+      .where('productId', '==', courseId)
+      .where('productType', '==', 'course')
+      .where('status', 'in', ['paid', 'access_granted'])
+      .limit(1)
+      .get(),
+    user.db
+      .collection('access_records')
+      .where('userId', '==', user.uid)
+      .where('productId', '==', courseId)
+      .where('productType', '==', 'course')
+      .where('status', '==', 'active')
+      .limit(1)
+      .get(),
+  ])
+  return !orderSnap.empty || !accessSnap.empty
+}
+
 export async function GET(req: NextRequest) {
   try {
     const user = await requireUser(req)
@@ -10,6 +33,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const courseId = cleanText(searchParams.get('courseId'), 180)
     if (!courseId) return jsonError('بيانات الكورس غير صحيحة.', 400)
+    if (!(await hasCourseAccess(user, courseId))) return jsonError('لا يوجد وصول مفعل لهذا الكورس.', 403)
     const snap = await user.db.collection('course_progress').doc(`${user.uid}_${courseId}`).get()
     return jsonSuccess({ progress: snap.exists ? snap.data() : null })
   } catch (error) {
@@ -27,6 +51,7 @@ export async function POST(req: NextRequest) {
     const lessonId = cleanText(body.lessonId, 180)
     const totalLessons = Math.max(1, Number(body.totalLessons || 1))
     if (!courseId || !lessonId) return jsonError('بيانات الدرس غير مكتملة.', 400)
+    if (!(await hasCourseAccess(user, courseId))) return jsonError('لا يوجد وصول مفعل لهذا الكورس.', 403)
 
     const ref = user.db.collection('course_progress').doc(`${user.uid}_${courseId}`)
     const snap = await ref.get()
@@ -41,6 +66,7 @@ export async function POST(req: NextRequest) {
       {
         userId: user.uid,
         courseId,
+        lessonId,
         completedLessonIds: completedIds,
         lastLessonId: lessonId,
         progressPercent,

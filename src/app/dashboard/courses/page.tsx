@@ -80,7 +80,7 @@ export default function DashboardCoursesPage() {
         title="كورسات جديدة قيد الإعداد"
         description="بعد تأكيد شراء أي كورس، سيظهر هنا مع تقدّمك وآخر درس وصلتِ إليه."
         actionLabel="استكشفي الكورسات"
-        actionHref="/booking"
+        actionHref="/courses"
       />
     )
   }
@@ -113,7 +113,7 @@ export default function DashboardCoursesPage() {
         {items.map(({ course, progress }) => (
           <Link
             key={course.id}
-            href={`/courses/${course.slug}/learn`}
+            href={`/dashboard/courses/${course.slug}/learn`}
             className="group overflow-hidden rounded-[2.25rem] border border-sand bg-ivory/90 shadow-soft backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-premium"
           >
             <ImageSlot

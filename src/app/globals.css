@@ -6,49 +6,74 @@
   --font-arabic: 'Tajawal', 'Noto Kufi Arabic', Tahoma, Arial, sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 
-  /* Heba ElSherif official botanical premium palette */
-  --color-cream: 245 240 231;       /* #F5F0E7 */
-  --color-ivory: 245 240 231;       /* #F5F0E7 */
-  --color-paper: 245 240 231;       /* #F5F0E7 */
-  --color-warm-beige: 228 215 199;  /* #E4D7C7 */
-  --color-sand: 228 215 199;        /* #E4D7C7 */
-  --color-soft-sand: 228 215 199;   /* #E4D7C7 */
-  --color-stone: 183 155 96;        /* #B79B60 */
-  --color-petrol: 47 97 115;        /* #2F6173 */
-  --color-deep-teal: 15 50 55;      /* #0F3237 */
-  --color-aqua: 47 97 115;          /* brand teal derivative */
-  --color-gold: 183 155 96;         /* #B79B60 */
-  --color-olive: 111 106 47;        /* #6F6A2F */
-  --color-leaf-gray: 111 106 47;    /* #6F6A2F */
-  --color-burgundy: 122 36 51;      /* #7A2433 */
-  --color-rose: 122 36 51;          /* #7A2433 */
-  --color-mauve: 183 155 96;        /* #B79B60 */
-  --color-warm-gray: 111 106 47;    /* #6F6A2F */
-  --color-charcoal: 15 50 55;       /* #0F3237 */
-  --color-shadow: 15 50 55;
+  /* Heba ElSherif V7 textile-inspired premium palette */
+  --color-ivory: 247 242 234;       /* #F7F2EA */
+  --color-soft-white: 255 253 248;  /* #FFFDF8 */
+  --color-sand: 216 208 190;        /* #D8D0BE */
+  --color-taupe: 156 148 132;       /* #9C9484 */
+  --color-khaki: 167 156 130;       /* #A79C82 */
+  --color-deep-teal: 14 52 64;      /* #0E3440 */
+  --color-teal-hover: 18 63 76;     /* #123F4C */
+  --color-burgundy: 122 31 43;      /* #7A1F2B */
+  --color-burgundy-soft: 180 90 100;/* #B45A64 */
+  --color-cobalt: 47 111 168;       /* #2F6FA8 */
+  --color-antique-gold: 181 154 101;/* #B59A65 */
+  --color-muted-gold: 213 196 158;  /* #D5C49E */
+  --color-ink: 31 30 28;            /* #1F1E1C */
+  --color-text-soft: 110 103 93;    /* #6E675D */
+  --color-border: 230 221 207;      /* #E6DDCF */
+
+  /* Backward-compatible V6 class aliases, remapped to V7 semantics. */
+  --color-cream: var(--color-ivory);
+  --color-paper: var(--color-soft-white);
+  --color-warm-beige: var(--color-sand);
+  --color-soft-sand: var(--color-sand);
+  --color-stone: var(--color-antique-gold);
+  --color-petrol: var(--color-deep-teal);
+  --color-aqua: var(--color-cobalt);
+  --color-gold: var(--color-antique-gold);
+  --color-olive: var(--color-khaki);
+  --color-leaf-gray: var(--color-taupe);
+  --color-rose: var(--color-burgundy-soft);
+  --color-mauve: var(--color-muted-gold);
+  --color-warm-gray: var(--color-text-soft);
+  --color-charcoal: var(--color-ink);
+  --color-shadow: var(--color-deep-teal);
   color-scheme: light;
 }
 
 .dark {
-  --color-cream: 15 50 55;
-  --color-ivory: 18 57 62;
-  --color-paper: 20 66 72;
-  --color-warm-beige: 228 215 199;
-  --color-sand: 111 106 47;
-  --color-soft-sand: 183 155 96;
-  --color-stone: 183 155 96;
-  --color-petrol: 158 205 212;
-  --color-deep-teal: 15 50 55;
-  --color-aqua: 228 215 199;
-  --color-gold: 183 155 96;
-  --color-olive: 228 215 199;
-  --color-leaf-gray: 228 215 199;
-  --color-burgundy: 196 97 113;
-  --color-rose: 196 97 113;
-  --color-mauve: 183 155 96;
-  --color-warm-gray: 228 215 199;
-  --color-charcoal: 245 240 231;
-  --color-shadow: 15 50 55;
+  --color-ivory: 14 52 64;
+  --color-soft-white: 18 63 76;
+  --color-sand: 213 196 158;
+  --color-taupe: 216 208 190;
+  --color-khaki: 213 196 158;
+  --color-deep-teal: 14 52 64;
+  --color-teal-hover: 18 63 76;
+  --color-burgundy: 180 90 100;
+  --color-burgundy-soft: 198 112 122;
+  --color-cobalt: 131 176 217;
+  --color-antique-gold: 181 154 101;
+  --color-muted-gold: 213 196 158;
+  --color-ink: 247 242 234;
+  --color-text-soft: 216 208 190;
+  --color-border: 181 154 101;
+
+  --color-cream: var(--color-ivory);
+  --color-paper: var(--color-soft-white);
+  --color-warm-beige: var(--color-sand);
+  --color-soft-sand: var(--color-sand);
+  --color-stone: var(--color-antique-gold);
+  --color-petrol: var(--color-cobalt);
+  --color-aqua: var(--color-cobalt);
+  --color-gold: var(--color-antique-gold);
+  --color-olive: var(--color-muted-gold);
+  --color-leaf-gray: var(--color-muted-gold);
+  --color-rose: var(--color-burgundy-soft);
+  --color-mauve: var(--color-muted-gold);
+  --color-warm-gray: var(--color-text-soft);
+  --color-charcoal: var(--color-ink);
+  --color-shadow: var(--color-deep-teal);
   color-scheme: dark;
 }
 
@@ -401,37 +426,37 @@ img, video { max-width: 100%; height: auto; }
 .dark .on-dark .text-ivory\/80,
 .dark .on-dark .text-cream\/75,
 .dark .on-dark .text-cream\/80 {
-  color: #F5F0E7 !important;
+  color: rgb(var(--color-soft-white)) !important;
 }
 .dark .on-dark .text-warm-gray,
 .dark .on-dark .text-warm-gray\/70 {
-  color: #E4D7C7 !important;
+  color: rgb(var(--color-sand)) !important;
 }
-.on-dark.bg-petrol, .on-dark .bg-petrol { background-color: #2F6173 !important; }
-.on-dark.bg-deepTeal, .on-dark .bg-deepTeal { background-color: #0F3237 !important; }
+.on-dark.bg-petrol, .on-dark .bg-petrol { background-color: rgb(var(--color-deep-teal)) !important; }
+.on-dark.bg-deepTeal, .on-dark .bg-deepTeal { background-color: rgb(var(--color-deep-teal)) !important; }
 .on-dark .text-gold,
-.dark .on-dark .text-gold { color: #B79B60 !important; }
+.dark .on-dark .text-gold { color: rgb(var(--color-antique-gold)) !important; }
 .on-dark .text-deepTeal,
-.dark .on-dark .text-deepTeal { color: #0F3237 !important; }
+.dark .on-dark .text-deepTeal { color: rgb(var(--color-deep-teal)) !important; }
 
 /* Admin receives an operational design system separate from the public poetic UI. */
 .admin-shell {
   background:
     radial-gradient(circle at 86% 8%, rgba(183,155,96,.13), transparent 28rem),
     radial-gradient(circle at 12% 18%, rgba(47,97,115,.10), transparent 30rem),
-    #F5F0E7;
-  color: #0F3237;
+    rgb(var(--color-ivory));
+  color: rgb(var(--color-deep-teal));
 }
 .dark .admin-shell {
   background:
     radial-gradient(circle at 84% 8%, rgba(183,155,96,.12), transparent 30rem),
     radial-gradient(circle at 10% 16%, rgba(47,97,115,.20), transparent 32rem),
-    linear-gradient(135deg, #0F3237 0%, #123F45 100%);
-  color: #F5F0E7;
+    linear-gradient(135deg, rgb(var(--color-deep-teal)) 0%, rgb(var(--color-teal-hover)) 100%);
+  color: rgb(var(--color-soft-white));
 }
 .admin-shell .admin-sidebar {
-  background: #0F3237 !important;
-  color: #F5F0E7 !important;
+  background: rgb(var(--color-deep-teal)) !important;
+  color: rgb(var(--color-soft-white)) !important;
   scrollbar-width: none;
 }
 .admin-shell .admin-sidebar::-webkit-scrollbar { width: 0; height: 0; }
@@ -451,7 +476,7 @@ img, video { max-width: 100%; height: auto; }
 .admin-shell [class*="bg-ivory/"] {
   background: rgba(255,253,247,.94) !important;
   border-color: rgba(228,215,199,.92) !important;
-  color: #0F3237 !important;
+  color: rgb(var(--color-deep-teal)) !important;
 }
 .dark .admin-shell .admin-card,
 .dark .admin-shell .brand-rich-card,
@@ -462,7 +487,7 @@ img, video { max-width: 100%; height: auto; }
 .dark .admin-shell [class*="bg-cream/"] {
   background: rgba(18,63,69,.92) !important;
   border-color: rgba(183,155,96,.30) !important;
-  color: #F5F0E7 !important;
+  color: rgb(var(--color-soft-white)) !important;
 }
 .admin-shell .bg-cream,
 .admin-shell [class*="bg-cream/"] {
@@ -474,33 +499,33 @@ img, video { max-width: 100%; height: auto; }
 }
 .admin-shell .bg-petrol,
 .admin-shell [class*="bg-petrol/"] {
-  background-color: #2F6173 !important;
+  background-color: rgb(var(--color-deep-teal)) !important;
 }
 .dark .admin-shell .bg-petrol,
 .dark .admin-shell [class*="bg-petrol/"] {
-  background-color: #16484F !important;
+  background-color: rgb(var(--color-teal-hover)) !important;
 }
 .admin-shell .bg-deepTeal,
 .admin-shell .bg-deep-teal,
 .admin-shell [class*="bg-deep-teal/"] {
-  background-color: #0F3237 !important;
+  background-color: rgb(var(--color-deep-teal)) !important;
 }
 .admin-shell .text-charcoal,
-.admin-shell .brand-title { color: #0F3237 !important; }
+.admin-shell .brand-title { color: rgb(var(--color-deep-teal)) !important; }
 .admin-shell .text-warm-gray,
-.admin-shell .premium-muted { color: #6F6A2F !important; }
-.admin-shell .text-petrol { color: #2F6173 !important; }
-.admin-shell .text-gold { color: #B79B60 !important; }
+.admin-shell .premium-muted { color: rgb(var(--color-text-soft)) !important; }
+.admin-shell .text-petrol { color: rgb(var(--color-deep-teal)) !important; }
+.admin-shell .text-gold { color: rgb(var(--color-antique-gold)) !important; }
 .admin-shell .text-ivory,
-.admin-shell .text-cream { color: #F5F0E7 !important; }
+.admin-shell .text-cream { color: rgb(var(--color-soft-white)) !important; }
 .dark .admin-shell .text-charcoal,
 .dark .admin-shell .brand-title,
-.dark .admin-shell .premium-label { color: #F5F0E7 !important; }
+.dark .admin-shell .premium-label { color: rgb(var(--color-soft-white)) !important; }
 .dark .admin-shell .text-warm-gray,
-.dark .admin-shell .premium-muted { color: #E4D7C7 !important; }
-.dark .admin-shell .text-petrol { color: #9ECDD4 !important; }
+.dark .admin-shell .premium-muted { color: rgb(var(--color-sand)) !important; }
+.dark .admin-shell .text-petrol { color: rgb(var(--color-cobalt)) !important; }
 .dark .admin-shell .text-ivory,
-.dark .admin-shell .text-cream { color: #F5F0E7 !important; }
+.dark .admin-shell .text-cream { color: rgb(var(--color-soft-white)) !important; }
 .admin-shell .premium-input,
 .dark .admin-shell .premium-input,
 .admin-shell input,
@@ -510,7 +535,7 @@ img, video { max-width: 100%; height: auto; }
 .dark .admin-shell textarea,
 .dark .admin-shell select {
   background: rgba(255,253,247,.96) !important;
-  color: #0F3237 !important;
+  color: rgb(var(--color-deep-teal)) !important;
   border-color: rgba(183,155,96,.36) !important;
 }
 .admin-shell .premium-input::placeholder,
@@ -518,28 +543,28 @@ img, video { max-width: 100%; height: auto; }
 .admin-shell .admin-hero {
   background:
     radial-gradient(circle at 82% 10%, rgba(183,155,96,.20), transparent 24rem),
-    linear-gradient(135deg, #0F3237 0%, #16484F 100%) !important;
-  color: #F5F0E7 !important;
+    linear-gradient(135deg, rgb(var(--color-deep-teal)) 0%, rgb(var(--color-teal-hover)) 100%) !important;
+  color: rgb(var(--color-soft-white)) !important;
   border-color: rgba(183,155,96,.42) !important;
 }
 .admin-shell .admin-hero .text-charcoal,
 .admin-shell .admin-hero .text-warm-gray,
 .admin-shell .admin-hero .text-ivory,
 .admin-shell .admin-hero .text-cream,
-.admin-shell .admin-hero .brand-title { color: #F5F0E7 !important; }
-.admin-shell .admin-hero .text-gold { color: #B79B60 !important; }
-.admin-shell .admin-nav-item { color: rgba(245,240,231,.82) !important; }
-.admin-shell .admin-nav-item:hover { color: #F5F0E7 !important; background: rgba(245,240,231,.08) !important; }
+.admin-shell .admin-hero .brand-title { color: rgb(var(--color-soft-white)) !important; }
+.admin-shell .admin-hero .text-gold { color: rgb(var(--color-antique-gold)) !important; }
+.admin-shell .admin-nav-item { color: rgba(255,253,248,.82) !important; }
+.admin-shell .admin-nav-item:hover { color: rgb(var(--color-soft-white)) !important; background: rgba(255,253,248,.08) !important; }
 .admin-shell .admin-nav-item-active {
   background: rgba(183,155,96,.18) !important;
   border: 1px solid rgba(183,155,96,.38) !important;
-  color: #F5F0E7 !important;
+  color: rgb(var(--color-soft-white)) !important;
 }
-.admin-shell .admin-soft-text { color: rgba(245,240,231,.72) !important; }
-.admin-shell .admin-sidebar .text-warm-gray { color: rgba(245,240,231,.72) !important; }
-.admin-shell .admin-sidebar .text-charcoal { color: #F5F0E7 !important; }
-.admin-shell .admin-section-title { color: #B79B60 !important; }
-.admin-shell .mini-label { color: #B79B60 !important; letter-spacing: .08em; }
+.admin-shell .admin-soft-text { color: rgba(255,253,248,.72) !important; }
+.admin-shell .admin-sidebar .text-warm-gray { color: rgba(255,253,248,.72) !important; }
+.admin-shell .admin-sidebar .text-charcoal { color: rgb(var(--color-soft-white)) !important; }
+.admin-shell .admin-section-title { color: rgb(var(--color-antique-gold)) !important; }
+.admin-shell .mini-label { color: rgb(var(--color-antique-gold)) !important; letter-spacing: .08em; }
 .dark .admin-shell .shadow-premium,
 .dark .admin-shell .shadow-soft,
 .dark .admin-shell .shadow-botanical { box-shadow: 0 22px 62px rgba(0,0,0,.22) !important; }
@@ -551,4 +576,4 @@ img, video { max-width: 100%; height: auto; }
 .dark .bg-deepTeal .text-ivory\/75,
 .dark .bg-deepTeal .text-ivory\/80,
 .dark .bg-deep-teal.text-ivory,
-.dark .bg-deep-teal .text-ivory { color: #F5F0E7 !important; }
+.dark .bg-deep-teal .text-ivory { color: rgb(var(--color-soft-white)) !important; }
