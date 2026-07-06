@@ -2,6 +2,7 @@
   "name": "heba-elsherif",
   "version": "6.0.0-supabase-native-hardening",
   "private": true,
+  "packageManager": "pnpm@10.13.1",
   "description": "Arabic-first premium emotional learning and coaching platform for Heba ElSherif.",
   "scripts": {
     "dev": "next dev",
