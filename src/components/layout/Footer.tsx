@@ -6,7 +6,7 @@ import BrandDivider from '@/components/brand/BrandDivider'
 const footerSections = [
   {
     title: 'المنصة',
-    links: PUBLIC_NAV_LINKS.filter((link) => ['/', '/about', '/services', '/courses', '/books', '/articles'].includes(link.href)),
+    links: PUBLIC_NAV_LINKS.filter((link) => ['/', '/about', '/services', '/books', '/articles'].includes(link.href)),
   },
   {
     title: 'الحساب',

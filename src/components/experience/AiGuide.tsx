@@ -29,7 +29,7 @@ const guideTopics = [
     title: 'اختاري الكورس حسب المرحلة لا حسب الفضول',
     answer:
       'الكورس الأنسب هو الذي يشرح ما تعيشينه الآن: حدود، تشتت، تعلق، أو ضعف اتصال بالذات. اقرئي الوعد العاطفي قبل السعر.',
-    href: '/courses',
+    href: '/booking',
     action: 'شاهدي الكورسات',
   },
   {
@@ -76,7 +76,7 @@ export default function AiGuide() {
     const top = entries[0]?.[0] || 'course'
     if (top === 'session') return { label: 'جلسة فردية', href: '/booking', text: 'الأقرب الآن: جلسة فردية تمنحك وضوحًا أسرع.' }
     if (top === 'book') return { label: 'كتاب رقمي', href: '/books', text: 'الأقرب الآن: كتاب هادئ تبدأين منه دون ضغط.' }
-    return { label: 'كورس منظم', href: '/courses', text: 'الأقرب الآن: كورس منظم يساعدك على بناء الفهم خطوة بخطوة.' }
+    return { label: 'جلسة توجيه', href: '/booking', text: 'الأقرب الآن: جلسة توجيه تساعدك على ترتيب السؤال واختيار الخطوة بهدوء.' }
   }, [scores])
 
   function answer(score: string) {

@@ -9,12 +9,9 @@ interface ImageSlotProps {
   fallbackSrc?: string
   alt?: string
   ratio?: SlotRatio
-  label?: string
-  hint?: string
   className?: string
   priority?: boolean
   variant?: SlotVariant
-  showLabel?: boolean
 }
 
 const ratioClasses: Record<SlotRatio, string> = {
@@ -39,14 +36,11 @@ const variantClasses: Record<SlotVariant, string> = {
 export default function ImageSlot({
   src,
   fallbackSrc = '',
-  alt = 'Heba ElSherif visual space',
+  alt = 'هوية هبة الشريف البصرية',
   ratio = 'video',
-  label = 'مساحة الصورة',
-  hint = 'تكوين بصري هادئ من هوية هبة الشريف.',
   className = '',
   priority = false,
   variant = 'soft',
-  showLabel = true,
 }: ImageSlotProps) {
   const imageSrc = src?.trim() || fallbackSrc.trim()
 
@@ -64,8 +58,7 @@ export default function ImageSlot({
           sizes="(max-width: 768px) 100vw, 50vw"
         />
       ) : (
-        <div className="absolute inset-0 overflow-hidden">
-          <span className="sr-only">{label}. {hint}</span>
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
           <div className="absolute -right-16 top-8 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
           <div className="absolute -left-16 bottom-8 h-60 w-60 rounded-full bg-petrol/14 blur-3xl" />
           <div className="absolute inset-x-8 bottom-8 top-8 rounded-[2rem] border border-gold/25 bg-ivory/20 backdrop-blur-[1px] dark:border-gold/10 dark:bg-deep-teal/20" />
@@ -79,9 +72,7 @@ export default function ImageSlot({
             <div className="relative mb-5 h-24 w-32 overflow-hidden rounded-[1.75rem] border border-gold/25 bg-ivory/72 p-2 text-petrol shadow-soft backdrop-blur-sm dark:bg-cream/90">
               <Image src="/images/brand/logo-symbol.png" alt="" fill className="object-contain p-2" sizes="128px" />
             </div>
-            <BrandOrnament className="mb-3 scale-75" />
-            {showLabel ? <p className="text-lg font-black text-petrol dark:text-gold">{label}</p> : null}
-            {showLabel ? <p className="mt-2 max-w-xs text-xs font-bold leading-6 text-warm-gray">{hint}</p> : null}
+            <BrandOrnament className="scale-75" />
           </div>
         </div>
       )}

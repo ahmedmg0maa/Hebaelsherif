@@ -10,7 +10,7 @@ import ThemeToggle from '@/components/experience/ThemeToggle'
 import BrandMark from '@/components/brand/BrandMark'
 
 const desktopLinks = PUBLIC_NAV_LINKS.filter((item) =>
-  ['/', '/services', '/courses', '/books', '/booking', '/about', '/contact'].includes(item.href),
+  ['/', '/services', '/books', '/booking', '/about', '/contact'].includes(item.href),
 )
 
 export default function Navbar() {

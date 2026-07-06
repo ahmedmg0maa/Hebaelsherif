@@ -30,9 +30,6 @@ export default function CourseCard({ course, featured = false, compact = false }
           alt={course.title}
           ratio="video"
           variant="course"
-          label="صورة الكورس"
-          hint="غلاف بصري للمسار."
-          showLabel={!course.coverImageUrl}
           className="rounded-b-none border-0 shadow-none"
         />
 

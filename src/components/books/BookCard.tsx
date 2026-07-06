@@ -21,10 +21,7 @@ export default function BookCard({ book, featured = false }: BookCardProps) {
           alt={book.title}
           ratio="book"
           variant="book"
-          label="غلاف الكتاب"
-          hint="غلاف بصري للكتاب."
           className="rounded-[1.65rem] shadow-soft"
-          showLabel={!book.coverImageUrl}
         />
 
         <div className="absolute right-6 top-6 flex flex-wrap gap-2">
