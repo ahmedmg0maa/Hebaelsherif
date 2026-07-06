@@ -24,22 +24,29 @@ export default function DashboardCourseLearnPage() {
   const slug = useMemo(() => decodeURIComponent(String(params?.slug || '')), [params?.slug])
   const { user, session, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(true)
-  const [state, setState] = useState<LearnState>({ course: null, lessons: [], progress: null, hasAccess: false })
+  const [state, setState] = useState<LearnState>({
+    course: null,
+    lessons: [],
+    progress: null,
+    hasAccess: false,
+  })
 
   useEffect(() => {
     if (authLoading) return
+
     if (!user?.uid || !slug) {
       setLoading(false)
       return
     }
-    
-const userId = user.uid
 
-async function loadLearningSpace() {
-  
+    const userId = user.uid
+
+    async function loadLearningSpace() {
       setLoading(true)
+
       const coursesSnap = await getDocs(query(collection(db, 'courses'), where('slug', '==', slug)))
       const courseDoc = coursesSnap.docs[0]
+
       if (!courseDoc) {
         setState({ course: null, lessons: [], progress: null, hasAccess: false })
         setLoading(false)
@@ -47,14 +54,16 @@ async function loadLearningSpace() {
       }
 
       const course = { id: courseDoc.id, ...courseDoc.data() } as Course
+
       const ordersSnap = await getDocs(
         query(
           collection(db, 'orders'),
-          where('userId', '==', user.uid),
+          where('userId', '==', userId),
           where('productId', '==', course.id),
           where('productType', '==', 'course'),
         ),
       )
+
       const hasPaidOrder = ordersSnap.docs
         .map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Order)
         .some((order) => order.status === 'paid' || order.status === 'access_granted')
@@ -62,11 +71,12 @@ async function loadLearningSpace() {
       const accessSnap = await getDocs(
         query(
           collection(db, 'access_records'),
-          where('userId', '==', user.uid),
+          where('userId', '==', userId),
           where('productId', '==', course.id),
           where('productType', '==', 'course'),
         ),
       )
+
       const hasManualAccess = accessSnap.docs.some((docItem) => String(docItem.data().status || 'active') === 'active')
       const hasAccess = hasPaidOrder || hasManualAccess
 
@@ -78,11 +88,12 @@ async function loadLearningSpace() {
 
       const [lessonsSnap, progressSnap] = await Promise.all([
         getDocs(query(collection(db, 'course_lessons'), where('courseId', '==', course.id))),
-        getDoc(doc(db, 'course_progress', `${user.uid}_${course.id}`)),
+        getDoc(doc(db, 'course_progress', `${userId}_${course.id}`)),
       ])
 
       const lessons = lessonsSnap.docs.map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Lesson)
       const progress = progressSnap.exists() ? (progressSnap.data() as unknown as CourseProgress) : null
+
       setState({ course, lessons, progress, hasAccess })
       setLoading(false)
     }
@@ -142,5 +153,12 @@ async function loadLearningSpace() {
     )
   }
 
-  return <CoursePlayerShell course={state.course} lessons={state.lessons} initialProgress={state.progress} accessToken={session?.access_token} />
+  return (
+    <CoursePlayerShell
+      course={state.course}
+      lessons={state.lessons}
+      initialProgress={state.progress}
+      accessToken={session?.access_token}
+    />
+  )
 }
