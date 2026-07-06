@@ -9,8 +9,7 @@ export default function GlobalExperience() {
 
   useEffect(() => {
     const stored = window.localStorage.getItem('heba-theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const shouldDark = stored ? stored === 'dark' : prefersDark
+    const shouldDark = stored === 'dark'
     document.documentElement.classList.toggle('dark', shouldDark)
   }, [])
 

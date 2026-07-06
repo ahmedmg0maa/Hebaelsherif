@@ -30,8 +30,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
 
   useEffect(() => {
     const stored = window.localStorage.getItem('heba-theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const shouldDark = stored ? stored === 'dark' : prefersDark
+    const shouldDark = stored === 'dark'
     setDark(shouldDark)
     document.documentElement.classList.toggle('dark', shouldDark)
   }, [])
