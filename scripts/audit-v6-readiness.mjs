@@ -54,7 +54,7 @@ for (const file of rootFiles) {
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 if (pkg.scripts?.build !== 'node scripts/build-v6.mjs') errors.push('package.json build script must run the verified V6 Next build guard.')
-if (!pkg.scripts?.check?.includes('npm run audit:v6')) errors.push('package.json check must include audit:v6.')
+if (!pkg.scripts?.check?.includes('pnpm run audit:v6')) errors.push('package.json check must include audit:v6 via pnpm.')
 
 const adminRoutes = ['bookings', 'orders', 'users', 'analytics', 'settings', 'logs', 'messages']
 for (const route of adminRoutes) {

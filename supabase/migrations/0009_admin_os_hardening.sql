@@ -141,8 +141,10 @@ select
   date_trunc('month', coalesce(o.created_at, b.created_at))::date as month,
   count(distinct o.id) as orders_count,
   count(distinct b.id) as bookings_count,
-  coalesce(sum(case when o.payment_status in ('confirmed','paid','submitted') or o.status in ('paid','access_granted') then o.final_amount else 0 end), 0) as orders_revenue,
-  coalesce(sum(case when b.payment_status in ('confirmed','submitted') or b.status in ('confirmed','completed') then b.final_amount else 0 end), 0) as bookings_revenue
+  -- enum columns compared as ::text: payment_status has no 'paid' value, so an
+  -- enum-literal comparison aborts the whole migration (V6 incident #3).
+  coalesce(sum(case when o.payment_status::text in ('confirmed','paid','submitted') or o.status::text in ('paid','access_granted') then o.final_amount else 0 end), 0) as orders_revenue,
+  coalesce(sum(case when b.payment_status::text in ('confirmed','submitted') or b.status::text in ('confirmed','completed') then b.final_amount else 0 end), 0) as bookings_revenue
 from public.orders o
 full outer join public.bookings b on false
 group by 1;

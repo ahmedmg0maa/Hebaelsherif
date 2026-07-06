@@ -1,8 +1,7 @@
 {
   "name": "heba-elsherif",
-  "version": "6.0.0-supabase-native-hardening",
+  "version": "7.0.0",
   "private": true,
-  "packageManager": "pnpm@10.13.1",
   "description": "Arabic-first premium emotional learning and coaching platform for Heba ElSherif.",
   "scripts": {
     "dev": "next dev",
@@ -10,17 +9,23 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "type-check": "tsc --noEmit",
-    "check": "npm run build && npm run type-check && npm run lint && npm run audit:v6 && npm run audit",
+    "check": "pnpm run build && pnpm run type-check && pnpm run lint && pnpm run audit:v6 && pnpm run audit && pnpm run audit:ux",
     "route-audit": "node scripts/audit-public-routes.mjs",
+    "audit:routes": "node scripts/audit-public-routes.mjs",
     "audit:launch": "node scripts/audit-launch-readiness.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:types": "supabase gen types typescript --local > src/db/types.ts",
     "db:migrate": "supabase migration up",
     "db:reset": "supabase db reset",
-    "check:full": "npm run check",
-    "audit": "npm audit --audit-level=moderate",
-    "audit:v6": "node scripts/audit-v6-readiness.mjs"
+    "check:full": "pnpm run check",
+    "audit": "pnpm audit --audit-level moderate",
+    "audit:v6": "node scripts/audit-v6-readiness.mjs",
+    "audit:v7": "node scripts/audit-v7.mjs",
+    "audit:security": "node scripts/audit-security.mjs",
+    "audit:admin": "node scripts/audit-admin.mjs",
+    "audit:ux": "node scripts/audit-ux-placeholders.mjs",
+    "check:deploy": "pnpm run type-check && pnpm run lint && pnpm run build && pnpm run audit:ux && pnpm run audit:routes && pnpm run audit:security && pnpm run audit:admin && pnpm run audit:v6 && pnpm run audit:v7 && pnpm run audit:launch"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
@@ -49,5 +54,6 @@
   },
   "overrides": {
     "postcss": "^8.5.10"
-  }
+  },
+  "packageManager": "pnpm@10.13.1"
 }

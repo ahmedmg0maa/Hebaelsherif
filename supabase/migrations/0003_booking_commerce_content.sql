@@ -81,7 +81,24 @@ create table public.bookings (
   check (start_at < end_at)
 );
 
-alter table public.bookings add column slot_range tstzrange generated always as (tstzrange(start_at, end_at + interval '30 minutes', '[)')) stored;
+-- slot_range must be trigger-maintained: tstzrange(timestamptz, timestamptz) is not
+-- immutable, so a generated column fails on Supabase (V6 incident #1).
+alter table public.bookings add column slot_range tstzrange not null;
+
+create or replace function public.set_booking_slot_range()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.slot_range := tstzrange(new.start_at, new.end_at + interval '30 minutes', '[)');
+  return new;
+end;
+$$;
+
+create trigger trg_bookings_slot_range
+before insert or update of start_at, end_at on public.bookings
+for each row execute function public.set_booking_slot_range();
+
 create index bookings_date_status_idx on public.bookings (date, status);
 create index bookings_user_idx on public.bookings (user_id, created_at desc);
 alter table public.bookings add constraint bookings_no_overlap exclude using gist (slot_range with &&) where (status in ('pending', 'awaiting_payment', 'payment_submitted', 'confirmed', 'reschedule_requested'));
