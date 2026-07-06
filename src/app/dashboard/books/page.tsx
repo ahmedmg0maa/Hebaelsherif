@@ -93,8 +93,6 @@ export default function DashboardBooksPage() {
               alt={book.title}
               ratio="book"
               variant="book"
-              label="غلاف الكتاب"
-              hint="غلاف الكتاب الحقيقي يظهر هنا."
               className="mx-auto max-w-[260px]"
             />
             <div className="p-3 pt-5">

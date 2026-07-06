@@ -35,9 +35,9 @@ export async function GET(req: NextRequest) {
     })
     const env = {
       appUrl: Boolean(process.env.NEXT_PUBLIC_APP_URL),
-      adminProject: Boolean(process.env.FIREBASE_ADMIN_PROJECT_ID),
-      adminEmail: Boolean(process.env.FIREBASE_ADMIN_CLIENT_EMAIL),
-      adminPrivateKey: Boolean(process.env.FIREBASE_ADMIN_PRIVATE_KEY),
+      supabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      supabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+      supabaseServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
       paymentInstapay: Boolean(process.env.NEXT_PUBLIC_PAYMENT_INSTAPAY),
       paymentWallet: Boolean(process.env.NEXT_PUBLIC_PAYMENT_WALLET),
       paymentBank: Boolean(process.env.NEXT_PUBLIC_PAYMENT_BANK),

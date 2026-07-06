@@ -126,8 +126,6 @@ export default function BooksPage() {
                 src={featuredBook?.coverImageUrl}
                 ratio="book"
                 variant="book"
-                label="غلاف كتاب مميز"
-                hint="تكوين بصري من هوية المكتبة"
                 className="mx-auto max-w-[340px]"
                 priority
               />

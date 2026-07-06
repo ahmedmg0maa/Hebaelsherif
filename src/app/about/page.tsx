@@ -38,7 +38,7 @@ export default function AboutPage() {
             </div>
             <div className="mt-8 flex gap-3">
               <PremiumButton href="/booking">احجزي جلسة</PremiumButton>
-              <PremiumButton href="/courses" variant="outline">استكشفي الكورسات</PremiumButton>
+              <PremiumButton href="/booking" variant="outline">احجزي جلسة</PremiumButton>
             </div>
           </div>
         </section>

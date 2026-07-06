@@ -168,7 +168,7 @@ export default function DashboardOrdersPage() {
         title="لا توجد طلبات بعد"
         description="عند طلب كورس أو كتاب، سيظهر هنا مسار الدفع وفتح الوصول خطوة بخطوة."
         actionLabel="استكشفي المسارات"
-        actionHref="/courses"
+        actionHref="/booking"
       />
     )
   }

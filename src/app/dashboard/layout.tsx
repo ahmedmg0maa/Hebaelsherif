@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import BrandDivider from '@/components/brand/BrandDivider'
 import BrandMark from '@/components/brand/BrandMark'
 import BrandOrnament from '@/components/brand/BrandOrnament'
@@ -24,14 +23,7 @@ const navIcons: Record<string, string> = {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const router = useRouter()
   const { user, loading, logout } = useAuth()
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push(`/auth/login?next=${encodeURIComponent(pathname)}`)
-    }
-  }, [loading, pathname, router, user])
 
   if (loading) {
     return (
@@ -41,7 +33,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     )
   }
 
-  if (!user) return null
+  if (!user) {
+    return (
+      <main className="min-h-screen bg-cream px-4 py-10 text-charcoal">
+        <div className="mx-auto max-w-3xl rounded-[2.5rem] border border-sand bg-ivory/92 p-8 text-center shadow-premium">
+          <BrandMark size="lg" className="justify-center" />
+          <BrandDivider className="mx-auto my-6" />
+          <p className="mini-label mb-3">مساحة خاصة محمية</p>
+          <h1 className="text-4xl font-black leading-tight text-charcoal md:text-5xl">سجلي الدخول لفتح لوحة رحلتك.</h1>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-8 text-warm-gray">
+            هذه الصفحة لا تظهر فارغة بعد الآن. سجلي الدخول لمتابعة الحجوزات والطلبات والمحتوى المتاح داخل حسابك.
+          </p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <PremiumButton href={`/auth/login?next=${encodeURIComponent(pathname)}`} size="lg">تسجيل الدخول</PremiumButton>
+            <PremiumButton href="/booking" variant="outline" size="lg">حجز جلسة</PremiumButton>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen overflow-hidden bg-cream text-charcoal lg:flex">

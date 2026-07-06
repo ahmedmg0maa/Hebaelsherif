@@ -75,7 +75,7 @@ export default function DashboardProfilePage() {
               بياناتك تساعد المنصة على اقتراح المسار الأقرب لكِ: كورس، كتاب، أو جلسة خاصة.
             </p>
           </div>
-          <ImageSlot ratio="square" variant="portrait" label="صورة شخصية اختيارية" hint="رمز هادئ للملف الشخصي." />
+          <ImageSlot ratio="square" variant="portrait" />
         </div>
       </section>
 

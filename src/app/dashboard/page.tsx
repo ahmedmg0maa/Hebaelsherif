@@ -58,8 +58,8 @@ const journeyStages = [
   },
   {
     title: 'تعلم',
-    description: 'افتحي كورسًا أو كتابًا وابدئي بخطوة صغيرة.',
-    href: '/dashboard/courses',
+    description: 'افتحي كتابًا أو مقالًا وابدئي بخطوة صغيرة.',
+    href: '/dashboard/books',
     icon: '◈',
   },
   {
@@ -98,7 +98,7 @@ export default function DashboardHomePage() {
       const today = getTodayDateString()
 
       const stats: DashboardStats = {
-        paidCourses: orders.filter((order) => order.productType === 'course' && (order.status === 'paid' || order.status === 'access_granted')).length,
+        paidCourses: 0,
         paidBooks: orders.filter((order) => order.productType === 'book' && (order.status === 'paid' || order.status === 'access_granted')).length,
         upcomingSessions: bookings.filter((booking) => booking.status !== 'cancelled' && booking.date >= today).length,
         pendingOrders: orders.filter((order) => order.status === 'pending' || order.status === 'payment_submitted').length,
@@ -123,7 +123,7 @@ export default function DashboardHomePage() {
 
   const completionScore = useMemo(() => {
     const { paidCourses, paidBooks, upcomingSessions, paidOrders } = data.stats
-    const raw = paidCourses * 24 + paidBooks * 18 + upcomingSessions * 24 + paidOrders * 8
+    const raw = paidBooks * 24 + upcomingSessions * 24 + paidOrders * 8
     return Math.min(100, raw)
   }, [data.stats])
 
@@ -176,9 +176,6 @@ export default function DashboardHomePage() {
 
             <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_280px] lg:items-end">
               <div className="flex flex-col gap-3 sm:flex-row">
-                <PremiumButton href="/dashboard/courses" size="lg">
-                  أكملي التعلم
-                </PremiumButton>
                 <PremiumButton href="/booking" variant="outline" size="lg">
                   احجزي جلسة خاصة
                 </PremiumButton>
@@ -198,7 +195,7 @@ export default function DashboardHomePage() {
           </div>
 
           <aside className="grid gap-4 rounded-[2.25rem] border border-sand bg-cream/72 p-5 shadow-soft backdrop-blur-sm">
-            <ImageSlot ratio="square" variant="brand" label="صورة رحلة المستخدم" hint="تكوين بصري هادئ من هوية الرحلة." showLabel />
+            <ImageSlot ratio="square" variant="brand" />
             <div className="rounded-[1.7rem] border border-sand bg-ivory/74 p-5">
               <p className="text-xs font-black text-warm-gray">توصية اليوم</p>
               <h3 className="mt-2 text-xl font-black text-charcoal">ابدئي بخطوة واحدة فقط</h3>
@@ -211,7 +208,6 @@ export default function DashboardHomePage() {
       </section>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <DashboardStatCard icon="◈" label="كورسات مفتوحة" value={data.stats.paidCourses} href="/dashboard/courses" hint="مسارات تعليمية" />
         <DashboardStatCard icon="☾" label="كتب متاحة" value={data.stats.paidBooks} href="/dashboard/books" hint="قراءة رقمية" />
         <DashboardStatCard icon="◌" label="جلسات قادمة" value={data.stats.upcomingSessions} href="/dashboard/sessions" hint="مواعيدك الخاصة" />
         <DashboardStatCard icon="◇" label="طلبات قيد المراجعة" value={data.stats.pendingOrders} href="/dashboard/orders" hint="تأكيد الدفع" />
@@ -221,9 +217,9 @@ export default function DashboardHomePage() {
         <PremiumEmptyState
           icon="✦"
           title="رحلتك لم تبدأ بعد"
-          description="عند شراء كورس أو كتاب أو حجز جلسة، سيظهر كل شيء هنا تلقائيًا بتصميم واضح ومنظم."
-          actionLabel="استكشفي الكورسات"
-          actionHref="/courses"
+          description="عند شراء كتاب أو حجز جلسة، سيظهر كل شيء هنا تلقائيًا بتصميم واضح ومنظم."
+          actionLabel="احجزي جلسة"
+          actionHref="/booking"
         />
       ) : null}
 
@@ -306,7 +302,7 @@ export default function DashboardHomePage() {
                 <p className="text-xs font-black tracking-[.22em] text-gold">لحظة مراجعة</p>
                 <h3 className="mt-3 text-3xl font-black leading-tight">ما الذي تحتاجينه من نفسك هذا الأسبوع؟</h3>
                 <p className="mt-4 text-sm leading-8 text-ivory/72">
-                  استخدمي هذه المساحة كبداية: كورس واحد للفهم، كتاب واحد للتهدئة، أو جلسة واحدة للوضوح العميق.
+                  استخدمي هذه المساحة كبداية: مقال واحد للفهم، كتاب واحد للتهدئة، أو جلسة واحدة للوضوح العميق.
                 </p>
               </div>
               <div className="grid gap-2">
@@ -335,7 +331,7 @@ export default function DashboardHomePage() {
               <MiniMetric label="مدفوع" value={data.stats.paidOrders} />
               <MiniMetric label="قيد المراجعة" value={data.stats.pendingOrders} />
               <MiniMetric label="جلسات" value={data.stats.upcomingSessions} />
-              <MiniMetric label="محتوى" value={data.stats.paidCourses + data.stats.paidBooks} />
+              <MiniMetric label="محتوى" value={data.stats.paidBooks} />
             </div>
           </div>
 
@@ -343,7 +339,7 @@ export default function DashboardHomePage() {
             <p className="text-xs font-black tracking-[.22em] text-gold">ملخص الاستثمار</p>
             <strong className="mt-4 block text-4xl font-black latin-numerals">{formatEGP(data.stats.totalInvestment)}</strong>
             <p className="mt-3 text-sm leading-7 text-ivory/72">
-              إجمالي المحتوى المؤكد داخل رحلتك حتى الآن، ويشمل الكورسات والكتب المدفوعة.
+              إجمالي الطلبات المؤكدة داخل رحلتك حتى الآن، ويشمل الكتب والجلسات المدفوعة.
             </p>
           </div>
 
@@ -351,7 +347,7 @@ export default function DashboardHomePage() {
             <p className="mini-label mb-3">مساعد هبة</p>
             <h3 className="text-2xl font-black text-charcoal">اختاري بناءً على احتياجك</h3>
             <div className="mt-5 grid gap-3">
-              <GuideChoice title="أحتاج فهمًا" href="/courses" />
+              <GuideChoice title="أحتاج فهمًا" href="/articles" />
               <GuideChoice title="أحتاج تهدئة" href="/books" />
               <GuideChoice title="أحتاج وضوحًا شخصيًا" href="/booking" />
             </div>

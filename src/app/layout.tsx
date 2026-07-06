@@ -11,6 +11,7 @@ import { cleanOptionalEnvValue, getSafeSiteUrl } from '@/lib/runtime/site-url'
 
 import './globals.css'
 
+
 export const dynamic = 'force-dynamic'
 
 const appUrl = getSafeSiteUrl()

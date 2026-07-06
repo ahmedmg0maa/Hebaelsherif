@@ -36,10 +36,10 @@ export default function ServicesPage() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <PremiumButton href="/booking" size="lg">احجزي جلسة</PremiumButton>
-              <PremiumButton href="/courses" variant="outline" size="lg">شاهدي الكورسات</PremiumButton>
+              <PremiumButton href="/start-here" variant="outline" size="lg">ابدئي من هنا</PremiumButton>
             </div>
           </div>
-          <ImageSlot fallbackSrc={IMAGE_SLOTS.session} alt="جلسة هبة الشريف" ratio="portrait" label="مساحة بصرية للجلسات" priority />
+          <ImageSlot fallbackSrc={IMAGE_SLOTS.session} alt="جلسة هبة الشريف" ratio="portrait" priority />
         </section>
 
         <section className="border-y border-sand bg-ivory/55">

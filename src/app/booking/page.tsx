@@ -790,8 +790,6 @@ export default function BookingPage() {
                 fallbackSrc={IMAGE_SLOTS.session}
                 ratio="portrait"
                 variant="session"
-                label="صورة مساحة الجلسة"
-                hint="تكوين بصري هادئ من هوية الجلسات."
                 className="min-h-[420px]"
               />
 

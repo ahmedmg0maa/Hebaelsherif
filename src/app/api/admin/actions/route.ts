@@ -349,8 +349,11 @@ async function handleSimpleAction(action: string, targetType: string, targetId: 
     if (action === 'user_role_changed') {
       const role = text(values.role)
       if (!['user', 'owner', 'admin', 'support', 'content_manager', 'finance', 'viewer'].includes(role)) throw new Error('INVALID_ROLE')
+      const targetSnap = await db.collection('users').doc(target).get()
+      const beforeRole = String(targetSnap.data()?.role || 'user')
+      if ((role === 'owner' || beforeRole === 'owner') && session.role !== 'owner') throw new Error('OWNER_ROLE_PROTECTED')
       await db.collection('users').doc(target).update({ role, updatedAt: now })
-      await writeAdminLog(db, { session, action, targetType: 'users', targetId: target, after: { role } })
+      await writeAdminLog(db, { session, action, targetType: 'users', targetId: target, before: { role: beforeRole }, after: { role } })
       return { role }
     }
     if (action === 'customer_note_created') {
@@ -424,6 +427,7 @@ export async function POST(req: NextRequest) {
     if (message === 'MEETING_URL_REQUIRED') return NextResponse.json({ success: false, error: 'رابط الجلسة مطلوب.' }, { status: 400 })
     if (message === 'NOTE_REQUIRED') return NextResponse.json({ success: false, error: 'الملاحظة مطلوبة.' }, { status: 400 })
     if (message === 'INVALID_ROLE') return NextResponse.json({ success: false, error: 'الدور غير صحيح.' }, { status: 400 })
+    if (message === 'OWNER_ROLE_PROTECTED') return NextResponse.json({ success: false, error: 'دور المالك لا يُعدل إلا من مالك الحساب.' }, { status: 403 })
     if (message === 'TASK_TITLE_REQUIRED') return NextResponse.json({ success: false, error: 'عنوان المهمة مطلوب.' }, { status: 400 })
     const { status, error: translated } = adminErrorResponse(error)
     return NextResponse.json({ success: false, error: translated }, { status })

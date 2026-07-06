@@ -34,7 +34,7 @@ export default function StartHerePage() {
             ))}
           </div>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <PremiumButton href="/courses">الكورسات</PremiumButton>
+            <PremiumButton href="/booking">الجلسات</PremiumButton>
             <PremiumButton href="/booking" variant="outline">الجلسات</PremiumButton>
           </div>
         </section>

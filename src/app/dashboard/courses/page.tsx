@@ -80,7 +80,7 @@ export default function DashboardCoursesPage() {
         title="كورسات جديدة قيد الإعداد"
         description="بعد تأكيد شراء أي كورس، سيظهر هنا مع تقدّمك وآخر درس وصلتِ إليه."
         actionLabel="استكشفي الكورسات"
-        actionHref="/courses"
+        actionHref="/booking"
       />
     )
   }
@@ -121,8 +121,6 @@ export default function DashboardCoursesPage() {
               alt={course.title}
               ratio="video"
               variant="course"
-              label="صورة الكورس"
-              hint="غلاف الكورس يظهر هنا عند إضافته."
               className="rounded-none border-0 shadow-none"
             />
 

@@ -12,7 +12,6 @@ export default function robots(): MetadataRoute.Robots {
           '/start-here',
           '/services',
           '/programs',
-          '/courses',
           '/books',
           '/booking',
           '/articles',

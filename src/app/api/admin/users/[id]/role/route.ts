@@ -24,6 +24,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!userSnap.exists) return jsonError('المستخدم غير موجود.', 404)
 
     const before = userSnap.data() || {}
+    const actorIsOwner = context.role === 'owner'
+    if (role === 'owner' && !actorIsOwner) return jsonError('دور المالك لا يُمنح إلا من مالك الحساب.', 403)
+    if (String(before.role) === 'owner' && !actorIsOwner) return jsonError('لا يمكن تعديل دور المالك إلا من مالك آخر.', 403)
     await userRef.set({ role, updatedAt: Timestamp.now(), updatedBy: context.uid }, { merge: true })
 
     await context.db.collection('admin_logs').add({

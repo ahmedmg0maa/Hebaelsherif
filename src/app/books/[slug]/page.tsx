@@ -161,8 +161,6 @@ export default function BookDetailsPage() {
                     alt={book.title}
                     ratio="book"
                     variant="book"
-                    label="غلاف الكتاب"
-                    hint="أضيفي غلاف الكتاب الحقيقي من لوحة الإدارة."
                     priority
                   />
                   <div className="absolute -bottom-6 left-4 right-4 rounded-[2rem] border border-gold/20 bg-ivory/90 p-4 text-center shadow-premium backdrop-blur-md">

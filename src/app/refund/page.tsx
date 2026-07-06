@@ -2,6 +2,6 @@ import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-static'
 
-export default function CourseDetailsRedirect() {
-  redirect('/courses')
+export default function RefundAliasPage() {
+  redirect('/refund-policy')
 }

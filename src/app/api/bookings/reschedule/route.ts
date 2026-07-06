@@ -26,6 +26,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'بيانات تغيير الموعد غير مكتملة.' }, { status: 400 })
     }
 
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || !/^\d{2}:\d{2}$/.test(requestedTime)) {
+      return NextResponse.json({ error: 'صيغة التاريخ أو الوقت غير صحيحة.' }, { status: 400 })
+    }
+
+    const cairoToday = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Cairo' }).format(new Date())
+    if (requestedDate <= cairoToday) {
+      return NextResponse.json({ error: 'اختاري تاريخًا قادمًا لإعادة الجدولة.' }, { status: 400 })
+    }
+    if (new Date(`${requestedDate}T12:00:00Z`).getUTCDay() === 5) {
+      return NextResponse.json({ error: 'الجمعة غير متاحة للحجز.' }, { status: 400 })
+    }
+
     const ref = db.collection('bookings').doc(bookingId)
     const snap = await ref.get()
     if (!snap.exists || snap.data()?.userId !== decoded.uid) {
