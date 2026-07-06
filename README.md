@@ -54,3 +54,24 @@ pnpm run check:deploy
 - لا أسرار في المتصفح — مفتاح service-role للخادم فقط.
 - كل إجراء إداري مؤثر يُسجل في سجل التدقيق.
 - لا محتوى وهمي أو Placeholder في الواجهة العامة (يفشل الفحص تلقائيًا).
+
+## V8 status
+
+Current completed version: `8.0.0`.
+
+V8 completes the structured V7.x roadmap into a global premium platform foundation:
+
+- unified commerce model
+- checkout intent flow
+- LMS stable dashboard/course player foundation
+- admin OS expanded routes
+- V8 Supabase migration
+- V8 readiness audit
+
+Run:
+
+```bash
+pnpm run check:deploy
+```
+
+Then apply Supabase migrations on staging before production.

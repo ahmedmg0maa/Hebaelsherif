@@ -63,7 +63,7 @@ if (!flags.includes('courses_enabled: false')) errors.push('courses_enabled defa
 if (!flags.includes('workshops_enabled: false')) errors.push('workshops_enabled default must be false in flags lib.')
 
 // V7 docs
-for (const doc of ['VERCEL_DEPLOYMENT.md', 'SUPABASE_MIGRATIONS.md', 'CUSTOMER_GUIDE.md', 'V7_IMPLEMENTATION_REPORT.md', 'V7_FINAL_DELIVERY_REPORT.md', 'docs/V7_ARCHITECTURE.md', 'docs/V7_ADMIN_OS.md', 'docs/V7_DATABASE_SCHEMA.md', 'docs/V7_INCIDENTS_AND_FIXES.md']) {
+for (const doc of ['VERCEL_DEPLOYMENT.md', 'SUPABASE_MIGRATIONS.md', 'CUSTOMER_GUIDE.md', 'V7_IMPLEMENTATION_REPORT.md', 'V7_FINAL_DELIVERY_REPORT.md', 'docs/V7_ARCHITECTURE.md', 'docs/V7_ADMIN_OS.md', 'docs/V7_DATABASE_SCHEMA.md', 'docs/V7_INCIDENTS_AND_FIXES.md', 'docs/V7_COLOR_SYSTEM.md', 'docs/V7_VISUAL_TARGETS.md', 'docs/V7_PATCH_ROADMAP_TO_V8.md']) {
   if (!fs.existsSync(path.join(root, doc))) errors.push(`Missing V7 documentation: ${doc}`)
 }
 

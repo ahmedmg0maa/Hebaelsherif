@@ -23,6 +23,13 @@ const requiredAdminPages = [
   'src/app/admin/logs/page.tsx',
   'src/app/admin/system-health/page.tsx',
   'src/app/admin/exports/page.tsx',
+  'src/app/admin/products/page.tsx',
+  'src/app/admin/pages/page.tsx',
+  'src/app/admin/media/page.tsx',
+  'src/app/admin/reports/page.tsx',
+  'src/app/admin/roles/page.tsx',
+  'src/app/admin/security/page.tsx',
+  'src/app/admin/audit-logs/page.tsx',
 ]
 
 for (const file of requiredAdminPages) {
@@ -57,7 +64,7 @@ for (const file of ['src/app/api/admin/v7/[entity]/route.ts', 'src/app/api/admin
 
 // Admin navigation must include operational V7 sections.
 const design = fs.readFileSync(path.join(root, 'src/constants/design.ts'), 'utf8')
-for (const href of ['/admin/workshops', '/admin/coupons', '/admin/offers']) {
+for (const href of ['/admin/workshops', '/admin/coupons', '/admin/offers', '/admin/products', '/admin/pages', '/admin/media', '/admin/reports', '/admin/roles', '/admin/security', '/admin/audit-logs']) {
   if (!design.includes(href)) errors.push(`Admin nav missing link: ${href}`)
 }
 

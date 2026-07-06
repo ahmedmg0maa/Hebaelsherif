@@ -54,3 +54,17 @@ See `SUPABASE_SETUP.md` and `docs/V6_INCIDENTS_AND_RECOVERY_PLAN.md` for details
 1. Register the owner account through `/auth/register`.
 2. Call `POST /api/admin/seed-admin` with header `x-admin-setup-secret: <ADMIN_SETUP_SECRET>` and body `{ "email": "<owner email>" }`.
 3. Remove or rotate `ADMIN_SETUP_SECRET` after seeding.
+
+## V8 deployment gate
+
+Before deploying V8:
+
+```bash
+corepack enable
+corepack prepare pnpm@10.13.1 --activate
+pnpm install --frozen-lockfile
+pnpm run check:deploy
+supabase db push
+```
+
+Confirm Vercel uses Node 24.x and the install command in `vercel.json` uses pnpm with `--frozen-lockfile`.

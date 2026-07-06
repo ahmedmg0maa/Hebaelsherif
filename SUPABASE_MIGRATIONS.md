@@ -42,3 +42,29 @@ Dashboard fallback: run each file's SQL in order in the SQL editor.
 2. Seed the owner (see `DEPLOYMENT.md` → Admin bootstrap).
 3. Feature flags live in `site_settings` key `features` (public row): toggle `courses_enabled` / `workshops_enabled` when content is ready.
 4. Optional: regenerate types — `pnpm run db:types`.
+
+## V8 migration
+
+Apply after the previous V7 migrations:
+
+```bash
+supabase db push
+```
+
+New migration:
+
+```txt
+0013_v8_unified_platform.sql
+```
+
+It adds the unified product/checkout/CMS/reporting foundation:
+
+- `products`
+- `product_bundles`
+- `checkout_sessions`
+- `page_sections`
+- `navigation_items`
+- `learning_snapshots`
+- `offer_targets`
+
+Staging is required before production because these tables connect public product discovery, protected access, checkout, and admin CMS controls.

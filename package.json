@@ -1,6 +1,6 @@
 {
   "name": "heba-elsherif",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "private": true,
   "description": "Arabic-first premium emotional learning and coaching platform for Heba ElSherif.",
   "scripts": {
@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "type-check": "tsc --noEmit",
-    "check": "pnpm run build && pnpm run type-check && pnpm run lint && pnpm run audit:v6 && pnpm run audit && pnpm run audit:ux",
+    "check": "pnpm run build && pnpm run type-check && pnpm run lint && pnpm run audit:v6 && pnpm run audit:v7 && pnpm run audit:v8 && pnpm run audit:ux",
     "route-audit": "node scripts/audit-public-routes.mjs",
     "audit:routes": "node scripts/audit-public-routes.mjs",
     "audit:launch": "node scripts/audit-launch-readiness.mjs",
@@ -25,7 +25,9 @@
     "audit:security": "node scripts/audit-security.mjs",
     "audit:admin": "node scripts/audit-admin.mjs",
     "audit:ux": "node scripts/audit-ux-placeholders.mjs",
-    "check:deploy": "pnpm run type-check && pnpm run lint && pnpm run build && pnpm run audit:ux && pnpm run audit:routes && pnpm run audit:security && pnpm run audit:admin && pnpm run audit:v6 && pnpm run audit:v7 && pnpm run audit:launch"
+    "audit:colors": "node scripts/audit-colors.mjs",
+    "check:deploy": "pnpm run type-check && pnpm run lint && pnpm run build && pnpm run audit:ux && pnpm run audit:routes && pnpm run audit:security && pnpm run audit:admin && pnpm run audit:v6 && pnpm run audit:v7 && pnpm run audit:v8 && pnpm run audit:colors && pnpm run audit:launch",
+    "audit:v8": "node scripts/audit-v8.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
