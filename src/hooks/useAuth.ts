@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Session, User as SupabaseAuthUser } from '@supabase/supabase-js'
 import type { User as SupabaseCompatUser } from '@/lib/supabase/auth-token-compat'
 import { createSupabaseBrowserClient } from '@/lib/supabase/client'
+import { getSupabasePublicEnv } from '@/lib/supabase/env'
 import { isAdminRole } from '@/lib/auth/permissions'
 import type { User } from '@/types'
 
@@ -57,6 +58,17 @@ async function getProfile(authUser: SupabaseAuthUser) {
   return toAppUser(authUser, data as Record<string, unknown> | null)
 }
 
+function hasSupabasePublicEnv() {
+  const env = getSupabasePublicEnv()
+  return Boolean(env.url && env.anonKey)
+}
+
+function assertClientAuthConfigured() {
+  if (!hasSupabasePublicEnv()) {
+    throw new Error('Supabase public environment variables are required for authentication.')
+  }
+}
+
 export function useAuth() {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -68,6 +80,20 @@ export function useAuth() {
 
   useEffect(() => {
     let mounted = true
+
+    if (!hasSupabasePublicEnv()) {
+      setState({
+        user: null,
+        sessionUser: null,
+        loading: false,
+        session: null,
+        supabaseUser: null,
+      })
+      return () => {
+        mounted = false
+      }
+    }
+
     const supabase = createSupabaseBrowserClient()
 
     async function loadSession() {
@@ -113,6 +139,7 @@ export function useAuth() {
   const actions = useMemo(
     () => ({
       async register({ name, email, password, phone }: RegisterInput) {
+        assertClientAuthConfigured()
         const supabase = createSupabaseBrowserClient()
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -153,6 +180,7 @@ export function useAuth() {
       },
 
       async login({ email, password }: LoginInput) {
+        assertClientAuthConfigured()
         const supabase = createSupabaseBrowserClient()
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
@@ -169,6 +197,7 @@ export function useAuth() {
       },
 
       async loginWithGoogle() {
+        assertClientAuthConfigured()
         const supabase = createSupabaseBrowserClient()
         const redirectTo = `${window.location.origin}/auth/callback`
         const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } })
@@ -177,6 +206,7 @@ export function useAuth() {
       },
 
       async resetPassword(email: string) {
+        assertClientAuthConfigured()
         const supabase = createSupabaseBrowserClient()
         const redirectTo = `${window.location.origin}/auth/reset-password`
         const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
@@ -184,6 +214,7 @@ export function useAuth() {
       },
 
       async logout() {
+        assertClientAuthConfigured()
         const supabase = createSupabaseBrowserClient()
         await supabase.auth.signOut()
         setState({

@@ -205,6 +205,23 @@ function normalizeRow(collectionName: string, row: DocumentData) {
     addAlias(data, 'coverImageUrl', row.cover_url)
   }
 
+
+  if (collectionName === 'course_lessons') {
+    addAlias(data, 'courseId', row.course_id)
+    addAlias(data, 'stageTitle', row.stage_title)
+    addAlias(data, 'order', row.sort_order ?? row.order)
+  }
+
+  if (collectionName === 'course_progress') {
+    addAlias(data, 'userId', row.user_id)
+    addAlias(data, 'courseId', row.course_id)
+    addAlias(data, 'lastLessonId', row.lesson_id)
+    addAlias(data, 'progressPercent', row.progress_percent)
+    if (Array.isArray(data.completedLessonIds)) data.completedLessonIds = data.completedLessonIds.map(String)
+    else addAlias(data, 'completedLessonIds', [])
+    addAlias(data, 'lastViewedAt', toDateCompat(updated || created))
+  }
+
   if (collectionName === 'admin_logs' || collectionName === 'audit_logs') {
     if (data.adminId && !data.actor_id) data.actor_id = data.adminId
     if (data.adminEmail && !data.actor_email) data.actor_email = data.adminEmail

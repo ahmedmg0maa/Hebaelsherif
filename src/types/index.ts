@@ -2,13 +2,65 @@ export type AdminRole = 'owner' | 'admin' | 'super_admin' | 'support' | 'content
 export type UserRole = 'user' | AdminRole
 
 export type PublishStatus = 'published' | 'draft' | 'review' | 'coming_soon' | 'hidden' | 'archived'
-export type ProductType = 'course' | 'book'
+export type ProductType = 'course' | 'book' | 'workshop' | 'session' | 'bundle' | 'vip_program' | 'free_resource'
 export type OrderStatus = 'pending' | 'awaiting_payment' | 'payment_submitted' | 'paid' | 'access_granted' | 'rejected' | 'failed' | 'refunded' | 'cancelled'
 export type PaymentStatus = 'not_required' | 'pending' | 'submitted' | 'confirmed' | 'failed' | 'refunded'
 export type PaymentMethod = 'instapay' | 'vodafone_cash' | 'bank_transfer' | 'manual'
 export type BookingStatus = 'pending' | 'awaiting_payment' | 'payment_submitted' | 'confirmed' | 'reschedule_requested' | 'cancelled' | 'completed' | 'no_show'
 export type BookingDuration = 60 | 90
 export type SupabaseDate = Date | { toDate: () => Date }
+
+
+export interface Product {
+  id: string
+  slug: string
+  title: string
+  description?: string
+  shortDescription?: string
+  productType: ProductType
+  status: PublishStatus
+  price: number
+  currency?: 'EGP'
+  coverImageUrl?: string
+  category?: string
+  accessMode?: 'free' | 'manual_payment' | 'paid_access' | 'admin_grant'
+  sortOrder?: number
+  createdAt: SupabaseDate
+  updatedAt?: SupabaseDate
+}
+
+export interface Offer {
+  id: string
+  titleAr: string
+  descriptionAr?: string
+  discountType: 'percentage' | 'fixed' | 'none'
+  discountValue: number
+  startsAt?: SupabaseDate
+  endsAt?: SupabaseDate
+  countdownEnabled?: boolean
+  targetType?: ProductType | 'all'
+  status: 'draft' | 'scheduled' | 'active' | 'expired' | 'archived'
+  createdAt: SupabaseDate
+  updatedAt?: SupabaseDate
+}
+
+export interface Workshop {
+  id: string
+  slug: string
+  titleAr: string
+  subtitleAr?: string
+  descriptionAr?: string
+  kind?: 'live' | 'recorded' | 'hybrid' | 'webinar' | 'group'
+  priceEgp?: number
+  capacity?: number
+  startsAt?: SupabaseDate
+  endsAt?: SupabaseDate
+  coverUrl?: string
+  status: PublishStatus
+  registrationOpen?: boolean
+  createdAt: SupabaseDate
+  updatedAt?: SupabaseDate
+}
 
 export interface User {
   uid: string
