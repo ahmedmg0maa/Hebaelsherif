@@ -50,7 +50,6 @@ export const BRAND_TOKENS = {
 export const PUBLIC_NAV_LINKS = [
   { href: '/', label: 'الرئيسية' },
   { href: '/services', label: 'الخدمات' },
-  { href: '/courses', label: 'الكورسات' },
   { href: '/books', label: 'الكتب' },
   { href: '/booking', label: 'الجلسات' },
   { href: '/articles', label: 'المقالات' },
@@ -60,7 +59,6 @@ export const PUBLIC_NAV_LINKS = [
 
 export const DASHBOARD_NAV_LINKS = [
   { href: '/dashboard', label: 'رحلتي' },
-  { href: '/dashboard/courses', label: 'كورساتي' },
   { href: '/dashboard/books', label: 'كتبي' },
   { href: '/dashboard/sessions', label: 'جلساتي' },
   { href: '/dashboard/orders', label: 'طلباتي' },
@@ -77,6 +75,9 @@ export const ADMIN_NAV_LINKS = [
   { href: '/admin/tasks', label: 'المهام' },
   { href: '/admin/courses', label: 'الكورسات' },
   { href: '/admin/books', label: 'الكتب' },
+  { href: '/admin/workshops', label: 'الورش' },
+  { href: '/admin/coupons', label: 'الكوبونات' },
+  { href: '/admin/offers', label: 'العروض' },
   { href: '/admin/content', label: 'المحتوى المحمي' },
   { href: '/admin/users', label: 'العملاء' },
   { href: '/admin/reviews', label: 'التقييمات' },
