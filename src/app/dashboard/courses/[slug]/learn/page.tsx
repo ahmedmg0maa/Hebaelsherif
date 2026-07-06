@@ -32,8 +32,11 @@ export default function DashboardCourseLearnPage() {
       setLoading(false)
       return
     }
+    
+const userId = user.uid
 
-    async function loadLearningSpace() {
+async function loadLearningSpace() {
+  
       setLoading(true)
       const coursesSnap = await getDocs(query(collection(db, 'courses'), where('slug', '==', slug)))
       const courseDoc = coursesSnap.docs[0]
