@@ -16,22 +16,22 @@ const groupDefinitions = [
   {
     title: 'التشغيل اليومي',
     hint: 'المبيعات والحجوزات والمتابعة',
-    links: ['/admin', '/admin/action-queue', '/admin/orders', '/admin/bookings', '/admin/messages', '/admin/tasks'],
+    links: ['/admin', '/admin/action-queue', '/admin/products', '/admin/orders', '/admin/bookings', '/admin/messages', '/admin/tasks'],
   },
   {
     title: 'المنتجات والحماية',
     hint: 'الكورسات والكتب والمحتوى المدفوع',
-    links: ['/admin/courses', '/admin/books', '/admin/workshops', '/admin/content'],
+    links: ['/admin/courses', '/admin/books', '/admin/workshops', '/admin/pages', '/admin/media', '/admin/content'],
   },
   {
     title: 'العملاء والثقة',
     hint: 'العملاء، التقييمات، والتحليلات',
-    links: ['/admin/users', '/admin/reviews', '/admin/coupons', '/admin/offers', '/admin/analytics', '/admin/campaigns'],
+    links: ['/admin/users', '/admin/reviews', '/admin/coupons', '/admin/offers', '/admin/reports', '/admin/analytics', '/admin/campaigns'],
   },
   {
     title: 'النظام',
     hint: 'السجلات والإعدادات الأساسية',
-    links: ['/admin/system-health', '/admin/notifications', '/admin/templates', '/admin/exports', '/admin/logs', '/admin/settings'],
+    links: ['/admin/security', '/admin/roles', '/admin/audit-logs', '/admin/system-health', '/admin/notifications', '/admin/templates', '/admin/exports', '/admin/logs', '/admin/settings'],
   },
 ]
 
@@ -162,7 +162,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <PremiumBadge variant="gold">V4.0 Global</PremiumBadge>
+              <PremiumBadge variant="gold">V8.0 Global</PremiumBadge>
               <CommandPalette />
               <NotificationBell />
               <PremiumButton href="/admin/action-queue" variant="outline" size="sm">
