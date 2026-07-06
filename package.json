@@ -1,39 +1,52 @@
 {
   "name": "heba-elsherif",
-  "version": "4.1.0",
+  "version": "6.0.0-supabase-native-hardening",
   "private": true,
   "description": "Arabic-first premium emotional learning and coaching platform for Heba ElSherif.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build-v6.mjs",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings=0",
     "type-check": "tsc --noEmit",
-    "check": "npm run type-check && npm run lint && npm run build",
+    "check": "npm run build && npm run type-check && npm run lint && npm run audit:v6 && npm run audit",
     "route-audit": "node scripts/audit-public-routes.mjs",
-    "audit:launch": "node scripts/audit-launch-readiness.mjs"
+    "audit:launch": "node scripts/audit-launch-readiness.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:types": "supabase gen types typescript --local > src/db/types.ts",
+    "db:migrate": "supabase migration up",
+    "db:reset": "supabase db reset",
+    "check:full": "npm run check",
+    "audit": "npm audit --audit-level=moderate",
+    "audit:v6": "node scripts/audit-v6-readiness.mjs"
   },
   "dependencies": {
-    "firebase": "^10.14.1",
-    "firebase-admin": "^12.7.0",
-    "next": "14.2.35",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.0",
+    "next": "^16.2.10",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.35",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.10",
     "eslint-config-prettier": "^9.1.0",
-    "postcss": "^8.4.49",
+    "postcss": "^8.5.10",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.62.1"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
   }
 }

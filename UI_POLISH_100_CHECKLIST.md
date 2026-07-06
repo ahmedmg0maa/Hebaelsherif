@@ -111,9 +111,9 @@
 ## Build & Quality
 91. TypeScript checked.
 92. Production build checked.
-93. No Firebase/Admin logic broken.
+93. No Supabase/Admin logic broken.
 94. API routes preserved.
-95. Firestore rules unchanged structurally.
+95. Supabase RLS policies unchanged structurally.
 96. Env example untouched.
 97. Documentation added.
 98. Image slots preserved.

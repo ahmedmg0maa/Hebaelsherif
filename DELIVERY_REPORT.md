@@ -23,7 +23,7 @@
 17. تحديث navigation للصفحات الجديدة.
 18. تحديث sitemap ديناميكي للصفحات والمقالات.
 19. تحديث robots.
-20. تحديث Firestore rules للـ leads/contact/coupons/admin logs.
+20. تحديث Supabase data rules للـ leads/contact/coupons/admin logs.
 21. توسيع types للطلبات والحجوزات والدفع والكوبونات والـ logs.
 22. دعم حالات دفع وحجز إضافية.
 23. تحسين مستندات المشروع.

@@ -13,7 +13,7 @@ npm run dev
 
 ## Environment
 
-انسخ `.env.example` إلى `.env.local` وضع مفاتيح Firebase وVercel والدفع.
+انسخ `.env.example` إلى `.env.local` وضع مفاتيح Supabase وVercel والدفع.
 
 المتغيرات الأساسية:
 
@@ -33,11 +33,11 @@ ADMIN_SETUP_SECRET=
 NEXT_PUBLIC_APP_URL=
 ```
 
-## Firebase Checklist
+## Supabase Checklist
 
 - Enable Authentication: Email/Password + Google.
-- Create Firestore in production mode.
-- Publish `firestore.rules`.
+- Create Supabase data in production mode.
+- Publish `supabase/migrations`.
 - Add authorized domains: localhost, Vercel domain, custom domain.
 - Generate service account key and put its values in env.
 
@@ -84,8 +84,8 @@ You can also use external image URLs in Admin fields.
 
 - Do not commit `.env.local`.
 - Use Vercel environment variables.
-- Add Firebase Admin variables to Vercel.
-- Add domain to Firebase Auth authorized domains.
+- Add Supabase Admin variables to Vercel.
+- Add domain to Supabase Auth authorized domains.
 - Replace placeholders with real brand photos and copy before final brand launch.
 
 ## Verified
