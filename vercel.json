@@ -1,5 +1,6 @@
 {
   "framework": "nextjs",
+  "installCommand": "npm ci --no-audit --no-fund",
   "regions": [
     "fra1"
   ],
