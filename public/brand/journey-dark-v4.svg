@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 960" fill="none">
+<defs>
+ <linearGradient id="thought" x1="780" y1="210" x2="1115" y2="660" gradientUnits="userSpaceOnUse"><stop stop-color="#D8C3A5"/><stop offset="1" stop-color="#D8C3A5" stop-opacity=".24"/></linearGradient>
+ <radialGradient id="opening"><stop stop-color="#E2CDAC"/><stop offset="1" stop-color="#E2CDAC" stop-opacity="0"/></radialGradient>
+</defs>
+<g opacity=".05">
+ <path d="M875 681v-107c-59-29-91-76-98-150-11-116 50-211 154-227 86-13 155 23 174 91 7 25 7 47 2 69l32 40q8 10-13 15l-21 5 3 22q1 10-11 13l10 11q5 5-7 11l-12 6c-2 37-38 65-82 60v141Z" fill="url(#thought)" stroke="none"/>
+ <path d="M805 386c-2-91 51-151 126-162 62-9 116 13 141 56" stroke="#D8C3A5" stroke-width="1.4"/>
+ <ellipse cx="927" cy="312" rx="69" ry="109" fill="url(#opening)"/>
+ <path d="M916 340v-58q0-5 5-5h18q5 0 5 5v58" stroke="#E2CDAC" stroke-width="2"/>
+ <path d="m920 339 17-4v-53l-17-4Z" fill="#E2CDAC" stroke="none"/>
+ <path d="M655.8 698.0h169.0v10.0h-169.0Z" fill="#E2CDAC" stroke="none"/><path d="M674.3 681.0h160.7v9.7h-160.7Z" fill="#E2CDAC" stroke="none"/><path d="M693.9 663.9h152.5v9.3h-152.5Z" fill="#E2CDAC" stroke="none"/><path d="M714.2 646.9h144.3v9.0h-144.3Z" fill="#E2CDAC" stroke="none"/><path d="M735.0 629.8h136.2v8.7h-136.2Z" fill="#E2CDAC" stroke="none"/><path d="M755.9 612.8h128.2v8.3h-128.2Z" fill="#E2CDAC" stroke="none"/><path d="M776.7 595.7h120.2v8.0h-120.2Z" fill="#E2CDAC" stroke="none"/><path d="M797.0 578.7h112.4v7.7h-112.4Z" fill="#E2CDAC" stroke="none"/><path d="M816.6 561.6h104.6v7.3h-104.6Z" fill="#E2CDAC" stroke="none"/><path d="M835.1 544.6h96.9v7.0h-96.9Z" fill="#E2CDAC" stroke="none"/><path d="M852.3 527.5h89.3v6.7h-89.3Z" fill="#E2CDAC" stroke="none"/><path d="M868.0 510.5h81.8v6.3h-81.8Z" fill="#E2CDAC" stroke="none"/><path d="M882.0 493.4h74.4v6.0h-74.4Z" fill="#E2CDAC" stroke="none"/><path d="M894.0 476.4h67.1v5.7h-67.1Z" fill="#E2CDAC" stroke="none"/><path d="M904.0 459.3h60.0v5.3h-60.0Z" fill="#E2CDAC" stroke="none"/><path d="M911.9 442.3h53.0v5.0h-53.0Z" fill="#E2CDAC" stroke="none"/><path d="M917.5 425.2h46.2v4.7h-46.2Z" fill="#E2CDAC" stroke="none"/><path d="M920.9 408.2h39.6v4.3h-39.6Z" fill="#E2CDAC" stroke="none"/><path d="M922.1 391.1h33.2v4.0h-33.2Z" fill="#E2CDAC" stroke="none"/><path d="M921.1 374.1h27.2v3.7h-27.2Z" fill="#E2CDAC" stroke="none"/><path d="M917.9 357.0h21.6v3.3h-21.6Z" fill="#E2CDAC" stroke="none"/><path d="M912.5 340.0h17.0v3.0h-17.0Z" fill="#E2CDAC" stroke="none"/>
+ <path d="M-40 823c269 112 433-105 683-55s510 194 846-90" stroke="#E2CDAC" stroke-width="1.5"/>
+ <path d="M-45 861c271 105 445-107 692-54s511 179 844-90" stroke="#E2CDAC" stroke-width=".6"/>
+ <path d="M-30 98c192 48 304-68 477-34" stroke="#E2CDAC" stroke-width="1"/>
+</g></svg>

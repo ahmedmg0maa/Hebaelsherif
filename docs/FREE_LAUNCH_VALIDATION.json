@@ -1,0 +1,105 @@
+{
+  "release": "HEBA_FREE_LAUNCH_2026-10-12",
+  "recordedAt": "2026-10-12T09:57:50.190Z",
+  "sourceArchive": {
+    "name": "HEBA_LAUNCH_2026-09-23.zip",
+    "version": 9,
+    "sha256": "a31a55915e494091083107d64f1acd570a087d9f02244ced18bd2bc49475d7bd"
+  },
+  "status": "Source prepared and locally validated. Actual provider configuration, missing migrations and live acceptance required before public intake.",
+  "officialSources": 28,
+  "migrationAdded": "102_free_launch_operations.sql",
+  "previousMigrationsChanged": false,
+  "versions": {
+    "next": "16.3.8",
+    "eslintConfigNext": "16.3.8",
+    "sharp": "0.35.5",
+    "fastUri": "3.1.8",
+    "sourceMapJs": "1.2.2"
+  },
+  "checks": {
+    "existingContractsAndAudits": {
+      "passed": 72,
+      "total": 72,
+      "scope": "Existing 58 contract scripts and 14 audits during this release. Targeted CMS checks repeated after final CTA default adjustment."
+    },
+    "freeSql": {
+      "passedGroups": 10,
+      "engine": "PGlite 0.5.8",
+      "scope": "Actual 098/102 and actual legacy 057 claim function on synthetic single-connection fixtures; quota/transaction rollback/denial. Not whole history, live Supabase RLS or multi-connection acceptance."
+    },
+    "adapters": {
+      "passedGroups": 8,
+      "scope": "Real TUS/mail/config/confirmation functions with injected network replies; no real messages or uploads."
+    },
+    "bookingIdentity": {
+      "status": "passed",
+      "scope": "Actual React component in an isolated browser harness; signup busy state, return path, deadline-based resend cooldown, and login with injected Auth."
+    },
+    "publicBrowser": {
+      "passed": 74,
+      "total": 74,
+      "scope": "Final source, Next 16.3.8, Chromium 153. Both desktop/mobile; public routes, RTL, keyboard, responsive, dark and reduced motion. Final single complete run: 74 passed, 1.2 minutes."
+    },
+    "finalBrowser": {
+      "widths": [
+        1440,
+        390
+      ],
+      "status": "passed",
+      "scope": "Final actual homepage/tour, password-only owner UI, central confirmation redirect and complete booking simulation; no providers configured."
+    },
+    "worker": {
+      "status": "passed",
+      "widths": [
+        1440,
+        390
+      ],
+      "headers": true,
+      "anonymousAdminGuard": true,
+      "tourAndBookingNavigation": true,
+      "scope": "Compiled local workerd, including navigation after prefetch reduction. Managed container denied interface enumeration; an external test-only loopback fallback was used. Initial short network-idle wait failed while background routes prefetched; final DOM-ready and interaction checks passed. No live Free CPU validation."
+    },
+    "builds": {
+      "next": "passed",
+      "cloudflareVinext": "passed",
+      "isolatedTypecheck": "passed",
+      "eslint": "passed",
+      "wranglerDryRun": "passed; no deployment"
+    },
+    "dependencyAudit": {
+      "initialRegistryFindings": 13,
+      "finalRawRegistryFindings": 1,
+      "unmitigatedFindings": 0,
+      "acceptedLocalMitigation": "GHSA-vfj7-8cjw-p6xm",
+      "scope": "Do not report zero raw findings: upstream braces has no fixed release. Native pnpm patch identity and adversarial/ordinary behavior verified; audit gate refuses all other advisories."
+    },
+    "videoPreparation": {
+      "status": "passed",
+      "fixtures": [
+        "1.2-second single-part MP4",
+        "301.2-second two-part MP4"
+      ],
+      "scope": "Actual local FFmpeg compression, file-size and ffprobe duration checks. Not real lesson quality acceptance."
+    },
+    "diffWhitespace": "passed",
+    "releaseSecurity": "Package/archive scan and final audit verified after unified release filename and public-config helper fixes."
+  },
+  "notPerformed": [
+    "No real Supabase migration, owner enrollment or account/data write",
+    "No real SMTP/Resend messages, transfer, purchase or upload",
+    "No live Storage delivery or paid video service",
+    "No deployment, DNS edit, account creation or billing/subscription change",
+    "No full database-history restore/rehearsal or multi-connection booking race",
+    "No production CPU/Core Web Vitals/load measurement or comprehensive accessibility certification"
+  ],
+  "operationalLimits": [
+    "Keep existing accounts on Free; source does not read or guarantee their billing state",
+    "Free defaults block paid Stream and deploy:free refuses its credentials",
+    "Application email budget excludes Auth SMTP and other applications on the provider",
+    "Finite storage/traffic; video splitting does not expand them",
+    "Manual payment proof review; no card processor",
+    "Owner must apply the versioned home preset to existing CMS content and publish verified business values/policies"
+  ],
+  "handoff": "START_HERE_AR.md"
+}

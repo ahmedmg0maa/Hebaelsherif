@@ -1,3 +1,23 @@
 allowBuilds:
-  sharp: true
-  unrs-resolver: true
+  esbuild: true
+  sharp: false
+  unrs-resolver: false
+  workerd: true
+
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
+
+# pnpm 11 compatibility: same resolutions as package.json for pnpm 10.
+overrides:
+  sharp: "0.35.5"
+  source-map-js: "1.2.2"
+  fast-uri: "3.1.8"
+  postcss: ">=8.5.23"
+  nanoid: ">=3.3.18"
+  browserslist: "4.28.8"
+  baseline-browser-mapping: "2.11.0"

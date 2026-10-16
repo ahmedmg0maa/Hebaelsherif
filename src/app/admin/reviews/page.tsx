@@ -1,130 +1,96 @@
-'use client'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { requirePermission } from '@/lib/auth/permissions'
+import { getServiceClient, hasSupabaseServerSecret } from '@/lib/supabase/server'
+import { hasSupabasePublicConfig } from '@/lib/supabase/public-key'
+import { Card } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Stars } from '@/components/catalog/Stars'
+import { ReviewControls } from '@/components/admin/AdminControls'
 
+export const metadata: Metadata = { title: 'التقييمات — الإدارة' }
 
-export const dynamic = 'force-dynamic'
-
-import { useEffect, useMemo, useState } from 'react'
-import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from '@/lib/supabase/data-client-compat'
-import { db } from '@/lib/supabase/client-compat'
-import type { Review } from '@/types'
-import { formatArabicDateTime, formatNumber } from '@/lib/utils/formatters'
-import { reviewStatusMeta, toMillis } from '@/lib/admin/operations'
-import { AdminActionButton, AdminPageHeader, AdminPanel, EmptyState, Field, inputClass, MetricCard, StatusBadge, ToneBadge } from '@/components/admin/OperationsUI'
-import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-
-function mapReviews(snapshot: Awaited<ReturnType<typeof getDocs>>) {
-  return snapshot.docs.map((docItem) => ({ id: docItem.id, ...(docItem.data() as Record<string, unknown>) })) as Review[]
+type Row = {
+  id: string
+  version: number
+  display_name: string | null
+  rating: number
+  comment: string
+  is_approved: boolean
+  is_featured: boolean
+  created_at: string
+  verified_purchase:boolean
+  status: 'pending' | 'approved' | 'rejected' | 'archived'
+  moderation_reason: string | null
+  owner_response: string | null
+  owner_response_published: boolean
+  display_name_consent: boolean
+  publication_consent_at: string | null
+  source_type: 'purchase' | 'booking'
+  source_reference_id: string | null
+  verified_at: string | null
+  products: { title: string } | { title: string }[] | null
 }
 
-export default function AdminReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all')
-  const [savingId, setSavingId] = useState('')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
-
-  async function load() {
-    setLoading(true)
-    try {
-      const snap = await getDocs(collection(db, 'reviews'))
-      setReviews(mapReviews(snap).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)))
-    } catch (loadError) {
-      console.error('Reviews load error:', loadError)
-      setError('تعذر تحميل التقييمات.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => { load() }, [])
-
-  async function updateReview(review: Review, status: 'approved' | 'rejected' | 'hidden', action: string) {
-    const text = status === 'approved' ? 'اعتماد هذا التقييم؟' : status === 'rejected' ? 'رفض هذا التقييم؟' : 'إخفاء هذا التقييم؟'
-    if (!window.confirm(text)) return
-    setSavingId(review.id)
-    try {
-      const values = { status, isApproved: status === 'approved', updatedAt: serverTimestamp() }
-      await updateDoc(doc(db, 'reviews', review.id), values)
-      await addDoc(collection(db, 'admin_logs'), {
-        action,
-        targetType: 'reviews',
-        targetId: review.id,
-        before: { status: review.status },
-        after: values,
-        message: `${action} - ${review.userName || review.userId}`,
-        createdAt: serverTimestamp(),
-      })
-      setReviews((current) => current.map((item) => (item.id === review.id ? { ...item, status } : item)))
-      setMessage('تم تحديث التقييم.')
-    } catch (updateError) {
-      console.error('Review update error:', updateError)
-      setError('تعذر تحديث التقييم.')
-    } finally {
-      setSavingId('')
-    }
-  }
-
-  const filtered = useMemo(() => reviews.filter((review) => filter === 'all' || review.status === filter), [filter, reviews])
-  const stats = useMemo(() => ({
-    total: reviews.length,
-    pending: reviews.filter((review) => review.status === 'pending').length,
-    approved: reviews.filter((review) => review.status === 'approved' || review.status === 'published').length,
-    hidden: reviews.filter((review) => review.status === 'hidden').length,
-    rejected: reviews.filter((review) => review.status === 'rejected').length,
-  }), [reviews])
-
-  if (loading) return <PremiumSkeleton className="h-[28rem]" />
+export default async function AdminReviewsPage({ searchParams }: { searchParams: Promise<{ status?: string; page?: string }> }) {
+  if (!hasSupabasePublicConfig() || !hasSupabaseServerSecret()) return <EmptyState title="إدارة التقييمات غير مهيّأة" description="تتطلب اتصالًا ببيئة البيانات." />
+  if (!await requirePermission('reviews.manage')) return <EmptyState title="لا توجد صلاحية" description="إدارة التقييمات تتطلب الصلاحية المناسبة." />
+  const params = await searchParams
+  const statuses = ['all', 'pending', 'approved', 'rejected', 'archived']
+  const status = statuses.includes(params.status ?? '') ? params.status! : 'all'
+  const page = /^\d{1,5}$/.test(params.page ?? '') ? Math.max(1, Number(params.page)) : 1
+  let query = getServiceClient().from('reviews').select('id, version, display_name, display_name_consent, rating, comment, is_approved, is_featured, verified_purchase, verified_at, publication_consent_at, source_type, source_reference_id, status, moderation_reason, owner_response, owner_response_published, created_at, products(title)', { count: 'exact' })
+  if (status !== 'all') query = query.eq('status', status)
+  const result = await query.order('created_at', { ascending: false }).order('id', { ascending: false }).range((page - 1) * 30, page * 30 - 1)
+  if (result.error || result.count === null) return <EmptyState title="تعذّر تحميل التقييمات" description="حدّثي الصفحة للمحاولة مرة أخرى؛ لم تُعرض نتيجة فارغة بدل الخطأ." />
+  const reviews = result.data as Row[]
+  const labels: Record<string, string> = { all: 'الكل', pending: 'بانتظار المراجعة', approved: 'معتمد', rejected: 'مرفوض', archived: 'مؤرشف' }
 
   return (
-    <div className="space-y-8">
-      <AdminPageHeader title="مراجعة التقييمات" description="اعتماد التقييمات الحقيقية فقط، مع منع الادعاءات العلاجية أو البيانات الشخصية قبل ظهورها للعامة." />
-      {message ? <div className="rounded-2xl border border-olive/25 bg-olive/10 p-4 text-sm font-black text-olive dark:text-ivory">{message}</div> : null}
-      {error ? <div className="rounded-2xl border border-burgundy/25 bg-burgundy/10 p-4 text-sm font-black text-burgundy dark:text-ivory">{error}</div> : null}
+    <div className="mx-auto max-w-4xl space-y-8">
+      <header>
+        <h1 className="text-3xl font-bold text-deep-teal">التقييمات</h1>
+        <p className="mt-1 text-text-soft">لا يمكن اعتماد أو تمييز تجربة قبل إثبات الشراء وتسجيل موافقة النشر؛ كل قرار يُحفظ مع سجل تدقيق ذري.</p>
+      </header>
 
-      <div className="grid gap-4 md:grid-cols-5">
-        <MetricCard label="كل التقييمات" value={formatNumber(stats.total)} tone="muted" />
-        <MetricCard label="بانتظار الاعتماد" value={formatNumber(stats.pending)} tone="warning" />
-        <MetricCard label="معتمدة" value={formatNumber(stats.approved)} tone="success" />
-        <MetricCard label="مخفية" value={formatNumber(stats.hidden)} tone="muted" />
-        <MetricCard label="مرفوضة" value={formatNumber(stats.rejected)} tone="danger" />
-      </div>
-
-      <AdminPanel title="فلترة التقييمات" description="كل تقييم يظهر للعامة فقط بعد الاعتماد.">
-        <Field label="الحالة">
-          <select className={inputClass} value={filter} onChange={(event) => setFilter(event.target.value)}>
-            <option value="all">كل الحالات</option>
-            <option value="pending">بانتظار الاعتماد</option>
-            <option value="approved">معتمدة</option>
-            <option value="published">منشورة</option>
-            <option value="hidden">مخفية</option>
-            <option value="rejected">مرفوضة</option>
-          </select>
-        </Field>
-      </AdminPanel>
-
-      <AdminPanel title="قائمة التقييمات" description="راجعي النص قبل الاعتماد؛ لا نستخدم تقييمات وهمية ولا نعرض معلومات حساسة.">
-        {filtered.length === 0 ? <EmptyState title="لا توجد تقييمات" description="عند إرسال تقييم حقيقي سيظهر هنا للمراجعة والاعتماد." /> : (
-          <div className="grid gap-4 xl:grid-cols-2">
-            {filtered.map((review) => (
-              <article key={review.id} className="rounded-[1.75rem] border border-sand bg-cream/80 p-5 shadow-soft dark:border-gold/25 dark:bg-white/10">
-                <div className="mb-4 flex flex-wrap items-center gap-3">
-                  <h3 className="text-lg font-black text-charcoal dark:text-ivory">{review.userName || 'عميلة'}</h3>
-                  <StatusBadge meta={reviewStatusMeta[String(review.status)]} fallback={String(review.status)} />
-                  <ToneBadge tone="gold">{review.rating}/5</ToneBadge>
+      <nav aria-label="حالة التقييمات" className="flex flex-wrap gap-2">{statuses.map(value => <Link key={value} href={`/admin/reviews?status=${value}`} aria-current={status === value ? 'page' : undefined} className={`rounded-full border border-line px-4 py-3 text-sm ${status === value ? 'bg-deep-teal text-ivory' : 'text-deep-teal'}`}>{labels[value]}</Link>)}</nav>
+      <p className="text-sm text-text-soft">{result.count.toLocaleString('ar-EG')} تقييم — صفحة {page.toLocaleString('ar-EG')}</p>
+      {reviews.length === 0 ? (
+        <EmptyState title="لا تقييمات بعد" description="تظهر تقييمات العميلات هنا فور إرسالها لاعتمادها أو حذفها." />
+      ) : (
+        <div className="space-y-4">
+          {reviews.map((r) => {
+            const product = Array.isArray(r.products) ? r.products[0] : r.products
+            return (
+              <Card key={r.id} className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-deep-teal">{r.display_name ?? 'عميلة'}</span>
+                    <Stars rating={r.rating} />
+                    {r.status === 'approved' ? <Badge tone="success">معتمد</Badge> : r.status === 'rejected' ? <Badge tone="danger">مرفوض</Badge> : r.status === 'archived' ? <Badge tone="sand">مؤرشف</Badge> : <Badge tone="pending">بانتظار المراجعة</Badge>}
+                    {r.is_featured && <Badge tone="gold">مميّز</Badge>}
+                    {r.verified_purchase && <Badge tone="teal">شراء موثّق</Badge>}
+                    {r.verified_at && <Badge tone="success">التحقق مسجل</Badge>}
+                    {r.publication_consent_at ? <Badge tone="gold">وافقت على النشر</Badge> : <Badge tone="danger">لا توجد موافقة نشر</Badge>}
+                  </div>
+                  {product && <span className="text-xs text-taupe">{product.title}</span>}
                 </div>
-                <p className="text-sm font-bold leading-7 text-warm-gray dark:text-cream">{review.content}</p>
-                <p className="mt-3 text-xs font-bold text-warm-gray dark:text-cream">{review.productType} · {review.productId} · {formatArabicDateTime(review.createdAt)}</p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  <AdminActionButton disabled={savingId === review.id} tone="success" onClick={() => updateReview(review, 'approved', 'review_approved')}>اعتماد</AdminActionButton>
-                  <AdminActionButton disabled={savingId === review.id} tone="warning" onClick={() => updateReview(review, 'hidden', 'review_hidden')}>إخفاء</AdminActionButton>
-                  <AdminActionButton disabled={savingId === review.id} tone="danger" onClick={() => updateReview(review, 'rejected', 'review_rejected')}>رفض</AdminActionButton>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </AdminPanel>
+                <p className="leading-relaxed text-ink">{r.comment}</p>
+                <dl className="grid gap-2 rounded-lg border border-line bg-surface-raised/60 p-3 text-xs sm:grid-cols-3">
+                  <div><dt className="text-text-soft">المصدر</dt><dd className="mt-1 font-semibold text-deep-teal">{r.source_type === 'booking' ? 'حجز' : 'شراء'}</dd></div>
+                  <div><dt className="text-text-soft">اسم العرض</dt><dd className="mt-1 font-semibold text-deep-teal">{r.display_name_consent ? (r.display_name ?? 'لم يتوفر اسم أول') : 'مجهول باختيار العميلة'}</dd></div>
+                  <div><dt className="text-text-soft">مرجع داخلي</dt><dd className="mt-1 font-mono text-deep-teal">{r.source_reference_id ? `${r.source_reference_id.slice(0, 8)}…` : 'غير متوفر'}</dd></div>
+                </dl>
+                {r.moderation_reason && <p className="rounded-lg bg-sand/30 p-2 text-xs text-text-soft">سبب داخلي: {r.moderation_reason}</p>}
+                {r.owner_response && <p className="rounded-lg bg-ivory/60 p-2 text-sm text-text-soft">رد المالكة: {r.owner_response}{r.owner_response_published ? ' (منشور)' : ' (داخلي)'}</p>}
+                <ReviewControls version={r.version} ownerResponse={r.owner_response} responsePublished={r.owner_response_published} moderationReason={r.moderation_reason} id={r.id} approved={r.is_approved} featured={r.is_featured} status={r.status} />
+              </Card>
+            )
+          })}
+        </div>
+      )}
+      <nav aria-label="صفحات التقييمات" className="flex gap-4">{page > 1 && <Link className="px-4 py-3 text-deep-teal" href={`/admin/reviews?status=${status}&page=${page - 1}`}>السابق</Link>}{page * 30 < result.count && <Link className="px-4 py-3 text-deep-teal" href={`/admin/reviews?status=${status}&page=${page + 1}`}>التالي</Link>}</nav>
     </div>
   )
 }

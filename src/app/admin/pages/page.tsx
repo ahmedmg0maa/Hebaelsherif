@@ -1,30 +1,83 @@
-export const dynamic = 'force-dynamic'
+import { LearningTemplateButton } from '@/components/admin/LearningTemplateButton'
+import { getHomeArticleOptions } from '@/lib/data/home'
+import type { Metadata } from 'next'
+import { adminList } from '@/lib/data/cms'
+import { Card } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { CmsPageCreator, CmsPageEditor, CmsSectionEditor, NavigationEditor } from '@/components/admin/CmsStructureManager'
+import { PreviewButton } from '@/components/admin/PreviewButton'
+import { HomeSectionManager } from '@/components/admin/HomeSectionManager'
+import { getHomeCopy, getPublicMediaOptions } from '@/lib/data/cms'
 
-import { AdminPageHeader, AdminPanel, EmptyState, MetricCard } from '@/components/admin/OperationsUI'
+export const metadata: Metadata = { title: 'الصفحات — الإدارة' }
 
-const metrics = [{ label: 'Feature Flags', value: 'جاهزة', hint: 'V8 OS' },{ label: 'SEO', value: 'قابل للتحكم', hint: 'V8 OS' },{ label: 'Navigation', value: 'مراجعة قبل النشر', hint: 'V8 OS' }]
-const actions = ['إخفاء أو إظهار صفحة','تعديل hero title و CTA','إدارة الأسئلة والقانونيات']
+type Row = {
+  id: string
+  slug: string
+  title: string
+  seo_title: string | null
+  seo_description: string | null
+  is_published: boolean
+  status: string
+  publish_at: string | null
+  canonical_url: string | null
+  og_image_url: string | null
+  legal_review_status: string
+  legal_version: string | null
+  effective_at: string | null
+  page_sections: { id:string;name:string;kind:string;sort:number;is_visible:boolean;content:unknown }[]
+}
+type NavRow={id:string;menu:string;label:string;href:string;sort:number;is_visible:boolean}
 
-export default function AdminPagesPage() {
+export default async function AdminPagesPage() {
+  const [pages, homeCopy, media, articles] = await Promise.all([
+    adminList<Row>('pages', 'id, slug, title, seo_title, seo_description, is_published, status, publish_at, canonical_url, og_image_url, legal_review_status, legal_version, effective_at, page_sections(id,name,kind,sort,is_visible,content)', {
+      orderBy: 'slug',
+      ascending: true,
+    }),
+    getHomeCopy(),
+    getPublicMediaOptions(200, true),
+    getHomeArticleOptions(),
+  ])
+  const navigation=await adminList<NavRow>('navigation_items','id,menu,label,href,sort,is_visible',{orderBy:'sort',ascending:true,limit:200})
+
   return (
-    <div className="space-y-8">
-      <AdminPageHeader title="تحكم الصفحات والـ CMS" description="تحكم منضبط في ظهور الصفحات والأقسام والـ SEO بدون page builder هش." />
-      <div className="grid gap-4 md:grid-cols-3">
-        {metrics.map((metric) => <MetricCard key={metric.label} label={metric.label} value={metric.value} hint={metric.hint} tone="gold" />)}
-      </div>
-      <AdminPanel title="خطة التشغيل" description="هذه الصفحة جزء من Admin OS V8؛ تعرض ما يجب إدارته وتمنع وجود أقسام غير مفهومة أو فارغة.">
-        <div className="grid gap-4 md:grid-cols-3">
-          {actions.map((action, index) => (
-            <article key={action} className="rounded-2xl border border-sand bg-cream/70 p-5">
-              <span className="latin-numerals flex h-9 w-9 items-center justify-center rounded-full bg-petrol text-sm font-black text-ivory">{index + 1}</span>
-              <p className="mt-4 text-sm font-black leading-7 text-charcoal">{action}</p>
-            </article>
+    <div className="mx-auto max-w-3xl space-y-8">
+      <LearningTemplateButton />
+      <header>
+        <h1 className="text-3xl font-bold text-deep-teal">الصفحات</h1>
+        <p className="mt-1 text-text-soft">عناوين SEO والوصف لكل صفحة، مع التحكم في النشر.</p>
+      </header>
+
+      <CmsPageCreator />
+
+      {pages.length === 0 ? (
+        <EmptyState
+          title="لا صفحات CMS بعد"
+          description="أضيفي صفحة من النموذج أعلاه ثم رتّبي أقسامها وراجعيها قبل النشر."
+        />
+      ) : (
+        <div className="space-y-5">
+          {pages.map((p) => (
+            <Card key={p.id} className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-bold text-deep-teal">{p.title}</h2>
+                  <p className="text-xs text-taupe" dir="ltr">/{p.slug}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge tone={p.is_published ? 'success' : 'sand'}>{{draft:'مسودة',scheduled:'مجدولة',published:'منشورة',archived:'مؤرشفة'}[p.status]??'حالة غير متاحة'}</Badge>
+                  <PreviewButton type="page" id={p.id}/>
+                </div>
+              </div>
+              <CmsPageEditor page={p}/>
+              <details className="rounded-xl border border-line"><summary className="cursor-pointer list-none px-4 py-3 font-bold text-deep-teal">بنية الصفحة ({p.page_sections.length.toLocaleString('ar-EG')} أقسام)</summary><div className="space-y-3 border-t border-line p-4">{p.slug === 'home' ? <HomeSectionManager articles={articles} assets={media} pageId={p.id} sections={p.page_sections.map((section) => section.kind === 'hero' && (!section.content || Object.keys(section.content as object).length === 0) ? { ...section, content: homeCopy } : section)} /> : <>{p.page_sections.sort((a,b)=>a.sort-b.sort).map(section=><CmsSectionEditor key={section.id} pageId={p.id} section={section}/>)}<CmsSectionEditor pageId={p.id}/></>}</div></details>
+            </Card>
           ))}
         </div>
-      </AdminPanel>
-      <AdminPanel title="حالة الربط" description="لا يتم عرض بيانات وهمية؛ عند ربط Supabase ستظهر البيانات التشغيلية في الجداول والتقارير.">
-        <EmptyState title="جاهز للربط التشغيلي" description="البنية والواجهة جاهزتان. المرحلة التالية تربط الجداول والـ RPCs الخاصة بهذا القسم ضمن دورة التنفيذ المحددة." />
-      </AdminPanel>
+      )}
+      <section className="space-y-4"><header><h2 className="text-2xl font-bold text-deep-teal">القوائم والرأس والتذييل</h2><p className="text-sm text-text-soft">أضيفي الروابط ورتبيها وانشريها دون تعديل الكود.</p></header>{navigation.map(item=><NavigationEditor key={item.id} item={item}/>)}<NavigationEditor/></section>
     </div>
   )
 }

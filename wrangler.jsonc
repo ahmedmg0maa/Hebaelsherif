@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "heba-elsherif-platform",
+  "compatibility_date": "2026-08-26",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "main": "worker/index.ts",
+  "routes": [
+    { "pattern": "hebaelsherif.com", "custom_domain": true },
+    { "pattern": "www.hebaelsherif.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "dist/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS"
+  },
+  "cache": {
+    "enabled": true
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "head_sampling_rate": 0.1
+    }
+  },
+  "triggers": { "crons": ["* * * * *"] },
+  "env": {
+    "preview": {
+      "name": "heba-elsherif-platform-public-preview",
+      "routes": [],
+      "vars": {
+        "HEBA_DEPLOYMENT_ENV": "preview"
+      }
+    },
+    "staging": {
+      "name": "heba-elsherif-platform-staging",
+      "routes": [],
+      "vars": {
+        "HEBA_DEPLOYMENT_ENV": "staging"
+      }
+    }
+  }
+}

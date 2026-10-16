@@ -1,0 +1,368 @@
+{
+  "date": "2026-09-05",
+  "checkpoint": "Master V2 checkpoint 2",
+  "overall": "INCOMPLETE_NOT_RELEASE_APPROVED",
+  "sourceChecks": {
+    "passed": 61,
+    "total": 61,
+    "results": [
+      {
+        "step": "verify:archive-security",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:delivery-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:booking-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:booking-permissions-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:booking-staging-contract",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:booking-staging-contract-fixtures",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:fresh-admin-assurance",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:report-export-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:home-cms-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:navigation-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:cms-page-lifecycle-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:article-lifecycle-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:settings-flags-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:public-search-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:start-here-cms-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:guided-assessment-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:master-v2-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:preview-experience-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:catalog-publication-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:program-catalog-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:media-lifecycle-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:newsletter-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:admin-security-center-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:final-hardening-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:admin-read-integrity-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:resend-outbox-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-360-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:sentry-monitoring-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:admin-notifications-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:admin-role-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:booking-admin-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:commerce-admin-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:checkout-upload-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-learning-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-protected-delivery-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-dashboard-read-integrity-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-account-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-password-lifecycle-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-booking-self-service-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:customer-registration-bootstrap-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:account-deletion-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:revision-recovery-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:admin-operations-ux-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:contact-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:testimonial-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:press-governance-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:resource-hub-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "verify:recovery-runner-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:cms-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:remediation-local",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:routes",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:ux",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:colors",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:security",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:admin",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:media",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:commerce",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:catalog",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:booking",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:db",
+        "exit": 0,
+        "detail": "passed"
+      },
+      {
+        "step": "audit:launch",
+        "exit": 0,
+        "detail": "passed"
+      }
+    ]
+  },
+  "builds": {
+    "next": {
+      "status": "passed",
+      "command": "corepack pnpm build:isolated",
+      "staticGeneration": "8/8 after per-request dynamic HTML; routes retained"
+    },
+    "workers": {
+      "status": "passed",
+      "command": "corepack pnpm build:cloudflare:isolated",
+      "runtimeAcceptance": "not executed"
+    },
+    "lint": {
+      "status": "passed",
+      "warnings": 0
+    },
+    "isolatedTypecheck": {
+      "status": "passed",
+      "latestTypeScriptValidation": "also passed during final Next build"
+    }
+  },
+  "browser": {
+    "status": "blocked",
+    "htmlInspected": true,
+    "interactiveAcceptance": false,
+    "mobileAcceptance": false,
+    "observedError": "ERR_BLOCKED_BY_CLIENT",
+    "hydration": "false",
+    "limitation": "Main Vite RSC browser module was blocked. No bypass attempted; visual/interactivity sign-off remains open."
+  },
+  "database": {
+    "migration": "082_master_v2_home_content_local_only.sql",
+    "operation": "supabase/operations/082_home_copy_backfill_local_only.sql",
+    "applied": false,
+    "postgresExecution": false,
+    "rlsRuntimeAcceptance": false
+  },
+  "e2e": {
+    "status": "authored_not_executed",
+    "changes": "Sequential quiz navigation, retained edit answers, modal focus restoration, Home question interaction; existing suite retained."
+  },
+  "performance": {
+    "fieldVitals": "not measured",
+    "WCAG_AA": "not certified"
+  },
+  "deployment": {
+    "performed": false,
+    "externalWrites": false
+  },
+  "references": {
+    "writtenPlan": "retrieved and embedded unchanged",
+    "approvedRasterFiles": "not recovered in this turn; exact visual matching not asserted"
+  }
+}

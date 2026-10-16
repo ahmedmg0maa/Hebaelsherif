@@ -1,0 +1,2 @@
+export const RELEASE_ID = 'HEBA_CREAM_MOTION_2026-10-13'
+export const RELEASE_ZIP_NAME = `${RELEASE_ID}.zip`

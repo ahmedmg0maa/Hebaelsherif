@@ -1,0 +1,249 @@
+{
+  "release": "HEBA_CUSTOMER_REFINED_2026-10-13",
+  "generated_at": "2026-10-13T12:36:30.618596+00:00",
+  "input_archive": "HEBA_REVIEWED_2026-10-12(1).zip",
+  "input_sha256": "009d93fabfe88edcac5623b4d8ea0fbc0b51bd9f828cb713aae936e8ac186cea",
+  "scope": "Local source/code/artwork review and corrections; no deployment or live provider mutation.",
+  "route_templates": 84,
+  "route_handlers": 9,
+  "report_coverage": {
+    "covered": 84,
+    "missing": []
+  },
+  "source_changes": [
+    "src/app/globals.css",
+    "src/styles/tokens.ts",
+    "src/app/admin/system/page.tsx",
+    "src/app/dashboard/profile/page.tsx",
+    "src/app/(public)/programs/page.tsx",
+    "src/app/(public)/testimonials/page.tsx",
+    "src/app/(public)/booking/page.tsx",
+    "src/app/(public)/courses/page.tsx",
+    "src/app/(public)/search/page.tsx",
+    "src/app/(public)/about/page.tsx",
+    "src/app/(public)/start-here/page.tsx",
+    "src/app/(public)/press/page.tsx",
+    "src/app/(public)/faq/page.tsx",
+    "src/app/(public)/services/page.tsx",
+    "src/app/(public)/books/page.tsx",
+    "src/app/(public)/resources/page.tsx",
+    "src/app/(public)/auth/admin/page.tsx",
+    "src/app/(public)/auth/reset-password/page.tsx",
+    "src/app/(public)/articles/[slug]/page.tsx",
+    "src/app/(public)/books/[slug]/page.tsx",
+    "src/components/layout/PublicFrame.tsx",
+    "src/components/layout/PublicFooter.tsx",
+    "src/components/layout/BrandLogo.tsx",
+    "src/components/layout/PublicHeader.tsx",
+    "src/components/home/ServiceCards.tsx",
+    "src/components/home/ReadingShelf.tsx",
+    "src/components/home/FinalCta.tsx",
+    "src/components/home/JourneyMap.tsx",
+    "src/components/home/Hero.tsx",
+    "src/components/contact/ContactForm.tsx",
+    "src/components/ui/Section.tsx",
+    "src/components/catalog/PageHero.tsx",
+    "src/components/catalog/ProductCard.tsx",
+    "src/components/catalog/StartHereQuiz.tsx",
+    "src/components/catalog/CatalogCoverImage.tsx",
+    "src/lib/actions/auth.ts",
+    "src/lib/home/sections.ts",
+    "src/lib/supabase/server.ts",
+    "src/lib/supabase/public-key.ts",
+    "src/lib/assessments/scoring.ts",
+    "src/lib/assessments/governance.ts",
+    "src/lib/start-here/content.ts"
+  ],
+  "new_source_files": [
+    "src/components/auth/AdminLoginForm.tsx",
+    "src/lib/supabase/server-key.ts"
+  ],
+  "checks": [
+    {
+      "script": "scripts/verify-customer-polish.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.58,
+      "output": "verify:customer-polish passed — key fallback, scoring ties/weights, admin prerequisites and cream-surface text contrast"
+    },
+    {
+      "script": "scripts/verify-guided-assessment-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.44,
+      "output": "verify:guided-assessment-local passed — versioning, atomic publication, structured Admin mapping, safe targets and ephemeral answers verified"
+    },
+    {
+      "script": "scripts/verify-start-here-cms-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.18,
+      "output": "verify:start-here-cms-local passed — structured page shell, safe links, audit and versioned-assessment handoff verified"
+    },
+    {
+      "script": "scripts/verify-master-v2-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.44,
+      "output": "verify:master-v2-local passed — 27 scoring combinations, tie rules, copy validation, article metadata, CMS source contracts. Not database/browser execution."
+    },
+    {
+      "script": "scripts/verify-home-cms-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.35,
+      "output": "verify:home-cms-local passed — fixed registry, Arabic forms, persistence/permission/audit/public consumer and visual preview contracts verified"
+    },
+    {
+      "script": "scripts/verify-navigation-governance-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.16,
+      "output": "verify:navigation-governance-local passed — bounded permissioned atomic navigation mutation/audit and truthful Admin/public consumers verified locally"
+    },
+    {
+      "script": "scripts/verify-fresh-admin-assurance.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.38,
+      "output": "verify:fresh-admin-assurance passed — sensitive actions require fresh staff MFA or fresh enrolled-owner password assurance; permission and active session remain mandatory"
+    },
+    {
+      "script": "scripts/verify-customer-password-lifecycle-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.17,
+      "output": "verify:customer-password-lifecycle-local passed — current-password proof, recovery-only AMR, SSR PKCE callback, rate-limited two-phase evidence and session closure verified"
+    },
+    {
+      "script": "scripts/verify-contact-governance-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.32,
+      "output": "verify:contact-governance-local passed — server-only intake, atomic dual-scope throttling, consent, Admin permission/audit and PII-minimized contracts verified"
+    },
+    {
+      "script": "scripts/verify-catalog-publication-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.21,
+      "output": "verify:catalog-publication-local passed — domain/product publication parity, completeness/media-rights and unavailable checkout denial verified"
+    },
+    {
+      "script": "scripts/verify-preview-experience-local.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.24,
+      "output": "PASS Preview fixtures require the explicit preview deployment environment.\nPASS Preview fixtures fail closed when Supabase public configuration exists.\nPASS The course fixture is limited to the guarded provider-free path.\nPASS The book fixture is limited to the guarded provider-free path.\nPASS The booking UI has an explicit Preview runtime branch.\nPASS Preview proof completion exits before the real upload adapter.\nPASS The completion receipt explicitly denies real persistence.\nPASS The file step explicitly says that the selected image is not uploaded.\nPASS Wrangler defines a separate public Preview Worker.\nPASS The Preview Worker activates only the non-secret Preview environment flag.\nPASS public/images/experience/course-clarity-journey.webp exists and remains below 500 KB (245162 bytes).\nPASS public/images/experience/book-listen-inward.webp exists and remains below 500 KB (125906 bytes).\nPASS public/images/experience/journey-landscape.webp exists and remains below 500 KB (176574 bytes).\nPreview experience contract passed (13/13)."
+    },
+    {
+      "script": "scripts/verify-launch-adapters.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 2.18,
+      "output": "PASS TUS resumes from server offset and never resends acknowledged bytes\nPASS TUS rejects missing offsets and uncertain chunks without blind replay\nPASS mail disabled in preview or without configuration\nPASS mail uses stable idempotency and records confirmed success only\nPASS mail provider rejection remains retryable and stores no raw provider body\nPASS mail escapes content, refuses unconfirmed success and sends one quota-reserved item\n{\"passed\":6,\"scope\":\"Real adapter functions with injected network replies; no live uploads or emails\"}\nPASS production config refuses preview, private public key and partial Stream\nTotal launch adapter/config groups: 7\nPASS sensitive confirmation chooses the enrolled method and rejects external redirects\nFinal launch adapter/config groups: 8"
+    },
+    {
+      "script": "scripts/verify-readiness-behavior.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.87,
+      "output": "PASS actual payment normalization and readiness: healthy, empty slots, invalid settings, failed reads, missing revision/calendar and unconfigured states. Database replies injected; no provider access."
+    },
+    {
+      "script": "scripts/audit-colors.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.5,
+      "output": "✅ audit:colors: passed"
+    },
+    {
+      "script": "scripts/audit-security.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.42,
+      "output": "✅ audit:security: passed\n\nfatal: not a git repository (or any of the parent directories): .git"
+    },
+    {
+      "script": "scripts/verify-archive-security.mjs",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.97,
+      "output": "verify:archive-security passed — nested forbidden paths and secret content are rejected"
+    },
+    {
+      "command": "corepack pnpm type-check",
+      "passed": true,
+      "scope": "Isolated next typegen + TypeScript; final Next build also reran TypeScript."
+    },
+    {
+      "command": "corepack pnpm lint",
+      "passed": true,
+      "scope": "Final full ESLint, zero errors or warnings."
+    },
+    {
+      "command": "corepack pnpm build:isolated",
+      "passed": true,
+      "scope": "Final source snapshot, successful Next build with providers unset."
+    },
+    {
+      "command": "corepack pnpm build:cloudflare:isolated",
+      "passed": true,
+      "scope": "Final source snapshot, successful Vinext/Cloudflare build with providers unset. This is not deployment acceptance."
+    },
+    {
+      "command": "corepack pnpm audit:dependencies",
+      "passed": true,
+      "status": "passed-with-verified-local-mitigation",
+      "raw_registry_findings": 1,
+      "unmitigated_findings": 0,
+      "note": "Existing pinned braces local patch is verified; do not claim a clean unpatched registry audit."
+    },
+    {
+      "check": "Referenced local visual/font assets",
+      "passed": true,
+      "count": 16,
+      "missing": []
+    },
+    {
+      "check": "Original logo byte preservation",
+      "passed": true
+    },
+    {
+      "check": "Cream-surface text contrast",
+      "passed": true,
+      "muted_text": "#635F58",
+      "ivory": "#F2E9DA",
+      "ivory_ratio": 5.27,
+      "raised": "#FAF3E7",
+      "raised_ratio": 5.75,
+      "note": "Base palette only; not a complete browser accessibility certification."
+    }
+  ],
+  "not_executed": [
+    {
+      "check": "Browser/screenshots/viewport visual QA",
+      "reason": "The approved control-browser capability was unavailable. Sites workflow requires skipping rather than improvising another browser path."
+    },
+    {
+      "check": "Real admin sign-in/password/role/session",
+      "reason": "No live account/environment credentials or authorized provider connection were supplied in this request."
+    },
+    {
+      "check": "Real booking, payment proof, content access, Auth email and recovery delivery",
+      "reason": "Needs controlled actual provider/customer-account acceptance; no email or purchase was sent here."
+    },
+    {
+      "check": "Live domain/deployment/CPU/performance",
+      "reason": "No production deployment or browser performance run was performed."
+    },
+    {
+      "check": "OPEN_SITE_WINDOWS.cmd on Windows",
+      "reason": "The execution environment is Linux. Wrapper provided for local review, not certified on Windows."
+    }
+  ],
+  "provider_mutations": [],
+  "migrations_added": [],
+  "secrets_in_delivery": false,
+  "packaging": "Use package:release and verify the final ZIP manifest, payload hashes and archive safety before handoff."
+}

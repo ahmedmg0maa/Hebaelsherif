@@ -1,111 +1,53 @@
-'use client'
+import { AccountPagination } from '@/components/dashboard/AccountPagination'
+import { accountPage } from '@/lib/customer-order-state'
+import { getCollectionCount } from '@/lib/data/customer-account'
+import type { Metadata } from 'next'
+import { getMyBooks } from '@/lib/data/dashboard'
+import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { EmptyState } from '@/components/ui/EmptyState'
 
+export const metadata: Metadata = { title: 'كتبي' }
 
-export const dynamic = 'force-dynamic'
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { collection, doc, getDoc, getDocs, query, where } from '@/lib/supabase/data-client-compat'
-import BrandOrnament from '@/components/brand/BrandOrnament'
-import ImageSlot from '@/components/ui/ImageSlot'
-import PremiumEmptyState from '@/components/ui/PremiumEmptyState'
-import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-import { db } from '@/lib/supabase/client-compat'
-import { useAuth } from '@/hooks/useAuth'
-import type { Book, Order } from '@/types'
+const dateFmt = new Intl.DateTimeFormat('ar-EG', { timeZone: 'Africa/Cairo', day: 'numeric', month: 'long', year: 'numeric' })
 
-export default function DashboardBooksPage() {
-  const { user } = useAuth()
-  const [loading, setLoading] = useState(true)
-  const [books, setBooks] = useState<Book[]>([])
-
-  useEffect(() => {
-    const userId = user?.uid
-    if (!userId) return
-
-    async function loadBooks() {
-      setLoading(true)
-
-      const ordersSnap = await getDocs(query(collection(db, 'orders'), where('userId', '==', userId)))
-      const paidBookOrders = ordersSnap.docs
-        .map((docItem) => ({ id: docItem.id, ...docItem.data() }) as Order)
-        .filter((order) => order.productType === 'book' && (order.status === 'paid' || order.status === 'access_granted'))
-
-      const ownedBooks = await Promise.all(
-        paidBookOrders.map(async (order) => {
-          const bookSnap = await getDoc(doc(db, 'books', order.productId))
-          if (!bookSnap.exists()) return null
-          return { id: bookSnap.id, ...bookSnap.data() } as Book
-        }),
-      )
-
-      setBooks(ownedBooks.filter(Boolean) as Book[])
-      setLoading(false)
-    }
-
-    loadBooks().catch((error) => {
-      console.error('Dashboard books error:', error)
-      setLoading(false)
-    })
-  }, [user?.uid])
-
-  if (loading) {
-    return (
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <PremiumSkeleton className="h-96" />
-        <PremiumSkeleton className="h-96" />
-        <PremiumSkeleton className="h-96" />
-      </div>
-    )
-  }
-
-  if (books.length === 0) {
-    return (
-      <PremiumEmptyState
-        icon="☾"
-        title="مكتبتك الهادئة تنتظر أول كتاب"
-        description="بعد تأكيد شراء أي كتاب، سيظهر هنا ويمكنك فتحه من مساحة القراءة الخاصة بك."
-        actionLabel="استكشفي الكتب"
-        actionHref="/books"
-      />
-    )
-  }
+export default async function MyBooksPage({searchParams}:{searchParams:Promise<{page?:string}>}) {
+  const page=accountPage((await searchParams).page)
+  const [books,total]=await Promise.all([getMyBooks(page),getCollectionCount('books')])
 
   return (
-    <div className="space-y-8">
-      <section className="premium-glow-border rounded-[2.5rem] border border-sand bg-ivory/90 p-6 shadow-premium backdrop-blur-sm lg:p-8">
-        <BrandOrnament className="mb-5" />
-        <p className="mini-label mb-3">كتبي</p>
-        <h2 className="text-4xl font-black leading-tight text-petrol md:text-5xl">مكتبة وعي شخصية</h2>
-        <p className="mt-4 max-w-2xl text-sm leading-8 text-warm-gray">
-          كل كتاب مؤكد يظهر هنا كمساحة قراءة محفوظة يمكنك العودة إليها وقتما أردتِ.
-        </p>
-      </section>
+    <div className="mx-auto max-w-4xl">
+      <header className="mb-8">
+        <h1 className="font-heading text-3xl font-bold leading-snug text-deep-teal">كتبي</h1>
+        <p className="mt-1 text-text-soft">مكتبتك الخاصة — كتبك وملفاتك المتاحة للتحميل الآمن.</p>
+      </header>
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {books.map((book) => (
-          <Link
-            key={book.id}
-            href={`/books/${book.slug}/read`}
-            className="group rounded-[2.25rem] border border-sand bg-ivory/90 p-4 shadow-soft backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-premium"
-          >
-            <ImageSlot
-              src={book.coverImageUrl}
-              alt={book.title}
-              ratio="book"
-              variant="book"
-              className="mx-auto max-w-[260px]"
-            />
-            <div className="p-3 pt-5">
-              <span className="rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-xs font-black text-gold">
-                {book.pagesCount ? `${book.pagesCount} صفحة` : book.category || 'كتاب رقمي'}
-              </span>
-              <h3 className="mt-4 text-xl font-black text-charcoal transition group-hover:text-petrol">{book.title}</h3>
-              <p className="mt-3 line-clamp-3 text-sm leading-7 text-warm-gray">{book.shortDescription}</p>
-              <span className="mt-5 inline-block text-sm font-black text-petrol">افتحي الكتاب ←</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {books.length === 0 ? (
+        <EmptyState
+          title="مكتبتك فارغة حاليًا"
+          description="حين تشترين كتابًا وتُعتمد دفعتك يظهر هنا جاهزًا للتحميل الفوري."
+          actionLabel="تصفّحي الكتب"
+          actionHref="/books"
+        />
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2">
+          {books.map((b) => (
+            <Card key={b.slug} hover className="flex gap-5">
+              <div className="flex flex-1 flex-col">
+                <h2 className="font-bold text-deep-teal">{b.title}</h2>
+                <p className="tnum mt-1 flex-1 text-sm text-text-soft">
+                  {b.pagesCount ? `${b.pagesCount.toLocaleString('ar-EG')} صفحة · ` : ''}
+                  أُضيف {dateFmt.format(new Date(b.grantedAt))}
+                </p>
+                <Button href={`/dashboard/books/${b.slug}/download`} variant="secondary" size="sm" className="self-start">
+                  تحميل الكتاب
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+      <div className="mt-6"><AccountPagination page={page} total={total} base="/dashboard/books"/></div>
     </div>
   )
 }

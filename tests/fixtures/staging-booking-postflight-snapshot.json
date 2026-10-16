@@ -1,0 +1,26 @@
+{
+  "productionProjectRef": "zfbwpubsnuijybxjuidc",
+  "projectRef": "isolated-staging-example",
+  "environment": "staging",
+  "containsCustomerData": false,
+  "containsCredentials": false,
+  "recovery": { "verified": true, "restoreDrillAt": "2026-08-25T00:00:00Z" },
+  "migrationIds": ["000", "043", "044", "045", "046", "047"],
+  "tables": ["booking_holds", "booking_slot_overrides"],
+  "rls": { "booking_holds": true, "booking_slot_overrides": true },
+  "functionGrants": {
+    "create_booking_order(uuid,date,time,text,text,text)": ["service_role"],
+    "create_package_booking(uuid,date,time,text,text,text,uuid)": ["service_role"],
+    "booking_service_policy(uuid)": ["service_role"],
+    "booking_slot_is_available(uuid,date,time,uuid,uuid)": ["service_role"],
+    "create_booking_hold(uuid,date,time)": ["authenticated"],
+    "release_my_booking_hold(uuid)": ["authenticated"],
+    "create_free_booking_from_hold(uuid,text,text,text)": ["authenticated"],
+    "create_booking_order_from_hold(uuid,text,text,text)": ["authenticated"],
+    "create_package_booking_from_hold(uuid,text,text,text,uuid)": ["authenticated"],
+    "available_booking_slots(uuid,date)": ["anon", "authenticated"],
+    "available_booking_calendar(uuid,date,date)": ["anon", "authenticated"],
+    "booking_runtime_contract()": ["anon", "authenticated"]
+  },
+  "policies": { "bookings": [] }
+}

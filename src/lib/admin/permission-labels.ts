@@ -1,0 +1,15 @@
+export const PERMISSION_LABELS: Record<string, string> = {
+  'admin.access': 'دخول لوحة الإدارة', 'roles.manage': 'إدارة الأدوار والصلاحيات', 'users.view': 'عرض العميلات', 'users.manage': 'إدارة حسابات العميلات',
+  'payments.view': 'عرض الدفعات', 'payments.approve': 'قبول الدفعات', 'payments.reject': 'رفض الدفعات',
+  'orders.view': 'عرض الطلبات', 'orders.update': 'إدارة الطلبات', 'orders.refund': 'استرداد المدفوعات',
+  'bookings.view': 'عرض الحجوزات', 'bookings.manage': 'إدارة الحجوزات', 'availability.manage': 'فتح وإغلاق المواعيد', 'packages.manage': 'إدارة الباقات والاشتراكات',
+  'catalog.view': 'عرض الكتالوج', 'catalog.manage': 'إضافة وتعديل المنتجات', 'catalog.publish': 'نشر وإيقاف المنتجات', 'catalog.delete': 'حذف المنتجات غير المستخدمة',
+  'content.view': 'عرض المحتوى', 'content.manage': 'إضافة وتعديل المحتوى', 'content.publish': 'نشر وإيقاف المحتوى', 'content.delete': 'حذف المحتوى', 'learning.manage': 'إدارة المحتوى التعليمي',
+  'media.view': 'عرض الوسائط', 'media.manage': 'إضافة وتعديل الوسائط', 'media.delete': 'حذف الوسائط غير المرتبطة',
+  'settings.view': 'عرض الإعدادات', 'settings.manage': 'تعديل الإعدادات', 'feature_flags.manage': 'فتح وإغلاق الموقع والميزات',
+  'inbox.view': 'عرض الرسائل', 'inbox.manage': 'إدارة الرسائل', 'newsletter.manage': 'إدارة النشرة', 'reviews.manage': 'إدارة التقييمات',
+  'press.manage': 'إدارة الظهور الإعلامي', 'resources.manage': 'إدارة الموارد', 'assessments.manage': 'إدارة الاختبار',
+  'reports.view': 'عرض التقارير', 'reports.export': 'تصدير التقارير', 'reports.snapshot': 'حفظ نسخة التقارير',
+  'marketing.manage': 'إدارة العروض والكوبونات', 'audit.view': 'عرض سجلات التدقيق والدخول', 'system.view': 'عرض حالة النظام والأمان',
+  'notifications.send': 'إرسال الإشعارات', 'admin.search': 'البحث في الإدارة',
+}

@@ -1,0 +1,394 @@
+{
+  "release": "HEBA_LAUNCH_2026-09-23",
+  "recordedAt": "2026-09-23T16:07:43.043029+00:00",
+  "sourceArchiveSha256": "9417c74946ef48cf2683b75d6efbf55c43f154aaff762987eaa618de72c8be57",
+  "status": "source implementation and local validation complete; external connection/deployment acceptance outstanding",
+  "migrations": [
+    "096_owner_password_access.sql",
+    "097_shared_coach_calendar.sql",
+    "098_booking_status_email.sql",
+    "099_stream_course_video.sql",
+    "100_long_lesson_admission.sql",
+    "101_learning_home_preset.sql"
+  ],
+  "checks": {
+    "existingLocalContracts": {
+      "passed": 58,
+      "total": 58,
+      "results": [
+        {
+          "name": "verify:booking-local",
+          "code": 0
+        },
+        {
+          "name": "verify:booking-permissions-local",
+          "code": 0
+        },
+        {
+          "name": "verify:booking-staging-contract-fixtures",
+          "code": 0
+        },
+        {
+          "name": "verify:fresh-admin-assurance",
+          "code": 0
+        },
+        {
+          "name": "verify:report-export-local",
+          "code": 0
+        },
+        {
+          "name": "verify:home-cms-local",
+          "code": 0
+        },
+        {
+          "name": "verify:cms-page-sections-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:navigation-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:cms-page-lifecycle-local",
+          "code": 0
+        },
+        {
+          "name": "verify:article-lifecycle-local",
+          "code": 0
+        },
+        {
+          "name": "verify:settings-flags-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:public-search-local",
+          "code": 0
+        },
+        {
+          "name": "verify:start-here-cms-local",
+          "code": 0
+        },
+        {
+          "name": "verify:guided-assessment-local",
+          "code": 0
+        },
+        {
+          "name": "verify:master-v2-local",
+          "code": 0
+        },
+        {
+          "name": "verify:preview-experience-local",
+          "code": 0
+        },
+        {
+          "name": "verify:program-catalog-local",
+          "code": 0
+        },
+        {
+          "name": "verify:catalog-publication-local",
+          "code": 0
+        },
+        {
+          "name": "verify:media-lifecycle-local",
+          "code": 0
+        },
+        {
+          "name": "verify:newsletter-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:admin-security-center-local",
+          "code": 0
+        },
+        {
+          "name": "verify:admin-read-integrity-local",
+          "code": 0
+        },
+        {
+          "name": "verify:resend-outbox-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-360-local",
+          "code": 0
+        },
+        {
+          "name": "verify:sentry-monitoring-local",
+          "code": 0
+        },
+        {
+          "name": "verify:admin-notifications-local",
+          "code": 0
+        },
+        {
+          "name": "verify:admin-role-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:booking-admin-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:commerce-admin-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:checkout-upload-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-learning-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-protected-delivery-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-dashboard-read-integrity-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-account-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-password-lifecycle-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-booking-self-service-local",
+          "code": 0
+        },
+        {
+          "name": "verify:customer-registration-bootstrap-local",
+          "code": 0
+        },
+        {
+          "name": "verify:account-deletion-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:revision-recovery-local",
+          "code": 0
+        },
+        {
+          "name": "verify:admin-operations-ux-local",
+          "code": 0
+        },
+        {
+          "name": "verify:contact-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:testimonial-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:press-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:resource-hub-local",
+          "code": 0
+        },
+        {
+          "name": "verify:recovery-runner-local",
+          "code": 0
+        },
+        {
+          "name": "verify:final-hardening-local",
+          "code": 0
+        },
+        {
+          "name": "verify:delivery-local",
+          "code": 0
+        },
+        {
+          "name": "verify:protected-upload-binding-local",
+          "code": 0
+        },
+        {
+          "name": "verify:course-curriculum-governance-local",
+          "code": 0
+        },
+        {
+          "name": "verify:protected-delivery-removal-local",
+          "code": 0
+        },
+        {
+          "name": "verify:archive-security",
+          "code": 0
+        },
+        {
+          "name": "verify:master-v2-continuation-local",
+          "code": 0
+        },
+        {
+          "name": "verify:master-v2-admin-workflows-local",
+          "code": 0
+        },
+        {
+          "name": "verify:catalog-atomic-local",
+          "code": 0
+        },
+        {
+          "name": "verify:commerce-administration-local",
+          "code": 0
+        },
+        {
+          "name": "verify:phase7-workflows-local",
+          "code": 0
+        },
+        {
+          "name": "verify:phase8-workflows-local",
+          "code": 0
+        },
+        {
+          "name": "verify:phases9-11-workflows-local",
+          "code": 0
+        }
+      ]
+    },
+    "localAudits": {
+      "passed": 14,
+      "total": 14,
+      "results": [
+        {
+          "name": "verify:booking-staging-contract",
+          "code": 0
+        },
+        {
+          "name": "audit:cms-local",
+          "code": 0
+        },
+        {
+          "name": "audit:remediation-local",
+          "code": 0
+        },
+        {
+          "name": "audit:routes",
+          "code": 0
+        },
+        {
+          "name": "audit:ux",
+          "code": 0
+        },
+        {
+          "name": "audit:colors",
+          "code": 0
+        },
+        {
+          "name": "audit:security",
+          "code": 0
+        },
+        {
+          "name": "audit:admin",
+          "code": 0
+        },
+        {
+          "name": "audit:media",
+          "code": 0
+        },
+        {
+          "name": "audit:commerce",
+          "code": 0
+        },
+        {
+          "name": "audit:catalog",
+          "code": 0
+        },
+        {
+          "name": "audit:booking",
+          "code": 0
+        },
+        {
+          "name": "audit:db",
+          "code": 0
+        },
+        {
+          "name": "audit:launch",
+          "code": 0
+        }
+      ]
+    },
+    "newSql": {
+      "passedGroups": 16,
+      "engine": "isolated PGlite 0.5.8",
+      "scope": "Actual 096–101 with synthetic dependency tables and identity claims. Readiness function in 096 excluded. One connection; not full migration history or Supabase RLS/provider/concurrency acceptance."
+    },
+    "adaptersAndConfiguration": {
+      "passedGroups": 7,
+      "scope": "Actual TUS, mail worker, config validator, owner/staff confirmation router with injected external replies; no messages, real Auth or video upload."
+    },
+    "publicBrowserSuite": {
+      "passedCasesAcrossRuns": 74,
+      "totalDistinctCases": 74,
+      "engine": "isolated Chromium 153 / Playwright",
+      "scope": "Public Next app without Supabase configuration; routes, RTL layouts, 390/768/1024/1440 widths, keyboard, dark preference, empty states, guards. Not full WCAG certification or Core Web Vitals measurement.",
+      "runs": [
+        {
+          "command": "playwright test tests/e2e/public.spec.ts --project=desktop-chromium --project=mobile-chromium --workers=2 --timeout=20000 --global-timeout=240000",
+          "passed": 69,
+          "timeout": 1,
+          "notCompleted": 4
+        },
+        {
+          "command": "desktop-chromium --grep \"home learning tour\" --timeout=60000",
+          "passed": 1
+        },
+        {
+          "command": "mobile-chromium --grep \"mobile layout|tablet and phone|reduced motion|draft legal\" --timeout=60000",
+          "passed": 4
+        }
+      ],
+      "note": "The tour assertions completed but the short run timeout expired; targeted reruns on the unchanged app passed. Main-suite runtime cap interrupted four remaining cases; all four passed separately. Early discovered layout, mobile focus and missing-configuration booking bugs were fixed before these final runs."
+    },
+    "finalLaunchBrowser": {
+      "results": [
+        {
+          "width": 1440,
+          "home": true,
+          "tour": true,
+          "ownerPasswordOnly": true,
+          "bookingPreview": true
+        },
+        {
+          "width": 390,
+          "home": true,
+          "tour": true,
+          "ownerPasswordOnly": true,
+          "bookingPreview": true
+        }
+      ],
+      "errors": [],
+      "scope": "Provider-free actual browser interactions. No live Auth, payment or storage acceptance.",
+      "note": "Latest built source includes the central admin confirmation route, CMS caption/button bindings, and complete provider-free booking simulation at both widths."
+    },
+    "builds": {
+      "nextProduction": "passed, includes final TypeScript compilation",
+      "cloudflareVinextProduction": "passed; not deployed",
+      "isolatedTypecheck": "passed",
+      "eslint": "passed, zero errors/warnings",
+      "productionDependencyAudit": "passed: no known vulnerabilities in the audited lockfile",
+      "generatedTypesNote": "A bare tsc invocation against mixed Next/vinext generated route files failed; the documented isolated type-check and production Next build passed. Use the documented command."
+    }
+  },
+  "notPerformed": [
+    "No real Supabase migration, user creation/enrollment or production-data writes",
+    "No real messages, SMTP acceptance, purchases or proof uploads",
+    "No live Stream upload/processing/playback or Storage delivery",
+    "No multi-connection PostgreSQL race or full historical migration rehearsal",
+    "No Cloudflare account/domain configuration, deployment or deployed-Worker browser acceptance",
+    "No measured production Core Web Vitals, load test or full accessibility conformance audit"
+  ],
+  "operationalLimits": [
+    "Manual payment proof review; no card processor added",
+    "Stream optional and paid; issued bearer playback tokens remain valid up to four hours",
+    "Unbound/removed Stream videos need explicit provider cleanup",
+    "Archive is source; rebuild with actual public config and set runtime secrets before deployment",
+    "Migrations 096–101 pending on the actual provider; calendar migration refuses conflicting existing reservations"
+  ],
+  "handoff": "START_HERE_AR.md",
+  "packaging": "pnpm package:release generates integrity manifest and scans TGZ/ZIP; no local env, dependencies, build output or raw test artifacts included"
+}
