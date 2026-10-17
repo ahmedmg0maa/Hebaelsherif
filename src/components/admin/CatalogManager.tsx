@@ -28,7 +28,7 @@ export type CatalogAdminItem = {
   archivedAt?:string|null
   level?: string
   durationMinutes?: number
-  bookingPaymentMode?: 'payment_required' | 'free'
+  bookingPaymentMode?: 'payment_required' | 'free' | 'request'
   bufferBeforeMinutes?: number | null
   bufferAfterMinutes?: number | null
   minimumNoticeMinutes?: number | null
@@ -144,6 +144,7 @@ function CatalogForm({ kind, item, onDone, media = [], controller }: { kind: Kin
           <Field prefix={prefix} label="مدة الجلسة بالدقائق" name="duration_minutes" type="number" min={15} defaultValue={item?.durationMinutes ?? 60} required />
           <Select prefix={prefix} label="الدفع عند الحجز" name="booking_payment_mode" defaultValue={item?.bookingPaymentMode ?? 'payment_required'} options={[
             { value: 'payment_required', label: 'يتطلب وسيلة دفع مهيأة' },
+            { value: 'request', label: 'طلب موعد مدفوع — مراجعة وتنسيق الدفع بعد الطلب' },
             { value: 'free', label: 'حجز مجاني بلا دفع' },
           ]} />
           <Field prefix={prefix} label="فاصل قبل الجلسة (دقائق)" name="buffer_before_minutes" type="number" min={0} defaultValue={item?.bufferBeforeMinutes} />

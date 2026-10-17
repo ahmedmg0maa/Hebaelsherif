@@ -49,6 +49,9 @@ export type MyBooking = {
   status: string
   meetingUrl: string | null
   customerNotes: string | null
+  requestedPrice?: number | null
+  requestedCurrency?: string | null
+  requestExpiresAt?: string | null
   events: { id: string; event: string; createdAt: string }[]
   rescheduleRequests: { id: string; proposedStartsAt: string; status: string; reason: string; createdAt: string }[]
 }
@@ -243,7 +246,7 @@ export async function getMyBookings(page?: number): Promise<MyBooking[]> {
   return withUser<MyBooking[]>([], async (supabase, userId) => {
     const { data, error } = await supabase
       .from('bookings')
-      .select('id, service_id, starts_at, ends_at, status, meeting_url, customer_notes, services!inner(title)')
+      .select('id, service_id, starts_at, ends_at, status, meeting_url, customer_notes, requested_price, requested_currency, request_expires_at, services!inner(title)')
       .eq('user_id', userId)
       .order('starts_at', { ascending: false })
       .order('id', { ascending: false })
@@ -283,6 +286,9 @@ export async function getMyBookings(page?: number): Promise<MyBooking[]> {
         status: b.status,
         meetingUrl: safeHttpsUrl(b.meeting_url),
         customerNotes: b.customer_notes,
+        requestedPrice: b.requested_price == null ? null : Number(b.requested_price),
+        requestedCurrency: b.requested_currency,
+        requestExpiresAt: b.request_expires_at,
         events: eventsByBooking.get(b.id) ?? [],
         rescheduleRequests: reschedulesByBooking.get(b.id) ?? [],
       }

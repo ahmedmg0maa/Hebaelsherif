@@ -11,10 +11,10 @@ const png=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0])
 const authorized={authorized:true,orderId:order,method:'instapay',declaredMime:'image/png',declaredSize:png.length,status:'issued',expired:false}
 const proof={orderId:order,method:'instapay',path:`${user}/${order}/${intent}.png`,intentId:intent,type:'image/png',size:png.length}
 function actions({rpc,inspect=()=>({mime:'image/png',size:png.length,bytes:png})}){
- const calls=[],removed=[]
+ const calls=[],removed=[],revalidated=[]
  const client={auth:{getUser:async()=>({data:{user:{id:user}}})},rpc:async(n,p)=>{calls.push({n,p});return rpc(n,p)},storage:{from:()=>({remove:async p=>{removed.push(p);return {error:null}},createSignedUploadUrl:async()=>({data:{token:'fixture'}})})}}
- const common={'@/lib/supabase/server':{getServerClient:async()=>client,getServiceClient:()=>client,hasSupabaseServerSecret:()=>true},'@/lib/supabase/public-key':{hasSupabasePublicConfig:()=>true},'@/lib/delivery/security':{isUuid:uuid}}
- return {...load('src/lib/actions/checkout.ts',{...common,'@/lib/rate-limit':{rateLimit:async()=>({allowed:true}),RATE_LIMIT_MSG:'Fixture'},'@/lib/delivery/file-validation.mjs':{inspectStoredObject:async()=>inspect()},'@/lib/payment-proof-validation.mjs':{validateObservedPaymentProof}}),...load('src/lib/actions/booking.ts',common),calls,removed}
+ const common={'next/cache':{revalidatePath:path=>revalidated.push(path)},'@/lib/supabase/server':{getServerClient:async()=>client,getServiceClient:()=>client,hasSupabaseServerSecret:()=>true},'@/lib/supabase/public-key':{hasSupabasePublicConfig:()=>true},'@/lib/delivery/security':{isUuid:uuid}}
+ return {...load('src/lib/actions/checkout.ts',{...common,'@/lib/rate-limit':{rateLimit:async()=>({allowed:true}),RATE_LIMIT_MSG:'Fixture'},'@/lib/delivery/file-validation.mjs':{inspectStoredObject:async()=>inspect()},'@/lib/payment-proof-validation.mjs':{validateObservedPaymentProof}}),...load('src/lib/actions/booking.ts',common),calls,removed,revalidated}
 }
 await check('ambiguous proof completion never removes uploaded evidence',async()=>{const a=actions({rpc:n=>n==='authorize_payment_proof_upload_finalization'?{data:authorized}:{error:{message:'connection lost'}}});const r=await a.finalizePaymentProofUpload(proof);assert.equal(r.ok,false);assert.equal(r.terminal,undefined);assert.equal(a.removed.length,0)})
 await check('unavailable Storage inspection preserves issued intent for retry',async()=>{const a=actions({rpc:()=>({data:authorized}),inspect:()=>null});assert.equal((await a.finalizePaymentProofUpload(proof)).ok,false);assert.equal(a.calls.length,1);assert.equal(a.removed.length,0)})
@@ -23,6 +23,16 @@ await check('only committed rejection authorizes cleanup, invalid bytes are term
 await check('authorization mismatch never inspects or removes a private object',async()=>{const a=actions({rpc:()=>({data:{...authorized,orderId:payment}}),inspect:()=>{throw Error('must not inspect')}});assert.equal((await a.finalizePaymentProofUpload(proof)).ok,false);assert.equal(a.calls.length,1);assert.equal(a.removed.length,0)})
 await check('checkout preserves all returned states and null expiry, rejects malformed success',async()=>{for(const status of ['pending_payment','awaiting_review','paid','cancelled','expired','refund_pending','refunded']){const a=actions({rpc:()=>({data:{order_id:order,total:100,expires_at:null,status}})});const r=await a.createOrder({productId:intent,method:'instapay',requestId:payment});assert.equal(r.data.status,status);assert.equal(r.data.expiresAt,null)}const a=actions({rpc:()=>({data:{}})});assert.equal((await a.createOrder({productId:intent,method:'instapay',requestId:payment})).ok,false)})
 await check('booking free mode never sends a stale subscription and ambiguous results stay retryable',async()=>{const a=actions({rpc:()=>({data:{bookingId:intent,total:0,bookingStatus:'confirmed',confirmed:true}})});const input={serviceId:order,date:'2099-01-01',time:'12:00',fullName:'Test User',phone:'01012345678',notes:'',subscriptionId:payment};assert.equal((await a.completeBookingFromHold(input,intent,true)).ok,true);assert.equal(a.calls[0].n,'complete_booking_hold_v2');assert.equal(a.calls[0].p.p_subscription_id,null);const b=actions({rpc:()=>({error:{message:'lost response'}})});assert.equal((await b.completeBookingFromHold(input,intent,false)).terminal,false)})
+await check('priced request and package modes preserve their different outcomes and refresh both views',async()=>{
+ const input={serviceId:order,date:'2099-01-01',time:'12:00',fullName:'Test User',phone:'01012345678',notes:''}
+ const request=actions({rpc:()=>({data:{bookingId:intent,total:1200,bookingStatus:'pending',requested:true,confirmed:false}})})
+ const result=await request.completeBookingFromHold(input,intent,false,true)
+ assert.equal(result.data.total,1200);assert.equal(result.data.confirmed,false);assert.equal(request.calls[0].p.p_mode,'request')
+ assert(request.revalidated.includes('/dashboard/bookings'));assert(request.revalidated.includes('/admin/bookings'))
+ const pack=actions({rpc:()=>({data:{bookingId:intent,total:0,bookingStatus:'confirmed',packageBacked:true,confirmed:true}})})
+ await pack.completeBookingFromHold({...input,subscriptionId:payment},intent,false,true)
+ assert.equal(pack.calls[0].p.p_mode,'package');assert.equal(pack.calls[0].p.p_subscription_id,payment)
+})
 function uploader({begin,finalize,upload}){
  return load('src/lib/payment-proof-upload.ts',{'@/lib/actions/checkout':{beginPaymentProofUpload:begin,finalizePaymentProofUpload:finalize},'@/lib/supabase/client':{getBrowserClient:()=>({storage:{from:()=>({uploadToSignedUrl:upload})}})}}).createPaymentProofUploader()
 }

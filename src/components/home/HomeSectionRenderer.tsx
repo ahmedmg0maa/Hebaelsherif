@@ -6,6 +6,7 @@ import type { ArticlesContent, CtaContent, EditorialFeatureContent, GuidedStartC
 import { Hero } from '@/components/home/Hero'
 import { TrustStrip } from '@/components/home/TrustStrip'
 import { ServiceCards } from '@/components/home/ServiceCards'
+import { PublishedCatalog } from '@/components/home/PublishedCatalog'
 import { JourneyMap } from '@/components/home/JourneyMap'
 import { LearningTour } from '@/components/home/LearningTour'
 import { OfferBlock } from '@/components/home/OfferBlock'
@@ -27,7 +28,7 @@ export async function HomeSectionRenderer({ section, copy, data, profile, assess
   let content: React.ReactNode = null
   if (section.kind === 'trust') content = <TrustStrip profile={profile} />
   else if (section.kind === 'manifesto' || section.kind === 'quote') content = <NarrativeSection content={section.content as NarrativeContent} quote={section.kind === 'quote'} media={section.media?.main} />
-  else if (section.kind === 'pathways') content = <ServiceCards content={section.content as PathwaysContent} media={section.media} />
+  else if (section.kind === 'pathways') content = <><ServiceCards content={section.content as PathwaysContent} media={section.media} /><PublishedCatalog /></>
   else if (section.kind === 'guided_start') content = <JourneyMap content={section.content as GuidedStartContent} assessment={assessment} />
   else if (section.kind === 'editorial_feature') content = <LearningTour content={section.content as EditorialFeatureContent} media={section.media?.main} />
   else if (section.kind === 'offer') content = <OfferBlock offer={data.offer} ctaLabel={(section.content as { ctaLabel: string }).ctaLabel} />

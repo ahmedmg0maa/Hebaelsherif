@@ -6,7 +6,7 @@ if(!existsSync(migration))failures.push('booking windows/credit migration missin
 else{const sql=read(migration);for(const token of ['guard_availability_window_overlap','subscription_credit_ledger','adjust_subscription_credits','for update'])if(!sql.includes(token))failures.push(`booking migration missing ${token}`)}
 if(!read('src/components/admin/AvailabilityManager.tsx').includes('saveAvailabilityWindow'))failures.push('multiple-window admin UI missing')
 if(!read('src/components/admin/MembershipManager.tsx').includes('SubscriptionCreditControl'))failures.push('credit ledger admin control missing')
-if(!existsSync('supabase/migrations/027_package_booking.sql')||!(read('src/lib/actions/booking.ts').includes("rpc('complete_booking_hold_v2'") && read('src/lib/actions/booking.ts').includes("input.subscriptionId ? 'package' : 'paid'")))failures.push('package-backed booking flow missing')
+if(!existsSync('supabase/migrations/027_package_booking.sql')||!(read('src/lib/actions/booking.ts').includes("rpc('complete_booking_hold_v2'") && read('src/lib/actions/booking.ts').includes("input.subscriptionId ? 'package'") && read('src/lib/actions/booking.ts').includes("requestOnly?'request':'paid'")))failures.push('package-backed booking flow missing')
 if(!existsSync('supabase/migrations/028_credit_idempotency_lock.sql')||!read('supabase/migrations/028_credit_idempotency_lock.sql').includes('pg_advisory_xact_lock'))failures.push('credit idempotency lock missing')
 const operational='supabase/migrations/044_booking_operational_workflow_local_only.sql'
 if(!existsSync(operational))failures.push('operational booking migration missing')

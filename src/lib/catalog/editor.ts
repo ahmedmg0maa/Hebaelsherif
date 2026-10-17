@@ -48,7 +48,9 @@ export function catalogEditorPayload(kind: CatalogKind, form: FormData): { ok: t
       if (!['online', 'in_person', 'hybrid'].includes(String(value.location_kind)) || (value.meeting_url && !/^https:\/\/[^\s]+$/.test(String(value.meeting_url)))) throw new Error()
     } else {
       value.duration_minutes = num('duration_minutes', 15, 1440, 60)
-      value.booking_payment_mode = str('booking_payment_mode', 30, 'payment_required')
+      const mode=str('booking_payment_mode',30,'payment_required')
+      value.request_enabled=mode==='request'
+      value.booking_payment_mode = mode==='request'?'payment_required':mode
       if (!['payment_required', 'free'].includes(String(value.booking_payment_mode))) throw new Error()
       for (const key of ['buffer_before_minutes', 'buffer_after_minutes', 'minimum_notice_minutes', 'cancellation_notice_hours', 'reschedule_notice_hours']) value[key] = num(key, 0, 525600, null)
       value.booking_window_days = num('booking_window_days', 1, 365, null)

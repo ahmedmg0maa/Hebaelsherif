@@ -21,12 +21,12 @@ const allMethods: { id: Method; label: string; hint: string }[] = [
   { id: 'bank_transfer', label: 'تحويل بنكي', hint: 'من حسابك البنكي مباشرة' },
 ]
 
-function StepDots({ step }: { step: 1 | 2 | 3 }) {
-  const labels = ['الطلب والدفع', 'إرفاق الإيصال', 'التأكيد']
+function StepDots({ step, free }: { step: 1 | 2 | 3; free: boolean }) {
+  const labels = free ? ['إضافة إلى الحساب', 'تفعيل الوصول'] : ['الطلب والدفع', 'إرفاق الإيصال', 'التأكيد']
   return (
-    <ol className="mb-8 grid grid-cols-3 gap-3">
+    <ol className={cn('mb-8 grid gap-3', free ? 'grid-cols-2' : 'grid-cols-3')}>
       {labels.map((label, i) => {
-        const n = (i + 1) as 1 | 2 | 3
+        const n = (free && i === 1 ? 3 : i + 1) as 1 | 2 | 3
         const state = n < step ? 'done' : n === step ? 'active' : 'next'
         return (
           <li key={label} aria-current={n === step ? 'step' : undefined} className="flex min-w-0 items-center justify-center gap-2">
@@ -186,7 +186,7 @@ export function CheckoutClient({ product, settings }: { product: CheckoutProduct
 
   return (
     <div ref={stage} tabIndex={-1} aria-label={`الدفع: الخطوة ${step} من 3`} aria-busy={busy} className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
-      <StepDots step={step} />
+      <StepDots step={step} free={total === 0} />
       {step > 1 && order && <dl aria-label="ملخص الطلب" className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface-raised px-5 py-4 text-sm"><div><dt className="text-taupe">طلبك</dt><dd className="mt-1 font-bold text-deep-teal">{product.title}{selectedVariant ? ` — ${selectedVariant.name}` : ''}</dd></div><div><dt className="text-taupe">الإجمالي المسجل</dt><dd className="tnum mt-1 font-bold text-burgundy">{formatPrice(order.total)}</dd></div></dl>}
 
       {step === 1 && (
@@ -213,19 +213,19 @@ export function CheckoutClient({ product, settings }: { product: CheckoutProduct
 
           {product.variants.length > 0 && <label className="block text-sm font-bold text-deep-teal">اختاري النسخة<select disabled={busy || Boolean(checkoutRequestId)} value={variantId} onChange={(event) => { setVariantId(event.target.value); setCoupon(null); setCouponMsg(null); setCheckoutRequestId(null) }} className="mt-2 min-h-11 w-full rounded-xl border border-line bg-surface-raised px-4 text-ink">{product.variants.map((variant) => <option key={variant.id} value={variant.id}>{variant.name} — {formatPrice(variant.price)}</option>)}</select></label>}
 
-          <form onSubmit={onApplyCoupon} className="flex items-end gap-3">
+          {selectedPrice > 0 && <form onSubmit={onApplyCoupon} className="flex items-end gap-3">
             <FormField label="كوبون خصم (اختياري)" name="coupon" disabled={busy || Boolean(checkoutRequestId)} dir="ltr" className="flex-1" />
             <Button type="submit" variant="secondary" disabled={busy || demoMode || Boolean(checkoutRequestId)}>
               تطبيق
             </Button>
-          </form>
+          </form>}
           {couponMsg && (
             <p className={cn('text-sm font-medium', coupon ? 'text-deep-teal' : 'text-burgundy')} role="status">
               {couponMsg}
             </p>
           )}
 
-          <fieldset disabled={busy || Boolean(checkoutRequestId)}>
+          {total > 0 && <fieldset disabled={busy || Boolean(checkoutRequestId)}>
             <legend className="mb-3 text-sm font-bold text-deep-teal">اختاري وسيلة الدفع</legend>
             <div className="grid gap-3 sm:grid-cols-3">
               {methods.map((m) => (
@@ -251,7 +251,7 @@ export function CheckoutClient({ product, settings }: { product: CheckoutProduct
                 </label>
               ))}
             </div>
-          </fieldset>
+          </fieldset>}
 
           {error && (
             <p className="rounded-xl bg-burgundy/10 px-4 py-3 text-sm font-medium text-burgundy" role="alert">
@@ -335,7 +335,7 @@ export function CheckoutClient({ product, settings }: { product: CheckoutProduct
               : order?.status === 'awaiting_review' ? 'طلبك الآن قيد المراجعة. سنفعّل وصولك ونرسل لك إشعارًا فور اعتماد الإيصال.' : 'لم يعد الطلب في انتظار الدفع. راجعي حالته وتفاصيله داخل حسابك قبل إجراء أي تحويل.'}
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <Button href="/dashboard/payments">تابعي حالة الدفع</Button>
+            <Button href={order?.status === 'paid' ? product.type === 'course' ? `/dashboard/courses/${product.slug}/learn` : product.type === 'book' ? '/dashboard/books' : '/dashboard' : '/dashboard/payments'}>{order?.status === 'paid' ? product.type === 'course' ? 'ابدئي التعلّم' : product.type === 'book' ? 'افتحي الكتاب' : 'افتحي محتواك' : 'تابعي حالة الدفع'}</Button>
             <Button href="/dashboard" variant="secondary">
               لوحتي
             </Button>

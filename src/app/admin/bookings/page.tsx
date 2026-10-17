@@ -17,6 +17,9 @@ type Row = {
   starts_at: string
   ends_at: string
   status: string
+  requested_price: number | null
+  requested_currency: string | null
+  request_expires_at: string | null
   customer_notes: string | null
   meeting_url: string | null
   admin_notes: string
@@ -48,7 +51,7 @@ export default async function AdminBookingsPage({searchParams}:{searchParams:Pro
  const db=await getServerClient()
  // bookings.user_id references auth.users, not profiles. Read names separately
  // through the same authenticated/RLS client rather than inventing an embed.
- const {data,error,count}=await db.from('bookings').select('id, user_id, starts_at, ends_at, status, customer_notes, meeting_url, admin_notes, services(title), booking_events(id,event,created_at), booking_reschedule_requests(id,proposed_starts_at,status,reason,created_at)',{count:'exact'}).gte('starts_at',boundary(days[0],start).toISOString()).lt('starts_at',boundary(addCalendarDays(days.at(-1)!,1),end).toISOString()).order('starts_at',{ascending:true}).limit(1000)
+ const {data,error,count}=await db.from('bookings').select('id, user_id, starts_at, ends_at, status, requested_price, requested_currency, request_expires_at, customer_notes, meeting_url, admin_notes, services(title), booking_events(id,event,created_at), booking_reschedule_requests(id,proposed_starts_at,status,reason,created_at)',{count:'exact'}).gte('starts_at',boundary(days[0],start).toISOString()).lt('starts_at',boundary(addCalendarDays(days.at(-1)!,1),end).toISOString()).order('starts_at',{ascending:true}).limit(1000)
  if(error||count!==(data??[]).length)throw new Error('BOOKING_CALENDAR_READ_INCOMPLETE')
  const rows=(data??[]) as unknown as Omit<Row,'profiles'>[]
  const userIds=[...new Set(rows.map(row=>row.user_id))]
@@ -87,6 +90,8 @@ export default async function AdminBookingsPage({searchParams}:{searchParams:Pro
                 <TR key={b.id}>
                   <TD>
                     <p className="font-semibold text-deep-teal">{service?.title ?? 'جلسة'}</p>
+                    {b.requested_price != null && <p className="tnum mt-1 text-xs text-deep-teal">طلب بسعر {Number(b.requested_price).toLocaleString('ar-EG')} {b.requested_currency} — لا توجد دفعة مسجلة</p>}
+                    {b.status === 'pending' && b.request_expires_at && <p className="mt-1 text-xs text-taupe">مهلة المراجعة: {dateFmt.format(new Date(b.request_expires_at))}</p>}
                     {b.customer_notes && <p className="max-w-56 truncate text-xs text-taupe">{b.customer_notes}</p>}
                   </TD>
                   <TD>{dateFmt.format(new Date(b.starts_at))}</TD>

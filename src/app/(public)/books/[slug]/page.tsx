@@ -23,7 +23,7 @@ export default async function BookDetailPage({ params }: Props) {
   const book = await getBook((await params).slug)
   if (!book) notFound()
   const paymentSettings = await getPaymentSettings()
-  const orderingAvailable = !book.isPreviewExperience && Boolean(paymentSettings.instapay || paymentSettings.wallet || paymentSettings.bank)
+  const orderingAvailable = !book.isPreviewExperience && (book.price === 0 || Boolean(paymentSettings.instapay || paymentSettings.wallet || paymentSettings.bank))
 
   const includes = [
     book.pagesCount ? `${book.pagesCount.toLocaleString('ar-EG')} صفحة مصممة بعناية` : 'كتاب رقمي كامل',
@@ -66,7 +66,7 @@ export default async function BookDetailPage({ params }: Props) {
                 <Button href="#book-preview" size="lg" className="mt-6 w-full">افتحي قارئة الكتاب</Button>
               ) : orderingAvailable ? (
                 <Button href={`/checkout/book/${book.slug}`} size="lg" className="mt-6 w-full">
-                  اطلبي النسخة
+                  {book.price === 0 ? 'أضيفي الدليل المجاني لحسابك' : 'اطلبي النسخة'}
                 </Button>
               ) : (
                 <p className="mt-6 rounded-xl bg-ivory px-4 py-3 text-center text-sm font-medium text-text-soft" role="status">
@@ -89,7 +89,7 @@ export default async function BookDetailPage({ params }: Props) {
       {orderingAvailable && <MobileBuyBar
         price={book.price}
         compareAtPrice={book.compareAtPrice}
-        ctaLabel="اطلبي النسخة"
+        ctaLabel={book.price === 0 ? 'أضيفي الدليل المجاني لحسابك' : 'اطلبي النسخة'}
         ctaHref={`/checkout/book/${book.slug}`}
       />}
     </main>

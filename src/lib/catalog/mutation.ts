@@ -18,7 +18,7 @@ export function catalogMutationError(error: { code?: string; message?: string } 
 
 export function revalidateCatalogMutation(kind: CatalogKind, result: { slug?: string; previousSlug?: string }) {
   const route = { course: 'courses', book: 'books', workshop: 'workshops', service: 'services' }[kind]
-  for (const path of ['/', '/search', '/services', '/programs', '/booking', '/admin/products', '/admin/services', `/admin/${kind === 'service' ? 'bookings' : route}`, `/${route}`]) revalidatePath(path)
+  for (const path of ['/', '/search', '/sitemap.xml', '/services', '/programs', '/booking', '/admin/products', '/admin/services', `/admin/${kind === 'service' ? 'bookings' : route}`, `/${route}`]) revalidatePath(path)
   for (const slug of new Set([result.slug, result.previousSlug])) {
     if (!slug) continue
     revalidatePath(`/${route}/${slug}`)

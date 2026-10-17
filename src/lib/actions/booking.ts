@@ -1,6 +1,7 @@
 'use server'
 
 import { getServerClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
 import { isUuid } from '@/lib/delivery/security'
 import { hasSupabasePublicConfig } from '@/lib/supabase/public-key'
 
@@ -14,7 +15,7 @@ export type BookingInput = {
   subscriptionId?: string
 }
 
-export type BookingData = { bookingId: string; orderId?: string; total: number; expiresAt?: string | null; packageBacked?: boolean; confirmed?: boolean; bookingStatus?: string; orderStatus?: string | null }
+export type BookingData = { bookingId: string; orderId?: string; total: number; expiresAt?: string | null; packageBacked?: boolean; confirmed?: boolean; requested?:boolean; bookingStatus?: string; orderStatus?: string | null }
 type Result =
   | { ok: true; data: BookingData }
   | { ok: false; error: string; code?: 'AUTH' | 'SLOT_TAKEN'; terminal?: boolean }
@@ -22,6 +23,7 @@ type Result =
 const hasEnv = hasSupabasePublicConfig
 
 const messages: Record<string, string> = {
+  PENDING_REQUEST_EXISTS:'لديكِ طلب موعد قيد المراجعة بالفعل. تابعيه أو ألغيه من حجوزاتك قبل إرسال طلب آخر.',
   offer_capacity_exhausted: 'اكتملت سعة العرض. حدّثي الصفحة لمراجعة سعر الجلسة الحالي.',
   site_intake_closed: 'استقبال الحجوزات أو الطلبات الجديدة متوقف مؤقتًا. حجوزاتك السابقة محفوظة.',
   BOOKING_ATTEMPT_CONFLICT: 'هذه المحاولة مرتبطة ببيانات حجز سابقة. تابعي النتيجة من حسابك.',
@@ -74,12 +76,12 @@ export async function releaseBookingHold(holdId: string) {
   await context.supabase.rpc('release_my_booking_hold', { p_hold_id: holdId })
 }
 
-export async function completeBookingFromHold(input: BookingInput, holdId: string, isFree: boolean): Promise<Result> {
+export async function completeBookingFromHold(input: BookingInput, holdId: string, isFree: boolean, requestOnly=false): Promise<Result> {
   const context = await requireBookingUser()
   if ('error' in context) return { ok: false, code: context.auth ? 'AUTH' : undefined, error: context.error ?? 'إنشاء الحجوزات غير متاح حاليًا.' }
   if (!isUuid(holdId) || !isUuid(input.serviceId) || (input.subscriptionId && !isUuid(input.subscriptionId))) return { ok:false, terminal:true, error:'بيانات الحجز غير صحيحة.' }
   const { data, error } = await context.supabase.rpc('complete_booking_hold_v2', {
-    p_hold_id:holdId, p_mode:isFree ? 'free' : input.subscriptionId ? 'package' : 'paid',
+    p_hold_id:holdId, p_mode:isFree ? 'free' : input.subscriptionId ? 'package' : requestOnly?'request':'paid',
     p_full_name:input.fullName.trim(), p_phone:input.phone.trim(), p_notes:input.notes.trim(),
     p_subscription_id:isFree ? null : input.subscriptionId || null,
   })
@@ -89,6 +91,7 @@ export async function completeBookingFromHold(input: BookingInput, holdId: strin
     return { ok: false, code: slotTaken ? 'SLOT_TAKEN' : undefined, terminal: Boolean(key && key !== 'BOOKING_ATTEMPT_CONFLICT') || slotTaken, error: key ? messages[key] : 'تعذّر تأكيد نتيجة الحجز. أعيدي المحاولة نفسها أو راجعي حجوزاتك من حسابك.' }
   }
   if (!isUuid(data.bookingId) || !Number.isFinite(data.total) || data.total < 0 || !['pending','confirmed','completed','cancelled','no_show'].includes(data.bookingStatus)) return { ok:false, error:'تعذّر تأكيد نتيجة الحجز. أعيدي المحاولة نفسها.' }
+  for (const path of ['/booking', '/dashboard/bookings', '/admin/bookings']) revalidatePath(path)
   return { ok: true, data: data as BookingData }
 }
 

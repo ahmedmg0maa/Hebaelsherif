@@ -29,7 +29,7 @@ export type BookingService = {
   durationMinutes: number
   price: number
   currency: string
-  paymentMode: 'payment_required' | 'free'
+  paymentMode: 'payment_required' | 'free' | 'request'
   bookingPolicyNote: string
   policy: { slotInterval: number; bufferBefore: number; bufferAfter: number; minimumNotice: number; horizonDays: number; holdMinutes: number }
   rules: BookingRule[]
@@ -77,13 +77,13 @@ export async function getBookingExperience(): Promise<BookingExperience> {
   try {
     const supabase = await getServerClient()
     const { data: contract, error: contractError } = await supabase.rpc('booking_runtime_contract')
-    if (contractError || (contract?.migration !== '044' || contract?.customerJourney !== '093' || contract?.coachCalendar !== '097' || contract?.coachWorkingHours !== '103')) {
+    if (contractError || (contract?.migration !== '044' || contract?.customerJourney !== '093' || contract?.coachCalendar !== '097' || contract?.coachWorkingHours !== '103' || contract?.customerRequests !== '107')) {
       return { services: [], paymentSettings, calendarDates, credits: [], policy, runtime: { status: 'migration-required', detail: 'عقد الحجز واستعادة المحاولات 092–093 والتقويم المشترك 097 غير مكتمل. راجعي الترحيلات في المشروع الصحيح قبل نشر الحجز.' } }
     }
     const { data, error: servicesError } = await supabase
       .from('services')
       .select(
-        'id, product_id, slug, title, description, duration_minutes, price, booking_payment_mode, buffer_before_minutes, buffer_after_minutes, minimum_notice_minutes, booking_window_days, hold_minutes, booking_policy_note, products!inner(currency, is_published), availability_rules(weekday, start_time, end_time, timezone), availability_exceptions(date, is_closed, start_time, end_time, kind)',
+        'id, product_id, slug, title, description, duration_minutes, price, request_enabled, booking_payment_mode, buffer_before_minutes, buffer_after_minutes, minimum_notice_minutes, booking_window_days, hold_minutes, booking_policy_note, products!inner(currency, is_published), availability_rules(weekday, start_time, end_time, timezone), availability_exceptions(date, is_closed, start_time, end_time, kind)',
       )
       .eq('is_active', true)
       .eq('products.is_published', true)
@@ -157,7 +157,7 @@ export async function getBookingExperience(): Promise<BookingExperience> {
         durationMinutes: service.duration_minutes,
         price: Number(service.price),
         currency: product?.currency ?? 'EGP',
-        paymentMode: service.booking_payment_mode === 'free' ? 'free' : 'payment_required',
+        paymentMode: service.booking_payment_mode === 'free' ? 'free' : service.request_enabled ? 'request' : 'payment_required',
         bookingPolicyNote: service.booking_policy_note ?? '',
         policy: {
           slotInterval: policy.slotInterval,

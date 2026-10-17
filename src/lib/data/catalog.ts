@@ -37,7 +37,7 @@ export type CatalogCourse = {
   rating: number
   ratingCount: number
   coverUrl: string | null
-  modules: { title: string; lessons: { title: string; durationSeconds: number; isPreview: boolean }[] }[]
+  modules: { title: string; lessons: { title: string; durationSeconds: number; isPreview: boolean; previewText?: string }[] }[]
   isPreviewExperience?: boolean
   previewLessons?: PreviewCourseLesson[]
 }
@@ -102,7 +102,7 @@ export async function listCourses(): Promise<CatalogCourse[]> {
     const { data } = await supabase
       .from('courses')
       .select(
-        'slug, title, description, level, duration_minutes, cover_url, products!inner(subtitle, price, compare_at_price, is_published), course_modules(title, sort, course_lessons(title, duration_seconds, sort, is_preview))',
+        'slug, title, description, level, duration_minutes, cover_url, products!inner(subtitle, price, compare_at_price, is_published), course_modules(title, sort, course_lessons(title, description, duration_seconds, sort, is_preview))',
       )
       .eq('is_published', true)
       .eq('products.is_published', true)
@@ -115,7 +115,7 @@ export async function listCourses(): Promise<CatalogCourse[]> {
           title: m.title,
           lessons: (m.course_lessons ?? [])
             .sort((a, b) => a.sort - b.sort)
-            .map((l) => ({ title: l.title, durationSeconds: l.duration_seconds, isPreview: l.is_preview })),
+            .map((l) => ({ title: l.title, durationSeconds: l.duration_seconds, isPreview: l.is_preview, previewText: l.is_preview ? l.description : undefined })),
         }))
       return {
         slug: c.slug,

@@ -52,8 +52,8 @@ export default async function ServicesPage() {
               </div>
               <div className="flex shrink-0 flex-col items-center gap-3">
                 <span className="tnum text-xl font-bold text-burgundy">{formatPrice(s.price)}</span>
-                <Button href="/booking" size="sm">
-                  احجزي موعدك
+                <Button href={`/booking?service=${encodeURIComponent(s.slug)}`} size="sm">
+                  اختاري موعدك
                 </Button>
               </div>
             </Card>

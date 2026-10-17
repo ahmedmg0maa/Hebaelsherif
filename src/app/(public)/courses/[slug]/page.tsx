@@ -33,7 +33,7 @@ export default async function CourseDetailPage({ params }: Props) {
   const course = await getCourse((await params).slug)
   if (!course) notFound()
   const paymentSettings = await getPaymentSettings()
-  const orderingAvailable = !course.isPreviewExperience && Boolean(paymentSettings.instapay || paymentSettings.wallet || paymentSettings.bank)
+  const orderingAvailable = !course.isPreviewExperience && (course.price === 0 || Boolean(paymentSettings.instapay || paymentSettings.wallet || paymentSettings.bank))
 
   const includes = [
     `${lessonsLabel(course.lessonsCount)} مرتبة داخل المنهج`,
@@ -83,7 +83,7 @@ export default async function CourseDetailPage({ params }: Props) {
               <Button href="#course-preview" size="lg" className="mt-6 w-full">ابدئي الدرس الأول</Button>
             ) : orderingAvailable ? (
               <Button href={`/checkout/course/${course.slug}`} size="lg" className="mt-6 w-full">
-                اطلبي الالتحاق
+                {course.price === 0 ? 'ابدئي الدورة المجانية' : 'اطلبي الالتحاق'}
               </Button>
             ) : (
               <p className="mt-6 rounded-xl bg-ivory px-4 py-3 text-center text-sm font-medium text-text-soft" role="status">
@@ -107,14 +107,14 @@ export default async function CourseDetailPage({ params }: Props) {
                 </svg>
               </summary>
               <ul className="border-t border-line">
-                {m.lessons.map((l) => (
+                {m.lessons.map((l, li) => (
                   <li key={l.title} className="flex items-center justify-between gap-4 px-5 py-3.5 text-sm not-last:border-b not-last:border-line/60">
                     <span className="flex items-center gap-3 text-ink">
                       <svg viewBox="0 0 20 20" className="h-4 w-4 text-antique-gold" fill="currentColor" aria-hidden>
                         <path d="M7 5.5v9l7-4.5Z" />
                       </svg>
                       {l.title}
-                      {l.isPreview && <Badge tone="cobalt">معاينة مجانية</Badge>}
+                      {l.isPreview && l.previewText ? <a href={`#lesson-${mi}-${li}`} className="font-semibold text-burgundy underline underline-offset-4">اقرئي الدرس</a> : l.isPreview && <Badge tone="cobalt">معاينة مجانية</Badge>}
                     </span>
                     <span className="tnum shrink-0 text-taupe">{fmtSeconds(l.durationSeconds)}</span>
                   </li>
@@ -125,6 +125,10 @@ export default async function CourseDetailPage({ params }: Props) {
         </div>
       </Section>
 
+      {course.modules.some(m => m.lessons.some(l => l.isPreview && l.previewText)) && <Section tone="white" eyebrow="قراءة متاحة" title="ابدئي القراءة الآن" lead="اقرئي الدروس المتاحة هنا. بعد الالتحاق بالدورة يمكنكِ حفظ التقدم من حسابك.">
+        <div className="mx-auto max-w-3xl space-y-6">{course.modules.flatMap((m, mi) => m.lessons.map((l, li) => l.isPreview && l.previewText ? <article key={`${mi}-${li}`} id={`lesson-${mi}-${li}`} className="scroll-mt-28 rounded-2xl border border-line bg-surface-raised p-5 sm:p-8"><h3 className="text-xl font-bold text-deep-teal">{l.title}</h3><div className="mt-4 space-y-4 text-text-soft">{l.previewText.split(/\n\s*\n/).map((paragraph, i) => <p key={i} className="leading-loose">{paragraph}</p>)}</div></article> : null))}</div>
+      </Section>}
+
       <CTARibbon
         title="استكشفي المحتوى المنشور"
         lead="تظهر تفاصيل الوصول وطريقة التعلّم داخل الحساب بعد اعتماد الاستحقاق."
@@ -134,7 +138,7 @@ export default async function CourseDetailPage({ params }: Props) {
       {orderingAvailable && <MobileBuyBar
         price={course.price}
         compareAtPrice={course.compareAtPrice}
-        ctaLabel="اطلبي الالتحاق"
+        ctaLabel={course.price === 0 ? 'ابدئي الدورة المجانية' : 'اطلبي الالتحاق'}
         ctaHref={`/checkout/course/${course.slug}`}
       />}
     </main>

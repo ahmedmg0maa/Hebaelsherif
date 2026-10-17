@@ -923,3 +923,7 @@
 - Booking customer names are resolved separately by user_id through the authenticated RLS client. Do not add a foreign key to auth-owned data merely to satisfy an invalid PostgREST embed. Fail closed on actual query errors and truncated calendar periods.
 - Retain intentional full Auth-document navigation in fresh-assurance links. A lint rule triggered by the new dynamic public route is not a reason to alter authentication behavior.
 
+# 2026-10-17 — Connect priced appointment requests and starter content
+
+The owner explicitly requested public, integrated operation and authorized initial editable content. A service can now opt into reviewable appointment requests while retaining its real EGP price and existing payment_required classification. A request is pending, creates no financial order/payment, carries a price/currency snapshot, holds the shared calendar, and expires after 24 hours if unreviewed. Existing governed Admin confirmation/cancellation and booking mail snapshots remain authoritative; no staff MFA policy is relaxed. Free course/book checkout remains an actual entitlement-granting zero-total order and no longer depends on configured payout accounts. Initial learning content and original artwork are persisted through the same audited catalog/media/curriculum/article governance as later Admin edits. Do not invent bank details, testimonials, workshop dates or paid subscriptions to populate the public site.
+

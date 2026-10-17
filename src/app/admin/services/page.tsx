@@ -16,6 +16,7 @@ type ServiceRow = {
   description: string
   duration_minutes: number
   price: number
+  request_enabled: boolean
   is_active: boolean
   booking_payment_mode: 'payment_required' | 'free'
   buffer_before_minutes: number | null
@@ -35,7 +36,7 @@ type ServiceRow = {
 
 export default async function ServicesPage({searchParams}:{searchParams:Promise<CatalogQuery>}) {
   const [listing,media]=await Promise.all([adminCatalogPage<ServiceRow>('services',
-'id, title, slug, description, duration_minutes, price, is_active, booking_payment_mode, buffer_before_minutes, buffer_after_minutes, minimum_notice_minutes, booking_window_days, hold_minutes, cancellation_notice_hours, reschedule_notice_hours, max_reschedules, booking_policy_note, products!inner(archived_at,compare_at_price, currency, subtitle, sort, cover_url), availability_rules(id, weekday, start_time, end_time), availability_exceptions(id, date, is_closed, start_time, end_time, kind, reason), booking_slot_overrides(id, date, start_time, mode, reason)',await searchParams),getPublicMediaOptions()])
+'id, title, slug, description, duration_minutes, price, is_active, request_enabled, booking_payment_mode, buffer_before_minutes, buffer_after_minutes, minimum_notice_minutes, booking_window_days, hold_minutes, cancellation_notice_hours, reschedule_notice_hours, max_reschedules, booking_policy_note, products!inner(archived_at,compare_at_price, currency, subtitle, sort, cover_url), availability_rules(id, weekday, start_time, end_time), availability_exceptions(id, date, is_closed, start_time, end_time, kind, reason), booking_slot_overrides(id, date, start_time, mode, reason)',await searchParams),getPublicMediaOptions()])
   const serviceRows=listing.rows
   const actor=await requirePermission('availability.manage')
   let schedule:CoachSchedule|null=null
@@ -47,7 +48,7 @@ export default async function ServicesPage({searchParams}:{searchParams:Promise<
 
       {serviceRows.length > 0 && <Card><CardTitle>الخدمات والسياسات</CardTitle><div className="mt-5 grid gap-4 md:grid-cols-2">{serviceRows.map((service) => {
         const product = Array.isArray(service.products) ? service.products[0] : service.products
-        return <div key={service.id} className="rounded-xl border border-line bg-ivory/45 p-4"><div className="mb-3"><h3 className="font-bold text-deep-teal">{service.title}</h3><p className="text-sm text-text-soft">{Number(service.price).toLocaleString('ar-EG')} EGP · {service.duration_minutes.toLocaleString('ar-EG')} دقيقة · {service.booking_payment_mode === 'free' ? 'مجاني' : 'يتطلب دفعًا'}</p></div><CatalogEditPanel kind="service" media={media} item={{ id: service.id, title: service.title, slug: service.slug, description: service.description, price: Number(service.price), compareAtPrice: product?.compare_at_price, currency: product?.currency, subtitle: product?.subtitle, coverUrl: product?.cover_url, sort: product?.sort, archivedAt:product?.archived_at, isPublished: service.is_active, durationMinutes: service.duration_minutes, bookingPaymentMode: service.booking_payment_mode, bufferBeforeMinutes: service.buffer_before_minutes, bufferAfterMinutes: service.buffer_after_minutes, minimumNoticeMinutes: service.minimum_notice_minutes, bookingWindowDays: service.booking_window_days, holdMinutes: service.hold_minutes, cancellationNoticeHours: service.cancellation_notice_hours, rescheduleNoticeHours: service.reschedule_notice_hours, maxReschedules: service.max_reschedules, bookingPolicyNote: service.booking_policy_note }} /></div>
+        return <div key={service.id} className="rounded-xl border border-line bg-ivory/45 p-4"><div className="mb-3"><h3 className="font-bold text-deep-teal">{service.title}</h3><p className="text-sm text-text-soft">{Number(service.price).toLocaleString('ar-EG')} EGP · {service.duration_minutes.toLocaleString('ar-EG')} دقيقة · {service.request_enabled ? 'طلب موعد ومراجعة قبل الدفع' : service.booking_payment_mode === 'free' ? 'مجاني' : 'يتطلب دفعًا'}</p></div><CatalogEditPanel kind="service" media={media} item={{ id: service.id, title: service.title, slug: service.slug, description: service.description, price: Number(service.price), compareAtPrice: product?.compare_at_price, currency: product?.currency, subtitle: product?.subtitle, coverUrl: product?.cover_url, sort: product?.sort, archivedAt:product?.archived_at, isPublished: service.is_active, durationMinutes: service.duration_minutes, bookingPaymentMode: service.request_enabled ? 'request' : service.booking_payment_mode, bufferBeforeMinutes: service.buffer_before_minutes, bufferAfterMinutes: service.buffer_after_minutes, minimumNoticeMinutes: service.minimum_notice_minutes, bookingWindowDays: service.booking_window_days, holdMinutes: service.hold_minutes, cancellationNoticeHours: service.cancellation_notice_hours, rescheduleNoticeHours: service.reschedule_notice_hours, maxReschedules: service.max_reschedules, bookingPolicyNote: service.booking_policy_note }} /></div>
       })}</div></Card>}
 
       <CatalogPagination {...listing}/>

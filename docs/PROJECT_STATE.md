@@ -1,3 +1,12 @@
+# Client integration in progress — 2026-10-17
+
+The owner explicitly requested a usable connected public site and authorized initial editable content. The currently published clean release is 41e42e8 (Worker de94878c-6a6d-4abe-8b09-bbf1bcafcd17); production history remains 106. Its two approved sessions are drafts and no learning content is published, which explains the empty client catalog. Do not call that public launch complete.
+
+Migration 107 is now committed atomically after the restored-database test, source/live function-definition comparison, verified fresh backup and successful production rollback rehearsal; original users/bookings/products/owner-access counts were preserved. It adds optional priced appointment requests, separate from financial payment/confirmation, a 24-hour review deadline, existing global calendar locks, ownership/idempotency guards and service-only expiry. Fresh logical backup: .launch-backups/client-integration-2026-10-17/application.dump, SHA256 046478a3fc66f9283af7f5bf389e95e3343392abc9f90447b9725e59c4cbefad.
+
+Both approved sessions (1200/1800 EGP), a real three-lesson free text course, a six-page original Arabic PDF workbook and two articles are now published through the existing permission-checked/audited Admin RPCs. Original cream/teal/gold SVG covers were rendered, uploaded, registered with accurate rights and linked through media governance; the PDF was stored privately, magic/size inspected and bound before publication. All are editable in Admin. Source content is content/starter/learning.json; regenerable guide is output/pdf/quiet-first-step.pdf. Initial publication proof and before-images remain private in the backup directory. The new client source is not deployed yet: it adds live homepage cards, session deep selection, real lesson previews, free-content CTAs without requiring payout methods, account/Admin request prices and cache invalidation. Next: deployed customer acceptance, tests/build/push/deploy. No invented payout accounts, payment receipts, qualifications, testimonials or workshop dates. Preserve the existing cream/teal/gold art and automatic accessible motion.
+
+---
 # Published Admin acceptance — 2026-10-17
 
 Authoritative checkpoint: application source 8f1abfa is deployed on hebaelsherif.com and www, prepare-cream-motion, clean build at 07:56:59 UTC, Worker 35a838f2-27a0-49b3-bda9-8fa51c87d9a9. Later documentation-only commits do not change the tested runtime; /.well-known/heba-release.json remains the authority for the exact deployed commit and build time.

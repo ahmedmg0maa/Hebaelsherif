@@ -24,7 +24,7 @@ export default async function MyCoursesPage({searchParams}:{searchParams:Promise
       {courses.length === 0 ? (
         <EmptyState
           title="لم تلتحقي بأي دورة بعد"
-          description="حين تشترين دورة وتُعتمد دفعتك ستظهر هنا مع تقدمك خطوة بخطوة."
+          description="تظهر هنا الدورات المجانية التي تلتحقين بها والدورات المدفوعة بعد اعتمادها، مع تقدمك خطوة بخطوة."
           actionLabel="استكشفي الدورات"
           actionHref="/courses"
         />

@@ -35,7 +35,7 @@ export default async function MyBookingsPage({searchParams}:{searchParams:Promis
       {bookings.length === 0 ? (
         <EmptyState
           title="لا حجوزات بعد"
-          description="تظهر حجوزاتك الفعلية هنا بعد تأكيدها، مع حالة الإلغاء أو طلب تغيير الموعد."
+          description="تظهر طلبات مواعيدك وحجوزاتك هنا، مع حالة المراجعة والتأكيد والإلغاء."
           actionLabel="احجزي جلستك الأولى"
           actionHref="/booking"
         />
@@ -51,6 +51,8 @@ export default async function MyBookingsPage({searchParams}:{searchParams:Promis
                     <Badge tone={st.tone}>{st.label}</Badge>
                   </div>
                   <p className="tnum mt-1 text-sm text-taupe">{dateFmt.format(new Date(b.startsAt))}</p>
+                  {b.requestedPrice != null && <p className="tnum mt-2 text-sm text-deep-teal">سعر الجلسة: {b.requestedPrice.toLocaleString('ar-EG')} {b.requestedCurrency} — إرسال الطلب لا يثبت الدفع.</p>}
+                  {b.status === 'pending' && b.requestExpiresAt && <p className="mt-2 text-sm text-text-soft">طلبك قيد المراجعة حتى {dateFmt.format(new Date(b.requestExpiresAt))}. ننسق التفاصيل والدفع قبل تأكيد اللقاء.</p>}
                   {b.customerNotes && <p className="mt-2 text-sm text-text-soft">ملاحظتك: {b.customerNotes}</p>}
                   {b.rescheduleRequests.length > 0 && <div className="mt-3 rounded-xl bg-ivory px-3 py-2 text-xs text-text-soft">{b.rescheduleRequests.map((request) => <p key={request.id}>طلب تغيير {request.status === 'pending' ? 'قيد المراجعة' : request.status === 'approved' ? 'تمت الموافقة عليه' : 'تم رفضه'} — {dateFmt.format(new Date(request.proposedStartsAt))}</p>)}</div>}
                   {b.events.length > 0 && <details className="mt-3 text-xs text-taupe"><summary className="cursor-pointer font-semibold text-deep-teal">سجل الحجز</summary><ol className="mt-2 space-y-1">{b.events.slice().sort((a, z) => z.createdAt.localeCompare(a.createdAt)).map((event) => <li key={event.id}>{dateFmt.format(new Date(event.createdAt))} — {event.event}</li>)}</ol></details>}

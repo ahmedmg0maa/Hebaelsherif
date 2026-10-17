@@ -52,7 +52,7 @@ function availableDate(service: BookingService, date: string) {
   return (service.availableSlots[date] ?? []).length > 0
 }
 
-export function BookingWizard({ experience }: { experience: BookingExperience }) {
+export function BookingWizard({ experience, initialServiceId }: { experience: BookingExperience; initialServiceId?: string }) {
   const router = useRouter()
   const [signedIn, setSignedIn] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
@@ -62,7 +62,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
   const [proofUploader] = useState(createPaymentProofUploader)
   const uploadPaymentProofDirect = proofUploader.upload
   const [step, setStep] = useState(0)
-  const [serviceId, setServiceId] = useState(experience.services[0]?.id ?? '')
+  const [serviceId, setServiceId] = useState(initialServiceId ?? experience.services[0]?.id ?? '')
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [fullName, setFullName] = useState('')
@@ -80,7 +80,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
   const [confirmed, setConfirmed] = useState(false)
   const [closed, setClosed] = useState(false)
   const [pendingAttempt, setPendingAttempt] = useState(false)
-  const bookingAttempt = useRef<{ input:BookingInput; holdId:string; isFree:boolean } | null>(null)
+  const bookingAttempt = useRef<{ input:BookingInput; holdId:string; isFree:boolean; requestOnly:boolean } | null>(null)
   const [hold, setHold] = useState<{ id: string; expiresAt: string } | null>(null)
   const [now, setNow] = useState(0)
   const actionLock = useRef(false)
@@ -96,7 +96,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
     experience.paymentSettings.wallet && { id: 'wallet' as const, label: experience.paymentSettings.wallet.provider, detail: experience.paymentSettings.wallet.number },
     experience.paymentSettings.bank && { id: 'bank_transfer' as const, label: 'تحويل بنكي', detail: experience.paymentSettings.bank.iban },
   ].filter(Boolean) as { id: PaymentMethod; label: string; detail: string }[]
-  const canCreateBooking = isPreview || service?.paymentMode === 'free' || paymentMethods.length > 0 || eligibleCredits.some(credit => credit.subscriptionId === subscriptionId)
+  const canCreateBooking = isPreview || service?.paymentMode === 'free' || service?.paymentMode === 'request' || paymentMethods.length > 0 || eligibleCredits.some(credit => credit.subscriptionId === subscriptionId)
   const paymentExpired = Boolean(order?.expiresAt && now > 0 && new Date(order.expiresAt).getTime() <= now)
   const secondsRemaining = hold ? Math.max(0, Math.ceil((new Date(hold.expiresAt).getTime() - now) / 1_000)) : 0
 
@@ -115,7 +115,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
       const raw = sessionStorage.getItem('heba-booking-selection')
       const draft = raw ? JSON.parse(raw) : null
       const selected = experience.services.find(item => item.id === draft?.serviceId)
-      if (selected && Date.now() - draft.savedAt < 86_400_000) {
+      if (selected && (!initialServiceId || initialServiceId === selected.id) && Date.now() - draft.savedAt < 86_400_000) {
         setServiceId(selected.id!); setDate(draft.date ?? '')
         if ((selected.availableSlots[draft.date] ?? []).includes(draft.time)) { setTime(draft.time); setStep(2) }
         else setStep(1)
@@ -223,11 +223,11 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
       return
     }
     const bookingInput = { serviceId: service.id, date, time, fullName, phone, notes, subscriptionId: subscriptionId || undefined }
-    if (!bookingAttempt.current && hold) bookingAttempt.current = { input:bookingInput, holdId:hold.id, isFree:service.paymentMode === 'free' }
+    if (!bookingAttempt.current && hold) bookingAttempt.current = { input:bookingInput, holdId:hold.id, isFree:service.paymentMode === 'free', requestOnly:service.paymentMode === 'request' }
     const attempt = bookingAttempt.current
     if (!attempt) return
     setPendingAttempt(true)
-    const result = await completeBookingFromHold(attempt.input, attempt.holdId, attempt.isFree)
+    const result = await completeBookingFromHold(attempt.input, attempt.holdId, attempt.isFree, attempt.requestOnly)
     setLoading(false)
     if (!result.ok) {
       setError(result.error)
@@ -244,7 +244,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
     const closedResult = ['cancelled','completed','no_show'].includes(result.data.bookingStatus ?? '') || ['cancelled','expired','refund_pending','refunded'].includes(result.data.orderStatus ?? '')
     setClosed(closedResult)
     setOrder(result.data.orderId ? { orderId: result.data.orderId, total: result.data.total, expiresAt: result.data.expiresAt } : null)
-    if (closedResult || result.data.orderStatus === 'awaiting_review' || result.data.confirmed) { setPackageComplete(Boolean(result.data.packageBacked)); setComplete(true) } else setStep(4)
+    if (closedResult || result.data.orderStatus === 'awaiting_review' || result.data.confirmed || result.data.requested) { setPackageComplete(Boolean(result.data.packageBacked)); setComplete(true) } else setStep(4)
   }
 
   async function submitProof(event: React.FormEvent<HTMLFormElement>) {
@@ -292,7 +292,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
       <div className="mx-auto max-w-2xl rounded-3xl border border-antique-gold/40 bg-surface-raised p-8 text-center shadow-card sm:p-12">
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-deep-teal text-2xl text-on-dark">✓</span>
         <h2 className="mt-5 text-3xl font-bold text-deep-teal">{isPreview ? 'اكتملت محاكاة الحجز بنجاح' : closed ? 'استعدنا نتيجة حجزك السابق' : confirmed ? 'حجزك مؤكد' : 'وصل طلب حجزك بنجاح'}</h2>
-        <p className="mt-3 leading-relaxed text-text-soft">{isPreview ? 'لم يُنشأ حجز أو طلب أو دفع، ولم تُرفع الصورة المختارة إلى أي خادم. هذه هي تجربة واجهة المسار فقط.' : closed ? 'تغيّرت حالة الحجز منذ إرسال المحاولة. راجعي التفاصيل داخل حسابك قبل أي دفع جديد.' : confirmed && !packageComplete ? 'تم تأكيد الجلسة. يمكنك متابعة الموعد وتفاصيله داخل حسابك.' : packageComplete ? 'استُخدمت جلسة من رصيدك المستحق وثُبّت الطلب دون حاجة إلى إثبات دفع.' : 'طلبك قيد المراجعة؛ تظهر حالة الجلسة داخل حسابك عند تحديثها.'}</p>
+        <p className="mt-3 leading-relaxed text-text-soft">{isPreview ? 'لم يُنشأ حجز أو طلب أو دفع، ولم تُرفع الصورة المختارة إلى أي خادم. هذه هي تجربة واجهة المسار فقط.' : closed ? 'تغيّرت حالة الحجز منذ إرسال المحاولة. راجعي التفاصيل داخل حسابك قبل أي دفع جديد.' : confirmed && !packageComplete ? 'تم تأكيد الجلسة. يمكنك متابعة الموعد وتفاصيله داخل حسابك.' : packageComplete ? 'استُخدمت جلسة من رصيدك المستحق وثُبّت الطلب دون حاجة إلى إثبات دفع.' : service.paymentMode === 'request' ? 'طلب الموعد قيد المراجعة وليس تأكيدًا أو إثبات دفع. ننسق التفاصيل والدفع قبل تأكيد اللقاء؛ يُلغى طلب الموعد بعد 24 ساعة إن لم يُراجع. تابعي حالته من حسابك.' : 'وصل إثبات الدفع للمراجعة. تابعي حالة الحجز من حسابك حتى تأكيده.'}</p>
         <Button href={isPreview ? '/booking' : '/dashboard/bookings'} className="mt-6">{isPreview ? 'تجربة الحجز مرة أخرى' : 'متابعة حجوزاتي'}</Button>
       </div>
     )
@@ -307,8 +307,8 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
           <p className="relative mt-1 text-xs leading-relaxed text-on-dark/70">كل الخطوات التالية تعمل داخل المتصفح. لا تُحفظ بياناتك ولا تُرسل صورة الإيصال ولا يُنشأ أي سجل في Supabase.</p>
         </div>
       )}
-      <ol className="grid grid-cols-5 gap-1 sm:gap-2" aria-label="خطوات الحجز">
-        {steps.map(([title, subtitle], index) => (
+      <ol className={cn('grid gap-1 sm:gap-2', service.paymentMode === 'request' && !subscriptionId ? 'grid-cols-4' : 'grid-cols-5')} aria-label="خطوات الحجز">
+        {steps.filter((_,index)=>service.paymentMode!=='request'||Boolean(subscriptionId)||index<4).map(([title, subtitle], index) => (
           <li key={title}>
             <button
               type="button"
@@ -439,7 +439,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
               <h2 className="text-3xl font-bold text-deep-teal">راجعي الحجز قبل تثبيته</h2>
               {pendingAttempt && <p role="status" className="mt-4 rounded-xl bg-ivory p-4 text-sm leading-relaxed text-text-soft">نحتفظ ببيانات هذه المحاولة حتى نتحقق من نتيجتها. يمكنك إعادة التحقق حتى لو انتهى العداد، أو <Link href="/dashboard/bookings" className="underline">مراجعة حجوزاتك</Link>.</p>}
               {hold && !pendingAttempt && <p className={cn('mt-4 rounded-xl px-4 py-3 text-sm font-bold', secondsRemaining > 0 ? 'bg-aqua/10 text-deep-teal' : 'bg-burgundy/10 text-burgundy')}>{isPreview ? 'تُحاكى مهلة تثبيت الموعد' : 'تم تثبيت الموعد مؤقتًا'} لمدة {Math.floor(secondsRemaining / 60).toLocaleString('ar-EG')}:{String(secondsRemaining % 60).padStart(2, '0')} دقيقة. {isPreview ? 'لا يوجد حجز في قاعدة البيانات.' : 'ينتهي الحجز المؤقت تلقائيًا إن لم يكتمل التأكيد.'}</p>}
-              <dl className="mt-6 grid gap-3 rounded-2xl bg-ivory p-5 text-sm sm:grid-cols-2"><div><dt className="text-text-soft">الخدمة</dt><dd className="mt-1 font-bold text-deep-teal">{service.title}</dd></div><div><dt className="text-text-soft">الموعد بتوقيت القاهرة</dt><dd className="mt-1 font-bold text-deep-teal">{date ? longDateFormatter.format(new Date(`${date}T12:00:00Z`)) : ''} — {time ? timeLabel(time) : ''}</dd></div><div><dt className="text-text-soft">التواصل</dt><dd className="mt-1 font-bold text-deep-teal">{fullName} · <span dir="ltr">{phone}</span></dd></div><div><dt className="text-text-soft">آلية الحجز</dt><dd className="mt-1 font-bold text-deep-teal">{service.paymentMode === 'free' ? 'تأكيد فوري بلا دفع' : subscriptionId ? 'خصم من رصيد الباقة' : 'دفع ثم مراجعة'}</dd></div></dl>
+              <dl className="mt-6 grid gap-3 rounded-2xl bg-ivory p-5 text-sm sm:grid-cols-2"><div><dt className="text-text-soft">الخدمة</dt><dd className="mt-1 font-bold text-deep-teal">{service.title}</dd></div><div><dt className="text-text-soft">الموعد بتوقيت القاهرة</dt><dd className="mt-1 font-bold text-deep-teal">{date ? longDateFormatter.format(new Date(`${date}T12:00:00Z`)) : ''} — {time ? timeLabel(time) : ''}</dd></div><div><dt className="text-text-soft">التواصل</dt><dd className="mt-1 font-bold text-deep-teal">{fullName} · <span dir="ltr">{phone}</span></dd></div><div><dt className="text-text-soft">آلية الحجز</dt><dd className="mt-1 font-bold text-deep-teal">{service.paymentMode === 'request' && !subscriptionId ? 'طلب موعد مدفوع ينتظر المراجعة؛ تنسيق الدفع بعد الطلب' : service.paymentMode === 'free' ? 'تأكيد فوري بلا دفع' : subscriptionId ? 'خصم من رصيد الباقة' : 'دفع ثم مراجعة'}</dd></div></dl>
               {service.bookingPolicyNote && <p className="mt-4 rounded-xl border border-antique-gold/30 bg-antique-gold/5 px-4 py-3 text-sm text-text-soft">{service.bookingPolicyNote}</p>}
               {!canCreateBooking && <p className="mt-4 rounded-xl bg-burgundy/10 px-4 py-3 text-sm font-semibold text-burgundy">الدفع لهذه الجلسة غير متاح حاليًا. تواصلي معنا لمساعدتك في اختيار موعد.</p>}
             </div>
@@ -495,7 +495,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
           {step < 4 && (
             <div className="mt-8 flex items-center justify-between gap-3 border-t border-line pt-5">
               <Button variant="secondary" disabled={step === 0 || loading || pendingAttempt} onClick={() => { if (step === 3 && hold) { if (!isPreview) void releaseBookingHold(hold.id).catch(() => undefined); setHold(null) }; setError(null); setStep((value) => Math.max(0, value - 1)) }}>رجوع</Button>
-              <Button disabled={loading || (step === 2 && !isPreview && (!authChecked || !signedIn))} onClick={next}>{loading ? 'جارٍ تثبيت الموعد…' : pendingAttempt ? 'التحقق من نتيجة المحاولة السابقة' : step === 3 ? (service.paymentMode === 'free' || subscriptionId ? 'تأكيد الحجز' : 'تثبيت الموعد والانتقال للدفع') : 'متابعة'}</Button>
+              <Button disabled={loading || (step === 2 && !isPreview && (!authChecked || !signedIn))} onClick={next}>{loading ? 'جارٍ تثبيت الموعد…' : pendingAttempt ? 'التحقق من نتيجة المحاولة السابقة' : step === 3 ? (service.paymentMode === 'request' && !subscriptionId ? 'إرسال طلب الموعد' : service.paymentMode === 'free' || subscriptionId ? 'تأكيد الحجز' : 'تثبيت الموعد والانتقال للدفع') : 'متابعة'}</Button>
             </div>
           )}
         </section>
@@ -508,7 +508,7 @@ export function BookingWizard({ experience }: { experience: BookingExperience })
             <div className="flex justify-between gap-4"><dt className="text-on-dark/60">التاريخ</dt><dd className="font-semibold">{date ? longDateFormatter.format(new Date(`${date}T12:00:00Z`)) : 'اختاري التاريخ'}</dd></div>
             <div className="flex justify-between gap-4"><dt className="text-on-dark/60">الوقت</dt><dd className="tnum font-semibold">{time ? timeLabel(time) : 'اختاري الوقت'}</dd></div>
             <div className="flex justify-between gap-4"><dt className="text-on-dark/60">المدة</dt><dd className="font-semibold">{service.durationMinutes.toLocaleString('ar-EG')} دقيقة</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-on-dark/60">الحالة</dt><dd className="font-semibold">{isPreview ? 'محاكاة غير محفوظة' : service.paymentMode === 'free' || subscriptionId ? 'تأكيد بعد تثبيت الموعد' : 'تأكيد بعد مراجعة الدفع'}</dd></div>
+            <div className="flex justify-between gap-4"><dt className="text-on-dark/60">الحالة</dt><dd className="font-semibold">{isPreview ? 'محاكاة غير محفوظة' : service.paymentMode === 'request' && !subscriptionId ? 'طلب مدفوع بانتظار المراجعة' : service.paymentMode === 'free' || subscriptionId ? 'تأكيد بعد تثبيت الموعد' : 'تأكيد بعد مراجعة الدفع'}</dd></div>
           </dl>
           <div className="mt-5 flex items-end justify-between gap-4">
             <span className="text-sm text-on-dark/60">الإجمالي</span>

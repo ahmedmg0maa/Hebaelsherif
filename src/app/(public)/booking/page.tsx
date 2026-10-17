@@ -5,13 +5,15 @@ import { PageHero } from '@/components/catalog/PageHero'
 
 export const metadata: Metadata = {
   title: 'حجز جلسة فردية',
-  description: 'اختاري الجلسة والتاريخ والوقت، ثم ثبتي الحجز وارفعي إيصال الدفع في مسار واضح وآمن.',
+  description: 'اختاري الجلسة والتاريخ والوقت، ثم أرسلي طلب الموعد وتابعي مراجعته من حسابك.',
 }
 
 export const dynamic = 'force-dynamic'
 
-export default async function BookingPage() {
+export default async function BookingPage({ searchParams }: { searchParams: Promise<{ service?: string }> }) {
   const experience = await getBookingExperience()
+  const requested = (await searchParams).service
+  const initialService = experience.services.find(service => service.slug === requested)?.id ?? undefined
 
   return (
     <main className="overflow-hidden">
@@ -24,7 +26,7 @@ export default async function BookingPage() {
       <section className="experience-booking-bg relative overflow-hidden bg-ivory px-4 py-10 sm:px-6 sm:py-14">
         <span className="experience-orb experience-orb-a" aria-hidden />
         <div className="relative z-10 mx-auto max-w-7xl">
-          <BookingWizard experience={experience} />
+          <BookingWizard experience={experience} initialServiceId={initialService ?? undefined} />
         </div>
       </section>
 

@@ -25,7 +25,7 @@ export default async function MyBooksPage({searchParams}:{searchParams:Promise<{
       {books.length === 0 ? (
         <EmptyState
           title="مكتبتك فارغة حاليًا"
-          description="حين تشترين كتابًا وتُعتمد دفعتك يظهر هنا جاهزًا للتحميل الفوري."
+          description="أضيفي دليلًا مجانيًا أو كتابًا من الكتالوج. يظهر هنا بعد تفعيل وصولك، جاهزًا للتحميل الآمن."
           actionLabel="تصفّحي الكتب"
           actionHref="/books"
         />
