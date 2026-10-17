@@ -37,3 +37,7 @@ The corresponding production POST at 2026-10-17 06:12:16 UTC (09:12:16 Cairo), r
 The encrypted input was consumed and removed; captured bytes were cleared and the password field emptied. A subsequent anonymous Admin visit redirected to `/auth/admin?redirect=%2Fadmin%2Foverview`. Private evidence: `owner-retest-worker-safe.json`, `owner-direct-auth-result.json`, `owner-login-diagnostic-state.json`, and password-free `owner-login-retest.png`.
 
 The current blocker is credential rejection by Supabase, before Admin session creation. Dashboard refresh, actual logout and post-logout session revocation cannot be accepted without a successful sign-in. The user is being asked to verify the configured account locally or authorize a recovery email and personally complete the new-password form. No credential, permission, staff MFA, throttle or Worker runtime change has been made to bypass this failure.
+
+## Local account confirmation
+
+The user chose local email review. A read-only lookup found exactly one registered owner; its email matches local OWNER_ADMIN_EMAIL and password entry remains enrolled. The full address was displayed only in a local window, without printing it in the conversation, command arguments or repository. The user selected "This is the intended owner account"; the local receipt contains only `intendedAccount: true`. The configured account is therefore confirmed as intended. Recovery-email authorization and user-completed password recovery remain pending; no recovery message or account change was performed during the review.
