@@ -15,6 +15,7 @@ import { isFreeOperation } from '@/lib/operations/cost-mode'
 import { ProtectedDeliveryUpload } from '@/components/admin/ProtectedDeliveryUpload'
 import { LessonEditor, ModuleEditor } from '@/components/admin/CurriculumItemEditors'
 import { ProtectedDeliveryItems } from '@/components/admin/ProtectedDeliveryItems'
+import {uploadLimitLabel} from '@/lib/uploads/limits.mjs'
 
 export const metadata: Metadata = { title: 'منشئ المنهج — الإدارة' }
 
@@ -60,13 +61,14 @@ export default async function CurriculumBuilderPage({ params }: Props) {
           الدورات
         </Link>
         <h1 className="mt-1 text-3xl font-bold text-deep-teal">منهج: {course.title}</h1>
-        <p className="mt-1 text-text-soft">أضيفي الوحدات ثم الدروس داخل كل وحدة — الترتيب تلقائي بالإضافة.</p>
+        <p className="mt-1 text-text-soft">أضيفي الوحدات ثم الدروس داخلها. افتحي الدرس لتحرير نصه وملفاته، وغيّري ترتيبه من «تعديل الدرس». حفظ المنهج لا ينشر الكورس تلقائيًا.</p>
+        <p className="mt-2 text-sm text-text-soft">{modules.length.toLocaleString('ar-EG')} وحدة · {lessonsResult.data.length.toLocaleString('ar-EG')} درس</p>
       </header>
 
       <Card className="p-6">
         <ModuleForm courseId={course.id} />
       </Card>
-      {isFreeOperation() && <Card className="space-y-2 border-antique-gold/30"><CardTitle>تجهيز الدروس للرفع المجاني</CardTitle><p className="text-sm leading-8 text-text-soft">قسّمي التسجيل الطويل إلى دروس قصيرة، واضغطي كل مقطع إلى أقل من 50 ميجابايت قبل الرفع. يمكنك إضافة أوراق العمل بجوار الدرس. راقبي سعة التخزين والنقل من حالة النظام؛ تقسيم الفيديو لا يزيد إجمالي السعة المجانية.</p><Link href="/admin/system" className="inline-flex min-h-11 items-center text-sm text-burgundy underline">متابعة التشغيل والسعة</Link></Card>}
+      {isFreeOperation() && <Card className="space-y-2 border-antique-gold/30"><CardTitle>تجهيز الدروس للرفع المجاني</CardTitle><p className="text-sm leading-8 text-text-soft">قسّمي التسجيل الطويل إلى دروس قصيرة. الحد لكل فيديو {uploadLimitLabel('course-videos')}، بما يشمل الملف المساوي للحد. يمكنك إضافة أوراق العمل بجوار الدرس. راقبي سعة التخزين والنقل من حالة النظام؛ تقسيم الفيديو لا يزيد إجمالي السعة المجانية.</p><Link href="/admin/system" className="inline-flex min-h-11 items-center text-sm text-burgundy underline">متابعة التشغيل والسعة</Link></Card>}
 
       {modules.length === 0 ? (
         <EmptyState title="لا وحدات بعد" description="ابدئي بإضافة الوحدة الأولى من النموذج أعلاه." />
@@ -81,17 +83,22 @@ export default async function CurriculumBuilderPage({ params }: Props) {
                   {(lessonsByModule.get(m.id) ?? [])
                     .map((l) => (
                       <li key={l.id} className="space-y-3 px-4 py-3 text-sm">
-                        <div className="flex items-center justify-between gap-3">
-                        <span className="flex items-center gap-2 text-ink">
+                        <details className="group">
+                        <summary className="min-h-12 cursor-pointer rounded-lg py-2 text-deep-teal focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt">
+                        <span className="inline-flex w-[calc(100%_-_1.5rem)] flex-wrap items-center justify-between gap-3 align-middle">
+                        <span className="flex min-w-0 flex-wrap items-center gap-2 break-words text-ink">
                           {l.title}
                           {l.is_preview && <Badge tone="cobalt">معاينة</Badge>}
-                          {!l.video_path && <Badge tone="pending">بلا فيديو</Badge>}
+                          {l.video_path ? <Badge tone="success">فيديو محفوظ</Badge> : l.description?.trim() ? <Badge tone="cobalt">نص محفوظ</Badge> : <Badge tone="pending">أكملي المحتوى</Badge>}
                         </span>
                         <span className="tnum text-taupe">
                           {Math.round(l.duration_seconds / 60).toLocaleString('ar-EG')} د
                         </span>
-                        </div>
-                        <div className="grid gap-2 md:grid-cols-2"><div className="space-y-3"><ProtectedDeliveryUpload kind="lesson-video" entityId={l.id} label="فيديو الدرس حتى 50MB" />{!isFreeOperation() && <StreamVideoUpload lessonId={l.id} />}</div><ProtectedDeliveryUpload kind="lesson-resource" entityId={l.id} label="إضافة مورد للدرس" /></div>
+                        </span>
+                        </summary>
+                        <div className="space-y-4 border-t border-line pt-4">
+                        <p className="text-sm leading-7 text-text-soft">تعديل النص والفيديو والملفات يغيّر المادة المتاحة للمشتركات المستحقات؛ تظل صلاحيات الوصول وسجلات التقدم مرتبطة بالدرس نفسه.</p>
+                        <div className="grid gap-2 md:grid-cols-2"><div className="space-y-3"><ProtectedDeliveryUpload kind="lesson-video" entityId={l.id} label={`فيديو الدرس حتى ${uploadLimitLabel('course-videos')}`} />{!isFreeOperation() && <StreamVideoUpload lessonId={l.id} />}</div><ProtectedDeliveryUpload kind="lesson-resource" entityId={l.id} label="إضافة ورقة عمل أو ملف للدرس" /></div>
                         <div className="grid gap-2 md:grid-cols-2">
                           <ProtectedDeliveryItems
                             kind="lesson-video"
@@ -108,6 +115,8 @@ export default async function CurriculumBuilderPage({ params }: Props) {
                         </div>
                         <LessonContentEditor id={l.id} courseId={course.id} description={l.description??''} hasVideo={Boolean(l.video_path)}/>
                         <LessonEditor id={l.id} courseId={course.id} title={l.title} minutes={Math.round(l.duration_seconds/60)} sort={l.sort} preview={l.is_preview}/>
+                        </div>
+                        </details>
                       </li>
                     ))}
                 </ul>

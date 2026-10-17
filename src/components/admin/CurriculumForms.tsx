@@ -30,7 +30,7 @@ export function LessonForm({ moduleId, courseId }: { moduleId: string; courseId:
   }} className="space-y-3 rounded-2xl border border-line bg-surface-raised p-4">
     <fieldset disabled={action.busy} className="grid gap-3 disabled:opacity-60 sm:grid-cols-[2fr_1fr_auto]">
       <FormField label="عنوان الدرس" name="title" hint="اسم الدرس داخل المحور؛ اكتبي موضوعه بوضوح." example="تحديد أولويات الأسبوع" required minLength={2} maxLength={180}/>
-      <FormField label="الدقائق" name="minutes" type="number" min={0} max={1440} defaultValue={0} dir="ltr"/>
+      <FormField label="مدة الدرس بالدقائق" name="minutes" type="number" min={0} max={1440} defaultValue={0} dir="ltr" hint="الوقت التقريبي الذي تحتاجه المشتركة لإكمال الدرس. يمكنك تعديله لاحقًا." example="15 لدرس مدته ربع ساعة"/>
       <label className="flex min-h-12 items-center gap-2 self-end text-sm text-ink"><input type="checkbox" name="is_preview" className="h-5 w-5 accent-deep-teal"/>معاينة مجانية <span className="text-sm text-text-soft">اختياري · تسمح بالدرس دون شراء بعد نشر الكورس. مثال: الدرس التعريفي.</span></label>
       <Button type="submit" disabled={action.busy} className="justify-self-start">{action.busy ? 'جارٍ الإضافة…' : 'إضافة الدرس'}</Button>
     </fieldset>
