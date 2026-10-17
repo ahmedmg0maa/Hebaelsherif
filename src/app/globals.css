@@ -422,10 +422,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Selected learning direction: editorial photography, quiet brand surfaces. */
 /* The title stays in the normal grid flow, with room for Arabic glyphs and CMS text. */
 .learning-hero {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);background:var(--color-ivory);isolation:isolate;}
-.learning-hero-copy {min-width:0;padding:clamp(2rem,4vw,4.5rem);align-self:center;position:relative;}
-.learning-hero-title {font-size:clamp(2.5rem,3.7vw,4.25rem);line-height:1.55;overflow-wrap:break-word;}
+.learning-hero-copy {min-width:0;padding:clamp(2rem,3.4vw,3.5rem);align-self:center;position:relative;}
+.learning-hero .learning-hero-title {font-size:clamp(2.125rem,3.15vw,3rem);line-height:1.45;margin-block-start:1rem;overflow-wrap:break-word;text-wrap:balance;}
 .learning-hero-title > span {display:block;}
-.learning-hero-photo {position:relative;min-width:0;min-height:640px;overflow:hidden;}
+.learning-hero-lead {margin-block-start:1.25rem;}
+.learning-hero-copy .hero-actions {margin-block-start:1.5rem;}
+.learning-hero-profile {margin-block-start:1rem;}
+.learning-hero-photo {position:relative;min-width:0;min-height:clamp(32rem,45vw,40rem);overflow:hidden;}
 .learning-photo-caption {position:absolute;bottom:1.5rem;inset-inline:1.5rem;display:flex;align-items:flex-start;gap:.7rem;width:fit-content;max-width:calc(100% - 3rem);border:1px solid rgb(255 253 248 / .2);background:rgb(19 47 53 / .88);color:#fffdf8;border-radius:12px;padding:.8rem 1.1rem;font-size:.8rem;line-height:1.8;}
 .learning-photo-caption > span {margin-top:.45rem;flex-shrink:0;}
 .learning-journey,.learning-tour {background:radial-gradient(ellipse at 0% 0%,rgb(47 97 115 / .8),transparent 70%),#133943;color:#fffdf8;}
@@ -436,13 +439,13 @@ h1, h2, h3, h4, h5, h6 {
 #main-content, #start-guide, #start-paths {scroll-margin-top:7rem;}
 @media(max-width:1023px){
  .learning-hero{grid-template-columns:minmax(0,1fr)}
- .learning-hero-copy{padding:2rem 1.5rem 2.5rem}
- .learning-hero-copy h1{font-size:clamp(2.3rem,7.5vw,3.75rem);line-height:1.55}
+ .learning-hero-copy{padding:1.75rem clamp(1.25rem,4vw,2.5rem) 2rem}
+ .learning-hero .learning-hero-title{font-size:clamp(2rem,4.8vw,2.75rem)}
  .learning-hero-photo{min-height:0;width:100%;height:clamp(260px,60vw,480px)}
 }
 @media(max-width:359px){
  .learning-hero-copy{padding-inline:1.125rem}
- .learning-hero-copy h1{font-size:2.15rem}
+ .learning-hero .learning-hero-title{font-size:1.875rem}
  .learning-photo-caption{inset-inline:1rem;max-width:calc(100% - 2rem)}
 }
 @media(prefers-reduced-motion:reduce){.learning-hero *, .learning-journey *, .learning-tour *{animation:none!important;transition:none!important}}
@@ -521,7 +524,6 @@ html.dark .back-to-top {color:#8BD3C8}
  .tour-intro {max-width:48rem}
  .tour-benefits {grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
  .tour-benefits li {flex-direction:column;gap:.6rem}
- .learning-hero-photo {height:clamp(260px,52vw,440px)}
 }
 @media(max-width:599px) {
  .tour-benefits {grid-template-columns:minmax(0,1fr);gap:.75rem}
@@ -532,11 +534,9 @@ html.dark .back-to-top {color:#8BD3C8}
  .tour-stage-count {font-size:.7rem}
  .hero-actions {display:grid;grid-template-columns:minmax(0,1fr)}
  .hero-actions > * {width:100%}
- .learning-hero-title {font-size:clamp(2.1rem,8vw,3.25rem)}
  .public-canvas :is(h1,h2) {text-wrap:pretty}
 }
 @media(max-width:359px) {
- .learning-hero-copy h1 {font-size:2.1rem}
  .tour-tabs {padding-inline:.5rem;gap:.2rem}
  .tour-tabs button {font-size:.75rem}
  .tour-stage-count {padding:.3rem .5rem}
