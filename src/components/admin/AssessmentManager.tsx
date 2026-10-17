@@ -1,4 +1,5 @@
 'use client'
+import {AdminField,AdminSelect} from './AdminField'
 
 import { useState } from 'react'
 import { useAdminAction } from './useAdminAction'
@@ -36,9 +37,9 @@ function AssessmentEditor({ assessmentId, versionId, version, name, initial, ini
   }
   return <form className="space-y-5" aria-busy={busy} onSubmit={submit}><fieldset disabled={busy} className="min-w-0 space-y-5">
     <div className="grid gap-3 md:grid-cols-2">
-      <label className="grid gap-1 text-xs font-bold text-deep-teal">اسم الاختبار<input name="name" defaultValue={name} minLength={3} maxLength={120} className={input} required /></label>
-      <label className="grid gap-1 text-xs font-bold text-deep-teal">حالة الإصدار<select name="status" defaultValue={initialStatus} className={input}>{ASSESSMENT_STATUSES.map((status) => <option key={status} value={status}>{statusLabels[status]}</option>)}</select></label>
-      <label className="grid gap-1 text-xs font-bold text-deep-teal">موعد النشر عند اختيار «مجدول»<input name="publish_at" type="datetime-local" defaultValue={initialPublishAt?formatCairoLocalDateTime(initialPublishAt)??'':''} className={input} /></label>
+      <AdminField label="اسم الاختبار" name="name" defaultValue={name} minLength={3} maxLength={120} required />
+      <AdminSelect label="حالة الإصدار" name="status" defaultValue={initialStatus}>{ASSESSMENT_STATUSES.map((status) => <option key={status} value={status}>{statusLabels[status]}</option>)}</AdminSelect>
+      <AdminField label="موعد النشر عند اختيار «مجدول»" name="publish_at" type="datetime-local" defaultValue={initialPublishAt?formatCairoLocalDateTime(initialPublishAt)??'':''} />
       <p className="self-end rounded-xl bg-ivory/70 p-3 text-xs leading-relaxed text-text-soft">{versionId ? `تعديل الإصدار ${version?.toLocaleString('ar-EG')}` : assessmentId ? 'سيُنشأ إصدار جديد مستقل؛ النسخة المنشورة لن تتغير حتى النشر.' : 'سيُنشأ الاختبار وإصداره الأول.'}</p>
     </div>
     <fieldset className="grid gap-3 rounded-2xl border border-line p-4 md:grid-cols-2"><legend className="px-2 font-bold text-deep-teal">مقدمة وتنبيه</legend>

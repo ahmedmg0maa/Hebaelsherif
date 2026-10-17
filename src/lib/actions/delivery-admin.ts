@@ -53,7 +53,7 @@ async function recordRejectedUpload(input: {
   })
 }
 
-export async function beginProtectedUpload(kind: Kind, entityId: string, file: { name: string; type: string; size: number }): Promise<Result<{ bucket: string; path: string; token: string; intentId: string }>> {
+export async function beginProtectedUpload(kind: Kind, entityId: string, file: { name: string; type: string; size: number }): Promise<Result<{ bucket: string; path: string; token: string; uploadUrl: string; intentId: string }>> {
   const admin = await requirePermission('learning.manage')
   if (!admin?.userId) return { ok: false, error: 'لا تملكين صلاحية إدارة ملفات التسليم.' }
   const rule = getUploadRule(kind)
@@ -78,7 +78,7 @@ export async function beginProtectedUpload(kind: Kind, entityId: string, file: {
     await recordRejectedUpload({ actorId: admin.userId, intentId, outcome: 'rejected', reason: 'signed_upload_issue_failed', cleanupConfirmed: false })
     return { ok: false, error: 'تعذّر بدء الرفع الآمن.' }
   }
-  return { ok: true, data: { bucket: rule.bucket, path, token: data.token, intentId } }
+  return { ok: true, data: { bucket: rule.bucket, path, token: data.token, uploadUrl: data.signedUrl, intentId } }
 }
 
 export async function abandonProtectedUpload(kind: Kind, entityId: string, input: { intentId: string; path: string }): Promise<Result<{ abandoned: boolean }>> {

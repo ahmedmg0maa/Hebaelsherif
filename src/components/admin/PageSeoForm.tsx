@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { updatePageSeo } from '@/lib/actions/cms'
-import { FormField } from '@/components/ui/FormField'
+import { AdminField as FormField } from '@/components/admin/AdminField'
 import { Button } from '@/components/ui/Button'
 
 export function PageSeoForm({

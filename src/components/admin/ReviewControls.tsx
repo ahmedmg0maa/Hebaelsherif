@@ -5,7 +5,7 @@ import { moderateReview, type ReviewModerationAction } from '@/lib/actions/revie
 import { useAdminAction } from './useAdminAction'
 import { ActionFeedback } from './ActionFeedback'
 import { Button } from '@/components/ui/Button'
-import { FormTextarea } from '@/components/ui/FormField'
+import { AdminTextarea as FormTextarea } from '@/components/admin/AdminField'
 
 type Props = {
  id: string; approved: boolean; featured: boolean; status: string; version: number;

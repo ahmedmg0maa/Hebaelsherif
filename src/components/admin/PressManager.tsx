@@ -1,4 +1,6 @@
 'use client'
+import {AdminTextarea} from './AdminField'
+import {AdminField,AdminSelect} from './AdminField'
 
 import { formatCairoLocalDateTime } from '@/lib/booking/cairo-time'
 import { ActionFeedback } from '@/components/admin/ActionFeedback'
@@ -19,24 +21,23 @@ export type AdminPressRow = {
   preview_image_url?: string | null
 }
 
-const input = 'min-h-12 w-full rounded-xl border border-line bg-surface-raised px-3 py-2 text-base text-ink'
 const statusLabels: Record<PressStatus, string> = { draft: 'مسودة', scheduled: 'مجدول', published: 'منشور', archived: 'مؤرشف' }
 
 function PressFields({ row, media }: { row?: AdminPressRow; media: MediaOption[] }) {
   return <>
     {row && <input type="hidden" name="id" value={row.id} />}
     <div className="grid gap-3 md:grid-cols-2">
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">الجهة الأصلية<input name="outlet" defaultValue={row?.outlet ?? ''} minLength={2} maxLength={160} className={input} required /></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">عنوان الظهور<input name="title" defaultValue={row?.title ?? ''} minLength={4} maxLength={240} className={input} required /></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">النوع<select name="kind" defaultValue={row?.kind ?? 'article'} className={input}>{PRESS_KINDS.map((kind) => <option key={kind} value={kind}>{PRESS_KIND_LABELS[kind]}</option>)}</select></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">تصنيف المصدر<select name="source_classification" defaultValue={row?.source_classification ?? 'independent_editorial'} className={input}>{PRESS_CLASSIFICATIONS.map((kind) => <option key={kind} value={kind}>{PRESS_CLASSIFICATION_LABELS[kind]}</option>)}</select></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal md:col-span-2">الرابط الأصلي HTTPS<input name="original_url" type="url" pattern="https://.*" dir="ltr" defaultValue={row?.original_url ?? ''} className={input} required /></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">تاريخ الظهور<input name="published_on" type="date" defaultValue={row?.published_on ?? ''} className={input} required /></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">صورة من المكتبة<select name="image_media_id" defaultValue={row?.image_media_id ?? ''} className={input}><option value="">دون صورة</option>{media.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal md:col-span-2">مقتطف محدود — لا تنسخي مقالًا كاملًا<textarea name="excerpt" rows={4} maxLength={500} defaultValue={row?.excerpt ?? ''} className={input} /></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">الحالة<select name="status" defaultValue={row?.status ?? 'draft'} className={input}>{PRESS_STATUSES.map((status) => <option key={status} value={status}>{statusLabels[status]}</option>)}</select></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">موعد النشر بتوقيت القاهرة<input name="publish_at" type="datetime-local" defaultValue={(row?.publish_at ? formatCairoLocalDateTime(row.publish_at) : '') ?? ''} className={input} /></label>
-      <label className="grid gap-1 text-sm font-semibold text-deep-teal">الترتيب<input name="sort" type="number" min={0} max={10000} defaultValue={row?.sort ?? 100} className={input} /></label>
+      <AdminField label="الجهة الأصلية" name="outlet" defaultValue={row?.outlet ?? ''} minLength={2} maxLength={160} required />
+      <AdminField label="عنوان الظهور" name="title" defaultValue={row?.title ?? ''} minLength={4} maxLength={240} required />
+      <AdminSelect label="النوع" name="kind" defaultValue={row?.kind ?? 'article'}>{PRESS_KINDS.map((kind) => <option key={kind} value={kind}>{PRESS_KIND_LABELS[kind]}</option>)}</AdminSelect>
+      <AdminSelect label="تصنيف المصدر" name="source_classification" defaultValue={row?.source_classification ?? 'independent_editorial'}>{PRESS_CLASSIFICATIONS.map((kind) => <option key={kind} value={kind}>{PRESS_CLASSIFICATION_LABELS[kind]}</option>)}</AdminSelect>
+      <AdminField className="grid gap-1 text-sm font-semibold text-deep-teal md:col-span-2" label="الرابط الأصلي HTTPS" name="original_url" type="url" pattern="https://.*" dir="ltr" defaultValue={row?.original_url ?? ''} required />
+      <AdminField label="تاريخ الظهور" name="published_on" type="date" defaultValue={row?.published_on ?? ''} required />
+      <AdminSelect label="صورة من المكتبة" name="image_media_id" defaultValue={row?.image_media_id ?? ''}><option value="">دون صورة</option>{media.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</AdminSelect>
+      <AdminTextarea className="grid gap-1 text-sm font-semibold text-deep-teal md:col-span-2" label="مقتطف محدود — لا تنسخي مقالًا كاملًا" name="excerpt" rows={4} maxLength={500} defaultValue={row?.excerpt ?? ''} />
+      <AdminSelect label="الحالة" name="status" defaultValue={row?.status ?? 'draft'}>{PRESS_STATUSES.map((status) => <option key={status} value={status}>{statusLabels[status]}</option>)}</AdminSelect>
+      <AdminField label="موعد النشر بتوقيت القاهرة" name="publish_at" type="datetime-local" defaultValue={(row?.publish_at ? formatCairoLocalDateTime(row.publish_at) : '') ?? ''} />
+      <AdminField label="الترتيب" name="sort" type="number" min={0} max={10000} defaultValue={row?.sort ?? 100} />
       <label className="flex items-center gap-2 self-end pb-3 text-sm font-semibold text-deep-teal"><input name="is_featured" type="checkbox" defaultChecked={row?.is_featured ?? false} />مميّز في الأسطح المختارة</label>
     </div>
   </>

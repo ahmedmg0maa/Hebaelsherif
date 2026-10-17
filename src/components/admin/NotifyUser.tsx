@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { sendUserNotification, notificationHistory, type NotificationHistory } from '@/lib/actions/admin-tools'
 import { Button } from '@/components/ui/Button'
-import { FormField, FormTextarea, FormSelect } from '@/components/ui/FormField'
+import { AdminField as FormField, AdminTextarea as FormTextarea, AdminSelect as FormSelect } from '@/components/admin/AdminField'
 import { useAdminAction } from './useAdminAction'
 import { ActionFeedback } from './ActionFeedback'
 import { AdminEditorDialog } from './AdminEditorDialog'

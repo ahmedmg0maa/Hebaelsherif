@@ -1,3 +1,4 @@
+import {LessonContentEditor} from '@/components/admin/LessonContentEditor'
 import type { Metadata } from 'next'
 import { sha256 } from '@/lib/delivery/security'
 import Link from 'next/link'
@@ -49,7 +50,7 @@ export default async function CurriculumBuilderPage({ params }: Props) {
   const modules = modulesData ?? []
   const moduleIds = modules.map((module) => module.id)
   const lessonsResult = moduleIds.length
-    ? await supabase.from('course_lessons').select('id,module_id,title,duration_seconds,sort,is_preview,video_path,lesson_resources(id,title,kind,archived_at)').in('module_id', moduleIds).order('sort').limit(1000)
+    ? await supabase.from('course_lessons').select('id,module_id,title,description,duration_seconds,sort,is_preview,video_path,lesson_resources(id,title,kind,archived_at)').in('module_id', moduleIds).order('sort').limit(1000)
     : { data: [], error: null }
   if (lessonsResult.error) throw new Error('admin_curriculum_lessons_read_failed')
   const lessonsByModule = new Map<string, typeof lessonsResult.data>()
@@ -108,6 +109,7 @@ export default async function CurriculumBuilderPage({ params }: Props) {
                             items={(l.lesson_resources ?? []).filter((item) => !item.archived_at).map((item) => ({ id: item.id, title: item.title, detail: item.kind }))}
                           />
                         </div>
+                        <LessonContentEditor id={l.id} courseId={course.id} description={l.description??''} hasVideo={Boolean(l.video_path)}/>
                         <LessonEditor id={l.id} courseId={course.id} title={l.title} minutes={Math.round(l.duration_seconds/60)} sort={l.sort} preview={l.is_preview}/>
                       </li>
                     ))}

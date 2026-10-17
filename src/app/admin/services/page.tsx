@@ -1,3 +1,6 @@
+import { CoachScheduleManager, type CoachSchedule } from '@/components/admin/CoachScheduleManager'
+import { requirePermission } from '@/lib/auth/permissions'
+import { getServiceClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import { getPublicMediaOptions } from '@/lib/data/cms'
 import { adminCatalogPage,type CatalogQuery } from '@/lib/data/admin-catalog'
@@ -34,7 +37,11 @@ export default async function ServicesPage({searchParams}:{searchParams:Promise<
   const [listing,media]=await Promise.all([adminCatalogPage<ServiceRow>('services',
 'id, title, slug, description, duration_minutes, price, is_active, booking_payment_mode, buffer_before_minutes, buffer_after_minutes, minimum_notice_minutes, booking_window_days, hold_minutes, cancellation_notice_hours, reschedule_notice_hours, max_reschedules, booking_policy_note, products!inner(archived_at,compare_at_price, currency, subtitle, sort, cover_url), availability_rules(id, weekday, start_time, end_time), availability_exceptions(id, date, is_closed, start_time, end_time, kind, reason), booking_slot_overrides(id, date, start_time, mode, reason)',await searchParams),getPublicMediaOptions()])
   const serviceRows=listing.rows
+  const actor=await requirePermission('availability.manage')
+  let schedule:CoachSchedule|null=null
+  if(actor){const {data,error}=await getServiceClient().rpc('admin_read_coach_schedule',{p_actor_id:actor.userId});if(error)throw new Error('COACH_SCHEDULE_READ_UNAVAILABLE');schedule=data as CoachSchedule}
   return <div className="mx-auto max-w-5xl space-y-8"><header><h1 className="font-heading text-3xl text-deep-teal">الخدمات والسياسات</h1><p className="mt-2 leading-loose text-text-soft">إضافة الخدمات وتعديلها وإيقافها، وسياسات الحجز وإتاحة المواعيد بتوقيت القاهرة.</p></header>
+      {schedule&&<CoachScheduleManager schedule={schedule}/>}
       <CatalogListTools {...listing}/>
       <CatalogCreatePanel kind="service" media={media} />
 

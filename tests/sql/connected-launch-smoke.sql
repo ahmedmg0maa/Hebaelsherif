@@ -12,6 +12,7 @@ DECLARE
   held jsonb; replay jsonb; booked jsonb; booked_again jsonb; booking uuid;
   denied boolean := false;
 BEGIN
+  day:=day+((7-extract(dow from day)::int)%7);
   INSERT INTO auth.users(id,email,raw_user_meta_data) VALUES
     (customer,'launch-'||customer||'@example.test','{"full_name":"عميلة اختبار معزولة"}'),
     (contender,'launch-'||contender||'@example.test','{"full_name":"اختبار تنافس معزول"}');

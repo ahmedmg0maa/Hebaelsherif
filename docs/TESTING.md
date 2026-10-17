@@ -1,5 +1,11 @@
 # Testing and quality gates
 
+## Admin workflows — 2026-10-17
+
+`node scripts/verify-admin-workflow-behavior.mjs` executes calendar/navigation/Cairo DST and the actual upload transport with controlled XHR replies. The SQL fixtures `tests/sql/coach-schedule-smoke.sql`, `admin-content-smoke.sql` and `media-registration-smoke.sql` always roll back; they cover persisted success, denied permissions and atomic retry behavior without public data or email delivery. Run with `psql -v ON_ERROR_STOP=1` against a restored project first.
+
+`node scripts/verify-coach-concurrency.mjs` requires explicit loopback PGHOST and a PGDATABASE beginning `heba_restore_` or `heba_test_`. Set HEBA_TEST_PSQL to the local PostgreSQL binary if needed. It starts two independent sessions and removes its disposable fixtures, retaining content-free audit history. It refuses remote hosts and is not a production load test. Source gates and SQL success do not certify the live Admin browser workflow.
+
 ## Cream and motion design slice — 2026-10-13
 
 `corepack pnpm verify:motion-v3` runs 16 isolated actual-component handler, observer-fallback, artwork and contrast groups without a browser or provider credentials. It is not DOM-rendering or device acceptance. `corepack pnpm test:design-v3` is the separate cross-engine design suite; it requires an already-running review URL and available Playwright browser runtimes, and never starts a server itself. Simulated iPhone/Android/tablet projects do not certify physical hardware.

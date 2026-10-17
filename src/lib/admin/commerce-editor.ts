@@ -65,7 +65,7 @@ export function commerceEditorPayload(kind: CommerceEditorKind, form: FormData):
     } else if (kind === 'coupon') {
       const code = str('code', 24).toUpperCase(), discountKind = str('kind', 20, 'percent'), discountValue = num('value', 0.01, 99999999.99, null, true)
       if (!/^[A-Z0-9_-]{3,24}$/.test(code) || !['percent', 'fixed'].includes(discountKind) || discountValue === null || (discountKind === 'percent' && discountValue > 100)) throw new Error()
-      value = { code, kind: discountKind, value: discountValue, max_uses: num('max_uses', 1, 1000000, null), max_uses_per_user: num('max_uses_per_user', 1, 1000000, 1) }
+      value = { allow_with_offers:form.get('allow_with_offers')==='on',code, kind: discountKind, value: discountValue, max_uses: num('max_uses', 1, 1000000, null), max_uses_per_user: num('max_uses_per_user', 1, 1000000, 1) }
     } else if (kind === 'offer') {
       const title = str('title'), campaign = str('kind', 30, 'flash_sale'), discount_kind = str('discount_kind', 20, 'percent'), discount_value = num('discount_value', 0.01, 99999999.99, null, true)
       if (title.length < 3 || !['flash_sale', 'coupon_campaign', 'bundle', 'limited_seats', 'countdown', 'seasonal'].includes(campaign) || !['percent', 'fixed'].includes(discount_kind) || discount_value === null || (discount_kind === 'percent' && discount_value > 100)) throw new Error()
@@ -80,7 +80,9 @@ export function commerceEditorPayload(kind: CommerceEditorKind, form: FormData):
         if ((product_type !== null && !productTypes.includes(product_type)) || (category !== null && (typeof category !== 'string' || !category.trim() || category.length > 180)) || (!product_id && !product_type && !category)) throw new Error()
         return { product_id, product_type, category }
       })
-      value = { title, kind: campaign, description: str('description', 10000), badge_text: str('badge_text', 100) || null, discount_kind, discount_value, usage_limit: num('usage_limit', 1, 1000000, null), targets: normalized }
+      const cta_label=str('cta_label',80,'تفاصيل العرض'),cta_href=str('cta_href',180,'/offers'),terms=str('terms',2000)
+      if(cta_label.length<2||!/^\/[a-zA-Z0-9/_?=&-]*$/.test(cta_href)||cta_href.startsWith('//'))return {ok:false,error:'اكتبي نص زر من 2 إلى 80 حرفًا، ورابطًا داخليًا صحيحًا مثل /courses دون مسافات.'}
+      value = {cta_label,cta_href,terms,show_on_home:form.get('show_on_home')==='on',is_active:form.get('is_active')==='on', title, kind: campaign, description: str('description', 10000), badge_text: str('badge_text', 100) || null, discount_kind, discount_value, usage_limit: num('usage_limit', 1, 1000000, null), targets: normalized }
     } else throw new Error()
     return { ok: true, value: { ...value, starts_at, ends_at } }
   } catch { return { ok: false, error: 'راجعي الحقول والأرقام والحدود ومواعيد البداية والنهاية بتوقيت القاهرة.' } }

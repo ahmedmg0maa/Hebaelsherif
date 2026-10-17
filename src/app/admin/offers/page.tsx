@@ -10,7 +10,7 @@ import { OfferForm, ActiveToggle, OfferEdit } from '@/components/admin/Marketing
 
 export const metadata: Metadata = { title: 'العروض — الإدارة' }
 
-const dateFmt = new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short' })
+const dateFmt = new Intl.DateTimeFormat('ar-EG', { timeZone:'Africa/Cairo', day: 'numeric', month: 'short' })
 
 const kindLabels: Record<string, string> = {
   flash_sale: 'تخفيض سريع',

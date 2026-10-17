@@ -9,7 +9,7 @@ const inputBase =
 type BaseProps = {
   label: string
   name: string
-  hint?: string
+  hint?: React.ReactNode
   error?: string
   required?: boolean
   className?: string
@@ -31,13 +31,10 @@ function FieldWrap({
         {required && <span className="ms-1 text-burgundy">*</span>}
       </label>
       {children}
-      {error ? (
-        <p id={`${name}-feedback`} className="text-sm font-medium text-burgundy" role="alert">
-          {error}
-        </p>
-      ) : hint ? (
-        <p id={`${name}-feedback`} className="text-sm text-text-soft">{hint}</p>
-      ) : null}
+      {(error || hint) ? <div id={`${name}-feedback`} className="space-y-1">
+        {hint && <div className="text-sm leading-6 text-text-soft">{hint}</div>}
+        {error && <p className="text-sm font-medium text-burgundy" role="alert">{error}</p>}
+      </div> : null}
     </div>
   )
 }
@@ -84,10 +81,10 @@ export function FormTextarea({ label, name, hint, error, required, className, ..
 }
 
 type SelectProps = BaseProps & {
-  options: Array<{ value: string; label: string }>
+  options?: Array<{ value: string; label: string }>
 } & Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'name' | 'className'>
 
-export function FormSelect({ label, name, hint, error, required, className, options, ...select }: SelectProps) {
+export function FormSelect({ label, name, hint, error, required, className, options, children, ...select }: SelectProps) {
   const generatedId = useId()
   const id = select.id ?? `${name}-${generatedId}`
   return (
@@ -101,11 +98,11 @@ export function FormSelect({ label, name, hint, error, required, className, opti
         className={cn(inputBase, 'appearance-none', error && 'border-burgundy/60')}
         {...select}
       >
-        {options.map((o) => (
+        {options ? options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
           </option>
-        ))}
+        )) : children}
       </select>
     </FieldWrap>
   )

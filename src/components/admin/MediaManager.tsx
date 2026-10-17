@@ -3,67 +3,76 @@
 import { useState } from 'react'
 import { beginMediaUpload, finalizeMediaUpload, manageMediaLifecycle, updateMediaMetadata } from '@/lib/actions/admin-control'
 import { Button } from '@/components/ui/Button'
-import { getBrowserClient } from '@/lib/supabase/client'
+import {uploadProtectedFile} from '@/lib/delivery/direct-upload'
+import {useAdminAction} from './useAdminAction'
+import {ActionFeedback} from './ActionFeedback'
+import {AdminField,AdminSelect} from './AdminField'
 
-const input = 'mt-1 min-h-11 w-full rounded-xl border border-line bg-surface-raised px-4 py-2 text-sm text-ink'
 
 export function MediaUpload() {
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
-  return <form className="grid gap-4 rounded-2xl border border-antique-gold/30 bg-surface-raised p-6 shadow-card md:grid-cols-2" onSubmit={async (event) => {
-    event.preventDefault(); setBusy(true); setMessage(null)
-    const form = new FormData(event.currentTarget)
-    const file = form.get('file')
-    if (!(file instanceof File)) { setMessage('اختاري ملفًا.'); setBusy(false); return }
-    const input = {
-      bucket: String(form.get('bucket') ?? ''), name: file.name, type: file.type, size: file.size,
-      title: String(form.get('title') ?? ''), alt: String(form.get('alt') ?? ''), tags: String(form.get('tags') ?? ''),
-      caption: String(form.get('caption') ?? ''), credit: String(form.get('credit') ?? ''), rightsStatus: String(form.get('rights_status') ?? ''),
-      rightsReference: String(form.get('rights_reference') ?? ''), folder: String(form.get('folder') ?? ''),
-      focalX: Number(form.get('focal_x') ?? 50), focalY: Number(form.get('focal_y') ?? 50),
-    }
-    const started = await beginMediaUpload(input)
-    if (!started.ok) { setMessage(started.error); setBusy(false); return }
-    const upload = await getBrowserClient().storage.from(started.data.bucket).uploadToSignedUrl(started.data.path, started.data.token, file, { contentType: file.type })
-    const result = upload.error ? { ok: false as const, error: 'تعذّر رفع الملف بأمان. حاولي مرة أخرى.' } : await finalizeMediaUpload({ ...input, path: started.data.path })
-    setMessage(result.ok ? 'تم رفع الملف وفهرسته في المكتبة.' : result.error); setBusy(false)
-    if (result.ok) event.currentTarget.reset()
+  const {busy,feedback,run}=useAdminAction()
+  type Pending={input:Parameters<typeof finalizeMediaUpload>[0];url:string;file:File}
+  const [pending,setPending]=useState<Pending|null>(null),[percent,setPercent]=useState<number|null>(null)
+  async function finish(job:Pending){const result=await finalizeMediaUpload(job.input);if(result.ok)setPending(null);return result}
+  async function transfer(job:Pending){
+   setPercent(0)
+   try{await uploadProtectedFile(job.url,job.file,setPercent)}catch{setPercent(null);return {ok:false as const,error:'توقف النقل أو لم يتأكد الرد. استخدمي التحقق من نفس المحاولة؛ يمكن إعادة نقل الملف نفسه دون إضافة عنصر جديد.'}}
+   setPercent(null);return finish(job)
+  }
+  return <form className="grid gap-4 rounded-2xl border border-antique-gold/30 bg-surface-raised p-4 shadow-card sm:p-6" aria-busy={busy} onSubmit={async event=>{
+   event.preventDefault();const element=event.currentTarget,form=new FormData(element)
+   const ok=await run(async()=>{
+    if(pending)return finish(pending)
+    const file=form.get('file')
+    if(!(file instanceof File)||!file.size)return {ok:false,error:'اختاري ملفًا غير فارغ.'}
+    const bucket=String(form.get('bucket')??'')
+    if(file.size>(bucket==='public-media'?10485760:50000000))return {ok:false,error:'حجم الملف أكبر من الحد الموضح؛ اضغطيه قبل الرفع.'}
+    const input={bucket,name:file.name,type:file.type,size:file.size,title:String(form.get('title')??''),alt:String(form.get('alt')??''),tags:String(form.get('tags')??''),caption:String(form.get('caption')??''),credit:String(form.get('credit')??''),rightsStatus:String(form.get('rights_status')??''),rightsReference:String(form.get('rights_reference')??''),folder:String(form.get('folder')??''),focalX:Number(form.get('focal_x')??50),focalY:Number(form.get('focal_y')??50)}
+    const started=await beginMediaUpload(input)
+    if(!started.ok)return started
+    const job={input:{...input,path:started.data.path},url:started.data.uploadUrl,file}
+    setPending(job);return transfer(job)
+   },'اكتمل النقل وسُجّل الملف مرة واحدة في المكتبة.')
+   if(ok)element.reset()
   }}>
-    <label className="text-sm font-semibold text-deep-teal">الملف<input name="file" type="file" required className={input} /></label>
-    <label className="text-sm font-semibold text-deep-teal">المخزن<select name="bucket" className={input}><option value="public-media">وسائط عامة</option><option value="course-videos">فيديو الدورات</option><option value="course-resources">موارد الدورات</option><option value="protected-books">الكتب المحمية</option><option value="workshop-recordings">تسجيلات الورش</option></select></label>
-    <label className="text-sm font-semibold text-deep-teal">اسم واضح للأصل<input name="title" className={input} placeholder="مثال: غلاف دورة الوعي" /></label>
-    <label className="text-sm font-semibold text-deep-teal">وسوم مفصولة بفواصل<input name="tags" className={input} placeholder="دورات، أغلفة، رئيسية" /></label>
-    <label className="text-sm font-semibold text-deep-teal md:col-span-2">النص البديل / الوصف<input name="alt" className={input} placeholder="صفي ما يظهر في الصورة لمن لا يستطيع رؤيتها" /></label>
-    <label className="text-sm font-semibold text-deep-teal">المجلد التنظيمي<input name="folder" defaultValue="uncategorized" dir="ltr" className={input} /></label>
-    <label className="text-sm font-semibold text-deep-teal">حقوق الاستخدام<select name="rights_status" defaultValue="unverified" className={input}><option value="unverified">غير موثقة</option><option value="owned">مملوك</option><option value="licensed">مرخّص</option><option value="public_domain">ملكية عامة</option></select></label>
-    <label className="text-sm font-semibold text-deep-teal">تعليق الصورة<input name="caption" className={input} /></label>
-    <label className="text-sm font-semibold text-deep-teal">النسبة / المصوّر<input name="credit" className={input} /></label>
-    <label className="text-sm font-semibold text-deep-teal md:col-span-2">مرجع الحق أو الترخيص<input name="rights_reference" className={input} placeholder="رقم ترخيص أو رابط المصدر — من دون أسرار" /></label>
-    <div className="grid gap-3 md:col-span-2 sm:grid-cols-2"><label className="text-sm font-semibold text-deep-teal">بؤرة القص أفقيًا %<input name="focal_x" type="number" min="0" max="100" defaultValue="50" className={input} /></label><label className="text-sm font-semibold text-deep-teal">بؤرة القص رأسيًا %<input name="focal_y" type="number" min="0" max="100" defaultValue="50" className={input} /></label></div>
+    <p className="text-sm leading-7 text-text-soft">وسائط عامة: صور JPG وPNG وWebP وGIF وSVG أو PDF حتى 10 ميجابايت. الملفات الخاصة حتى 50 ميجابايت بحسب النوع. لربط فيديو أو كتاب بالعميلات استخدمي أدوات الرفع داخل الكورس أو الكتاب. الرفع هنا يُضيف إلى المكتبة فقط.</p>
+    <fieldset disabled={busy||Boolean(pending)} className="grid gap-4 md:grid-cols-2">
+    <AdminField label="الملف" name="file" type="file" required />
+    <AdminSelect label="المخزن" name="bucket" required options={[{"value": "public-media", "label": "وسائط عامة"}, {"value": "course-videos", "label": "فيديو الدورات"}, {"value": "course-resources", "label": "موارد الدورات"}, {"value": "protected-books", "label": "الكتب المحمية"}, {"value": "workshop-recordings", "label": "تسجيلات الورش"}]}/>
+    <AdminField label="اسم واضح للأصل" name="title" />
+    <AdminField label="وسوم مفصولة بفواصل" name="tags" />
+    <AdminField label="النص البديل / الوصف" name="alt" />
+    <AdminField label="المجلد التنظيمي" name="folder" defaultValue="uncategorized" dir="ltr" />
+    <AdminSelect label="حقوق الاستخدام" name="rights_status" defaultValue="unverified" required options={[{"value": "unverified", "label": "غير موثقة"}, {"value": "owned", "label": "مملوك"}, {"value": "licensed", "label": "مرخّص"}, {"value": "public_domain", "label": "ملكية عامة"}]}/>
+    <AdminField label="تعليق الصورة" name="caption" />
+    <AdminField label="النسبة / المصوّر" name="credit" />
+    <AdminField label="مرجع الحق أو الترخيص" name="rights_reference" />
+    <div className="grid gap-3 md:col-span-2 sm:grid-cols-2"><AdminField label="بؤرة القص أفقيًا %" name="focal_x" type="number" min="0" max="100" defaultValue="50" /><AdminField label="بؤرة القص رأسيًا %" name="focal_y" type="number" min="0" max="100" defaultValue="50" /></div>
     <p className="text-xs text-text-soft md:col-span-2">الصور العامة تتطلب نصًا بديلًا. أنواع الملفات والحجم تُفحص حسب المخزن، والملفات الخاصة لا تحصل على رابط عام.</p>
-    {message && <p className="text-sm font-semibold text-deep-teal md:col-span-2" role="status">{message}</p>}
-    <Button type="submit" disabled={busy} className="justify-self-start">{busy ? 'جاري الرفع…' : 'رفع وفهرسة الملف'}</Button>
+    </fieldset>
+    {percent!==null&&<div><progress max={100} value={percent} className="w-full" aria-label="تقدم نقل الوسائط"/><p role="status" className="text-sm text-text-soft">{percent.toLocaleString('ar-EG')}٪ نقل — ثم التحقق والتسجيل.</p></div>}
+    <ActionFeedback feedback={feedback}/>
+    <div className="flex flex-wrap gap-2"><Button type="submit" disabled={busy}>{busy?'جارٍ التنفيذ…':pending?'التحقق وتسجيل نفس المحاولة':'رفع وفهرسة الملف'}</Button>{pending&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>run(()=>transfer(pending),'اكتمل النقل والتسجيل دون تكرار.')}>إعادة نقل الملف نفسه</Button>}</div>
   </form>
 }
 
 type MediaMetadataProps = { id: string; title: string; alt: string; tags: string[]; caption: string; credit: string; rightsStatus: string; rightsReference: string; folder: string; focalX: number; focalY: number }
 
 export function MediaMetadata({ id, title, alt, tags, caption, credit, rightsStatus, rightsReference, folder, focalX, focalY }: MediaMetadataProps) {
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
+  const {busy,feedback,run}=useAdminAction()
   return <details className="rounded-xl border border-line bg-ivory/40"><summary className="cursor-pointer list-none px-3 py-2 text-xs font-bold text-deep-teal">تعديل البيانات</summary><form className="grid gap-2 border-t border-line p-3" onSubmit={async (event) => {
-    event.preventDefault(); setBusy(true); const result = await updateMediaMetadata(id, new FormData(event.currentTarget)); setMessage(result.ok ? 'حُفظت البيانات.' : result.error); setBusy(false)
+    event.preventDefault();const data=new FormData(event.currentTarget);await run(()=>updateMediaMetadata(id,data),'حُفظت بيانات الوسائط.')
   }}>
-    <label className="text-xs font-semibold text-deep-teal">الاسم<input name="title" defaultValue={title} className={input} required /></label>
-    <label className="text-xs font-semibold text-deep-teal">النص البديل<input name="alt" defaultValue={alt} className={input} /></label>
-    <label className="text-xs font-semibold text-deep-teal">الوسوم<input name="tags" defaultValue={tags.join(', ')} className={input} /></label>
-    <label className="text-xs font-semibold text-deep-teal">المجلد<input name="folder" defaultValue={folder} dir="ltr" className={input} /></label>
-    <label className="text-xs font-semibold text-deep-teal">حقوق الاستخدام<select name="rights_status" defaultValue={rightsStatus} className={input}><option value="unverified">غير موثقة</option><option value="owned">مملوك</option><option value="licensed">مرخّص</option><option value="public_domain">ملكية عامة</option></select></label>
-    <label className="text-xs font-semibold text-deep-teal">التعليق<input name="caption" defaultValue={caption} className={input} /></label>
-    <label className="text-xs font-semibold text-deep-teal">النسبة<input name="credit" defaultValue={credit} className={input} /></label>
-    <label className="text-xs font-semibold text-deep-teal">مرجع الحق<input name="rights_reference" defaultValue={rightsReference} className={input} /></label>
-    <div className="grid grid-cols-2 gap-2"><label className="text-xs font-semibold text-deep-teal">بؤرة X<input name="focal_x" type="number" min="0" max="100" defaultValue={focalX} className={input} /></label><label className="text-xs font-semibold text-deep-teal">بؤرة Y<input name="focal_y" type="number" min="0" max="100" defaultValue={focalY} className={input} /></label></div>
-    {message && <p role="status" className="text-xs font-semibold text-deep-teal">{message}</p>}
+    <AdminField label="الاسم" name="title" defaultValue={title} required />
+    <AdminField label="النص البديل" name="alt" defaultValue={alt} />
+    <AdminField label="الوسوم" name="tags" defaultValue={tags.join(', ')} />
+    <AdminField label="المجلد" name="folder" defaultValue={folder} dir="ltr" />
+    <AdminSelect label="حقوق الاستخدام" name="rights_status" defaultValue={rightsStatus} required options={[{"value": "unverified", "label": "غير موثقة"}, {"value": "owned", "label": "مملوك"}, {"value": "licensed", "label": "مرخّص"}, {"value": "public_domain", "label": "ملكية عامة"}]}/>
+    <AdminField label="التعليق" name="caption" defaultValue={caption} />
+    <AdminField label="النسبة" name="credit" defaultValue={credit} />
+    <AdminField label="مرجع الحق" name="rights_reference" defaultValue={rightsReference} />
+    <div className="grid grid-cols-2 gap-2"><AdminField label="بؤرة X" name="focal_x" type="number" min="0" max="100" defaultValue={focalX} /><AdminField label="بؤرة Y" name="focal_y" type="number" min="0" max="100" defaultValue={focalY} /></div>
+    <ActionFeedback feedback={feedback}/>
     <Button size="sm" type="submit" disabled={busy}>{busy ? 'جاري الحفظ…' : 'حفظ البيانات'}</Button>
   </form></details>
 }

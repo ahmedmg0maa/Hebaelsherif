@@ -7,6 +7,7 @@ import { getServiceClient } from '@/lib/supabase/server'
 type Result = { ok: true } | { ok: false; error: string }
 
 function refresh() {
+  revalidatePath('/admin/services')
   revalidatePath('/admin/bookings')
   revalidatePath('/booking')
   revalidatePath('/services')
@@ -14,6 +15,8 @@ function refresh() {
 
 function governanceError(message: string, fallback: string): string {
   const normalized = message.toLowerCase()
+  if (normalized.includes('coach_schedule_conflict')) return 'لم يُحفظ التعديل لأنه يغلق وقت حجز قائم أو حجز مؤقت. راجعي أجندة الحجوزات وانقلي الموعد أولًا أو اختاري فترة أخرى. لم يُلغَ أي حجز.'
+  if (normalized.includes('coach_working_hours')) return 'يجب أن تقع الجلسة وفترتا الراحة كاملتين داخل ساعات عمل هبة، وبعيدًا عن الفترات المغلقة.'
   if (normalized.includes('permission_required')) return 'انتهت صلاحية الجلسة الإدارية أو لا تملكين الصلاحية المطلوبة.'
   if (normalized.includes('not_found')) return 'لم يعد السجل المطلوب موجودًا. حدّثي الصفحة وحاولي مجددًا.'
   if (normalized.includes('overlap') || normalized.includes('unavailable') || normalized.includes('23p01')) return 'الوقت المختار غير متاح أو يتداخل مع موعد قائم.'
@@ -58,7 +61,7 @@ export async function saveBookingSlotOverride(formData: FormData): Promise<Resul
   const mode = String(formData.get('mode') ?? '')
   const reason = String(formData.get('reason') ?? '').trim().slice(0, 500)
   if (!serviceId || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(startTime) || !['open', 'closed'].includes(mode))
-    return { ok: false, error: 'راجعي تاريخ ووقت وحالة الـ slot.' }
+    return { ok: false, error: 'اختاري تاريخًا ووقتًا صحيحين، وحددي فتح الموعد أو إغلاقه.' }
   const { error } = await getServiceClient().rpc('admin_upsert_booking_slot_override', {
     p_actor_id: admin.userId,
     p_service_id: serviceId,
@@ -115,7 +118,7 @@ export async function saveAvailabilityWindow(formData: FormData): Promise<Result
   const weekday = Number(formData.get('weekday'))
   const startTime = String(formData.get('start_time') ?? '')
   const endTime = String(formData.get('end_time') ?? '')
-  if (!serviceId || weekday < 0 || weekday > 6 || !/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime) || startTime >= endTime) return { ok: false, error: 'راجعي اليوم وبداية النافذة ونهايتها.' }
+  if (!serviceId || !Number.isInteger(weekday) || weekday < 0 || weekday > 6 || !validTime(startTime) || !validTime(endTime) || startTime >= endTime) return { ok: false, error: 'راجعي اليوم وبداية الفترة ونهايتها؛ النهاية يجب أن تأتي بعد البداية.' }
   const { error } = await getServiceClient().rpc('admin_create_availability_window', {
     p_actor_id: admin.userId,
     p_service_id: serviceId,
@@ -136,4 +139,34 @@ export async function deleteAvailabilityWindow(windowId: string): Promise<Result
   })
   if (error) return { ok: false, error: governanceError(error.message, 'تعذّر حذف نافذة الإتاحة.') }
   refresh(); return { ok: true }
+}
+
+const validTime = (s: string) => /^([01]\d|2[0-3]):[0-5]\d$/.test(s)
+const validDate = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s)) && new Date(s).toISOString().slice(0,10)===s
+
+export async function saveCoachHours(form: FormData): Promise<Result> {
+ const admin=await requirePermission('availability.manage')
+ if(!admin) return {ok:false,error:'لا تملكين صلاحية إدارة المواعيد.'}
+ const hours=Array.from({length:7},(_,weekday)=>({weekday,is_open:form.get(`open_${weekday}`)==='on',start_time:String(form.get(`start_${weekday}`)??''),end_time:String(form.get(`end_${weekday}`)??'')}))
+ if(hours.some(h=>!validTime(h.start_time)||!validTime(h.end_time)||h.start_time>=h.end_time)) return {ok:false,error:'راجعي ساعات كل يوم. اكتبي بداية ونهاية صحيحتين، والنهاية بعد البداية.'}
+ const {error}=await getServiceClient().rpc('admin_save_coach_hours',{p_actor_id:admin.userId,p_hours:hours})
+ if(error) return {ok:false,error:governanceError(error.message,'تعذّر حفظ جدول العمل. لم تتغير المواعيد.')}
+ refresh();return {ok:true}
+}
+export async function saveCoachException(form: FormData): Promise<Result> {
+ const admin=await requirePermission('availability.manage')
+ if(!admin) return {ok:false,error:'لا تملكين صلاحية إدارة المواعيد.'}
+ const date=String(form.get('date')??''),kind=String(form.get('kind')??''),wholeDay=form.get('whole_day')==='on'
+ const start=wholeDay?'00:00':String(form.get('start_time')??''),end=wholeDay?'24:00':String(form.get('end_time')??''),reason=String(form.get('reason')??'').trim()
+ if(!validDate(date)||!['open','closed'].includes(kind)||(!validTime(start))||(!validTime(end)&&!(wholeDay&&end==='24:00'))||start>=end||reason.length>500|| (wholeDay&&kind!=='closed')) return {ok:false,error:'اختاري تاريخًا ونوعًا وفترة صحيحة. إغلاق اليوم الكامل متاح للإغلاق فقط، والسبب بحد أقصى 500 حرف.'}
+ const {error}=await getServiceClient().rpc('admin_save_coach_exception',{p_actor_id:admin.userId,p_date:date,p_kind:kind,p_start:start,p_end:end,p_reason:reason})
+ if(error)return {ok:false,error:governanceError(error.message,'تعذّر حفظ الفترة الاستثنائية.')}
+ refresh();return {ok:true}
+}
+export async function deleteCoachException(id: string): Promise<Result> {
+ const admin=await requirePermission('availability.manage')
+ if(!admin)return {ok:false,error:'لا تملكين صلاحية إدارة المواعيد.'}
+ const {error}=await getServiceClient().rpc('admin_delete_coach_exception',{p_actor_id:admin.userId,p_id:id})
+ if(error)return {ok:false,error:governanceError(error.message,'تعذّرت استعادة الجدول المعتاد.')}
+ refresh();return {ok:true}
 }

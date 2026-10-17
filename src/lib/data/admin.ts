@@ -268,6 +268,7 @@ export async function getAdminOrders(status?: string, limit = 100): Promise<Admi
 }
 
 export type AdminCoupon = {
+  allowWithOffers:boolean
   id: string
   code: string
   kind: string
@@ -286,12 +287,12 @@ export async function getAdminCoupons(): Promise<AdminCoupon[]> {
     const supabase = await getServerClient()
     const { data, error } = await supabase
       .from('coupons')
-      .select('id, code, kind, value, max_uses, max_uses_per_user, starts_at, ends_at, is_active, coupon_redemptions(id)')
+      .select('allow_with_offers,id, code, kind, value, max_uses, max_uses_per_user, starts_at, ends_at, is_active, coupon_redemptions(id)')
       .order('created_at', { ascending: false })
     if (error) throw new Error('ADMIN_COUPONS_UNAVAILABLE')
     return (data ?? []).map((c) => ({
       id: c.id,
-      code: c.code,
+      code: c.code,allowWithOffers:c.allow_with_offers,
       kind: c.kind,
       value: Number(c.value),
       maxUses: c.max_uses,
@@ -307,6 +308,10 @@ export async function getAdminCoupons(): Promise<AdminCoupon[]> {
 }
 
 export type AdminOffer = {
+  ctaLabel:string
+  ctaHref:string
+  terms:string
+  showOnHome:boolean
   id: string
   kind: string
   title: string
@@ -328,7 +333,7 @@ export async function getAdminOffers(): Promise<AdminOffer[]> {
     const supabase = await getServerClient()
     const { data, error } = await supabase
       .from('offers')
-      .select('id, kind, title, description, badge_text, discount_kind, discount_value, starts_at, ends_at, is_active, usage_limit, offer_targets(product_type, product_id, category)')
+      .select('cta_label,cta_href,terms,show_on_home,id, kind, title, description, badge_text, discount_kind, discount_value, starts_at, ends_at, is_active, usage_limit, offer_targets(product_type, product_id, category)')
       .order('created_at', { ascending: false })
     if (error) throw new Error('ADMIN_OFFERS_UNAVAILABLE')
     return (data ?? []).map((o) => ({
@@ -337,6 +342,7 @@ export async function getAdminOffers(): Promise<AdminOffer[]> {
       title: o.title,
       description: o.description,
       badgeText: o.badge_text,
+      ctaLabel:o.cta_label,ctaHref:o.cta_href,terms:o.terms,showOnHome:o.show_on_home,
       discountKind: o.discount_kind,
       discountValue: o.discount_value ? Number(o.discount_value) : null,
       startsAt: o.starts_at,

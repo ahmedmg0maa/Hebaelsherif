@@ -5,7 +5,7 @@ const issues=validateLaunchConfig(process.env)
 if(issues.length){console.error(issues.join('\n'));process.exit(1)}
 const db=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})
 const {data:contract,error}=await db.rpc('booking_runtime_contract')
-if(error||contract?.coachCalendar!=='097'||contract?.customerJourney!=='093')throw Error('Booking database contract is not current. Apply the missing migrations in order.')
+if(error||contract?.coachWorkingHours!=='103'||contract?.coachCalendar!=='097'||contract?.customerJourney!=='093')throw Error('Booking database contract is not current. Apply the missing migrations in order.')
 const {data:launch,error:launchError}=await db.rpc('launch_runtime_contract')
 if(launchError||launch?.revision!=='102'||launch?.freeOperations!=='102')throw Error('Launch database revision 102 is missing. Apply missing migrations only, in order.')
 let owner=null

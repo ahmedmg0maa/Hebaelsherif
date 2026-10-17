@@ -77,7 +77,7 @@ export async function getBookingExperience(): Promise<BookingExperience> {
   try {
     const supabase = await getServerClient()
     const { data: contract, error: contractError } = await supabase.rpc('booking_runtime_contract')
-    if (contractError || (contract?.migration !== '044' || contract?.customerJourney !== '093' || contract?.coachCalendar !== '097')) {
+    if (contractError || (contract?.migration !== '044' || contract?.customerJourney !== '093' || contract?.coachCalendar !== '097' || contract?.coachWorkingHours !== '103')) {
       return { services: [], paymentSettings, calendarDates, credits: [], policy, runtime: { status: 'migration-required', detail: 'عقد الحجز واستعادة المحاولات 092–093 والتقويم المشترك 097 غير مكتمل. راجعي الترحيلات في المشروع الصحيح قبل نشر الحجز.' } }
     }
     const { data, error: servicesError } = await supabase

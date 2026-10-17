@@ -1,0 +1,42 @@
+BEGIN;
+SET LOCAL statement_timeout='45s';
+DO $test$
+declare actor uuid; u uuid:=gen_random_uuid(); p uuid:=gen_random_uuid(); c uuid:=gen_random_uuid(); m uuid; l uuid; offer jsonb; coupon jsonb; quote jsonb; payload jsonb; jid uuid; denied boolean:=false;
+begin
+ select user_id into actor from public.admin_roles where role='owner' limit 1;
+ perform set_config('request.jwt.claims','{"role":"service_role"}',true);
+ insert into auth.users(id,email,raw_user_meta_data) values(u,'content-'||u||'@example.test','{}');
+ insert into public.products(id,type,slug,title,description,subtitle,price,is_published) values(p,'course','content-'||p,'اختبار معزول','محتوى اختباري معزول لا يراه الجمهور','اختبار',100,true);
+ insert into public.courses(id,product_id,slug,title,description,duration_minutes,is_published) values(c,p,'content-'||c,'اختبار معزول','محتوى اختباري معزول لا يراه الجمهور',60,false);
+ m:=public.manage_course_curriculum(actor,'module_create',c,null,null,'محور اختبار');
+ l:=public.manage_course_curriculum(actor,'lesson_create',c,m,null,'درس اختبار',null,600,false);
+ perform public.admin_save_lesson_text(actor,l,'نص تعليمي معزول طويل بما يكفي لاختبار الحفظ الفعلي والمعاينة.');
+ if (select char_length(description) from public.course_lessons where id=l)<24 then raise exception 'lesson_text_not_saved';end if;
+ begin perform public.admin_save_lesson_text(u,l,'تعديل ممنوع');exception when insufficient_privilege then denied:=true;end;
+ if not denied then raise exception 'lesson_permission_failed';end if;
+ jid:=public.admin_schedule_catalog(actor,'course',c,'hide',now()+interval '1 hour');
+ update public.catalog_publication_jobs set run_at=now()-interval '1 second' where id=jid;
+ perform public.process_catalog_publication_jobs();
+ if (select status from public.catalog_publication_jobs where id=jid)<>'done' or (select is_published from public.products where id=p) then raise exception 'hide_job_failed';end if;
+ if public.process_catalog_publication_jobs()<>0 then raise exception 'job_replayed';end if;
+ -- Deliberately incomplete cover must fail publication, never invent readiness.
+ denied:=false;begin perform public.admin_schedule_catalog(actor,'course',c,'publish',now()+interval '1 hour');exception when others then denied:=true;end;
+ if not denied then raise exception 'incomplete_course_scheduled';end if;
+ update public.products set is_published=true where id=p;
+ update public.courses set is_published=true where id=c;
+ payload:=jsonb_build_object('title','عرض معزول','description','اختبار داخلي','kind','flash_sale','badge_text',null,'discount_kind','percent','discount_value',10,'starts_at',null,'ends_at',null,'usage_limit',null,'targets','[]'::jsonb,'cta_label','التفاصيل','cta_href','/courses','terms','شروط معزولة','show_on_home',true,'is_active',false);
+ offer:=public.manage_commerce_record(actor,'offer',null,'save',payload);
+ if (select is_active from public.offers where id=(offer->>'id')::uuid) then raise exception 'draft_offer_activated';end if;
+ perform public.manage_commerce_record(actor,'offer',(offer->>'id')::uuid,'active','{"is_active":true}');
+ quote:=public.calculate_checkout_quote(u,p,null,null);
+ if (quote->>'total')::numeric<>90 then raise exception 'displayed_offer_quote_mismatch';end if;
+ coupon:=public.manage_commerce_record(actor,'coupon',null,'save',jsonb_build_object('code','QA'||upper(replace(u::text,'-','')::varchar(10)),'kind','percent','value',10,'max_uses',null,'max_uses_per_user',1,'starts_at',null,'ends_at',null));
+ denied:=false;begin perform public.calculate_checkout_quote(u,p,null,(select code from public.coupons where id=(coupon->>'id')::uuid));exception when invalid_parameter_value then denied:=sqlerrm='coupon_stacking_not_allowed';end;
+ if not denied then raise exception 'default_coupon_stacking_allowed';end if;
+ update public.coupons set allow_with_offers=true where id=(coupon->>'id')::uuid;
+ quote:=public.calculate_checkout_quote(u,p,null,(select code from public.coupons where id=(coupon->>'id')::uuid));
+ if (quote->>'total')::numeric<>81 then raise exception 'coupon_after_offer_mismatch';end if;
+ if has_function_privilege('authenticated','public.admin_save_lesson_text(uuid,uuid,text)','execute') or has_function_privilege('anon','public.process_catalog_publication_jobs()','execute') then raise exception 'internal_permission_exposed';end if;
+ raise notice 'PASS lesson text/denied actor, real hide scheduling/retry, incomplete publication denied, offer draft/activation and actual 100→90→81 quote/coupon consistency';
+end $test$;
+ROLLBACK;

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { FormSelect, FormTextarea } from '@/components/ui/FormField'
+import { AdminSelect as FormSelect, AdminTextarea as FormTextarea } from '@/components/admin/AdminField'
 import { createUnsubscribeLink, manageInboxMessage, manageNewsletterSubscriber, retryOutboxEmail } from '@/lib/actions/crm'
 import { AdminEditorDialog } from './AdminEditorDialog'
 import { useAdminAction } from './useAdminAction'

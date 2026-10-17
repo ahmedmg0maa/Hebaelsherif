@@ -14,7 +14,7 @@ import {
 } from '@/lib/actions/cms'
 export { ReviewControls } from '@/components/admin/ReviewControls'
 import { Button } from '@/components/ui/Button'
-import { FormField, FormTextarea, FormSelect } from '@/components/ui/FormField'
+import { AdminField as FormField, AdminTextarea as FormTextarea, AdminSelect as FormSelect } from '@/components/admin/AdminField'
 
 function useBusy() {
   const { busy, feedback, run } = useAdminAction()

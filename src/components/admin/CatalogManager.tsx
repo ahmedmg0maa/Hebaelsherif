@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { AdminField, AdminSelect, AdminTextarea } from './AdminField'
+import { CatalogScheduleControl } from './CatalogScheduleControl'
 import { CatalogSavedPreview } from './CatalogSavedPreview'
 import { formatCairoLocalDateTime } from '@/lib/booking/cairo-time'
 import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
@@ -88,33 +90,12 @@ function PublicationChecklist({ kind }: { kind: Kind }) {
   </details>
 }
 
-function Field({ prefix, label, name, defaultValue, type = 'text', required = false, min, step, dir }: {
-  prefix: string; label: string; name: string; defaultValue?: string | number | null; type?: string; required?: boolean; min?: number; step?: number | string; dir?: 'ltr' | 'rtl'
-}) {
-  const id = `${prefix}-${name}`
-  return (
-    <label htmlFor={id} className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">
-      {label}
-      <input id={id} name={name} type={type} required={required} min={min} step={step} dir={dir}
-        defaultValue={defaultValue ?? ''}
-        className="min-h-12 w-full rounded-xl border border-line bg-surface-raised px-4 py-2 text-base text-ink focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/15" />
-    </label>
-  )
+function Field({prefix,defaultValue,...props}: {prefix:string;label:string;name:string;defaultValue?:string|number|null;type?:string;required?:boolean;min?:number;step?:number|string;dir?:'ltr'|'rtl'}) {
+ const limits:Record<string,{max?:number;maxLength?:number;minLength?:number}>={title:{minLength:2,maxLength:180},slug:{minLength:3,maxLength:80},subtitle:{maxLength:240},currency:{minLength:3,maxLength:3},duration_minutes:{max:props.min===15?1440:100000},buffer_before_minutes:{max:525600},buffer_after_minutes:{max:525600},minimum_notice_minutes:{max:525600},booking_window_days:{max:365},hold_minutes:{max:30},max_reschedules:{max:12}}
+ return <AdminField {...props} {...limits[props.name]} id={`${prefix}-${props.name}`} defaultValue={defaultValue??''}/>
 }
-
-function Select({ prefix, label, name, defaultValue, options }: {
-  prefix: string; label: string; name: string; defaultValue?: string; options: { value: string; label: string }[]
-}) {
-  const id = `${prefix}-${name}`
-  return (
-    <label htmlFor={id} className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">
-      {label}
-      <select id={id} name={name} defaultValue={defaultValue}
-        className="min-h-12 rounded-xl border border-line bg-surface-raised px-4 py-2 text-base text-ink focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/15">
-        {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-      </select>
-    </label>
-  )
+function Select({prefix,...props}: {prefix:string;label:string;name:string;defaultValue?:string;options:{value:string;label:string}[]}) {
+ return <AdminSelect {...props} id={`${prefix}-${props.name}`} required/>
 }
 
 function CatalogForm({ kind, item, onDone, media = [], controller }: { kind: Kind; item?: CatalogAdminItem; onDone?: () => void; media?: MediaOption[]; controller?: ReturnType<typeof useAdminAction> }) {
@@ -134,7 +115,7 @@ function CatalogForm({ kind, item, onDone, media = [], controller }: { kind: Kin
       <fieldset key={formVersion} disabled={busy} className="grid min-w-0 gap-5">
       <div className="grid gap-4 md:grid-cols-2">
         <Field prefix={prefix} label="العنوان" name="title" defaultValue={item?.title} required />
-        <Field prefix={prefix} label="الرابط (slug)" name="slug" defaultValue={item?.slug} required dir="ltr" />
+        <Field prefix={prefix} label="رابط الصفحة المختصر" name="slug" defaultValue={item?.slug} required dir="ltr" />
         <Field prefix={prefix} label="العنوان الفرعي" name="subtitle" defaultValue={item?.subtitle} />
         <MediaPickerField assets={media} defaultValue={item?.coverUrl} label={`غلاف ${labels[kind].singular}`} />
         <Field prefix={prefix} label="السعر" name="price" type="number" min={0} step="0.01" defaultValue={item?.price ?? 0} required />
@@ -143,11 +124,7 @@ function CatalogForm({ kind, item, onDone, media = [], controller }: { kind: Kin
         <Field prefix={prefix} label="الترتيب" name="sort" type="number" defaultValue={item?.sort ?? 0} />
       </div>
 
-      <label htmlFor={`${prefix}-description`} className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">
-        الوصف
-        <textarea id={`${prefix}-description`} name="description" rows={4} defaultValue={item?.description}
-          className="w-full rounded-xl border border-line bg-surface-raised px-4 py-3 text-base text-ink focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/15" />
-      </label>
+      <AdminTextarea label="الوصف والجمهور المناسب" name="description" id={`${prefix}-description`} rows={5} maxLength={30000} defaultValue={item?.description}/>
 
       {kind === 'course' && <div className="grid gap-4 md:grid-cols-2">
         <Select prefix={prefix} label="المستوى" name="level" defaultValue={item?.level ?? 'all'} options={[
@@ -178,7 +155,7 @@ function CatalogForm({ kind, item, onDone, media = [], controller }: { kind: Kin
           <Field prefix={prefix} label="مهلة تغيير الموعد (ساعات)" name="reschedule_notice_hours" type="number" min={0} defaultValue={item?.rescheduleNoticeHours} />
           <Field prefix={prefix} label="الحد الأقصى للتغييرات" name="max_reschedules" type="number" min={0} defaultValue={item?.maxReschedules ?? 2} />
         </div>
-        <label htmlFor={`${prefix}-booking-policy-note`} className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">سياسة الحجز الظاهرة للعميلة<textarea id={`${prefix}-booking-policy-note`} name="booking_policy_note" rows={3} defaultValue={item?.bookingPolicyNote} className="w-full rounded-xl border border-line bg-surface-raised px-4 py-3 text-base text-ink focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/15" /></label>
+        <AdminTextarea label="سياسة الحجز المعروضة للعميلة" name="booking_policy_note" maxLength={4000} defaultValue={item?.bookingPolicyNote} />
       </>}
 
       {kind === 'workshop' && <div className="grid gap-4 md:grid-cols-2">
@@ -193,6 +170,7 @@ function CatalogForm({ kind, item, onDone, media = [], controller }: { kind: Kin
       </div>}
 
       <PublicationChecklist kind={kind} />
+      <p className="text-sm leading-7 text-text-soft">حفظ النموذج دون اختيار النشر يحفظه مسودة مخفية. الإخفاء يوقف الظهور والطلبات الجديدة مع بقاء حقوق العميلات وسجلاتهن.</p>
 
       <label className="flex min-h-12 items-center gap-3 rounded-xl border border-line bg-ivory/55 px-4 text-sm font-bold text-deep-teal">
         <input type="checkbox" name="is_published" defaultChecked={item?.isPublished} className="h-4 w-4 accent-deep-teal" />
@@ -226,7 +204,7 @@ export function CatalogEditPanel({ kind, item, media = [] }: { kind: Kind; item:
   return (
     <AdminEditorDialog title={`تعديل ${labels[kind].singular}: ${item.title}`} triggerLabel="تعديل وإدارة">
       <div className="space-y-5 border-t border-line p-4">
-        <CatalogSavedPreview item={item}/>
+        <CatalogSavedPreview item={item}/>{kind!=='service'&&!item.archivedAt&&<CatalogScheduleControl kind={kind} id={item.id}/>}
         {item.archivedAt?<div className="rounded-xl bg-sand/25 p-5"><p className="mb-4 leading-loose text-text-soft">العنصر مؤرشف. تظل مشتريات العميلات وملفاتهن محفوظة. الاستعادة تعيده إلى المسودات دون نشر تلقائي.</p><Button disabled={deleting} onClick={()=>void run(()=>changeCatalogLifecycle(kind,item.id,'restore',item.archivedAt??null),'استُعيد إلى المسودات.')}>استعادة إلى المسودات</Button><ActionFeedback feedback={controller.feedback}/></div>:<><CatalogForm kind={kind} item={item} media={media} controller={controller}/><div className="rounded-xl border border-line p-4">{!confirmArchive?<Button variant="secondary" disabled={deleting} onClick={()=>setConfirmArchive(true)}>أرشفة وإيقاف البيع</Button>:<><p className="mb-3 text-sm leading-loose">توقف الأرشفة البيع والحجز الجديد، وتحتفظ بالمشتريات والمواعيد القائمة. يمكن استعادة العنصر لاحقًا إلى المسودات.</p><div className="flex flex-wrap gap-3"><Button disabled={deleting} onClick={async()=>{if(await run(()=>changeCatalogLifecycle(kind,item.id,'archive',null),'أُرشف العنصر.'))setConfirmArchive(false)}}>تأكيد الأرشفة</Button><Button variant="ghost" disabled={deleting} onClick={()=>setConfirmArchive(false)}>تراجع</Button></div></>}</div></>}
         <div className="border-t border-line pt-4">
           {!confirmDelete ? <Button size="sm" variant="burgundy" disabled={deleting} onClick={() => setConfirmDelete(true)}>حذف نهائي</Button> :

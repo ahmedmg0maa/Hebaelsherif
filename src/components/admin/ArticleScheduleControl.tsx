@@ -2,7 +2,7 @@
 
 import { scheduleArticle } from '@/lib/actions/cms'
 import { Button } from '@/components/ui/Button'
-import { FormSelect, FormField } from '@/components/ui/FormField'
+import { AdminSelect as FormSelect, AdminField as FormField } from '@/components/admin/AdminField'
 import { formatCairoLocalDateTime } from '@/lib/booking/cairo-time'
 import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
 import { ActionFeedback } from '@/components/admin/ActionFeedback'

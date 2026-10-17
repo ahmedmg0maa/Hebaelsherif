@@ -909,3 +909,11 @@
 - Load the security module from the running PowerShell host's PSHOME, not an inherited module search path. Keep existing Windows DPAPI ciphertext compatibility across console/dialog producers and the actual Node reader.
 - Keep decrypted input in a captured local pipe and memory only. Do not include it in argv, environment, plaintext files, console output, process exception logs or Git. Remove ciphertext by default after reading and clear captured byte buffers.
 - Distinguish input transport, actual Supabase password authentication and application session acceptance. A confirmed/enrolled owner account or successful encryption round-trip certifies neither login nor session creation. Retain staff MFA, throttling and permissions while diagnosing rejected credentials.
+# 2026-10-17 — Admin schedule and publishing continuation
+
+- Keep the single-coach GiST exclusion and add a shared transaction lock across reservation and schedule edits. Apply Cairo weekly hours to the complete occupied range, including buffers. Reject changes that invalidate active appointments/holds; never cancel them implicitly. Refresh occupied reservations when service/default buffers change.
+- Preserve governed catalog/commerce actions and their permission/audit boundaries. Add bounded scheduled publication jobs with a recorded actor, due-time permission/completeness checks, explicit failed state and no entitlement removal on hide/archive. Use the existing free Worker cron; enable no paid video service.
+- Separate offer activation from homepage placement. Default new offers to an inactive draft, retain real start/end dates and capacity, use the same checkout discount algorithm, and expose the existing per-coupon stacking rule accurately.
+- Make media registration idempotent and atomic with its audit. Never remove an object after an ambiguous metadata-insert response. Keep file bytes/temporary signatures out of audit and Git.
+- Owner approved two session prices (60 min/1200 EGP; 90 min/1800 EGP) and 30-minute start choices. Save initial descriptions/policies as hidden editable drafts rather than opening intake before cover/policy/payment review.
+

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { adminList } from '@/lib/data/cms'
+import { getServerClient } from '@/lib/supabase/server'
+import { formatCairoLocalDateTime,parseCairoLocalDateTime } from '@/lib/booking/cairo-time'
+import { calendarDays,addCalendarDays,validCalendarDate,type CalendarView } from '@/lib/booking/admin-calendar'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -33,11 +35,19 @@ const statusMap: Record<string, { label: string; tone: 'success' | 'pending' | '
   no_show: { label: 'تغيّب', tone: 'danger' },
 }
 
-export default async function AdminBookingsPage() {
-  const bookings = await adminList<Row>('bookings', 'id, starts_at, ends_at, status, customer_notes, meeting_url, admin_notes, services(title), profiles(full_name), booking_events(id,event,created_at), booking_reschedule_requests(id,proposed_starts_at,status,reason,created_at)', {
-      orderBy: 'starts_at',
-      ascending: false,
-    })
+export default async function AdminBookingsPage({searchParams}:{searchParams:Promise<{date?:string;view?:string}>}) {
+ const params=await searchParams
+ const anchor=params.date&&validCalendarDate(params.date)?params.date:formatCairoLocalDateTime(new Date())!.slice(0,10)
+ const view:CalendarView=params.view==='day'||params.view==='month'?params.view:'week'
+ const days=calendarDays(anchor,view)
+ const start=parseCairoLocalDateTime(`${days[0]}T00:00`),end=parseCairoLocalDateTime(`${addCalendarDays(days.at(-1)!,1)}T00:00`)
+ // A Cairo midnight can be skipped by DST. Noon is always valid; derive the
+ // first valid wall-clock minute rather than using a constant UTC offset.
+ function boundary(date:string,parsed:Date|null){return parsed??parseCairoLocalDateTime(`${date}T01:00`)!}
+ const db=await getServerClient()
+ const {data,error,count}=await db.from('bookings').select('id, starts_at, ends_at, status, customer_notes, meeting_url, admin_notes, services(title), profiles(full_name), booking_events(id,event,created_at), booking_reschedule_requests(id,proposed_starts_at,status,reason,created_at)',{count:'exact'}).gte('starts_at',boundary(days[0],start).toISOString()).lt('starts_at',boundary(addCalendarDays(days.at(-1)!,1),end).toISOString()).order('starts_at',{ascending:true}).limit(1000)
+ if(error||count!==(data??[]).length)throw new Error('BOOKING_CALENDAR_READ_INCOMPLETE')
+ const bookings=(data??[]) as unknown as Row[]
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <header>
@@ -47,10 +57,10 @@ export default async function AdminBookingsPage() {
 
       <Link href="/admin/services" className="inline-flex min-h-12 items-center rounded-xl border border-line px-5 font-semibold text-deep-teal">الخدمات والسياسات وإتاحة المواعيد</Link>
 
-      <BookingAgenda bookings={bookings.map((booking) => { const service = Array.isArray(booking.services) ? booking.services[0] : booking.services; const profile = Array.isArray(booking.profiles) ? booking.profiles[0] : booking.profiles; return { id: booking.id, startsAt: booking.starts_at, endsAt: booking.ends_at, status: booking.status, serviceTitle: service?.title ?? 'جلسة', customerName: profile?.full_name ?? '', customerNotes: booking.customer_notes, adminNotes: booking.admin_notes, events: (booking.booking_events ?? []).map((event) => ({ id: event.id, event: event.event, createdAt: event.created_at })), requests: (booking.booking_reschedule_requests ?? []).map((request) => ({ id: request.id, proposedStartsAt: request.proposed_starts_at, status: request.status, reason: request.reason, createdAt: request.created_at })) } })} />
+      <BookingAgenda anchor={anchor} initialView={view} bookings={bookings.map((booking) => { const service = Array.isArray(booking.services) ? booking.services[0] : booking.services; const profile = Array.isArray(booking.profiles) ? booking.profiles[0] : booking.profiles; return { id: booking.id, startsAt: booking.starts_at, endsAt: booking.ends_at, status: booking.status, serviceTitle: service?.title ?? 'جلسة', customerName: profile?.full_name ?? '', customerNotes: booking.customer_notes, adminNotes: booking.admin_notes, events: (booking.booking_events ?? []).map((event) => ({ id: event.id, event: event.event, createdAt: event.created_at })), requests: (booking.booking_reschedule_requests ?? []).map((request) => ({ id: request.id, proposedStartsAt: request.proposed_starts_at, status: request.status, reason: request.reason, createdAt: request.created_at })) } })} />
 
       {bookings.length === 0 ? (
-        <EmptyState title="لا حجوزات بعد" description="تظهر جلسات العميلات هنا فور حجزها لتأكيدها وإدارتها." />
+        <EmptyState title="لا حجوزات في هذه الفترة" description="اختاري فترة أخرى من التقويم أو راجعي ساعات العمل والخدمات المتاحة." />
       ) : (
         <Table>
           <THead>

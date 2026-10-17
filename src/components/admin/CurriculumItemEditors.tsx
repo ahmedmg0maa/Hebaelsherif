@@ -2,7 +2,7 @@
 
 import { deleteCourseLesson, deleteCourseModule, updateCourseLesson, updateCourseModule } from '@/lib/actions/cms'
 import { Button } from '@/components/ui/Button'
-import { FormField } from '@/components/ui/FormField'
+import { AdminField as FormField } from '@/components/admin/AdminField'
 import { AdminEditorDialog } from './AdminEditorDialog'
 import { useAdminAction } from './useAdminAction'
 import { ActionFeedback } from './ActionFeedback'
@@ -15,7 +15,7 @@ export function ModuleEditor({ id, courseId, title, sort }: { id: string; course
     await action.run(() => updateCourseModule(id, courseId, String(data.get('title')), Number(data.get('sort'))), 'حُفظت الوحدة.')
   }} className="space-y-5">
     <fieldset disabled={action.busy} className="grid gap-4 disabled:opacity-60 sm:grid-cols-[2fr_1fr]">
-      <FormField name="title" label="عنوان الوحدة" maxLength={160} minLength={2} required defaultValue={title}/>
+      <FormField name="title" label="عنوان الوحدة" hint="اسم المحور الذي يظهر في فهرس الكورس." example="تحديد الاحتياجات" maxLength={160} minLength={2} required defaultValue={title}/>
       <FormField name="sort" label="ترتيب الوحدة" type="number" min={1} max={10000} required defaultValue={sort} dir="ltr"/>
     </fieldset>
     <div className="flex flex-wrap gap-3"><Button type="submit" disabled={action.busy}>حفظ الوحدة</Button><Button type="button" variant="burgundy" disabled={action.busy} onClick={async () => {
@@ -33,10 +33,10 @@ export function LessonEditor({ id, courseId, title, minutes, sort, preview }: { 
     await action.run(() => updateCourseLesson(id, courseId, data), 'حُفظ الدرس.')
   }} className="space-y-5">
     <fieldset disabled={action.busy} className="grid gap-4 disabled:opacity-60 sm:grid-cols-2">
-      <FormField name="title" label="عنوان الدرس" maxLength={180} minLength={2} required defaultValue={title} className="sm:col-span-2"/>
+      <FormField name="title" label="عنوان الدرس" hint="اسم الدرس داخل المحور؛ لا يغيّر تعديل الاسم تقدم المشتركات." example="تحديد أولويات الأسبوع" maxLength={180} minLength={2} required defaultValue={title} className="sm:col-span-2"/>
       <FormField name="minutes" label="المدة بالدقائق" type="number" min={0} max={1440} required defaultValue={minutes} dir="ltr"/>
       <FormField name="sort" label="ترتيب الدرس" type="number" min={1} max={10000} required defaultValue={sort} dir="ltr"/>
-      <label className="flex min-h-12 items-center gap-2 text-sm"><input type="checkbox" name="is_preview" defaultChecked={preview} className="h-5 w-5 accent-deep-teal"/>معاينة مجانية</label>
+      <label className="flex min-h-12 items-center gap-2 text-sm"><input type="checkbox" name="is_preview" defaultChecked={preview} className="h-5 w-5 accent-deep-teal"/>معاينة مجانية <span className="text-sm text-text-soft">اختياري · تسمح بالدرس دون شراء بعد نشر الكورس. مثال: الدرس التعريفي.</span></label>
     </fieldset>
     <div className="flex flex-wrap gap-3"><Button type="submit" disabled={action.busy}>حفظ الدرس</Button><Button type="button" variant="burgundy" disabled={action.busy} onClick={async () => {
       if (window.confirm('هل تريدين حذف هذا الدرس الخالي من الملفات وسجل العميلات؟')) await action.run(() => deleteCourseLesson(id, courseId), 'حُذف الدرس.')

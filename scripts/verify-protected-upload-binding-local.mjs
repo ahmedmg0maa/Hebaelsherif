@@ -83,5 +83,5 @@ assert.match(uploadUi, /abandonProtectedUpload\(kind, entityId, pending\)/, 'exp
 assert.match(uploadUi, /maxLength=\{180\}/, 'upload title exposes server bound')
 assert.match(uploadUi, /maxLength=\{30\}/, 'book version exposes server bound')
 assert(uploadUi.includes('ActionFeedback') && uploadUi.includes('useAdminAction'), 'shared runner releases locks and renders status/alert')
-assert.match(uploadUi, /finally \{ setProgress\(''\) \}/, 'progress recovers after thrown failures')
+assert.match(uploadUi, /finally \{ setProgress\(''\);setPercent\(null\) \}/, 'progress recovers after thrown failures')
 console.log('verify:protected-upload-binding-local passed — issued authority, atomic binding, durable cleanup and retryable Admin workflow')

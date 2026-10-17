@@ -3,12 +3,7 @@ import { getServerClient } from '@/lib/supabase/server'
 import { hasSupabasePublicConfig } from '@/lib/supabase/public-key'
 import { publicArticleCover, readingMinutes } from '@/lib/articles/presentation'
 
-export type HomeOffer = {
-  title: string
-  description: string
-  badgeText: string
-  endsAt: string | null
-}
+export type HomeOffer = import('@/components/marketing/OfferCard').OfferPresentation
 
 export type HomeArticle = {
   slug: string
@@ -49,7 +44,10 @@ export async function getHomeData(): Promise<HomeData> {
     const [offerRes, articlesRes, resourcesRes, reviewsRes, pressRes] = await Promise.all([
       supabase
         .from('offers')
-        .select('title, description, badge_text, ends_at')
+        .select('id,title,description,badge_text,ends_at,cta_label,cta_href,terms,discount_kind,discount_value')
+        .eq('show_on_home',true)
+        .lte('starts_at',new Date().toISOString())
+        .or(`ends_at.is.null,ends_at.gt.${new Date().toISOString()}`)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -92,6 +90,8 @@ export async function getHomeData(): Promise<HomeData> {
     return {
       offer: offerRes.data
         ? {
+            id: offerRes.data.id,
+            ctaLabel:offerRes.data.cta_label,ctaHref:offerRes.data.cta_href,terms:offerRes.data.terms,discountKind:offerRes.data.discount_kind,discountValue:offerRes.data.discount_value==null?null:Number(offerRes.data.discount_value),
             title: offerRes.data.title,
             description: offerRes.data.description,
             badgeText: offerRes.data.badge_text ?? '',

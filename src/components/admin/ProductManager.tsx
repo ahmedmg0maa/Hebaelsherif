@@ -1,4 +1,6 @@
 'use client'
+import {AdminTextarea} from './AdminField'
+import {AdminField} from './AdminField'
 
 import { useState } from 'react'
 import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
@@ -18,15 +20,15 @@ function ProductForm({ item, media = [] }: { item?: ProductAdminItem; media?: Me
   const { busy, feedback, run } = useAdminAction(); const [confirm,setConfirm]=useState(false); const [formVersion, setFormVersion] = useState(0)
   return <form className="grid gap-3 md:grid-cols-2" aria-busy={busy} onSubmit={async(event)=>{event.preventDefault();const data=new FormData(event.currentTarget);if(await run(()=>saveProductRecord(item?.id??null,data),'تم حفظ المنتج.')){if(!item)setFormVersion(version=>version+1)}}}><fieldset key={formVersion} disabled={busy} className="grid min-w-0 gap-5 md:col-span-2 md:grid-cols-2">
     <label className="text-sm font-bold text-deep-teal">النوع<select name="type" defaultValue={item?.type??'bundle'} disabled={Boolean(item)} className={input}><option value="bundle">حزمة</option><option value="vip">VIP</option><option value="free_resource">مورد مجاني</option>{item && !['bundle','vip','free_resource'].includes(item.type) && <option value={item.type}>{item.type}</option>}</select>{item&&<input type="hidden" name="type" value={item.type}/>}</label>
-    <label className="text-sm font-bold text-deep-teal">العنوان<input name="title" defaultValue={item?.title} className={input} required/></label>
-    <label className="text-sm font-bold text-deep-teal">الرابط<input name="slug" defaultValue={item?.slug} className={input} dir="ltr" required/></label>
-    <label className="text-sm font-bold text-deep-teal">العنوان الفرعي<input name="subtitle" defaultValue={item?.subtitle??''} className={input}/></label>
-    <label className="text-sm font-bold text-deep-teal">السعر<input name="price" type="number" min="0" step="0.01" defaultValue={item?.price??0} className={input} required/></label>
-    <label className="text-sm font-bold text-deep-teal">قبل الخصم<input name="compare_at_price" type="number" min="0" step="0.01" defaultValue={item?.compareAtPrice??''} className={input}/></label>
-    <label className="text-sm font-bold text-deep-teal">العملة<input name="currency" defaultValue={item?.currency??'EGP'} className={input} dir="ltr"/></label>
-    <label className="text-sm font-bold text-deep-teal">الترتيب<input name="sort" type="number" defaultValue={item?.sort??0} className={input}/></label>
+    <AdminField label="العنوان" name="title" defaultValue={item?.title} required/>
+    <AdminField label="الرابط" name="slug" defaultValue={item?.slug} dir="ltr" required/>
+    <AdminField label="العنوان الفرعي" name="subtitle" defaultValue={item?.subtitle??''}/>
+    <AdminField label="السعر" name="price" type="number" min="0" step="0.01" defaultValue={item?.price??0} required/>
+    <AdminField label="قبل الخصم" name="compare_at_price" type="number" min="0" step="0.01" defaultValue={item?.compareAtPrice??''}/>
+    <AdminField label="العملة" name="currency" defaultValue={item?.currency??'EGP'} dir="ltr"/>
+    <AdminField label="الترتيب" name="sort" type="number" defaultValue={item?.sort??0}/>
     <MediaPickerField assets={media} defaultValue={item?.coverUrl} label="غلاف المنتج" />
-    <label className="text-sm font-bold text-deep-teal md:col-span-2">الوصف<textarea name="description" defaultValue={item?.description} rows={3} className={input}/></label>
+    <AdminTextarea className="text-sm font-bold text-deep-teal md:col-span-2" label="الوصف" name="description" defaultValue={item?.description} rows={3}/>
     <p className="rounded-xl bg-ivory/70 p-3 text-sm leading-relaxed text-text-soft md:col-span-2">الحفظ يعيد البرنامج إلى مسودة لحماية السعر والتكوين. استخدمي زر النشر المستقل بعد اكتمال الحزمة أو ربط VIP أو المورد المجاني.</p>
     </fieldset><ActionFeedback feedback={feedback} className="md:col-span-2" />
     <div className="flex flex-wrap gap-2 md:col-span-2"><Button type="submit" size="sm" disabled={busy}>{busy?'جاري الحفظ…':item?'حفظ المنتج':'إنشاء المنتج'}</Button>{item&&(!confirm?<Button type="button" size="sm" variant="burgundy" disabled={busy} onClick={()=>setConfirm(true)}>حذف</Button>:<><Button type="button" size="sm" variant="burgundy" disabled={busy} onClick={()=>run(()=>deleteProductRecord(item.id),'حُذف المنتج.')}>تأكيد الحذف</Button><Button type="button" size="sm" variant="ghost" disabled={busy} onClick={()=>setConfirm(false)}>تراجع</Button></>)}</div>

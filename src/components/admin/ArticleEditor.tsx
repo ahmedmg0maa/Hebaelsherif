@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { deleteArticle, saveArticle } from '@/lib/actions/admin-control'
 import { Button } from '@/components/ui/Button'
-import { FormField, FormTextarea } from '@/components/ui/FormField'
+import { AdminField as FormField, AdminTextarea as FormTextarea } from '@/components/admin/AdminField'
 import { MediaPickerField } from '@/components/admin/MediaPickerField'
 import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
 import { ActionFeedback } from '@/components/admin/ActionFeedback'

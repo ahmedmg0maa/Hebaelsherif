@@ -1,4 +1,5 @@
 'use client'
+import {AdminField,AdminSelect,AdminTextarea} from './AdminField'
 
 import { HomeMediaFields } from './HomeMediaFields'
 import type { MediaOption } from '@/lib/data/cms'
@@ -28,7 +29,8 @@ type SectionRow = { id: string; name: string; kind: string; sort: number; is_vis
 const input = 'min-h-10 w-full rounded-xl border border-line bg-surface-raised px-3 py-2 text-sm text-ink'
 
 function Field({ label, name, value, area = false, max = 500 }: { label: string; name: string; value: string; area?: boolean; max?: number }) {
-  return <label className="grid gap-1 text-sm font-semibold text-deep-teal">{label}{area ? <textarea name={name} defaultValue={value} rows={3} maxLength={max} className={input} required /> : <input name={name} defaultValue={value} maxLength={max} className={input} required />}</label>
+  const props={label,name,defaultValue:value,maxLength:max,required:true}
+  return area?<AdminTextarea {...props} rows={3}/>:<AdminField {...props}/>
 }
 
 function PathwayFields({ data, assets, media }: { data: PathwaysContent; assets: MediaOption[]; media: ReturnType<typeof normalizeHomeMedia> }) {
@@ -43,7 +45,7 @@ function PathwayFields({ data, assets, media }: { data: PathwaysContent; assets:
 }
 
 function LinkField({ label, name, value }: { label: string; name: string; value: string }) {
-  return <label className="grid gap-1 text-xs font-semibold text-deep-teal">{label}<input name={name} defaultValue={value} dir="ltr" pattern="/(?!/).*" className={input} required /></label>
+  return <AdminField label={label} name={name} defaultValue={value} dir="ltr" pattern="/(?!/).*" required />
 }
 
 function SectionFields({ kind, content, assets, articles }: { kind: HomeSectionKind; content: unknown; assets: MediaOption[]; articles: ArticleOption[] }) {
@@ -73,7 +75,7 @@ function SectionFields({ kind, content, assets, articles }: { kind: HomeSectionK
   if (kind === 'articles' || kind === 'resources') {
     const data = value as ArticlesContent
     return <div className="grid gap-3 md:grid-cols-2"><Field label="السطر التعريفي" name="eyebrow" value={data.eyebrow} /><Field label="العنوان" name="heading" value={data.heading} /><Field label="الوصف" name="lead" value={data.lead} /><Field label={kind === 'resources' ? 'زر كل الموارد' : 'زر كل المقالات'} name="cta_label" value={data.ctaLabel} />
-      {kind === 'articles' && <fieldset className="grid gap-3 md:col-span-2"><legend className="mb-2 font-bold text-deep-teal">المقالات المميزة بالترتيب</legend><p className="text-sm leading-loose text-text-soft">اتركي الاختيارات فارغة لعرض أحدث ثلاثة مقالات منشورة. تظهر البطاقات بالترتيب المحدد داخل تبويب المقالات.</p>{[0, 1, 2].map(index => <label key={index} className="grid gap-2 text-sm">المقال {index + 1}<select name={`article_slug_${index}`} defaultValue={data.selectedSlugs?.[index] ?? ''} className={input}><option value="">بدون اختيار</option>{data.selectedSlugs?.[index] && !articles.some(article => article.slug === data.selectedSlugs?.[index]) && <option value={data.selectedSlugs[index]}>الاختيار السابق لم يعد منشورًا؛ اختاري بديلًا</option>}{articles.map(article => <option key={article.slug} value={article.slug}>{article.title}</option>)}</select></label>)}</fieldset>}
+      {kind === 'articles' && <fieldset className="grid gap-3 md:col-span-2"><legend className="mb-2 font-bold text-deep-teal">المقالات المميزة بالترتيب</legend><p className="text-sm leading-loose text-text-soft">اتركي الاختيارات فارغة لعرض أحدث ثلاثة مقالات منشورة. تظهر البطاقات بالترتيب المحدد داخل تبويب المقالات.</p>{[0, 1, 2].map(index => <AdminSelect key={index} label={`المقال ${index + 1}`} name={`article_slug_${index}`} defaultValue={data.selectedSlugs?.[index] ?? ''}><option value="">بدون اختيار</option>{data.selectedSlugs?.[index] && !articles.some(article => article.slug === data.selectedSlugs?.[index]) && <option value={data.selectedSlugs[index]}>الاختيار السابق لم يعد منشورًا؛ اختاري بديلًا</option>}{articles.map(article => <option key={article.slug} value={article.slug}>{article.title}</option>)}</AdminSelect>)}</fieldset>}
     </div>
   }
   if (kind === 'testimonials') {
@@ -103,7 +105,7 @@ function HomeSectionEditor({ pageId, section, assets, articles }: { pageId: stri
       <input type="hidden" name="kind" value={kind} />
       <div className="grid gap-2 md:grid-cols-[1fr_8rem_auto]">
         <Field label={`${label} — اسم داخلي`} name="name" value={section.name} />
-        <label className="grid gap-1 text-xs font-semibold text-deep-teal">الترتيب<input name="sort" type="number" min="0" max="1000" defaultValue={section.sort} className={input} /></label>
+        <AdminField label="الترتيب" name="sort" type="number" min="0" max="1000" defaultValue={section.sort} />
         <label className="mt-auto flex min-h-10 items-center gap-2 text-sm font-semibold text-deep-teal"><input type="checkbox" name="is_visible" defaultChecked={section.is_visible} />ظاهر للعامة</label>
       </div>
       <SectionFields kind={kind} content={section.content} assets={assets} articles={articles} />

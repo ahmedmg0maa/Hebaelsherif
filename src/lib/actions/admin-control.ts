@@ -332,14 +332,14 @@ type ValidatedMediaUpload = {
   kind: 'image' | 'video' | 'audio' | 'document'
 }
 
-type MediaUploadStart = { bucket: string; path: string; token: string }
+type MediaUploadStart = { bucket: string; path: string; token: string; uploadUrl:string }
 
 function validateMediaUpload(input: MediaUploadInput): ValidatedMediaUpload | { error: string } {
   const bucket = input.bucket
   const allowed = ['public-media','course-videos','course-resources','protected-books','workshop-recordings']
   if (!allowed.includes(bucket)) return { error: 'المخزن غير مسموح.' }
   if (!input.name.trim() || !Number.isFinite(input.size) || input.size <= 0) return { error: 'اختاري ملفًا.' }
-  const limits: Record<string, number> = { 'public-media': 10, 'course-videos': 500, 'course-resources': 50, 'protected-books': 100, 'workshop-recordings': 500 }
+  const limits: Record<string, number> = { 'public-media': 10, 'course-videos': 50, 'course-resources': 50, 'protected-books': 50, 'workshop-recordings': 50 }
   if (input.size > limits[bucket] * 1024 * 1024) return { error: `الحد الأقصى لهذا المخزن ${limits[bucket]} ميجابايت.` }
   const allowedMime: Record<string, RegExp> = {
     'public-media': /^(image\/(jpeg|png|webp|gif|svg\+xml)|application\/pdf)$/,
@@ -379,7 +379,7 @@ export async function beginMediaUpload(input: MediaUploadInput): Promise<{ ok: t
   const service = getServiceClient()
   const { data, error } = await service.storage.from(media.bucket).createSignedUploadUrl(path)
   if (error || !data) return { ok: false, error: message(error) }
-  return { ok: true, data: { bucket: media.bucket, path, token: data.token } }
+  return { ok: true, data: { bucket: media.bucket, path, token: data.token,uploadUrl:data.signedUrl } }
 }
 
 export async function finalizeMediaUpload(input: MediaUploadInput & { path: string }): Promise<AdminActionResult> {
@@ -390,15 +390,14 @@ export async function finalizeMediaUpload(input: MediaUploadInput & { path: stri
   const safeName = media.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'asset'
   if (!new RegExp(`^admin/\\d{4}-\\d{2}-\\d{2}/[0-9a-f-]{36}-${safeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i').test(input.path)) return { ok: false, error: 'مسار الملف غير صحيح.' }
   const service = getServiceClient()
-  const { data, error } = await service.from('media_assets').insert({
+  const { data, error } = await service.rpc('admin_register_media',{p_actor:admin.id,p_data:{
     bucket: media.bucket, path: input.path, title: media.title, alt: media.alt, tags: media.tags, kind: media.kind, size_bytes: media.size, mime_type: media.type,
     original_name: media.name, visibility: media.bucket === 'public-media' ? 'public' : 'private', uploaded_by: admin.id,
     caption: media.caption, credit: media.credit, rights_status: media.rightsStatus, rights_reference: media.rightsReference, folder: media.folder,
     focal_x: media.focalX, focal_y: media.focalY, processing_status: 'original',
-  }).select('id').single()
-  if (error || !data) { await service.storage.from(media.bucket).remove([input.path]); return { ok: false, error: message(error) } }
-  await audit(admin.id, 'media.uploaded', 'media_asset', data.id, { bucket: media.bucket, kind: media.kind, size: media.size, rightsStatus: media.rightsStatus })
-  revalidatePath('/admin/media'); return { ok: true, id: data.id }
+  }})
+  if(error||typeof data!=='string')return {ok:false,error:'لم يتأكد تسجيل الملف. احتفظي بالمحاولة وأعيدي التحقق؛ لم يُحذف أي ملف.'}
+  revalidatePath('/admin/media'); return { ok: true, id: data }
 }
 
 export async function updateMediaMetadata(id: string, form: FormData): Promise<AdminActionResult> {

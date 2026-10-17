@@ -41,3 +41,18 @@ The current blocker is credential rejection by Supabase, before Admin session cr
 ## Local account confirmation
 
 The user chose local email review. A read-only lookup found exactly one registered owner; its email matches local OWNER_ADMIN_EMAIL and password entry remains enrolled. The full address was displayed only in a local window, without printing it in the conversation, command arguments or repository. The user selected "This is the intended owner account"; the local receipt contains only `intendedAccount: true`. The configured account is therefore confirmed as intended. Recovery-email authorization and user-completed password recovery remain pending; no recovery message or account change was performed during the review.
+
+## Authorized recovery handoff
+
+The user explicitly authorized a recovery email to the locally confirmed account. The production reset form was opened in a new tab in the user's existing Chrome profile so its PKCE state remains available when opening the email link in that browser. The confirmed address was loaded in memory and redacted from tool output; no password was entered by the agent.
+
+The initial native click returned an uncertain geometry error. The page was re-observed rather than submitting a duplicate request; it had already advanced to the new-password page. Read-only Supabase evidence resolved the uncertainty: `recovery_sent_at` 2026-10-17 06:28:31 UTC (09:28:31 Cairo), recovery sign-in 06:28:42 UTC, and owner Auth method `recovery`. The email request and link consumption therefore succeeded. Admin sessions remain zero at this boundary, as expected before password sign-in.
+
+The user must personally fill, confirm and submit the new password, then sign in at `/auth/admin` in Chrome. The agent is waiting for that outcome before verifying dashboard reload, current-session logout and denied access after logout. No recovery token, new password or full owner address is recorded here.
+
+
+## Successful password sign-in and session acceptance
+
+The human personally completed recovery and entered the new password at /auth/admin. At 09:32:49 Cairo the real browser reached /admin/overview. The database confirmed password AMR, matching bound Auth session, password_verified_at, active Admin session and login_succeeded/session_created events (ray a4bd44a35c3e4c05). Actual Chrome reload remained in Admin and refreshed last_seen. The UI safe logout revoked the Admin session and removed its bound Auth session. Two subsequent test sign-ins were also logged out; final read-only evidence confirms all three test sessions revoked, inactive and without a corresponding Auth session. Anonymous protected HTTP returned 307 to Admin auth with private/no-store.
+
+The final new-tab browser navigation after logout was interrupted because native automation could no longer determine Chrome's URL confidently; it is not counted as browser acceptance. Successful real sign-in, reload and logout are accepted separately. The agent never received the new password, and no policy was weakened. Private evidence: owner-sessions-all-test-logouts.json; owner-after-logout.png contains the public empty login page only.

@@ -54,7 +54,7 @@ assert.ok(dashboardForm.includes('name="current_password"') && dashboardForm.inc
 assert.ok(recoveryForm.includes('completeRecoveredPassword') && recoveryForm.includes("router.replace('/auth/login?password=changed')"), 'recovery UI must use the governed completion and require a fresh login')
 
 assert.ok(callback.includes('exchangeCodeForSession(code)'), 'SSR PKCE callback must exchange the one-time Auth code')
-assert.ok(callback.includes("new Set(['/dashboard', '/auth/update-password', '/auth/login'])"), 'callback destination must use a fixed internal allowlist')
+assert.ok(callback.includes("new Set(['/dashboard', '/booking', '/auth/update-password', '/auth/login'])"), 'callback destination must use a fixed internal allowlist')
 assert.ok(callback.includes("'Cache-Control', 'private, no-store'") && callback.includes("'Referrer-Policy', 'no-referrer'"), 'Auth callback responses must be private and non-referring')
 assert.ok(reset.includes('/auth/callback?next=/auth/update-password'), 'password recovery email must lead to the real update flow')
 assert.ok(register.includes('/auth/callback?next=/dashboard'), 'signup confirmation must complete through the SSR PKCE callback')

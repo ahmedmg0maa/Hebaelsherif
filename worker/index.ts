@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/cloudflare'
 import { deliverBookingMail, type BookingMailEnv } from './booking-mail'
+import {processCatalogSchedule} from './catalog-schedule'
 import vinextHandler from 'vinext/server/fetch-handler'
 import { scrubSentryEvent } from '../src/lib/monitoring/sentry-scrub'
 
@@ -31,6 +32,7 @@ export default Sentry.withSentry<Env>(
   {
     scheduled(_event: unknown, env: Env, ctx: WorkerContext) {
       ctx.waitUntil(deliverBookingMail(env))
+      ctx.waitUntil(processCatalogSchedule(env))
     },
     fetch(request: Request, env: Env, ctx: WorkerContext) {
       return vinextHandler.fetch(request, env, ctx)
