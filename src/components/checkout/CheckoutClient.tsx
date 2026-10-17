@@ -39,7 +39,7 @@ function StepDots({ step, free }: { step: 1 | 2 | 3; free: boolean }) {
                   state === 'next' && 'border border-line bg-surface-raised text-taupe',
                 )}
               >
-                {state === 'done' ? '✓' : n.toLocaleString('ar-EG')}
+                {state === 'done' ? '✓' : (i + 1).toLocaleString('ar-EG')}
               </span>
               <span className={cn('text-sm font-semibold', state === 'active' ? 'text-deep-teal' : 'text-taupe')}>
                 {label}
@@ -185,7 +185,7 @@ export function CheckoutClient({ product, settings }: { product: CheckoutProduct
   }
 
   return (
-    <div ref={stage} tabIndex={-1} aria-label={`الدفع: الخطوة ${step} من 3`} aria-busy={busy} className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+    <div ref={stage} tabIndex={-1} aria-label={total === 0 ? `المحتوى المجاني: الخطوة ${step === 1 ? 1 : 2} من 2` : `الدفع: الخطوة ${step} من 3`} aria-busy={busy} className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
       <StepDots step={step} free={total === 0} />
       {step > 1 && order && <dl aria-label="ملخص الطلب" className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface-raised px-5 py-4 text-sm"><div><dt className="text-taupe">طلبك</dt><dd className="mt-1 font-bold text-deep-teal">{product.title}{selectedVariant ? ` — ${selectedVariant.name}` : ''}</dd></div><div><dt className="text-taupe">الإجمالي المسجل</dt><dd className="tnum mt-1 font-bold text-burgundy">{formatPrice(order.total)}</dd></div></dl>}
 
