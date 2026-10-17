@@ -202,7 +202,7 @@ export async function getContentReadiness(booking?: BookingExperience): Promise<
       { id: 'connection', title: 'اتصال مصدر الحقيقة', detail: 'لم تُهيأ متغيرات Supabase العامة في هذه البيئة؛ لا يمكن قياس جاهزية المحتوى.', status: 'unconfigured', href: '/admin/system' },
       { id: 'catalog', title: 'منتجات منشورة', detail: 'تُفحص بعد ربط مشروع الإنتاج الصحيح؛ لا توجد بيانات بديلة محلية.', status: 'unconfigured', href: '/admin/products' },
       { id: 'booking', title: 'خدمات ومواعيد منشورة', detail: 'تُفحص بعد ربط مشروع الإنتاج الصحيح؛ لا توجد مواعيد افتراضية.', status: 'unconfigured', href: '/admin/bookings' },
-      { id: 'payments', title: 'وسيلة دفع مفعّلة', detail: 'تُفحص بعد ربط مشروع الإنتاج الصحيح؛ الشراء والحجز محجوبان بلا وسيلة دفع.', status: 'unconfigured', href: '/admin/settings' },
+      { id: 'payments', title: 'وسيلة دفع مفعّلة', detail: 'تُفحص بعد ربط مشروع الإنتاج الصحيح؛ الدفع المدفوع يحتاج بيانات تحويل معتمدة.', status: 'unconfigured', href: '/admin/settings' },
       { id: 'articles', title: 'مقال منشور', detail: 'تُفحص بعد ربط مشروع الإنتاج الصحيح.', status: 'unconfigured', href: '/admin/articles' },
       { id: 'legal', title: 'سياسات قانونية معتمدة', detail: 'تتطلب اعتماد المالكة ومراجعة قانونية؛ النصوص الحالية مسودات غير منشورة.', status: 'blocked', href: '/admin/pages' },
       { id: 'database-change', title: 'عقد تشغيل النسخة 102', detail: 'يلزم فحص عقد التشغيل الحالي في قاعدة البيانات المتصلة. لا تحدد هذه الصفحة آخر ترحيل مطبق من المحادثات القديمة.', status: 'unconfigured', href: '/admin/system' },
@@ -239,7 +239,7 @@ export async function getContentReadiness(booking?: BookingExperience): Promise<
         ? { id: 'payments', title: 'وسيلة دفع مفعّلة', detail: 'تعذّر التحقق من إعدادات الدفع؛ راجعي الصلاحيات والترحيلات.', status: 'unknown', href: '/admin/settings' }
         : paymentReady
           ? { id: 'payments', title: 'وسيلة دفع مفعّلة', detail: 'توجد وسيلة دفع مفعّلة واحدة على الأقل؛ لا تعرض هذه القائمة أي بيانات حساب.', status: 'ready', href: '/admin/settings' }
-          : { id: 'payments', title: 'وسيلة دفع مفعّلة', detail: 'الشراء والحجز محجوبان حتى تفعيل وسيلة دفع من الإعدادات.', status: 'needs-content', href: '/admin/settings' },
+          : { id: 'payments', title: 'وسيلة دفع مفعّلة', detail: 'الدفع غير متاح حتى إضافة بيانات التحويل. يظل المحتوى المجاني وطلب الموعد للمراجعة متاحين عند نشرهما وتفعيلهما.', status: 'needs-content', href: '/admin/settings' },
       readinessForCount('articles', 'مقال منشور', articles, '/admin/articles', (count) => `${count.toLocaleString('ar-EG')} مقالًا منشورًا ظاهرًا في الكتالوج العام.`, 'انشري مقالًا أو اتركي قسم المقالات فارغًا بوضوح.'),
       approvedLegal.error
         ? { id: 'legal', title: 'سياسات قانونية معتمدة', detail: 'تعذّر التحقق من حالة السياسات؛ لا تُعامل كمعتمدة.', status: 'unknown', href: '/admin/pages' }

@@ -12,7 +12,7 @@ try {
   tool.onResolve({filter:/^server-only$/},()=>({path:'empty',namespace:'fixture'}))
   tool.onResolve({filter:/^@\/lib\/auth\/permissions$/},()=>({path:'permissions',namespace:'fixture'}))
   tool.onResolve({filter:/^@\/lib\/supabase\/(server|public-key)$/},args=>({path:args.path,namespace:'fixture'}))
-  tool.onResolve({filter:/^\.\/booking$/},args=>args.importer.endsWith('/data/cms.ts')?{path:'booking',namespace:'fixture'}:null)
+  tool.onResolve({filter:/^\.\/booking$/},args=>args.importer.replaceAll('\\','/').endsWith('/data/cms.ts')?{path:'booking',namespace:'fixture'}:null)
   tool.onResolve({filter:/^@\//},args=>{const base=resolve('src',args.path.slice(2));const path=['.ts','.tsx'].map(ext=>base+ext).find(existsSync);return path?{path}:null})
   tool.onLoad({filter:/.*/,namespace:'fixture'},args=>({contents:args.path==='empty'?'':args.path==='permissions'?'export const requirePermission=async()=>globalThis.readinessFixture.permission;':args.path==='booking'?'export const getBookingExperience=async()=>globalThis.readinessFixture.experience;':args.path.endsWith('/public-key')?'export const hasSupabasePublicConfig=()=>globalThis.readinessFixture.configured;':`export const getServerClient=async()=>globalThis.readinessFixture.client;export const getServiceClient=()=>{globalThis.readinessFixture.serviceReads++;return globalThis.readinessFixture.client};export const hasSupabaseServerSecret=()=>true;`,loader:'js'}))
  }}]})
