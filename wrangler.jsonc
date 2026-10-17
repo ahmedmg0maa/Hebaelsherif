@@ -6,9 +6,10 @@
     "nodejs_compat"
   ],
   "main": "worker/index.ts",
+  "workers_dev": false,
   "routes": [
-    { "pattern": "hebaelsherif.com", "custom_domain": true },
-    { "pattern": "www.hebaelsherif.com", "custom_domain": true }
+    { "pattern": "hebaelsherif.com/*", "zone_name": "hebaelsherif.com" },
+    { "pattern": "www.hebaelsherif.com/*", "zone_name": "hebaelsherif.com" }
   ],
   "assets": {
     "directory": "dist/client",
