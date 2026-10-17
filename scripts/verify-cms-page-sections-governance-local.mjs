@@ -31,8 +31,8 @@ for (const action of ['createHomeSection', 'saveHomeSection', 'savePageSection',
   assert(!/from\('(page_sections|content_revisions|audit_logs)'\)\.(insert|update|delete)/.test(body), `${action} must not retain split writes`)
 }
 assert(homeManager.includes('window.confirm') && cmsManager.includes('window.confirm'), 'destructive section controls must require confirmation')
-assert(homeManager.includes("role={failed ? 'alert' : 'status'}") && cmsManager.includes("role={failed ? 'alert' : 'status'}"), 'Admin controls must expose accessible success/failure states')
-assert(cmsManager.includes('maxLength={65536}') && cmsManager.includes('max="1000"'), 'Admin section bounds must mirror the transaction')
+assert(homeManager.includes("role={failed ? 'alert' : 'status'}") && cmsManager.includes('<ActionFeedback feedback={feedback}') && readFileSync('src/components/admin/ActionFeedback.tsx','utf8').includes("role={feedback.ok ? 'status' : 'alert'}"), 'Admin controls must expose accessible success/failure states')
+assert(actions.includes('new TextEncoder().encode(raw).length>65536') && cmsManager.includes('max="1000"'), 'Admin section bounds must mirror the transaction')
 assert.match(adminPage, /page_sections\(id,name,kind,sort,is_visible,content\)/, 'Admin must reload persisted sections')
 assert.match(publicData, /getPublishedHomeSections[\s\S]*page_sections\(id,name,kind,sort,is_visible,content\)/, 'public home must consume governed section state')
 

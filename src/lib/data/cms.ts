@@ -16,11 +16,15 @@ export type MediaOption = { id: string; title: string; alt: string; kind: string
 export type PublicNavigationItem={menu:string;label:string;href:string;sort:number}
 
 export type PublishedCmsPage = {
+  seoTitle?:string|null
+  seoDescription?:string|null
+  canonicalUrl?:string|null
+  ogImageUrl?:string|null
   title: string
   updatedAt: string
   legalVersion: string | null
   effectiveAt: string | null
-  sections: { id: string; kind: string; sort: number; content: unknown }[]
+  sections: { id: string; kind: string; sort: number; is_visible:boolean; content: unknown }[]
 }
 
 export async function getPublishedCmsPage(slug: string): Promise<PublishedCmsPage | null> {
@@ -28,14 +32,14 @@ export async function getPublishedCmsPage(slug: string): Promise<PublishedCmsPag
   try {
     const supabase = await getServerClient()
     const { data } = await supabase.from('pages')
-      .select('title, updated_at, legal_review_status, legal_version, effective_at, page_sections(id, kind, sort, content)')
+      .select('seo_title,seo_description,canonical_url,og_image_url,title, updated_at, legal_review_status, legal_version, effective_at, page_sections(id, kind, sort, is_visible, content)')
       .eq('slug', slug)
       .eq('status', 'published')
       .eq('is_published', true)
       .maybeSingle()
     if (!data) return null
     if (['privacy','terms','refund','disclaimer','session-policy'].includes(slug) && (data.legal_review_status !== 'approved' || !data.legal_version || !data.effective_at)) return null
-    return { title: data.title, updatedAt: data.updated_at, legalVersion: data.legal_version, effectiveAt: data.effective_at, sections: [...(data.page_sections ?? [])].sort((a, b) => a.sort - b.sort) }
+    return {seoTitle:data.seo_title,seoDescription:data.seo_description,canonicalUrl:data.canonical_url,ogImageUrl:data.og_image_url, title: data.title, updatedAt: data.updated_at, legalVersion: data.legal_version, effectiveAt: data.effective_at, sections: [...(data.page_sections ?? [])].filter(section=>section.is_visible===true).sort((a, b) => a.sort - b.sort) }
   } catch { return null }
 }
 

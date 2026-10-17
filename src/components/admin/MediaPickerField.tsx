@@ -1,4 +1,5 @@
 'use client'
+import {AdminField} from './AdminField'
 
 import { useMemo, useState } from 'react'
 import type { MediaOption } from '@/lib/data/cms'
@@ -27,7 +28,7 @@ export function MediaPickerField({ assets, defaultValue = '', label = 'الصو�
       <details>
         <summary className="cursor-pointer text-sm font-bold text-deep-teal">اختيار من مكتبة الوسائط ({assets.length.toLocaleString('ar-EG')})</summary>
         <div className="mt-3 space-y-3">
-          <input aria-label="البحث في مكتبة الصور" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحثي بالاسم أو النص البديل" className="min-h-12 w-full rounded-xl border border-line bg-surface-raised px-3 text-sm text-ink" />
+          <AdminField name="media_search" label="البحث في مكتبة الصور" type="search" value={query} onChange={event=>setQuery(event.target.value)} hint="ابحثي بالاسم أو الوصف البديل لاختيار صورة موجودة. لا يغيّر البحث بيانات الصور." example="غلاف الكورس" maxLength={120}/>
           {filtered.length === 0 ? <p className="text-sm text-text-soft">لا توجد صور عامة مطابقة.</p> : <div className="grid max-h-72 grid-cols-2 gap-2 overflow-y-auto sm:grid-cols-3">
             {filtered.map((asset) => <button key={asset.id} type="button" aria-pressed={assetId === asset.id} onClick={() => { setAssetId(asset.id); setUrl(asset.url) }} className={`overflow-hidden rounded-xl border text-start ${assetId === asset.id ? 'border-deep-teal ring-2 ring-aqua/30' : 'border-line'}`}>
               <span className="block aspect-[4/3] bg-sand/20 bg-cover bg-center" role="img" aria-label={asset.alt || asset.title} style={{ backgroundImage: asset.kind === 'image' ? `url(${asset.url})` : undefined }} />

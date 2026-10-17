@@ -29,7 +29,7 @@ for (const action of ['saveNavigationItem', 'deleteNavigationItem']) {
   assert(!/from\('(navigation_items|audit_logs)'\)\.(insert|update|delete)/.test(body), `${action} must not retain split writes`)
 }
 assert.match(actions, /Number\.isInteger\(sort\)[\s\S]*sort < 0[\s\S]*sort > 1000/, 'Server Action must mirror order bounds without coercion')
-assert(manager.includes('window.confirm') && manager.includes("role={failed ? 'alert' : 'status'}"), 'Admin controls need destructive confirmation and accessible feedback')
+assert(manager.includes('window.confirm') && manager.includes('<ActionFeedback feedback={feedback}') && readFileSync('src/components/admin/ActionFeedback.tsx','utf8').includes("role={feedback.ok ? 'status' : 'alert'}"), 'Admin controls need destructive confirmation and accessible feedback')
 assert(manager.includes('maxLength={80}') && manager.includes('maxLength={180}') && manager.includes('max="1000"'), 'Admin inputs must mirror navigation bounds')
 assert.match(adminPage, /adminList<NavRow>\('navigation_items'[\s\S]*limit:200/, 'Admin must reload the bounded persisted rows')
 assert.match(publicData, /getPublicNavigation[\s\S]*from\('navigation_items'\)[\s\S]*eq\('is_visible',true\)/, 'public chrome must consume governed visible navigation')

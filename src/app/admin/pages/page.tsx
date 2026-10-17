@@ -71,7 +71,7 @@ export default async function AdminPagesPage() {
                   <PreviewButton type="page" id={p.id}/>
                 </div>
               </div>
-              <CmsPageEditor page={p}/>
+              <CmsPageEditor page={p} media={media}/>
               <details className="rounded-xl border border-line"><summary className="cursor-pointer list-none px-4 py-3 font-bold text-deep-teal">بنية الصفحة ({p.page_sections.length.toLocaleString('ar-EG')} أقسام)</summary><div className="space-y-3 border-t border-line p-4">{p.slug === 'home' ? <HomeSectionManager articles={articles} assets={media} pageId={p.id} sections={p.page_sections.map((section) => section.kind === 'hero' && (!section.content || Object.keys(section.content as object).length === 0) ? { ...section, content: homeCopy } : section)} /> : <>{p.page_sections.sort((a,b)=>a.sort-b.sort).map(section=><CmsSectionEditor key={section.id} pageId={p.id} section={section}/>)}<CmsSectionEditor pageId={p.id}/></>}</div></details>
             </Card>
           ))}

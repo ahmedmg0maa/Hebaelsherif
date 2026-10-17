@@ -1,4 +1,5 @@
 'use client'
+import {AdminField,AdminSelect,AdminTextarea} from './AdminField'
 
 import { useState } from 'react'
 import { formatCairoLocalDateTime } from '@/lib/booking/cairo-time'
@@ -32,7 +33,6 @@ export type PlanAdmin = {
 
 function PlanForm({ plan, services, packageProducts }: { plan?: PlanAdmin; services: { id: string; title: string }[]; packageProducts: { id: string; title: string }[] }) {
   const { busy, feedback, run } = useAdminAction()
-  const input = 'min-h-12 w-full rounded-xl border border-line bg-surface-raised px-4 py-2 text-ink focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/15'
   const prefix = `plan-${plan?.id ?? 'new'}`
   return <form className="grid gap-4 md:grid-cols-2" onSubmit={async (event) => {
     event.preventDefault()
@@ -47,30 +47,13 @@ function PlanForm({ plan, services, packageProducts }: { plan?: PlanAdmin; servi
       ['sessions_included','الجلسات المشمولة','number',plan?.sessions_included ?? 0],
       ['max_subscribers','الحد الأقصى للمشتركات','number',plan?.max_subscribers ?? ''],
       ['sort','الترتيب','number',plan?.sort ?? 0],
-    ].map(([name,label,type,value]) => <label key={String(name)} htmlFor={`${prefix}-${name}`} className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">
-      {label}<input id={`${prefix}-${name}`} name={String(name)} type={String(type)} defaultValue={value} min={type === 'number' ? 0 : undefined} step={name === 'price' ? '0.01' : undefined} required={['title','slug','price','duration_days'].includes(String(name))} className={input} dir={['slug','currency'].includes(String(name)) ? 'ltr' : 'rtl'} />
-    </label>)}
-    <label className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">دورية الباقة
-      <select name="billing_interval" defaultValue={plan?.billing_interval ?? 'month'} className={input}>
-        <option value="month">شهري</option><option value="quarter">ربع سنوي</option><option value="year">سنوي</option><option value="one_time">مرة واحدة</option>
-      </select>
-    </label>
-    <label className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">منتج الشراء المرتبط
-      <select name="product_id" defaultValue={plan?.product_id ?? ''} className={input}><option value="">تفعيل إداري فقط</option>{packageProducts.map(product=><option key={product.id} value={product.id}>{product.title}</option>)}</select>
-      <span className="text-sm font-normal text-text-soft">عند دفع هذا المنتج تُفعّل الباقة تلقائيًا.</span>
-    </label>
-    <label className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">تبدأ في — توقيت القاهرة
-      <input name="starts_at" type="datetime-local" defaultValue={(plan?.starts_at ? formatCairoLocalDateTime(plan.starts_at) : '') ?? ''} className={input} dir="ltr" />
-    </label>
-    <label className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal">تنتهي في — توقيت القاهرة
-      <input name="ends_at" type="datetime-local" defaultValue={(plan?.ends_at ? formatCairoLocalDateTime(plan.ends_at) : '') ?? ''} className={input} dir="ltr" />
-    </label>
-    <label className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal md:col-span-2">الوصف
-      <textarea name="description" rows={3} defaultValue={plan?.description} className={input} />
-    </label>
-    <label className="flex flex-col gap-1.5 text-sm font-semibold text-deep-teal md:col-span-2">المزايا — ميزة في كل سطر
-      <textarea name="features" rows={5} defaultValue={plan?.features.join('\n')} className={input} />
-    </label>
+    ].map(([name,label,type,value])=><AdminField key={String(name)} id={`${prefix}-${name}`} name={String(name)} label={String(label)} type={String(type)} defaultValue={value} min={type==='number'?(['duration_days','max_subscribers'].includes(String(name))?1:0):undefined} max={type==='number'?(name==='price'?99999999.99:name==='duration_days'?3650:name==='max_subscribers'?1000000:100000):undefined} step={name==='price'?'0.01':undefined} required={['title','slug','price','currency','duration_days'].includes(String(name))} dir={['slug','currency'].includes(String(name))?'ltr':'rtl'}/>)}
+    <AdminSelect label="دورية الباقة" name="billing_interval" defaultValue={plan?.billing_interval??'month'} required hint="وصف مدة الباقة للعميلة. اختيار دوري لا ينشئ خصمًا بنكيًا تلقائيًا؛ التجديد بحسب آلية الموقع الحالية." example="شهري لباقة شهر واحد"><option value="month">شهري</option><option value="quarter">ربع سنوي</option><option value="year">سنوي</option><option value="one_time">مرة واحدة</option></AdminSelect>
+    <AdminSelect label="منتج الشراء المرتبط" name="product_id" defaultValue={plan?.product_id??''} hint="عند دفع هذا المنتج تُفعّل الباقة تلقائيًا. دون منتج تكون الإتاحة إدارية فقط." example="منتج الباقة المعتمد في قسم المنتجات"><option value="">تفعيل إداري فقط</option>{packageProducts.map(product=><option key={product.id} value={product.id}>{product.title}</option>)}</AdminSelect>
+    <AdminField label="تبدأ في — القاهرة" name="starts_at" type="datetime-local" defaultValue={(plan?.starts_at?formatCairoLocalDateTime(plan.starts_at):'')??''} dir="ltr"/>
+    <AdminField label="تنتهي في — القاهرة" name="ends_at" type="datetime-local" defaultValue={(plan?.ends_at?formatCairoLocalDateTime(plan.ends_at):'')??''} dir="ltr"/>
+    <AdminTextarea label="وصف الباقة" name="description" defaultValue={plan?.description} maxLength={30000} rows={4} className="md:col-span-2"/>
+    <AdminTextarea label="المزايا — ميزة في كل سطر" name="features" defaultValue={plan?.features.join('\n')} maxLength={10000} rows={5} className="md:col-span-2" hint="اكتبي المزايا المعتمدة فقط. تظهر كقائمة في تفاصيل الباقة." example="متابعة التقدم ثم أوراق تطبيق في سطر آخر" limits="حتى 50 ميزة؛ كل ميزة حتى 300 حرف"/>
     <p className="text-sm leading-loose text-text-soft md:col-span-2">تعديل المدة والجلسات والخدمات يطبّق على الاشتراكات الجديدة. الاشتراكات القائمة تحتفظ بالحقوق المسجلة لها. أوقفي نشر منتج الشراء المرتبط قبل تعديل الباقة.</p>
     <fieldset className="space-y-3 rounded-xl border border-line bg-ivory/50 p-4 md:col-span-2">
       <legend className="px-2 text-sm font-bold text-deep-teal">الخدمات التي يمكن حجزها برصيد هذه الباقة</legend>
@@ -125,11 +108,9 @@ export function SubscriptionStatusControl({ id, status }: { id: string; status: 
   const { busy, feedback, run } = useAdminAction()
   const [confirm, setConfirm] = useState(false)
   return <div className="space-y-3">
-    <label className="grid gap-2 text-sm font-semibold text-deep-teal">حالة الاشتراك
-      <select value={status} disabled={busy} onChange={event => { const value = event.target.value; void run(() => updateSubscriptionStatus(id, value), 'حُدّثت حالة الاشتراك.') }} className="min-h-12 rounded-xl border border-line bg-surface-raised px-3 text-base text-ink">
+    <AdminSelect  label={`حالة الاشتراك`} required hint="يُحفظ التغيير فورًا. الإيقاف أو الإلغاء يمنع الاستفادة الجديدة وفق السياسة، مع حفظ التاريخ؛ لا ينفّذ استردادًا ماليًا." example="موقوف مؤقتًا عند الاتفاق على إيقاف الاستفادة" value={status} disabled={busy} onChange={event => { const value = event.target.value; void run(() => updateSubscriptionStatus(id, value), 'حُدّثت حالة الاشتراك.') }} name="admin_field_110">
         <option value="pending">بانتظار التفعيل</option><option value="active">نشط</option><option value="paused">موقوف مؤقتًا</option><option value="cancelled">ملغي</option><option value="expired">منتهي</option>
-      </select>
-    </label>
+      </AdminSelect>
     {!confirm ? <Button variant="ghost" disabled={busy} onClick={() => setConfirm(true)}>إلغاء وأرشفة</Button> : <div className="space-y-3 rounded-xl border border-burgundy/25 p-4">
       <p className="text-sm text-burgundy">هل تريدين إلغاء هذا الاشتراك وأرشفته؟</p>
       <div className="flex flex-wrap gap-2"><Button variant="burgundy" disabled={busy} onClick={async () => { if (await run(() => deleteSubscription(id), 'أُلغي الاشتراك وأُرشف.')) setConfirm(false) }}>تأكيد الإلغاء</Button><Button variant="ghost" disabled={busy} onClick={() => setConfirm(false)}>تراجع</Button></div>
@@ -148,7 +129,6 @@ export function SubscriptionCreditControl({ id, balance, included }: { id: strin
 
 export function SubscriptionCreate({ plans, customers }: { plans: { id: string; title: string }[]; customers: { id: string; name: string; email: string }[] }) {
   const { busy, feedback, run } = useAdminAction()
-  const input = 'min-h-12 w-full rounded-xl border border-line bg-surface-raised px-3 text-base text-ink'
   return <form className="space-y-5 rounded-2xl border border-line bg-surface-raised p-6" aria-busy={busy} onSubmit={async event => {
     event.preventDefault()
     const form = event.currentTarget, data = new FormData(form)
@@ -156,10 +136,10 @@ export function SubscriptionCreate({ plans, customers }: { plans: { id: string; 
   }}>
     <fieldset disabled={busy} className="grid gap-5 md:grid-cols-2">
       <legend className="mb-5 font-heading text-2xl text-deep-teal">إضافة اشتراك يدوي</legend>
-      <label className="grid gap-2 text-sm font-bold text-deep-teal">العميلة<select name="user_id" required className={input}><option value="">اختاري العميلة</option>{customers.map(customer => <option key={customer.id} value={customer.id}>{customer.name} — {customer.email}</option>)}</select></label>
-      <label className="grid gap-2 text-sm font-bold text-deep-teal">الباقة<select name="plan_id" required className={input}><option value="">اختاري الباقة</option>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.title}</option>)}</select></label>
-      <label className="grid gap-2 text-sm font-bold text-deep-teal">الحالة<select name="status" className={input}><option value="active">نشط</option><option value="pending">بانتظار التفعيل</option></select></label>
-      <label className="grid gap-2 text-sm font-bold text-deep-teal">ملاحظات داخلية<input name="admin_notes" maxLength={4000} className={input} /></label>
+      <AdminSelect  label={`العميلة`} name="user_id" hint="الحساب الذي سيحصل على حقوق هذه الباقة. راجعي الاسم والبريد قبل الحفظ." example="اختاري صاحبة الاشتراك المقصودة" required><option value="">اختاري العميلة</option>{customers.map(customer => <option key={customer.id} value={customer.id}>{customer.name} — {customer.email}</option>)}</AdminSelect>
+      <AdminSelect  label={`الباقة`} name="plan_id" hint="الباقة المعتمدة التي تحدد المدة ورصيد الجلسات والخدمات لهذا الاشتراك." example="الباقة المتفق عليها مع العميلة" required><option value="">اختاري الباقة</option>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.title}</option>)}</AdminSelect>
+      <AdminSelect  label={`الحالة`} name="status" required hint="التفعيل يتيح حقوق الباقة للعميلة. الانتظار يُنشئ سجلًا دون تفعيل الحقوق، ولا ينشئ دفعًا تلقائيًا." example="بانتظار التفعيل حتى اعتماد الاستحقاق"><option value="active">نشط</option><option value="pending">بانتظار التفعيل</option></AdminSelect>
+      <AdminField  label={`ملاحظات داخلية`} name="admin_notes" maxLength={4000}/>
     </fieldset>
     <ActionFeedback feedback={feedback} />
     <Button type="submit" disabled={busy || !plans.length || !customers.length}>{busy ? 'جاري الإنشاء…' : 'إنشاء الاشتراك'}</Button>

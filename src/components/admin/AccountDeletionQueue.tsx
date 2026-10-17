@@ -1,4 +1,5 @@
 'use client'
+import {AdminField,AdminTextarea} from './AdminField'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -21,7 +22,7 @@ export type AccountDeletionQueueRow = {
   note_present: boolean
 }
 
-const fmt = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeStyle: 'short' })
+const fmt = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeStyle: 'short',timeZone:'Africa/Cairo' })
 type ReviewStatus = 'in_review' | 'awaiting_customer' | 'approved_for_execution' | 'declined'
 
 export function AccountDeletionQueue({ rows, canManage }: { rows: AccountDeletionQueueRow[]; canManage: boolean }) {
@@ -72,15 +73,7 @@ export function AccountDeletionQueue({ rows, canManage }: { rows: AccountDeletio
 
           {canManage && row.customer_id && (
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-deep-teal" htmlFor={`deletion-note-${row.id}`}>ملاحظة المراجعة</label>
-              <textarea
-                id={`deletion-note-${row.id}`}
-                rows={2}
-                maxLength={1000}
-                value={notes[row.id] ?? ''}
-                onChange={(event) => setNotes((current) => ({ ...current, [row.id]: event.target.value }))}
-                className="min-h-20 w-full rounded-xl border border-line bg-surface-muted px-3 py-2 text-sm text-ink"
-              />
+              <AdminTextarea label="ملاحظة المراجعة" name={`deletion-note-${row.id}`} rows={2} maxLength={1000} value={notes[row.id]??''} onChange={e=>setNotes(current=>({...current,[row.id]:e.target.value}))} hint="سجّلي خطوات مراجعة طلب حذف الحساب. لا تضعي نسخة من بيانات الهوية في الملاحظة." example="تمت مراجعة الحقوق والطلبات المرتبطة"/>
               <div className="flex flex-wrap gap-2">
                 {row.status !== 'in_review' && <Button size="sm" variant="secondary" disabled={busy !== null} onClick={() => review(row, 'in_review')}>بدء/إعادة المراجعة</Button>}
                 <Button size="sm" variant="secondary" disabled={busy !== null} onClick={() => review(row, 'awaiting_customer')}>طلب متابعة</Button>
@@ -92,17 +85,7 @@ export function AccountDeletionQueue({ rows, canManage }: { rows: AccountDeletio
 
           {canManage && !row.customer_id && row.status === 'approved_for_execution' && (
             <div className="space-y-2 rounded-xl border border-burgundy/30 p-3">
-              <label htmlFor={`execution-reference-${row.id}`} className="block text-sm font-bold text-deep-teal">مرجع تنفيذ حذف الهوية</label>
-              <input
-                id={`execution-reference-${row.id}`}
-                dir="ltr"
-                minLength={3}
-                maxLength={128}
-                pattern="[A-Za-z0-9._:/-]+"
-                value={references[row.id] ?? ''}
-                onChange={(event) => setReferences((current) => ({ ...current, [row.id]: event.target.value }))}
-                className="min-h-11 w-full rounded-xl border border-line bg-surface-muted px-3 text-sm text-ink"
-              />
+              <AdminField label="مرجع تنفيذ حذف الهوية" name={`execution-reference-${row.id}`} dir="ltr" minLength={3} maxLength={128} pattern="[A-Za-z0-9._:/-]+" value={references[row.id]??''} onChange={e=>setReferences(current=>({...current,[row.id]:e.target.value}))} required hint="مرجع العملية المنفذة فعليًا بعد حذف الهوية؛ ليس رقم هوية العميلة أو كلمة مرورها." example="رقم طلب التنفيذ الداخلي"/>
               <Button size="sm" variant="burgundy" disabled={busy !== null} onClick={() => complete(row)}>تسجيل الاكتمال — MFA حديث</Button>
             </div>
           )}

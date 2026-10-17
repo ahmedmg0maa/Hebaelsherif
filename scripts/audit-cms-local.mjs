@@ -22,7 +22,7 @@ if (existsSync('src/lib/home/sections.ts')) {
 }
 if (existsSync(required[1])) {
   const source = read(required[1])
-  for (const token of ['sectionKinds', '<select name="kind"', 'HTTPS']) {
+  for (const token of ['sectionKinds', '<AdminSelect label="نوع القسم" name="kind"', 'pattern="https://.*"', '<ProseContentFields']) {
     if (!source.includes(token)) failures.push(`CMS structured editor missing ${token}`)
   }
 }

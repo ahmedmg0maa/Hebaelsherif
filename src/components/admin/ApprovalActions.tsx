@@ -1,4 +1,6 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Full navigation intentionally refreshes the private Auth document. */
 'use client'
+import {AdminField} from './AdminField'
 
 import { useState } from 'react'
 import { ActionFeedback } from '@/components/admin/ActionFeedback'
@@ -50,17 +52,7 @@ export function ApprovalActions({ paymentId, hasProof, canApprove, canReject }: 
       {canApprove && hasProof && !reviewed && <p className="text-sm font-semibold text-taupe">افتحي الإيصال وراجعيه لتفعيل زر الاعتماد لمدة 30 دقيقة.</p>}
       {canReject && rejecting && (
         <div className="flex flex-wrap items-center gap-3">
-          <label htmlFor={`reason-${paymentId}`} className="sr-only">
-            سبب الرفض
-          </label>
-          <input
-            id={`reason-${paymentId}`}
-            value={reason}
-            maxLength={500}
-            disabled={busy}
-            onChange={(e) => setReason(e.target.value)}
-            className="min-h-12 w-full max-w-sm rounded-lg border border-line bg-surface-raised px-3 py-2 text-base"
-          />
+          <AdminField label="سبب رفض الدفعة" name={`reason-${paymentId}`} required minLength={3} maxLength={500} disabled={busy} value={reason} onChange={e=>setReason(e.target.value)} hint="سبب محدد لقرار الرفض، بصياغة تصلح للتواصل مع العميلة. رفض الإثبات لا ينفّذ استردادًا ماليًا." example="قيمة الإيصال لا تطابق قيمة الطلب؛ يرجى مراجعتها"/>
           <Button variant="burgundy" size="sm" disabled={busy || reason.trim().length < 3} onClick={onReject}>
             تأكيد الرفض
           </Button>

@@ -13,6 +13,7 @@ export const metadata: Metadata = { title: 'الحجوزات — الإدارة'
 
 type Row = {
   id: string
+  user_id: string
   starts_at: string
   ends_at: string
   status: string
@@ -45,9 +46,16 @@ export default async function AdminBookingsPage({searchParams}:{searchParams:Pro
  // first valid wall-clock minute rather than using a constant UTC offset.
  function boundary(date:string,parsed:Date|null){return parsed??parseCairoLocalDateTime(`${date}T01:00`)!}
  const db=await getServerClient()
- const {data,error,count}=await db.from('bookings').select('id, starts_at, ends_at, status, customer_notes, meeting_url, admin_notes, services(title), profiles(full_name), booking_events(id,event,created_at), booking_reschedule_requests(id,proposed_starts_at,status,reason,created_at)',{count:'exact'}).gte('starts_at',boundary(days[0],start).toISOString()).lt('starts_at',boundary(addCalendarDays(days.at(-1)!,1),end).toISOString()).order('starts_at',{ascending:true}).limit(1000)
+ // bookings.user_id references auth.users, not profiles. Read names separately
+ // through the same authenticated/RLS client rather than inventing an embed.
+ const {data,error,count}=await db.from('bookings').select('id, user_id, starts_at, ends_at, status, customer_notes, meeting_url, admin_notes, services(title), booking_events(id,event,created_at), booking_reschedule_requests(id,proposed_starts_at,status,reason,created_at)',{count:'exact'}).gte('starts_at',boundary(days[0],start).toISOString()).lt('starts_at',boundary(addCalendarDays(days.at(-1)!,1),end).toISOString()).order('starts_at',{ascending:true}).limit(1000)
  if(error||count!==(data??[]).length)throw new Error('BOOKING_CALENDAR_READ_INCOMPLETE')
- const bookings=(data??[]) as unknown as Row[]
+ const rows=(data??[]) as unknown as Omit<Row,'profiles'>[]
+ const userIds=[...new Set(rows.map(row=>row.user_id))]
+ const profileResult=userIds.length?await db.from('profiles').select('id,full_name').in('id',userIds):{data:[],error:null}
+ if(profileResult.error)throw new Error('BOOKING_CALENDAR_PROFILE_READ_FAILED')
+ const profiles=new Map((profileResult.data??[]).map(profile=>[profile.id,{full_name:profile.full_name}]))
+ const bookings:Row[]=rows.map(row=>({...row,profiles:profiles.get(row.user_id)??null}))
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <header>

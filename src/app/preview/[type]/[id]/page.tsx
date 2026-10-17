@@ -2,7 +2,8 @@ import { resolveHomeMedia } from '@/lib/data/home-media'
 import { createHash } from 'node:crypto'
 import { notFound } from 'next/navigation'
 import { getServiceClient } from '@/lib/supabase/server'
-import { Card } from '@/components/ui/Card'
+import {ProsePage} from '@/components/catalog/ProsePage'
+import {normalizeCmsProse,type CmsProseSection} from '@/lib/cms/prose'
 import { normalizeHomeSections } from '@/lib/home/sections'
 import { getHomeCopy, getOwnerProfile } from '@/lib/data/cms'
 import { getHomeData } from '@/lib/data/home'
@@ -43,5 +44,6 @@ export default async function ContentPreviewPage({ params, searchParams }: Props
     return <main><p className="sticky top-0 z-60 bg-burgundy px-4 py-2 text-center text-sm font-bold text-on-dark">معاينة خاصة — ليست منشورة ولا قابلة للفهرسة · {previewLabel}</p>{sections.map((section) => <HomeSectionRenderer key={section.id} section={section} copy={copy} data={data} profile={profile} assessment={assessment} preview />)}</main>
   }
 
-  return <main className="mx-auto max-w-4xl px-6 py-12"><p className="mb-4 rounded-full bg-antique-gold/15 px-4 py-2 text-center text-sm font-bold text-deep-teal">معاينة خاصة — ليست منشورة · {previewLabel}</p><h1 className="text-4xl font-bold text-deep-teal">{page.title}</h1><div className="mt-8 space-y-5">{page.page_sections.sort((a, b) => a.sort - b.sort).map((section) => <Card key={section.id}><p className="text-xs font-bold text-antique-gold">{section.kind} · {section.name}</p><pre className="mt-3 whitespace-pre-wrap text-sm text-ink" dir="auto">{JSON.stringify(section.content, null, 2)}</pre></Card>)}</div></main>
+  const sections=page.page_sections.filter(s=>s.is_visible).sort((a,b)=>a.sort-b.sort).map(s=>normalizeCmsProse(s.content)).filter((s):s is CmsProseSection=>Boolean(s))
+  return <div><p className="bg-antique-gold/15 px-4 py-3 text-center text-sm font-bold text-deep-teal">معاينة خاصة — ليست منشورة · {previewLabel} · الأقسام الظاهرة فقط</p><ProsePage eyebrow="معاينة الصفحة" title={page.title} lead="" sections={sections}/></div>
 }

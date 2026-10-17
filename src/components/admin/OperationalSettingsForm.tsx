@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Full navigation intentionally refreshes the private Auth document. */
 'use client'
 
 import {AdminField} from './AdminField'

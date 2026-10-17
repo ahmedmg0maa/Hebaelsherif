@@ -1,4 +1,7 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Full navigation intentionally refreshes the private Auth document. */
 'use client'
+import {AdminTextarea,AdminField} from './AdminField'
+
 
 import { useState } from 'react'
 import { ActionFeedback } from '@/components/admin/ActionFeedback'
@@ -30,7 +33,7 @@ export function OrderActions({ orderId, status, canUpdate, canRefund }: { orderI
     <div className="space-y-1">
       <div className="grid min-w-64 gap-2">
         {(showRefundStart || showRefundResolution) && <a className="text-sm font-bold text-deep-teal underline underline-offset-4" href="/auth/admin/confirm?reauth=1&redirect=/admin/orders">تأكيد أمني حديث قبل الاسترداد</a>}
-        {(showCancel || showRefundStart) && <label className="text-sm font-semibold text-deep-teal">{showCancel ? 'سبب الإلغاء' : 'سبب الاسترداد'}<textarea disabled={busy} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} rows={2} className="mt-1 w-full rounded-lg border border-line bg-surface-raised p-3 text-base text-ink" /></label>}
+        {(showCancel || showRefundStart) && <AdminTextarea  label={`${showCancel ? 'سبب الإلغاء' : 'سبب الاسترداد'}`} disabled={busy} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} rows={2} name="admin_notes"/>}
         {showCancel && (
           <Button variant="secondary" size="sm" disabled={busy || reason.trim().length < 3} onClick={cancel}>
             إلغاء
@@ -43,9 +46,9 @@ export function OrderActions({ orderId, status, canUpdate, canRefund }: { orderI
         )}
         {(showRefundStart || showRefundResolution) && <p className="max-w-sm text-xs leading-relaxed text-text-soft">إن كان الطلب لباقة جلسات، راجعي حجوزاتها القادمة وألغيها قبل إتمام الاسترداد. استرداد جلسة منفردة يلغي موعدها القادم عند تأكيد إعادة المبلغ.</p>}
         {showRefundResolution && <>
-          <label className="text-sm font-semibold text-deep-teal">مرجع إعادة المبلغ<input disabled={busy} value={evidence} onChange={(event) => setEvidence(event.target.value)} maxLength={120} className="mt-1 min-h-12 w-full rounded-lg border border-line bg-surface-raised px-3 text-base text-ink" placeholder="مرجع التحويل أو الإيصال" /></label>
+          <AdminField  label={`مرجع إعادة المبلغ`} disabled={busy} value={evidence} onChange={(event) => setEvidence(event.target.value)} maxLength={120} placeholder="مرجع التحويل أو الإيصال" name="admin_field_46"/>
           <Button variant="burgundy" size="sm" disabled={busy || evidence.trim().length < 3} onClick={() => refund('complete')}>تأكيد إتمام الاسترداد</Button>
-          <label className="text-sm font-semibold text-deep-teal">سبب تعذّر الاسترداد<textarea disabled={busy} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} rows={2} className="mt-1 w-full rounded-lg border border-line bg-surface-raised p-3 text-base text-ink" /></label>
+          <AdminTextarea  label={`سبب تعذّر الاسترداد`} disabled={busy} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} rows={2} name="admin_notes"/>
           <Button variant="secondary" size="sm" disabled={busy || reason.trim().length < 3} onClick={() => refund('fail')}>تسجيل فشل الاسترداد</Button>
         </>}
       </div>

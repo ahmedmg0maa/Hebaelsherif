@@ -94,11 +94,11 @@ export function AdminTopbar({permissions}:{permissions:readonly Permission[]}) {
     <div className="mb-7 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface-raised/85 p-3 shadow-card backdrop-blur">
       <Link href={`/auth/admin/confirm?reauth=1&redirect=${encodeURIComponent(pathname)}`} className="min-h-11 content-center px-3 text-sm text-deep-teal underline underline-offset-4">تأكيد الدخول</Link>
       <div ref={boxRef} className="relative min-w-0 basis-64 flex-1">
-        <svg viewBox="0 0 24 24" className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-taupe" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+        <svg viewBox="0 0 24 24" className="pointer-events-none absolute start-4 top-10 h-4 w-4 text-taupe" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
           <circle cx="11" cy="11" r="7" />
           <path d="M20 20l-3.5-3.5" strokeLinecap="round" />
         </svg>
-        <label htmlFor="admin-search" className="sr-only">
+        <label htmlFor="admin-search" className="mb-1 block text-sm font-semibold text-deep-teal">
           بحث شامل
         </label>
         <input
@@ -108,6 +108,7 @@ export function AdminTopbar({permissions}:{permissions:readonly Permission[]}) {
           autoComplete="off"
           maxLength={120}
           aria-controls="admin-search-results"
+          aria-describedby="admin-search-help"
           onKeyDown={event => { if (event.key === 'ArrowDown' && open) { event.preventDefault(); boxRef.current?.querySelector<HTMLAnchorElement>('a')?.focus() } }}
           value={q}
           onChange={(e) => onChange(e.target.value)}
@@ -115,6 +116,7 @@ export function AdminTopbar({permissions}:{permissions:readonly Permission[]}) {
           placeholder={canSearchCustomers?'قسم، اسم عميلة أو بريدها…':'ابحثي عن قسم في الإدارة…'}
           className="min-h-12 w-full rounded-xl border border-line bg-surface-raised py-2.5 ps-11 pe-4 text-sm text-ink shadow-card transition-colors placeholder:text-taupe/60 focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/20"
         />
+        <p id="admin-search-help" className="mt-1 text-sm leading-6 text-text-soft">ابحثي دون تعديل البيانات. مثال: الحجوزات · اختياري · من حرفين إلى 120 حرفًا. لا يُحفظ البحث على الجهاز.</p>
         {open && q.trim().length >= 2 && (
           <div id="admin-search-results" role="region" aria-label="نتائج البحث" className="absolute inset-x-0 top-full z-30 mt-2 max-h-[65dvh] overflow-y-auto rounded-2xl border border-line bg-surface-raised shadow-card-hover">
             {matchingCommands.length>0&&<div className="border-b border-line p-2"><p className="px-3 py-2 text-xs font-bold text-taupe">أقسام الإدارة</p><ul>{matchingCommands.map(item=><li key={item.href}><Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-12 items-center justify-between gap-4 rounded-lg px-3 py-2 text-sm font-semibold text-deep-teal hover:bg-ivory"><span>{item.label}</span><span className="text-xs font-normal text-taupe">{item.group}</span></Link></li>)}</ul></div>}

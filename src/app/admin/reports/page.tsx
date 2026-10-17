@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { REPORT_MONTH_OPTIONS, reportMonths } from '@/lib/reports/integrity'
 import { Button } from '@/components/ui/Button'
 import type { Metadata } from 'next'
@@ -42,7 +43,7 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
     const unavailable = state === 'unconfigured'
     return <div className="mx-auto max-w-6xl space-y-8">
       <header><h1 className="text-3xl font-bold text-deep-teal">التقارير</h1></header>
-      <Card className="max-w-2xl"><CardTitle>{unavailable ? 'مصدر التقارير غير مهيأ' : 'تعذّرت قراءة مصدر التقارير'}</CardTitle><p className="mt-3 leading-loose text-text-soft">لا نعرض أرقامًا عندما تتعذر القراءة الكاملة أو تتجاوز البيانات حد التجميع الآمن. تحققي من حالة النظام والاتصال والصلاحيات ثم أعيدي المحاولة.</p><a className="mt-4 inline-block text-sm font-bold text-deep-teal underline underline-offset-4" href="/admin/system">فتح حالة النظام</a></Card>
+      <Card className="max-w-2xl"><CardTitle>{unavailable ? 'مصدر التقارير غير مهيأ' : 'تعذّرت قراءة مصدر التقارير'}</CardTitle><p className="mt-3 leading-loose text-text-soft">لا نعرض أرقامًا عندما تتعذر القراءة الكاملة أو تتجاوز البيانات حد التجميع الآمن. تحققي من حالة النظام والاتصال والصلاحيات ثم أعيدي المحاولة.</p><Link className="mt-4 inline-block text-sm font-bold text-deep-teal underline underline-offset-4" href="/admin/system">فتح حالة النظام</Link></Card>
     </div>
   }
 

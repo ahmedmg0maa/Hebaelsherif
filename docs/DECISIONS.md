@@ -917,3 +917,9 @@
 - Make media registration idempotent and atomic with its audit. Never remove an object after an ambiguous metadata-insert response. Keep file bytes/temporary signatures out of audit and Git.
 - Owner approved two session prices (60 min/1200 EGP; 90 min/1800 EGP) and 30-minute start choices. Save initial descriptions/policies as hidden editable drafts rather than opening intake before cover/policy/payment review.
 
+## 2026-10-17 — Managed prose pages and browser-discovered calendar relation
+
+- Normal page editors use structured prose fields and preserve existing unknown content keys. Public custom-slug pages and private previews share escaped prose normalization; public readers explicitly exclude hidden sections even for an authenticated owner. Legal approval and token permissions remain authoritative.
+- Booking customer names are resolved separately by user_id through the authenticated RLS client. Do not add a foreign key to auth-owned data merely to satisfy an invalid PostgREST embed. Fail closed on actual query errors and truncated calendar periods.
+- Retain intentional full Auth-document navigation in fresh-assurance links. A lint rule triggered by the new dynamic public route is not a reason to alter authentication behavior.
+

@@ -1,5 +1,6 @@
 "use client"
 
+import {AdminField} from './AdminField'
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { AdminSelect as FormSelect, AdminTextarea as FormTextarea } from '@/components/admin/AdminField'
@@ -29,7 +30,7 @@ export function SubscriberControls({ id, status }: { id: string; status: string 
       }, 'أُنشئ رابط جديد. يمكنك نسخه من الحقل الظاهر.')}>{unsubscribeUrl ? 'إنشاء رابط بديل' : 'تجهيز رابط الإلغاء'}</Button></>}
     {!confirmErase ? <Button type="button" size="sm" variant="burgundy" disabled={action.busy} onClick={() => setConfirmErase(true)}>محو البريد</Button> : <><Button type="button" size="sm" variant="burgundy" disabled={action.busy} onClick={() => manage('erase')}>تأكيد المحو</Button><Button type="button" size="sm" variant="ghost" disabled={action.busy} onClick={() => setConfirmErase(false)}>تراجع</Button></>}
   </div>
-    {unsubscribeUrl && <div className="space-y-2"><label className="block text-sm font-semibold">رابط إلغاء الاشتراك<input readOnly value={unsubscribeUrl} dir="ltr" onFocus={event => event.currentTarget.select()} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-surface-raised px-3 text-sm"/></label>
+    {unsubscribeUrl && <div className="space-y-2"><AdminField  label={`رابط إلغاء الاشتراك`} hint="رابط خاص بهذا الاشتراك. انسخيه للمتابعة مع صاحبته عند الحاجة، ولا تنشريه للعامة." example="الرابط المُجهز لهذه المشتركة فقط" readOnly value={unsubscribeUrl} dir="ltr" onFocus={event => event.currentTarget.select()} name="href"/>
       <Button type="button" size="sm" variant="secondary" disabled={action.busy} onClick={async () => {
         try {
           if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable')

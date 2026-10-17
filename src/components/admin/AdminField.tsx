@@ -5,6 +5,17 @@ import type { ComponentProps } from 'react'
 
 type Guidance = { description: string; example: string }
 const guidance: Record<string, Guidance> = {
+ cta_label:{description:'نص قصير يظهر على زر الانتقال.',example:'استكشفي الكورسات'},
+ cta_href:{description:'رابط صفحة داخل الموقع يبدأ بشرطة مائلة واحدة، دون مسافات.',example:'/courses'},
+ duration_days:{description:'عدد أيام صلاحية الباقة من التفعيل، وفق شروطها المعتمدة.',example:'30 يومًا'},
+ sessions_included:{description:'عدد الجلسات الذي تحصل عليه العميلة عند تفعيل الباقة.',example:'عدد الجلسات المعتمد للباقة'},
+ max_subscribers:{description:'حد الاشتراكات النشطة المتزامنة؛ اتركيه فارغًا دون حد. لا يمكن تقليله عن المشتركات الحاليات.',example:'العدد المناسب لقدرتك على المتابعة'},
+ canonical_url:{description:'الرابط الأساسي المعتمد لهذه الصفحة لمحركات البحث؛ اختياري عند عدم وجود نسخة بديلة.',example:'رابط الصفحة الحقيقي على hebaelsherif.com'},
+ legal_version:{description:'رقم أو اسم إصدار السياسة المعتمدة، لتوثيق النسخة المنشورة.',example:'1.0 بعد اعتماد النص'},
+ effective_at:{description:'التاريخ الذي يبدأ منه سريان هذه السياسة، بعد مراجعتها واعتمادها.',example:'اليوم المعتمد لبدء تطبيق السياسة'},
+ label:{description:'اسم الرابط الذي تقرؤه الزائرة في القائمة.',example:'عن هبة'},
+ href:{description:'وجهة الرابط داخل الموقع؛ اختاري صفحة متاحة فعلًا.',example:'/about'},
+ name:{description:'اسم تنظيمي يساعدك على التعرف على هذا السجل في الإدارة.',example:'مقدمة الصفحة'},
  file:{description:'اختاري الملف من جهازك؛ يبدأ النقل عند الضغط على الرفع، وتُفحص البيانات قبل التسجيل.',example:'صورة غلاف بصيغة WebP'},
  bucket:{description:'مكان حفظ الملف. العامة متاحة للزائرات، والخاصة تحتاج وصولًا مصرحًا. الربط بالدرس يتم من محرر المنهج.',example:'وسائط عامة لغلاف الكورس'},
  alt:{description:'وصف دقيق للصورة لمن لا تستطيع رؤيتها، ويُستخدم بدلًا منها عند تعذر تحميلها.',example:'مكتب ودفتر مفتوح بجوار نافذة'},

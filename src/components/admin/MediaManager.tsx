@@ -85,19 +85,13 @@ export function CopyMediaUrl({ url }: { url: string }) {
 type MediaReplacementOption = { id: string; title: string }
 
 export function MediaLifecycle({ id, archivedAt, replacedBy, usageCount = 0, replacements }: { id: string; archivedAt: string | null; replacedBy: string | null; usageCount?: number; replacements: MediaReplacementOption[] }) {
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
-  const run = async (action: 'archive' | 'restore' | 'replace', replacementId?: string) => {
-    setBusy(true); setMessage(null)
-    const result = await manageMediaLifecycle(id, action, replacementId)
-    setMessage(result.ok ? action === 'archive' ? 'نُقل الأصل إلى الأرشيف.' : action === 'restore' ? 'استُعيد الأصل إلى المكتبة النشطة.' : 'نُقلت الاستخدامات وأُرشف الأصل القديم.' : result.error)
-    setBusy(false)
-  }
-  if (archivedAt) return <div className="space-y-2">{replacedBy ? <p className="text-xs font-semibold text-text-soft">مؤرشف بعد استبدال آمن؛ الأصل البديل هو المرجع التشغيلي.</p> : <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => run('restore')}>استعادة</Button>}{message && <p role="status" className="text-xs font-semibold text-deep-teal">{message}</p>}</div>
+  const {busy,feedback,run:perform}=useAdminAction()
+  const run=(action:'archive'|'restore'|'replace',replacementId?:string)=>perform(()=>manageMediaLifecycle(id,action,replacementId),action==='archive'?'نُقل الأصل إلى الأرشيف ويمكن استعادته.':action==='restore'?'استُعيد الأصل إلى المكتبة النشطة.':'نُقلت الاستخدامات وأُرشف الأصل القديم.')
+  if (archivedAt) return <div className="space-y-2">{replacedBy ? <p className="text-xs font-semibold text-text-soft">مؤرشف بعد استبدال آمن؛ الأصل البديل هو المرجع التشغيلي.</p> : <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => run('restore')}>استعادة</Button>}<ActionFeedback feedback={feedback}/></div>
   return <div className="space-y-2">
     <p className="text-xs text-text-soft">{usageCount > 0 ? `مستخدم في ${usageCount.toLocaleString('ar-EG')} موضع؛ يلزم الاستبدال قبل الأرشفة.` : 'الأرشفة قابلة للاستعادة ولا تحذف ملف التخزين.'}</p>
     <div className="flex flex-wrap gap-2"><Button type="button" size="sm" variant="burgundy" disabled={busy} onClick={() => run('archive')}>أرشفة</Button></div>
-    {replacements.length > 0 && <form className="flex flex-wrap gap-2" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); void run('replace', String(form.get('replacement_id') ?? '')) }}><select name="replacement_id" required className="min-h-9 min-w-0 flex-1 rounded-lg border border-line bg-surface-raised px-2 text-xs text-ink"><option value="">اختاري أصلًا بديلًا متوافقًا</option>{replacements.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select><Button type="submit" size="sm" variant="secondary" disabled={busy}>استبدال ونقل الاستخدام</Button></form>}
-    {message && <p role="status" className="text-xs font-semibold text-deep-teal">{message}</p>}
+    {replacements.length > 0 && <form className="flex flex-wrap gap-2" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); void run('replace', String(form.get('replacement_id') ?? '')) }}><AdminSelect label="الأصل البديل" name="replacement_id" required hint="اختاري ملفًا متوافقًا لنقل الاستخدامات إليه ثم أرشفة الملف الحالي. لا تُحذف ملفات التخزين تلقائيًا." example="الصورة الجديدة التي تحل محل الغلاف الحالي"><option value="">اختاري أصلًا بديلًا متوافقًا</option>{replacements.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</AdminSelect><Button type="submit" size="sm" variant="secondary" disabled={busy}>استبدال ونقل الاستخدام</Button></form>}
+    <ActionFeedback feedback={feedback}/>
   </div>
 }

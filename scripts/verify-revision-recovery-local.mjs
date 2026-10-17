@@ -11,6 +11,6 @@ assert.ok(action.includes("from('content_revisions').insert"), 'restore does not
 assert.ok(page.includes(".filter((row) => row.entity_type in labels)"), 'revision UI is not limited to approved entity types')
 assert.ok(!page.includes('JSON.stringify'), 'revision UI must not expose raw snapshots')
 assert.ok(button.includes('استعادة كمسودة') && button.includes('reauth=1'), 'owner restore flow lacks safe state or MFA recovery link')
-assert.ok(preview.includes("mobile: 430") && preview.includes("tablet: 820") && preview.includes("desktop: 1440"), 'preview size controls missing')
+assert.ok(preview.includes("mobile: 390") && preview.includes("tablet: 768") && preview.includes("desktop: 1440"), 'requested preview size controls missing')
 console.log('verify:revision-recovery-local passed — allowlisted draft/hidden restore, fresh MFA, checkpoint/audit rollback, snapshot privacy and preview sizes verified')
 

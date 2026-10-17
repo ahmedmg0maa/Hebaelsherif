@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Full navigation intentionally refreshes the private Auth document. */
 'use client'
 
 import { useState } from 'react'
@@ -24,7 +25,7 @@ export function RolePermissionEditor({ role, allPermissions, selected }: { role:
         <div className="flex flex-wrap gap-3"><Button type="button" variant="secondary" onClick={() => setChosen(new Set(available))}>تحديد جميع صلاحيات التشغيل</Button><Button type="button" variant="ghost" onClick={() => setChosen(new Set(['admin.access']))}>إبقاء الدخول فقط</Button></div>
         <div className="grid gap-3 sm:grid-cols-2">{available.map(permission => <label key={permission} className="flex min-h-12 items-center gap-3 rounded-xl border border-line px-3 py-2 text-sm text-ink">
           <input type="checkbox" checked={chosen.has(permission)} disabled={permission === 'admin.access'} className="h-5 w-5 accent-deep-teal" onChange={event => setChosen(previous => { const next = new Set(previous); if (event.target.checked) next.add(permission); else next.delete(permission); return next })} />
-          {PERMISSION_LABELS[permission] ?? permission}
+          <span>{PERMISSION_LABELS[permission]??permission}<span className="mt-1 block text-sm leading-6 text-text-soft">{permission==='admin.access'?'مطلوب للدور الإداري؛ لا يمكن إزالته من هنا.':'اختياري · يسمح لأعضاء هذا الدور بهذه العملية عند حفظ الصلاحيات، مع استمرار متطلبات الأمان.'}</span><span className="mt-1 block text-sm leading-6 text-text-soft">مثال: منح الإجراء فقط لمن يحتاجه ضمن عمله.</span></span>
         </label>)}</div>
       </fieldset>
       <ActionFeedback feedback={feedback} />

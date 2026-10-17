@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import {AdminField,AdminSelect,AdminTextarea} from './AdminField'
 
 import { HomeMediaFields } from './HomeMediaFields'
@@ -58,7 +59,7 @@ function SectionFields({ kind, content, assets, articles }: { kind: HomeSectionK
     const data = value as NarrativeContent
     return <div className="grid gap-3"><Field label="السطر التعريفي" name="eyebrow" value={data.eyebrow} max={80} /><Field label="الفكرة الرئيسية" name="heading" value={data.heading} max={160} /><Field label="النص" name="body" value={data.body} max={500} area /></div>
   }
-  if (kind === 'trust') return <p className="text-sm leading-loose text-text-soft">تُعرض المؤهلات المؤكدة من ملف هبة. <a href="/admin/settings" className="font-bold underline">تعديل التعريف والاعتمادات</a></p>
+  if (kind === 'trust') return <p className="text-sm leading-loose text-text-soft">تُعرض المؤهلات المؤكدة من ملف هبة. <Link href="/admin/settings" className="font-bold underline">تعديل التعريف والاعتمادات</Link></p>
   if (kind === 'pathways') {
     const data = value as PathwaysContent
     return <PathwayFields data={data} assets={assets} media={normalizeHomeMedia(value.media)} />

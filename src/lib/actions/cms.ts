@@ -25,7 +25,7 @@ const hasEnv = () => hasSupabasePublicConfig() && hasSupabaseServerSecret()
 const SECTION_KINDS = ['hero','intro','trust','pathways','guided_start','editorial_feature','featured_services','books','courses','workshops','availability_preview','offer','testimonials','press','articles','resources','newsletter','cta','rich_text'] as const
 const safeLink = (value: string) => value.startsWith('/') || /^https:\/\/[^\s]+$/i.test(value)
 function validateSectionContent(value: unknown): string | null {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return 'محتوى القسم يجب أن يكون كائن JSON منظمًا.'
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return 'تعذّرت قراءة محتوى القسم. أعيدي فتح المحرر وحاولي مجددًا.'
   const pending: unknown[] = [value]
   while (pending.length) {
     const item = pending.pop()
@@ -483,8 +483,9 @@ export async function savePageSection(pageId: string, sectionId: string | null, 
   const admin = await requireAdminUser('content.manage')
   if (!admin) return { ok: false, error: NOT_ADMIN }
   let content: unknown
-  try { content = JSON.parse(String(formData.get('content') ?? '{}')) }
-  catch { return { ok: false, error: 'محتوى القسم يجب أن يكون JSON صحيحًا.' } }
+  const raw=String(formData.get('content')??'{}')
+  if(new TextEncoder().encode(raw).length>65536)return {ok:false,error:'محتوى القسم طويل جدًا. قصّري النصوص أو قسّميها إلى أقسام أصغر ثم احفظي مجددًا.'}
+  try {content=JSON.parse(raw)}catch{return {ok:false,error:'تعذّرت قراءة محتوى القسم. أعيدي فتح المحرر وحاولي مجددًا.'}}
   const kind = String(formData.get('kind') ?? 'rich_text').trim()
   if (!SECTION_KINDS.includes(kind as typeof SECTION_KINDS[number])) return { ok: false, error: 'نوع القسم غير معتمد في نظام التصميم.' }
   const contentError = validateSectionContent(content)
