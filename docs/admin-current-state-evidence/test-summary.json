@@ -1,0 +1,359 @@
+{
+  "documentedAt": "2026-10-17T10:16:56.502Z",
+  "mode": "read-only handover review",
+  "current": [
+    {
+      "command": "node scripts/verify-admin-workflow-behavior.mjs",
+      "passed": true,
+      "kind": "actual calendar/Cairo helpers and controlled XHR upload transport; local only"
+    },
+    {
+      "command": "node scripts/verify-booking-calendar-page.mjs",
+      "passed": true,
+      "kind": "actual page loader with controlled database responses; local only"
+    },
+    {
+      "command": "node scripts/verify-managed-page-behavior.mjs",
+      "passed": true,
+      "kind": "actual CMS reader/route renderer with controlled responses; local only"
+    },
+    {
+      "command": "node scripts/verify-auth-callback.mjs",
+      "passed": true,
+      "kind": "actual Auth callback/proxy with controlled provider responses; local only"
+    },
+    {
+      "command": "node scripts/verify-assessment-reader.mjs",
+      "passed": true,
+      "kind": "actual published assessment reader with controlled provider replies; local only"
+    },
+    {
+      "command": "node scripts/verify-admin-overview-counts.mjs",
+      "passed": true,
+      "kind": "actual overview counters with controlled provider replies; local only"
+    }
+  ],
+  "historicalSourceGates": {
+    "source": ".launch-backups/source-gates.json",
+    "rerunDuringThisReview": false,
+    "results": [
+      {
+        "name": "verify:archive-security",
+        "passed": true
+      },
+      {
+        "name": "verify:delivery-local",
+        "passed": true
+      },
+      {
+        "name": "verify:booking-local",
+        "passed": true
+      },
+      {
+        "name": "verify:booking-permissions-local",
+        "passed": true
+      },
+      {
+        "name": "verify:booking-staging-contract",
+        "passed": true
+      },
+      {
+        "name": "verify:booking-staging-contract-fixtures",
+        "passed": true
+      },
+      {
+        "name": "verify:fresh-admin-assurance",
+        "passed": true
+      },
+      {
+        "name": "verify:report-export-local",
+        "passed": true
+      },
+      {
+        "name": "verify:home-cms-local",
+        "passed": true
+      },
+      {
+        "name": "verify:navigation-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:cms-page-lifecycle-local",
+        "passed": true
+      },
+      {
+        "name": "verify:article-lifecycle-local",
+        "passed": true
+      },
+      {
+        "name": "verify:settings-flags-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:public-search-local",
+        "passed": true
+      },
+      {
+        "name": "verify:start-here-cms-local",
+        "passed": true
+      },
+      {
+        "name": "verify:guided-assessment-local",
+        "passed": true
+      },
+      {
+        "name": "verify:master-v2-local",
+        "passed": true
+      },
+      {
+        "name": "verify:master-v2-continuation-local",
+        "passed": true
+      },
+      {
+        "name": "verify:master-v2-admin-workflows-local",
+        "passed": true
+      },
+      {
+        "name": "verify:preview-experience-local",
+        "passed": true
+      },
+      {
+        "name": "verify:catalog-atomic-local",
+        "passed": true
+      },
+      {
+        "name": "verify:commerce-administration-local",
+        "passed": true
+      },
+      {
+        "name": "verify:phase7-workflows-local",
+        "passed": true
+      },
+      {
+        "name": "verify:phase8-workflows-local",
+        "passed": true
+      },
+      {
+        "name": "verify:phases9-11-workflows-local",
+        "passed": true
+      },
+      {
+        "name": "verify:catalog-publication-local",
+        "passed": true
+      },
+      {
+        "name": "verify:program-catalog-local",
+        "passed": true
+      },
+      {
+        "name": "verify:media-lifecycle-local",
+        "passed": true
+      },
+      {
+        "name": "verify:newsletter-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:admin-security-center-local",
+        "passed": true
+      },
+      {
+        "name": "verify:final-hardening-local",
+        "passed": true
+      },
+      {
+        "name": "verify:admin-read-integrity-local",
+        "passed": true
+      },
+      {
+        "name": "verify:resend-outbox-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-360-local",
+        "passed": true
+      },
+      {
+        "name": "verify:sentry-monitoring-local",
+        "passed": true
+      },
+      {
+        "name": "verify:admin-notifications-local",
+        "passed": true
+      },
+      {
+        "name": "verify:admin-role-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:booking-admin-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:commerce-admin-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:checkout-upload-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-learning-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-protected-delivery-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-dashboard-read-integrity-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-account-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-password-lifecycle-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-booking-self-service-local",
+        "passed": true
+      },
+      {
+        "name": "verify:customer-registration-bootstrap-local",
+        "passed": true
+      },
+      {
+        "name": "verify:auth-callback",
+        "passed": true
+      },
+      {
+        "name": "verify:account-deletion-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:revision-recovery-local",
+        "passed": true
+      },
+      {
+        "name": "verify:admin-operations-ux-local",
+        "passed": true
+      },
+      {
+        "name": "verify:contact-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:testimonial-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:press-governance-local",
+        "passed": true
+      },
+      {
+        "name": "verify:resource-hub-local",
+        "passed": true
+      },
+      {
+        "name": "verify:recovery-runner-local",
+        "passed": true
+      },
+      {
+        "name": "audit:cms-local",
+        "passed": true
+      },
+      {
+        "name": "audit:remediation-local",
+        "passed": true
+      },
+      {
+        "name": "audit:routes",
+        "passed": true
+      },
+      {
+        "name": "audit:ux",
+        "passed": true
+      },
+      {
+        "name": "audit:colors",
+        "passed": true
+      },
+      {
+        "name": "audit:security",
+        "passed": true
+      },
+      {
+        "name": "audit:admin",
+        "passed": true
+      },
+      {
+        "name": "audit:media",
+        "passed": true
+      },
+      {
+        "name": "audit:commerce",
+        "passed": true
+      },
+      {
+        "name": "audit:catalog",
+        "passed": true
+      },
+      {
+        "name": "audit:booking",
+        "passed": true
+      },
+      {
+        "name": "audit:db",
+        "passed": true
+      },
+      {
+        "name": "audit:launch",
+        "passed": true
+      }
+    ]
+  },
+  "liveReview": {
+    "adminNavigationPages": 30,
+    "ownerReachedOverview": true,
+    "reloadRetainedSession": true,
+    "formsOpenedWithoutSubmitting": [
+      "session",
+      "course",
+      "lesson",
+      "book delivery"
+    ],
+    "newMutationTests": false,
+    "signOutRepeated": false,
+    "signOutReason": "Historical acceptance retained; current human session preserved",
+    "responsiveObserved": [
+      {
+        "page": "admin/services",
+        "viewport": 390,
+        "documentWidth": 380
+      },
+      {
+        "page": "admin/services",
+        "viewport": 768,
+        "documentWidth": 758
+      },
+      {
+        "page": "admin/bookings",
+        "viewport": 390,
+        "documentWidth": 380
+      },
+      {
+        "page": "public home",
+        "viewport": 1280,
+        "documentWidth": 1270
+      },
+      {
+        "page": "public home",
+        "viewport": 390,
+        "documentWidth": 380
+      }
+    ]
+  }
+}

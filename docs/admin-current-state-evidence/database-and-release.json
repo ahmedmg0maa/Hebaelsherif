@@ -1,0 +1,810 @@
+{
+  "capturedAt": "2026-10-17T10:04:08.066Z",
+  "mode": "read-only; no mutation tests",
+  "project": "zfbwpubsnuijybxjuidc",
+  "git": {
+    "root": "D:/New life/Heba/web/Hebaelsherif-GitHub",
+    "remote": "https://github.com/ahmedmg0maa/Hebaelsherif.git",
+    "branch": "prepare-cream-motion",
+    "commit": "c56372482eff9845863a98fe06721a48c20f24c8",
+    "initialStatus": "?? docs/admin-current-state-evidence/"
+  },
+  "releases": [
+    {
+      "host": "hebaelsherif.com",
+      "status": 200,
+      "commit": "c56372482eff9845863a98fe06721a48c20f24c8",
+      "branch": "prepare-cream-motion",
+      "sourceDirty": false,
+      "builtAt": "2026-10-17T09:24:04.014Z"
+    },
+    {
+      "host": "www.hebaelsherif.com",
+      "status": 200,
+      "commit": "c56372482eff9845863a98fe06721a48c20f24c8",
+      "branch": "prepare-cream-motion",
+      "sourceDirty": false,
+      "builtAt": "2026-10-17T09:24:04.014Z"
+    }
+  ],
+  "counts": [
+    {
+      "entity": "products",
+      "count": 4
+    },
+    {
+      "entity": "services",
+      "count": 2
+    },
+    {
+      "entity": "availability_rules",
+      "count": 10
+    },
+    {
+      "entity": "coach_working_hours",
+      "count": 7
+    },
+    {
+      "entity": "coach_schedule_exceptions",
+      "count": 0
+    },
+    {
+      "entity": "bookings",
+      "count": 1
+    },
+    {
+      "entity": "booking_holds",
+      "count": 1
+    },
+    {
+      "entity": "booking_email_outbox",
+      "count": 3
+    },
+    {
+      "entity": "courses",
+      "count": 1
+    },
+    {
+      "entity": "course_modules",
+      "count": 1
+    },
+    {
+      "entity": "course_lessons",
+      "count": 3
+    },
+    {
+      "entity": "books",
+      "count": 1
+    },
+    {
+      "entity": "book_files",
+      "count": 1
+    },
+    {
+      "entity": "workshops",
+      "count": 0
+    },
+    {
+      "entity": "offers",
+      "count": 0
+    },
+    {
+      "entity": "coupons",
+      "count": 0
+    },
+    {
+      "entity": "orders",
+      "count": 0
+    },
+    {
+      "entity": "payments",
+      "count": 0
+    },
+    {
+      "entity": "payment_refunds",
+      "count": 0
+    },
+    {
+      "entity": "subscription_plans",
+      "count": 0
+    },
+    {
+      "entity": "articles",
+      "count": 2
+    },
+    {
+      "entity": "pages",
+      "count": 0
+    },
+    {
+      "entity": "page_sections",
+      "count": 0
+    },
+    {
+      "entity": "media_assets",
+      "count": 3
+    },
+    {
+      "entity": "resources",
+      "count": 0
+    },
+    {
+      "entity": "reviews",
+      "count": 0
+    },
+    {
+      "entity": "contact_messages",
+      "count": 0
+    },
+    {
+      "entity": "press_mentions",
+      "count": 0
+    },
+    {
+      "entity": "guided_assessments",
+      "count": 0
+    },
+    {
+      "entity": "admin_sessions",
+      "count": 12
+    },
+    {
+      "entity": "audit_logs",
+      "count": 106
+    },
+    {
+      "entity": "catalog_publication_jobs",
+      "count": 0
+    }
+  ],
+  "state": [
+    {
+      "latest_migration": "107",
+      "migrations": 108,
+      "identities": 1,
+      "enabled_owner_access": 1,
+      "unexpired_admin_sessions": 2,
+      "booking_contract": {
+        "holds": true,
+        "timezone": "Africa/Cairo",
+        "migration": "044",
+        "coachCalendar": "097",
+        "slot_overrides": true,
+        "customerJourney": "093",
+        "customerRequests": "107",
+        "coachWorkingHours": "103"
+      },
+      "launch_contract": {
+        "home": "101",
+        "mail": "102",
+        "owner": "096",
+        "stream": "099",
+        "calendar": "097",
+        "revision": "102",
+        "admission": "100",
+        "freeOperations": "102"
+      }
+    }
+  ],
+  "policies": [
+    {
+      "slug": "individual-session-60",
+      "duration_minutes": 60,
+      "price": "1200.00",
+      "currency": "EGP",
+      "is_active": true,
+      "is_published": true,
+      "request_enabled": true,
+      "booking_payment_mode": "payment_required",
+      "buffer_before_minutes": 0,
+      "buffer_after_minutes": 0,
+      "minimum_notice_minutes": 1440,
+      "booking_window_days": 30,
+      "hold_minutes": 10,
+      "cancellation_notice_hours": 24,
+      "reschedule_notice_hours": 24,
+      "max_reschedules": 2
+    },
+    {
+      "slug": "individual-session-90",
+      "duration_minutes": 90,
+      "price": "1800.00",
+      "currency": "EGP",
+      "is_active": true,
+      "is_published": true,
+      "request_enabled": true,
+      "booking_payment_mode": "payment_required",
+      "buffer_before_minutes": 0,
+      "buffer_after_minutes": 0,
+      "minimum_notice_minutes": 1440,
+      "booking_window_days": 30,
+      "hold_minutes": 10,
+      "cancellation_notice_hours": 24,
+      "reschedule_notice_hours": 24,
+      "max_reschedules": 2
+    }
+  ],
+  "hours": [
+    {
+      "weekday": 0,
+      "is_open": true,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    },
+    {
+      "weekday": 1,
+      "is_open": true,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    },
+    {
+      "weekday": 2,
+      "is_open": true,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    },
+    {
+      "weekday": 3,
+      "is_open": true,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    },
+    {
+      "weekday": 4,
+      "is_open": true,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    },
+    {
+      "weekday": 5,
+      "is_open": false,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    },
+    {
+      "weekday": 6,
+      "is_open": false,
+      "start_time": "10:00:00",
+      "end_time": "20:00:00"
+    }
+  ],
+  "roles": [
+    {
+      "role": "owner",
+      "assigned_accounts": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "admin",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "assessments.manage",
+        "audit.view",
+        "availability.manage",
+        "bookings.manage",
+        "bookings.view",
+        "catalog.delete",
+        "catalog.manage",
+        "catalog.publish",
+        "catalog.view",
+        "content.delete",
+        "content.manage",
+        "content.publish",
+        "content.view",
+        "feature_flags.manage",
+        "inbox.manage",
+        "inbox.view",
+        "learning.manage",
+        "marketing.manage",
+        "media.delete",
+        "media.manage",
+        "media.view",
+        "newsletter.manage",
+        "notifications.send",
+        "orders.refund",
+        "orders.update",
+        "orders.view",
+        "packages.manage",
+        "payments.approve",
+        "payments.reject",
+        "payments.view",
+        "press.manage",
+        "reports.export",
+        "reports.snapshot",
+        "reports.view",
+        "resources.manage",
+        "reviews.manage",
+        "settings.manage",
+        "settings.view",
+        "system.view",
+        "users.manage",
+        "users.view"
+      ]
+    },
+    {
+      "role": "analyst",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "bookings.view",
+        "catalog.view",
+        "content.view",
+        "orders.view",
+        "payments.view",
+        "reports.export",
+        "reports.view",
+        "system.view",
+        "users.view"
+      ]
+    },
+    {
+      "role": "auditor",
+      "permissions": [
+        "admin.access",
+        "audit.view",
+        "bookings.view",
+        "orders.view",
+        "payments.view",
+        "reports.view",
+        "system.view",
+        "users.view"
+      ]
+    },
+    {
+      "role": "content",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "assessments.manage",
+        "catalog.delete",
+        "catalog.manage",
+        "catalog.publish",
+        "catalog.view",
+        "content.delete",
+        "content.manage",
+        "content.publish",
+        "content.view",
+        "learning.manage",
+        "media.delete",
+        "media.manage",
+        "media.view",
+        "press.manage",
+        "reports.view",
+        "resources.manage",
+        "reviews.manage"
+      ]
+    },
+    {
+      "role": "editor",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "catalog.view",
+        "content.manage",
+        "content.view",
+        "learning.manage",
+        "media.manage",
+        "media.view"
+      ]
+    },
+    {
+      "role": "finance",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "audit.view",
+        "bookings.view",
+        "marketing.manage",
+        "orders.refund",
+        "orders.update",
+        "orders.view",
+        "packages.manage",
+        "payments.approve",
+        "payments.reject",
+        "payments.view",
+        "reports.export",
+        "reports.snapshot",
+        "reports.view",
+        "users.view"
+      ]
+    },
+    {
+      "role": "marketing",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "assessments.manage",
+        "catalog.view",
+        "content.manage",
+        "content.publish",
+        "content.view",
+        "inbox.view",
+        "marketing.manage",
+        "media.manage",
+        "media.view",
+        "newsletter.manage",
+        "press.manage",
+        "reports.export",
+        "reports.view",
+        "resources.manage",
+        "reviews.manage",
+        "users.view"
+      ]
+    },
+    {
+      "role": "operations",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "availability.manage",
+        "bookings.manage",
+        "bookings.view",
+        "inbox.manage",
+        "inbox.view",
+        "notifications.send",
+        "orders.view",
+        "packages.manage",
+        "reports.view",
+        "users.view"
+      ]
+    },
+    {
+      "role": "support",
+      "permissions": [
+        "admin.access",
+        "admin.search",
+        "bookings.view",
+        "inbox.manage",
+        "inbox.view",
+        "notifications.send",
+        "orders.view",
+        "payments.view",
+        "reports.view",
+        "reviews.manage",
+        "users.view"
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "key": "booking_policy",
+      "configuration": {
+        "timezone": "Africa/Cairo",
+        "booking_horizon_days": 30,
+        "buffer_after_minutes": 0,
+        "max_bookings_per_day": 20,
+        "buffer_before_minutes": 0,
+        "slot_interval_minutes": 30,
+        "minimum_notice_minutes": 30,
+        "customer_cancel_notice_hours": 24
+      }
+    }
+  ],
+  "legal": [],
+  "storage": [
+    {
+      "id": "avatars",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "course-resources",
+      "public": false,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "course-videos",
+      "public": false,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "payment-proofs",
+      "public": false,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "protected-books",
+      "public": false,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "public-media",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "workshop-recordings",
+      "public": false,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    }
+  ],
+  "safeguards": [
+    {
+      "schemaname": "public",
+      "tablename": "admin_sessions",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "book_access",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "booking_holds",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "bookings",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "contact_messages",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_progress",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "media_assets",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "orders",
+      "rowsecurity": true
+    },
+    {
+      "schemaname": "public",
+      "tablename": "payments",
+      "rowsecurity": true
+    }
+  ],
+  "functions": [
+    {
+      "proname": "admin_register_media",
+      "source_md5": "12561c24f262cb835d66df1b2025b8ca",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "admin_save_coach_exception",
+      "source_md5": "ca25cef60867d769cc469a2935819cd7",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "admin_save_coach_hours",
+      "source_md5": "33bcdaa8315140a192320f0af796e215",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "admin_update_booking_governed",
+      "source_md5": "d137eb7737303ef16d6d487045d88473",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "bind_validated_protected_upload",
+      "source_md5": "e3aeecea2531af2523cae123c11664f1",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "complete_booking_hold_v2",
+      "source_md5": "7132b23af71336157e3a5045ac760d46",
+      "anon_execute": false,
+      "customer_execute": true,
+      "server_execute": false
+    },
+    {
+      "proname": "create_product_order_v3",
+      "source_md5": "11a4cb53979e1f9eb2d825f9140df5cb",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "expire_booking_requests",
+      "source_md5": "15112efc042d30f07c706296a64b1cae",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "get_admin_security_readiness",
+      "source_md5": "e54de181068e2d2492c48a7e728435b6",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "manage_article",
+      "source_md5": "283e25f5af3764315753bb14ebd0c85b",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "manage_catalog_item",
+      "source_md5": "1f30abfb7d5ad1118a818357c9fa1d22",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "manage_course_curriculum",
+      "source_md5": "eb389c1cd90b10dd41bfdac78e0c5530",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "process_catalog_publication_jobs",
+      "source_md5": "79f18a1105400d5cadc4b11f89973e92",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    },
+    {
+      "proname": "set_program_product_publication",
+      "source_md5": "9c95d97b4375972dd3944c6601dde53a",
+      "anon_execute": false,
+      "customer_execute": false,
+      "server_execute": true
+    }
+  ],
+  "aggregates": [
+    {
+      "entity": "booking",
+      "status": "cancelled",
+      "count": 1
+    },
+    {
+      "entity": "hold",
+      "status": "converted",
+      "count": 1
+    },
+    {
+      "entity": "booking_mail",
+      "status": "sent",
+      "count": 2
+    },
+    {
+      "entity": "booking_mail",
+      "status": "superseded",
+      "count": 1
+    }
+  ],
+  "flags": [
+    {
+      "key": "booking_open",
+      "is_enabled": true
+    },
+    {
+      "key": "certificates",
+      "is_enabled": true
+    },
+    {
+      "key": "checkout_open",
+      "is_enabled": true
+    },
+    {
+      "key": "contact_open",
+      "is_enabled": true
+    },
+    {
+      "key": "newsletter_open",
+      "is_enabled": true
+    },
+    {
+      "key": "site_open",
+      "is_enabled": true
+    },
+    {
+      "key": "vip_program",
+      "is_enabled": false
+    },
+    {
+      "key": "workshops",
+      "is_enabled": true
+    }
+  ],
+  "activeHolds": [
+    {
+      "active_unexpired": 0
+    }
+  ],
+  "definitionComparison": [
+    {
+      "name": "admin_register_media",
+      "latestLocalMigration": "106_idempotent_media_registration.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "admin_save_coach_exception",
+      "latestLocalMigration": "103_coach_working_hours.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "admin_save_coach_hours",
+      "latestLocalMigration": "103_coach_working_hours.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "admin_update_booking_governed",
+      "latestLocalMigration": "061_atomic_booking_admin_governance_local_only.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "bind_validated_protected_upload",
+      "latestLocalMigration": "072_atomic_protected_upload_binding_local_only.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "complete_booking_hold_v2",
+      "latestLocalMigration": "107_connected_booking_requests.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "create_product_order_v3",
+      "latestLocalMigration": "093_customer_order_booking_consistency_local_only.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "expire_booking_requests",
+      "latestLocalMigration": "107_connected_booking_requests.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "get_admin_security_readiness",
+      "latestLocalMigration": "096_owner_password_access.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "manage_article",
+      "latestLocalMigration": "078_atomic_article_lifecycle_local_only.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "manage_catalog_item",
+      "latestLocalMigration": "107_connected_booking_requests.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "manage_course_curriculum",
+      "latestLocalMigration": "073_atomic_course_curriculum_governance_local_only.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "process_catalog_publication_jobs",
+      "latestLocalMigration": "105_course_content_and_publication_jobs.sql",
+      "normalizedBodyMatches": true
+    },
+    {
+      "name": "set_program_product_publication",
+      "latestLocalMigration": "053_program_product_publication_local_only.sql",
+      "normalizedBodyMatches": true
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "capturedAt": "2026-10-17T10:07:25.762Z",
+  "commit": "c56372482eff9845863a98fe06721a48c20f24c8",
+  "mode": "authenticated read-only navigation; no form submissions",
+  "routes": [
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "لوحة التحكم",
+      "path": "/admin/overview",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "موافقات الدفع",
+      "path": "/admin/payments",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "الطلبات",
+      "path": "/admin/orders",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الحجوزات",
+      "path": "/admin/bookings",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الباقات والاشتراكات",
+      "path": "/admin/memberships",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "العملاء",
+      "path": "/admin/users",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "الرسائل والقائمة البريدية",
+      "path": "/admin/inbox",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "المنتجات",
+      "path": "/admin/products",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الخدمات والسياسات",
+      "path": "/admin/services",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الدورات",
+      "path": "/admin/courses",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الكتب",
+      "path": "/admin/books",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "ورش العمل",
+      "path": "/admin/workshops",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "المقالات",
+      "path": "/admin/articles",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الصفحات",
+      "path": "/admin/pages",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "مراجعات المحتوى",
+      "path": "/admin/revisions",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "مكتبة الوسائط",
+      "path": "/admin/media",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "التقييمات",
+      "path": "/admin/reviews",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الظهور الإعلامي",
+      "path": "/admin/press",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "مكتبة الموارد",
+      "path": "/admin/resources",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الاختبار الإرشادي",
+      "path": "/admin/assessments",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "العروض",
+      "path": "/admin/offers",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الكوبونات",
+      "path": "/admin/coupons",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "التقارير",
+      "path": "/admin/reports",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الأدوار والصلاحيات",
+      "path": "/admin/roles",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "أرشيف تسجيل الدخول",
+      "path": "/admin/login-history",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "سجل التدقيق",
+      "path": "/admin/audit-logs",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "مركز الأمان",
+      "path": "/admin/security",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "الإعدادات",
+      "path": "/admin/settings",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1440,
+      "hasError": false,
+      "heading": "متابعة الملفات المحمية",
+      "path": "/admin/delivery",
+      "viewport": 1440
+    },
+    {
+      "documentWidth": 1430,
+      "hasError": false,
+      "heading": "حالة النظام",
+      "path": "/admin/system",
+      "viewport": 1440
+    }
+  ]
+}
