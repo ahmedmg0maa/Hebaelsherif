@@ -1,3 +1,11 @@
+# Admin phase-one acceptance corrections in progress — production held (2026-10-17)
+
+Latest user explicitly requests persisted choice labels/archived references, Enter search without parent-form submit, genuine isolated Auth/PostgREST/Storage/private-preview acceptance and full responsive/keyboard evidence. Existing branch was clean at ca3068b. Exact-ID permission-checked label resolution now retains all saved identifiers independently of search pages; unavailable/archived/hidden/inactive states are explicit, and search Enter prevents surrounding submission. Actual-action regression passed. Component browser test used a fully valid parent form: two Enter searches, zero save requests/SQL form writes and all three IDs retained; deliberate save wrote once. The fixture injects permission and uses a local SQL adapter, so it is NOT integrated acceptance. Final evidence/reload/retry/responsive checks are in progress.
+
+Only production Supabase is currently accessible; Docker and WSL are unavailable. User chose to provide a separate test-project connection locally. Use docs/admin-acceptance.env.example → ignored .env.admin-acceptance.local; scripts/check-admin-acceptance-environment.mjs refuses the production reference and external mail/scan side effects. No production settings, schema, content or deployment changed. Integrated acceptance remains BLOCKED until the real test connection is available; do not count component/SQL fixtures as provider success. Continue independent navigation/language work in separate commits.
+
+---
+
 # Admin foundation phase one — reviewable implementation, production held (2026-10-17)
 
 User explicitly ordered implementation, then stage-one review before production. Branch `admin-foundation-phase-one` starts at `c563724`; production and `prepare-cream-motion` remain at that source. Preserve the previous read-only review/evidence and approved plan. Read `docs/ADMIN_FOUNDATION_PHASE_ONE_AR.md` for scope, executable evidence, remaining acceptance, migrations and rollback. This is not completion of the whole Admin plan.
