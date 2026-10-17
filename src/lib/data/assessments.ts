@@ -17,7 +17,7 @@ export async function getPublishedGuidedAssessment(): Promise<PublishedGuidedAss
   try {
     const supabase = await getServerClient()
     const { data, error } = await supabase.from('guided_assessment_versions')
-      .select('id, version, content, published_at, guided_assessments!inner(name, slug, published_version_id)')
+      .select('id, version, content, published_at, guided_assessments!assessment_id!inner(name, slug, published_version_id)')
       .eq('status', 'published').eq('guided_assessments.slug', 'start-here').limit(1).maybeSingle()
     if (error || !data) return null
     const row = data as unknown as PublishedRow

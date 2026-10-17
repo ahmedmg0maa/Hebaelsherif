@@ -38,10 +38,11 @@ function TargetsEditor({ initial = [], products }: { initial?: Target[]; product
 }
 
 function CouponFields({ coupon }: { coupon?: AdminCoupon }) {
+  const [discountKind,setDiscountKind]=useState(coupon?.kind??'percent')
   return <>
     <FormField label="الكود" name="code" required maxLength={24} dir="ltr" defaultValue={coupon?.code} hint="3–24 حرفًا لاتينيًا أو رقمًا أو - أو _" />
-    <FormSelect label="نوع الخصم" name="kind" options={discounts} defaultValue={coupon?.kind ?? 'percent'} />
-    <FormField label="قيمة الخصم" name="value" type="number" min={0.01} max={99999999.99} step="0.01" required dir="ltr" defaultValue={coupon?.value} />
+    <FormSelect label="نوع الخصم" name="kind" options={discounts} value={discountKind} onChange={event=>setDiscountKind(event.target.value)} />
+    <FormField label="قيمة الخصم" name="value" type="number" min={0.01} max={discountKind==='percent'?100:99999999.99} step="0.01" required dir="ltr" defaultValue={coupon?.value} />
     <FormField label="حد الاستخدام الكلي (اختياري)" name="max_uses" type="number" min={1} max={1000000} dir="ltr" defaultValue={coupon?.maxUses ?? ''} />
     <FormField label="حد الاستخدام لكل عميلة" name="max_uses_per_user" type="number" min={1} max={1000000} defaultValue={coupon?.maxUsesPerUser ?? 1} dir="ltr" />
     <label className="flex min-h-12 items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" name="allow_with_offers" defaultChecked={coupon?.allowWithOffers??false} className="h-5 w-5 accent-deep-teal"/>السماح بالكوبون مع عرض سارٍ <span>اختياري؛ يُحسب خصم الكوبون بعد خصم العرض. دون العلامة يمنع الجمع بينهما.</span></label>
@@ -55,13 +56,14 @@ function Dates({ startsAt, endsAt }: { startsAt?: string | null; endsAt?: string
   </>
 }
 function OfferFields({ offer, products }: { offer?: AdminOffer; products: Product[] }) {
+  const [discountKind,setDiscountKind]=useState(offer?.discountKind??'percent')
   return <>
-    <FormField label="عنوان العرض" name="title" required maxLength={180} defaultValue={offer?.title} />
-    <FormField label="الوصف" name="description" maxLength={10000} defaultValue={offer?.description} />
+    <FormField label="عنوان العرض" name="title" required minLength={3} maxLength={180} defaultValue={offer?.title} hint="اسم الحملة الذي يظهر على بطاقة العرض بعد تفعيلها." example="العنوان المعتمد للحملة" />
+    <AdminTextarea label="الوصف" name="description" maxLength={10000} rows={4} defaultValue={offer?.description} hint="اشرحي فائدة العرض والمنتجات المشمولة دون وعود غير معتمدة." example="تفاصيل الحملة وشروط الاستفادة منها" />
     <FormSelect label="نوع الحملة" name="kind" options={campaigns} defaultValue={offer?.kind ?? 'flash_sale'} />
     <FormField label="نص الشارة" name="badge_text" maxLength={100} defaultValue={offer?.badgeText ?? ''} />
-    <FormSelect label="نوع الخصم" name="discount_kind" options={discounts} defaultValue={offer?.discountKind ?? 'percent'} />
-    <FormField label="قيمة الخصم" name="discount_value" type="number" min={0.01} max={99999999.99} step="0.01" required dir="ltr" defaultValue={offer?.discountValue ?? ''} />
+    <FormSelect label="نوع الخصم" name="discount_kind" options={discounts} value={discountKind} onChange={event=>setDiscountKind(event.target.value)} />
+    <FormField label="قيمة الخصم" name="discount_value" type="number" min={0.01} max={discountKind==='percent'?100:99999999.99} step="0.01" required dir="ltr" defaultValue={offer?.discountValue ?? ''} />
     <FormField label="حد الاستخدام الكلي (اختياري)" name="usage_limit" type="number" min={1} max={1000000} dir="ltr" defaultValue={offer?.usageLimit ?? ''} />
     <Dates startsAt={offer?.startsAt} endsAt={offer?.endsAt} />
     <FormField name="cta_label" label="نص زر العرض" required minLength={2} maxLength={80} defaultValue={offer?.ctaLabel??'تفاصيل العرض'} hint="جملة قصيرة تدعو الزائرة لفتح الوجهة المرتبطة بالعرض." example="استكشفي الكورسات المشمولة"/>
@@ -81,7 +83,7 @@ function MarketingEditor({ kind, coupon, offer, products = [] }: { kind: 'coupon
   return <form className="space-y-5" aria-busy={busy} onChange={e=>{if(kind!=='offer')return;const f=new FormData(e.currentTarget),end=parseCairoLocalDateTime(String(f.get('ends_at')??''));setPreview({id:offer?.id??'private-preview',title:String(f.get('title')??''),description:String(f.get('description')??''),badgeText:String(f.get('badge_text')??''),endsAt:end?.toISOString()??null,ctaLabel:String(f.get('cta_label')??''),ctaHref:String(f.get('cta_href')??''),terms:String(f.get('terms')??''),discountKind:String(f.get('discount_kind')??''),discountValue:Number(f.get('discount_value')||0)})}} onSubmit={async event => {
     event.preventDefault(); const form = event.currentTarget, data = new FormData(form)
     const operation = kind === 'coupon' ? () => id ? updateCoupon(id, data) : createCoupon(data) : () => id ? updateOffer(id, data) : createOffer(data)
-    if (await run(operation, 'تم حفظ التعديلات.')) { setConfirm(false); if (!id) { form.reset(); setGeneration(generation + 1) } }
+    if (await run(operation, 'تم حفظ التعديلات.')) { setConfirm(false); if (!id) { form.reset(); setGeneration(generation + 1);setPreview(null) } }
   }}>
     <fieldset key={generation} disabled={busy} className="grid gap-4 sm:grid-cols-2">{kind === 'coupon' ? <CouponFields coupon={coupon} /> : <OfferFields offer={offer} products={products} />}</fieldset>
     {kind==='offer'&&<section className="space-y-3 rounded-xl border border-dashed border-antique-gold/50 p-3"><h3 className="font-bold text-deep-teal">معاينة خاصة قبل الحفظ</h3><p className="text-sm text-text-soft">لا تُنشر هذه المعاينة ولا تطبّق خصمًا. ظهور العرض فعليًا يتطلب الحفظ والتفعيل وموعدًا ساريًا.</p><div className="flex gap-2"><Button type="button" variant="secondary" onClick={()=>setPreviewWidth('phone')}>هاتف</Button><Button type="button" variant="secondary" onClick={()=>setPreviewWidth('desktop')}>كمبيوتر</Button></div>{preview?<div className="mx-auto max-w-full" style={{width:previewWidth==='phone'?390:960}}><OfferCard offer={preview} preview/></div>:<p className="text-sm text-text-soft">اكتبي العنوان والنص لرؤية المعاينة.</p>}</section>}

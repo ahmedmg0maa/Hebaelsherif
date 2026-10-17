@@ -2,6 +2,8 @@
 
 ## Admin workflows — 2026-10-17
 
+`node scripts/verify-booking-calendar-page.mjs` executes the actual page loader and catches the nonexistent bookings/profiles embed and failed/truncated reads. `node scripts/verify-managed-page-behavior.mjs` executes the actual managed page reader/renderer with draft, hidden-section, escaped text, legal approval and metadata cases. `node scripts/verify-assessment-reader.mjs` executes the published assessment reader with the explicit assessment_id relation and pointer/content/error boundaries. These are regression checks for failures found in the authenticated production browser, not substitutes for repeating the live UI.
+
 `node scripts/verify-admin-workflow-behavior.mjs` executes calendar/navigation/Cairo DST and the actual upload transport with controlled XHR replies. The SQL fixtures `tests/sql/coach-schedule-smoke.sql`, `admin-content-smoke.sql` and `media-registration-smoke.sql` always roll back; they cover persisted success, denied permissions and atomic retry behavior without public data or email delivery. Run with `psql -v ON_ERROR_STOP=1` against a restored project first.
 
 `node scripts/verify-coach-concurrency.mjs` requires explicit loopback PGHOST and a PGDATABASE beginning `heba_restore_` or `heba_test_`. Set HEBA_TEST_PSQL to the local PostgreSQL binary if needed. It starts two independent sessions and removes its disposable fixtures, retaining content-free audit history. It refuses remote hosts and is not a production load test. Source gates and SQL success do not certify the live Admin browser workflow.

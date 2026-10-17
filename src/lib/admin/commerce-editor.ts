@@ -51,7 +51,7 @@ export function commerceEditorPayload(kind: CommerceEditorKind, form: FormData):
       return { ok: true, value: { name, price: num('price', 0, 99999999.99, 0, true), is_active: form.get('is_active') === 'on' } }
     }
     const starts_at = date('starts_at'), ends_at = date('ends_at')
-    if (starts_at && ends_at && ends_at <= starts_at) throw new Error()
+    if (starts_at && ends_at && ends_at <= starts_at) return {ok:false,error:'موعد نهاية العرض أو الباقة يجب أن يأتي بعد موعد البداية بتوقيت القاهرة.'}
     let value: CommercePayload
     if (kind === 'plan') {
       const title = str('title'), slug = str('slug', 80).toLowerCase(), currency = str('currency', 3, 'EGP').toUpperCase()
@@ -64,10 +64,12 @@ export function commerceEditorPayload(kind: CommerceEditorKind, form: FormData):
         features, eligible_service_ids: ids('eligible_service_ids'), is_active: form.get('is_active') === 'on', is_published: form.get('is_published') === 'on' }
     } else if (kind === 'coupon') {
       const code = str('code', 24).toUpperCase(), discountKind = str('kind', 20, 'percent'), discountValue = num('value', 0.01, 99999999.99, null, true)
+      if(discountKind==='percent'&&discountValue!==null&&discountValue>100)return {ok:false,error:'نسبة خصم الكوبون يجب أن تكون أكبر من صفر ولا تتجاوز 100٪.'}
       if (!/^[A-Z0-9_-]{3,24}$/.test(code) || !['percent', 'fixed'].includes(discountKind) || discountValue === null || (discountKind === 'percent' && discountValue > 100)) throw new Error()
       value = { allow_with_offers:form.get('allow_with_offers')==='on',code, kind: discountKind, value: discountValue, max_uses: num('max_uses', 1, 1000000, null), max_uses_per_user: num('max_uses_per_user', 1, 1000000, 1) }
     } else if (kind === 'offer') {
       const title = str('title'), campaign = str('kind', 30, 'flash_sale'), discount_kind = str('discount_kind', 20, 'percent'), discount_value = num('discount_value', 0.01, 99999999.99, null, true)
+      if(discount_kind==='percent'&&discount_value!==null&&discount_value>100)return {ok:false,error:'نسبة خصم العرض يجب أن تكون أكبر من صفر ولا تتجاوز 100٪.'}
       if (title.length < 3 || !['flash_sale', 'coupon_campaign', 'bundle', 'limited_seats', 'countdown', 'seasonal'].includes(campaign) || !['percent', 'fixed'].includes(discount_kind) || discount_value === null || (discount_kind === 'percent' && discount_value > 100)) throw new Error()
       // Preserve every legacy target field; checkout matches product ID or product type.
       const raw = str('targets', 20000, '[]')

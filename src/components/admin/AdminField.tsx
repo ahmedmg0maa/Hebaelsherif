@@ -5,6 +5,10 @@ import type { ComponentProps } from 'react'
 
 type Guidance = { description: string; example: string }
 const guidance: Record<string, Guidance> = {
+ q:{description:'يضيّق قائمة النتائج بالعنوان فقط بعد الضغط على تطبيق، دون تعديل السجلات.',example:'جزء من عنوان الكورس أو الخدمة'},
+ dataset:{description:'نوع السجلات التي تُدرج في ملف التقرير؛ التصدير يخضع للصلاحية وتأكيد الدخول الحديث.',example:'الطلبات لتقرير الطلبات ضمن الفترة'},
+ start:{description:'أول يوم يشمله التقرير بتوقيت القاهرة.',example:'بداية الشهر المطلوب'},
+ end:{description:'آخر يوم يشمله التقرير بتوقيت القاهرة، ويأتي بعد البداية أو يساويها.',example:'نهاية الشهر المطلوب'},
  cta_label:{description:'نص قصير يظهر على زر الانتقال.',example:'استكشفي الكورسات'},
  cta_href:{description:'رابط صفحة داخل الموقع يبدأ بشرطة مائلة واحدة، دون مسافات.',example:'/courses'},
  duration_days:{description:'عدد أيام صلاحية الباقة من التفعيل، وفق شروطها المعتمدة.',example:'30 يومًا'},
@@ -103,7 +107,7 @@ const guidance: Record<string, Guidance> = {
 function help(name: string, label: string, required?: boolean, hint?: string, example?: string, limits?: string) {
  const aliases:Record<string,string>={buffer_before:'buffer_before_minutes',buffer_after:'buffer_after_minutes',minimum_notice:'minimum_notice_minutes',horizon_days:'booking_window_days',cancel_notice_hours:'cancellation_notice_hours',exception_start:'start_time',exception_end:'end_time',run_at:'starts_at'}
  const base=name.replace(/_\d+$/,'')
- const semantic=base.includes('href')?'cta_href':base.includes('cta')?'cta_label':base.includes('title')?'title':base.includes('text')?'body':base
+ const semantic=/^media_.*_x$/.test(name)?'focal_x':/^media_.*_y$/.test(name)?'focal_y':/^media_.*_alt$/.test(name)?'alt':base.includes('href')?'cta_href':base.includes('cta')?'cta_label':base.includes('title')?'title':base.includes('text')?'body':base
  const entry=guidance[aliases[name]??name]??guidance[semantic]
  return <><span className="block">{hint ?? entry?.description ?? `اكتبي ${label} كما تريدين حفظه وعرضه في هذا القسم.`}</span>
    <span className="mt-1 block">مثال توضيحي: {example ?? entry?.example ?? label}.</span>

@@ -36,7 +36,7 @@ export default async function AdminOffersPage() {
       <header>
         <h1 className="text-3xl font-bold text-deep-teal">العروض</h1>
         <p className="mt-1 text-text-soft">
-          حملات الخصم تظهر تلقائيًا في الرئيسية وصفحات الاكتشاف وصفحة الدفع طوال نافذتها الزمنية.
+          يسري الخصم بعد التفعيل وخلال مواعيده على المنتجات المستهدفة وصفحة الدفع. ظهور البطاقة على الرئيسية اختيار مستقل داخل العرض.
         </p>
       </header>
 

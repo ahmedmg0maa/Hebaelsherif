@@ -14,7 +14,7 @@ export function ProsePage({
   updatedAt?: string
 }) {
   return (
-    <main className="mx-auto max-w-4xl px-5 py-14 sm:px-8 md:py-20">
+    <main className="mx-auto min-w-0 max-w-4xl break-words px-5 py-14 sm:px-8 md:py-20">
       <header className="mb-12 text-center">
         <p className="mb-3 text-sm font-semibold text-burgundy">{eyebrow}</p>
         <h1 className="font-heading text-4xl font-bold leading-snug text-deep-teal sm:text-5xl">{title}</h1>
@@ -27,7 +27,7 @@ export function ProsePage({
           <section key={s.heading}>
             <h2 className="mb-3 font-heading text-2xl font-bold text-deep-teal">{s.heading}</h2>
             {s.paragraphs.map((p, i) => (
-              <p key={i} className="mb-3 leading-loose text-ink">
+              <p key={i} className="mb-3 whitespace-pre-wrap leading-loose text-ink">
                 {p}
               </p>
             ))}

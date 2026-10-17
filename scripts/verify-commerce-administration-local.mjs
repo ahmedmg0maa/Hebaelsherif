@@ -15,6 +15,9 @@ export const payload = (kind, overrides = {}) => {
   assert.equal(parsed.ok,true,JSON.stringify(parsed)); return parsed.value
 }
 let checks = 0
+assert.match(parse('offer',form({...valid.offer,discount_value:'101'})).error,/100٪/)
+assert.match(parse('coupon',form({...valid.coupon,value:'101'})).error,/الكوبون.*100٪/)
+assert.match(parse('offer',form({...valid.offer,starts_at:'2099-01-03T12:00',ends_at:'2099-01-02T12:00'})).error,/بعد موعد البداية/)
 for (const kind of ['program','variant','plan','coupon','offer']) { payload(kind); checks++ }
 for (const [kind,fields] of [
   ['program',{ type:'course' }], ['program',{ type:'free_resource',price:'12' }], ['program',{price:'NaN'}],
