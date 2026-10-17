@@ -75,7 +75,7 @@ export default async function proxy(request: NextRequest) {
   // not from x-nonce. Keep the renderer and the browser on the same policy.
   requestHeaders.set('Content-Security-Policy', securityHeaders(nonce)['Content-Security-Policy'])
   const path = request.nextUrl.pathname
-  const needsAuth = path.startsWith('/dashboard') || path.startsWith('/admin')
+  const needsAuth = path.startsWith('/dashboard') || path.startsWith('/admin') || path.startsWith('/checkout/')
   const redirectToAuth = () => {
     const url = request.nextUrl.clone()
     url.pathname = path.startsWith('/admin') ? '/auth/admin' : '/auth/login'

@@ -39,7 +39,7 @@ for (const token of [
   'maxLength={120}',
   'maxLength={320}',
   'data: { full_name: fullName }',
-  '/auth/callback?next=/dashboard',
+  '/auth/callback?next=${encodeURIComponent(target)}',
   'role="status"',
 ]) assert.ok(registration.includes(token), `registration UI contract missing: ${token}`)
 assert.ok(!registration.includes('admin_roles') && !registration.includes('service_role'), 'registration client must not contain an Admin or privileged path')

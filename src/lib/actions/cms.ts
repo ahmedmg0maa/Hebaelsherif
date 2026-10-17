@@ -103,7 +103,7 @@ export async function createArticle(formData: FormData): Promise<ActionResult> {
   })
   if (error) return { ok: false, error: error.code === '23505' ? 'هذا الرابط مستخدم.' : GENERIC }
   if (!data?.id) return { ok: false, error: GENERIC }
-  revalidatePath('/admin/articles'); revalidatePath('/')
+  revalidatePath('/admin/articles'); revalidatePath('/'); revalidatePath('/search'); revalidatePath('/sitemap.xml')
   return { ok: true }
 }
 
@@ -117,8 +117,8 @@ export async function publishArticle(articleId: string, publish: boolean): Promi
     p_seo_description:null,p_status:publish?'published':'draft',p_publish_at:null,
   })
   if (error || !data?.id) return { ok: false, error: error?.message.includes('article_publication_incomplete') ? 'أكملي المقتطف والمحتوى وحقوق صورة الغلاف قبل النشر.' : GENERIC }
-  revalidatePath('/admin/articles'); revalidatePath('/')
-  revalidatePath('/articles'); revalidatePath('/')
+  revalidatePath('/admin/articles'); revalidatePath('/'); revalidatePath('/search'); revalidatePath('/sitemap.xml')
+  revalidatePath('/articles'); if (typeof data.articleSlug === 'string') revalidatePath(`/articles/${data.articleSlug}`)
   return { ok: true }
 }
 
@@ -609,4 +609,4 @@ export async function saveStartHereExperience(formData: FormData): Promise<Actio
   return { ok: true }
 }
 export async function createContentPreview(entityType:'page'|'article',entityId:string):Promise<{ok:true;url:string}|{ok:false;error:string}>{const admin=await requireAdminUser('content.manage');if(!admin)return{ok:false,error:NOT_ADMIN};const token=`${crypto.randomUUID()}${crypto.randomUUID()}`.replaceAll('-',''),tokenHash=createHash('sha256').update(token).digest('hex'),expiresAt=new Date(Date.now()+30*60_000).toISOString();const{error}=await getServiceClient().from('content_preview_tokens').insert({entity_type:entityType,entity_id:entityId,token_hash:tokenHash,expires_at:expiresAt,created_by:admin.user.id});if(error)return{ok:false,error:GENERIC};return{ok:true,url:`/preview/${entityType}/${entityId}?token=${token}`}}
-export async function scheduleArticle(articleId:string,status:string,publishAtInput:string|null):Promise<ActionResult>{const admin=await requireAdminUser('content.publish');if(!admin)return{ok:false,error:NOT_ADMIN};const instant=status==='scheduled'&&publishAtInput?parseCairoLocalDateTime(publishAtInput):null;if(!['draft','scheduled','published','archived'].includes(status)||(status==='scheduled'&&(!instant||instant<=new Date())))return{ok:false,error:'حددي حالة وموعدًا مستقبليًا صحيحًا بتوقيت القاهرة.'};const{data,error}=await getServiceClient().rpc('manage_article',{p_actor_id:admin.user.id,p_action:'lifecycle',p_article_id:articleId,p_title:null,p_slug:null,p_excerpt:null,p_content:null,p_cover_url:null,p_cover_asset_id:null,p_seo_title:null,p_seo_description:null,p_status:status,p_publish_at:instant?.toISOString()??null});if(error||!data?.id)return{ok:false,error:error?.message.includes('article_publication_incomplete')?'أكملي المقتطف والمحتوى وحقوق صورة الغلاف قبل النشر أو الجدولة.':GENERIC};revalidatePath('/admin/articles'); revalidatePath('/');revalidatePath('/articles'); revalidatePath('/');return{ok:true}}
+export async function scheduleArticle(articleId:string,status:string,publishAtInput:string|null):Promise<ActionResult>{const admin=await requireAdminUser('content.publish');if(!admin)return{ok:false,error:NOT_ADMIN};const instant=status==='scheduled'&&publishAtInput?parseCairoLocalDateTime(publishAtInput):null;if(!['draft','scheduled','published','archived'].includes(status)||(status==='scheduled'&&(!instant||instant<=new Date())))return{ok:false,error:'حددي حالة وموعدًا مستقبليًا صحيحًا بتوقيت القاهرة.'};const{data,error}=await getServiceClient().rpc('manage_article',{p_actor_id:admin.user.id,p_action:'lifecycle',p_article_id:articleId,p_title:null,p_slug:null,p_excerpt:null,p_content:null,p_cover_url:null,p_cover_asset_id:null,p_seo_title:null,p_seo_description:null,p_status:status,p_publish_at:instant?.toISOString()??null});if(error||!data?.id)return{ok:false,error:error?.message.includes('article_publication_incomplete')?'أكملي المقتطف والمحتوى وحقوق صورة الغلاف قبل النشر أو الجدولة.':GENERIC};revalidatePath('/admin/articles'); revalidatePath('/'); revalidatePath('/search'); revalidatePath('/sitemap.xml');revalidatePath('/articles'); if (typeof data.articleSlug === 'string') revalidatePath(`/articles/${data.articleSlug}`);return{ok:true}}

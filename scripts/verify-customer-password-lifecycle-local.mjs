@@ -57,6 +57,6 @@ assert.ok(callback.includes('exchangeCodeForSession(code)'), 'SSR PKCE callback 
 assert.ok(callback.includes("new Set(['/dashboard', '/booking', '/auth/update-password', '/auth/login'])"), 'callback destination must use a fixed internal allowlist')
 assert.ok(callback.includes("'Cache-Control', 'private, no-store'") && callback.includes("'Referrer-Policy', 'no-referrer'"), 'Auth callback responses must be private and non-referring')
 assert.ok(reset.includes('/auth/callback?next=/auth/update-password'), 'password recovery email must lead to the real update flow')
-assert.ok(register.includes('/auth/callback?next=/dashboard'), 'signup confirmation must complete through the SSR PKCE callback')
+assert.ok(register.includes('/auth/callback?next=${encodeURIComponent(target)}') && register.includes('customerReturnPath'), 'signup confirmation must preserve a validated customer destination through the SSR PKCE callback')
 
 console.log('verify:customer-password-lifecycle-local passed — current-password proof, recovery-only AMR, SSR PKCE callback, rate-limited two-phase evidence and session closure verified')

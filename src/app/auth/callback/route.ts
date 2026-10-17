@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { getServerClient } from '@/lib/supabase/server'
 import { hasSupabasePublicConfig } from '@/lib/supabase/public-key'
+import { customerReturnPath } from '@/lib/auth/customer-return'
 
 const allowedDestinations = new Set(['/dashboard', '/booking', '/auth/update-password', '/auth/login'])
 
 function destination(value: string | null) {
-  return value && allowedDestinations.has(value) ? value : '/auth/login'
+  return value && allowedDestinations.has(value) ? value : customerReturnPath(value, '/auth/login')
 }
 
 function privateRedirect(request: NextRequest, path: string) {

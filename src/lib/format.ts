@@ -13,7 +13,7 @@ export function formatDuration(minutes: number) {
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
   if (h === 0) return `${m.toLocaleString('ar-EG')} دقيقة`
-  if (m === 0) return `${h.toLocaleString('ar-EG')} ساعات`
+  if (m === 0) return h === 1 ? 'ساعة واحدة' : h === 2 ? 'ساعتان' : `${h.toLocaleString('ar-EG')} ${h <= 10 ? 'ساعات' : 'ساعة'}`
   return `${h.toLocaleString('ar-EG')} س ${m.toLocaleString('ar-EG')} د`
 }
 

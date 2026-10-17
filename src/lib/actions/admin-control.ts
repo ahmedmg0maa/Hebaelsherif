@@ -244,7 +244,7 @@ export async function saveArticle(articleId: string, form: FormData): Promise<Ad
   if(title.length<3||title.length>160||slug.length<3||slug.length>80||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)||excerpt.length>500||content.length>100000||seoTitle.length>70||seoDescription.length>180||coverUrl.length>500||(coverUrl&&!/^https:\/\/[^\s]+$/i.test(coverUrl)))return{ok:false,error:'راجعي حدود العنوان والرابط والمحتوى وحقول SEO والغلاف.'}
   const {data,error}=await getServiceClient().rpc('manage_article',{p_actor_id:admin.id,p_action:'content_update',p_article_id:articleId,p_title:title,p_slug:slug,p_excerpt:excerpt,p_content:content,p_cover_url:coverUrl||null,p_cover_asset_id:coverAssetId||null,p_seo_title:seoTitle||null,p_seo_description:seoDescription||null,p_status:null,p_publish_at:null})
   if(error||!data?.id)return{ok:false,error:error?.message.includes('content_publish_required')?'تعديل مقال منشور أو مجدول يتطلب صلاحية النشر.':error?.message.includes('article_publication_incomplete')?'لا يمكن إبقاء المقال منشورًا بمحتوى ناقص أو غلاف غير موثق الحقوق.':'تعذّر حفظ المقال.'}
-  revalidatePath('/admin/articles'); revalidatePath('/')
+  revalidatePath('/admin/articles'); revalidatePath('/'); revalidatePath('/search'); revalidatePath('/sitemap.xml')
   if(typeof data.previousSlug==='string')revalidatePath(`/articles/${data.previousSlug}`)
   revalidatePath(`/articles/${slug}`)
   revalidatePath('/articles')
@@ -256,7 +256,7 @@ export async function deleteArticle(articleId: string): Promise<AdminActionResul
   if (!admin) return { ok: false, error: 'هذه العملية تتطلب صلاحية إدارية.' }
   const {data,error}=await getServiceClient().rpc('manage_article',{p_actor_id:admin.id,p_action:'archive',p_article_id:articleId,p_title:null,p_slug:null,p_excerpt:null,p_content:null,p_cover_url:null,p_cover_asset_id:null,p_seo_title:null,p_seo_description:null,p_status:null,p_publish_at:null})
   if(error||!data?.id)return{ok:false,error:'تعذّر أرشفة المقال.'}
-  revalidatePath('/admin/articles'); revalidatePath('/')
+  revalidatePath('/admin/articles'); revalidatePath('/'); revalidatePath('/search'); revalidatePath('/sitemap.xml')
   revalidatePath('/articles')
   if(typeof data.articleSlug==='string')revalidatePath(`/articles/${data.articleSlug}`)
   return { ok: true }

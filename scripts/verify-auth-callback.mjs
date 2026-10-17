@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import ts from 'typescript'
+import {customerReturnPath} from '../src/lib/auth/customer-return.ts'
 const source=ts.transpileModule(readFileSync('src/app/auth/callback/route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText
 let configured=true, exchangeError=null, exchanges=0
 const loaded={exports:{}}
 const mocks={
+ '@/lib/auth/customer-return':{customerReturnPath},
  'next/server':{NextResponse:{redirect:url=>new Response(null,{status:307,headers:{Location:String(url)}})}},
  '@/lib/supabase/public-key':{hasSupabasePublicConfig:()=>configured},
  '@/lib/supabase/server':{getServerClient:async()=>({auth:{exchangeCodeForSession:async()=>{exchanges++;return {error:exchangeError}}}})},
@@ -16,13 +18,13 @@ async function callback(next,code='test-code'){
  if(code)url.searchParams.set('code',code)
  return loaded.exports.GET({url:url.href,nextUrl:url})
 }
-for(const path of ['/booking','/dashboard','/auth/update-password','/auth/login']){
+for(const path of ['/booking','/dashboard','/dashboard/books','/checkout/course/a-quiet-first-step','/checkout/book/quiet-week-workbook','/auth/update-password','/auth/login']){
  const response=await callback(path)
  assert.equal(response.headers.get('Location'),'https://hebaelsherif.com'+path)
  assert.equal(response.headers.get('Cache-Control'),'private, no-store')
  assert.equal(response.headers.get('Referrer-Policy'),'no-referrer')
 }
-for(const path of ['https://attacker.invalid','//attacker.invalid','/admin/overview','/booking?next=https://attacker.invalid',null]){
+for(const path of ['https://attacker.invalid','//attacker.invalid','/admin/overview','/booking?next=https://attacker.invalid','/checkout/course/../../admin','/checkout/course/%2f%2fattacker.invalid','/checkout/course/a?next=https://attacker.invalid',null]){
  assert.equal((await callback(path)).headers.get('Location'),'https://hebaelsherif.com/auth/login')
 }
 exchangeError=new Error('fixture exchange denied')
@@ -44,13 +46,13 @@ const proxyMocks={...mocks,
  '@/lib/supabase/public-key':{hasSupabasePublicConfig:()=>configured,getSupabasePublicKey:()=> 'public-fixture'},
 }
 new Function('require','module','exports',proxySource)(name=>{if(!proxyMocks[name])throw Error('Unexpected import '+name);return proxyMocks[name]},proxyModule,proxyModule.exports)
-for(const [path,session] of [['/admin/overview',false],['/dashboard',false],['/dashboard',true],['/auth/admin',false],['/auth/login',false]]){
+for(const [path,session] of [['/admin/overview',false],['/dashboard',false],['/dashboard',true],['/checkout/course/a-quiet-first-step',false],['/checkout/book/quiet-week-workbook',true],['/auth/admin',false],['/auth/login',false]]){
  configured=session
  const url=new URL('https://hebaelsherif.com'+path)
  const response=await proxyModule.exports.default({headers:new Headers(),cookies:{getAll:()=>[]},nextUrl:{pathname:path,clone:()=>new URL(url)}})
  assert.equal(response.headers.get('Cache-Control'),'private, no-store',path)
  assert.equal(response.headers.get('Pragma'),'no-cache',path)
  assert.equal(response.headers.get('X-Robots-Tag'),'noindex, nofollow',path)
- if(path.startsWith('/admin')||path==='/dashboard'&&!session)assert.equal(response.status,307)
+ if(path.startsWith('/admin')||(path==='/dashboard'||path.startsWith('/checkout/'))&&!session)assert.equal(response.status,307)
 }
 console.log('PASS real proxy: anonymous protected redirects, authenticated dashboard and Auth pages carry private/no-store headers.')

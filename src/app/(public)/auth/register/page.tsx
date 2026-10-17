@@ -1,14 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { getBrowserClient } from '@/lib/supabase/client'
 import { AuthShell, AuthLink } from '@/components/auth/AuthShell'
 import { PasswordField } from '@/components/auth/PasswordField'
 import { FormField } from '@/components/ui/FormField'
 import { Button } from '@/components/ui/Button'
 import { PASSWORD_HINT, PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, validateNewPassword } from '@/lib/auth/password-policy'
+import { customerReturnPath } from '@/lib/auth/customer-return'
 
-export default function RegisterPage() {
+function RegisterPageContent() {
+  const params = useSearchParams()
+  const target = customerReturnPath(params.get('redirect'))
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -43,7 +47,7 @@ export default function RegisterPage() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}`,
       },
     })
     if (error) {
@@ -60,7 +64,7 @@ export default function RegisterPage() {
       lead="خطوة واحدة تفصلك عن مكتبتك ودوراتك."
       footer={
         <>
-          لديك حساب بالفعل؟ <AuthLink href="/auth/login">سجّلي دخولك</AuthLink>
+          لديك حساب بالفعل؟ <AuthLink href={`/auth/login?redirect=${encodeURIComponent(target)}`}>سجّلي دخولك</AuthLink>
         </>
       }
     >
@@ -95,4 +99,8 @@ export default function RegisterPage() {
       )}
     </AuthShell>
   )
+}
+
+export default function RegisterPage() {
+  return <Suspense><RegisterPageContent /></Suspense>
 }

@@ -7,10 +7,7 @@ import { AuthShell, AuthLink } from '@/components/auth/AuthShell'
 import { PasswordField } from '@/components/auth/PasswordField'
 import { FormField } from '@/components/ui/FormField'
 import { Button } from '@/components/ui/Button'
-
-function safeRedirect(value: string | null) {
-  return value?.startsWith('/') && !value.startsWith('//') ? value : '/dashboard'
-}
+import { customerReturnPath } from '@/lib/auth/customer-return'
 
 function LoginForm() {
   const router = useRouter()
@@ -34,7 +31,7 @@ function LoginForm() {
       setLoading(false)
       return
     }
-    router.replace(safeRedirect(params.get('redirect')))
+    router.replace(customerReturnPath(params.get('redirect')))
     router.refresh()
   }
 
@@ -61,14 +58,20 @@ function LoginForm() {
   )
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
+  const params = useSearchParams()
+  const target = customerReturnPath(params.get('redirect'))
   return (
     <AuthShell
       title="أهلًا بعودتك"
       lead="ادخلي ببريدك وكلمة المرور لمتابعة رحلتك بأمان."
-      footer={<>ليس لديك حساب؟ <AuthLink href="/auth/register">أنشئي حسابك</AuthLink></>}
+      footer={<>ليس لديك حساب؟ <AuthLink href={`/auth/register?redirect=${encodeURIComponent(target)}`}>أنشئي حسابك</AuthLink></>}
     >
       <Suspense><LoginForm /></Suspense>
     </AuthShell>
   )
+}
+
+export default function LoginPage() {
+  return <Suspense><LoginPageContent /></Suspense>
 }
