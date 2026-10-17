@@ -1,5 +1,7 @@
 # Owner login diagnosis — 2026-10-17
 
+Final acceptance: the owner completed authorized password recovery personally, then personally signed in through /auth/admin. The production IAB session created at 07:40:08 UTC was password verified and bound to Supabase Auth. Authenticated Admin reads/saves/upload and an actual page reload succeeded. UI safe logout at approximately 07:59 UTC revoked that Admin session and removed its corresponding Auth session; a fresh navigation to /admin/overview in the same browser redirected to /auth/admin?redirect=%2Fadmin%2Foverview. Other human browser sessions were intentionally preserved. No new password was inspected, printed or stored by the agent. The original failure evidence below is historical and still identifies rejected credentials rather than a session-creation failure.
+
 Production source at investigation: `5b48e6f6a75c86d53d0a585277ef60628cf3c5ac`, `prepare-cream-motion`.
 
 ## Observed failure
