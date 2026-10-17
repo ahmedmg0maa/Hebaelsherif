@@ -60,8 +60,17 @@ try {
   const { error: deniedNotification } = await userClient.from('notifications').insert({ user_id: disposableUserId, title: 'Permission test', body: '', kind: 'info' })
   if (!deniedNotification) throw new Error('AAL1 session was allowed to create an administrative notification')
 } finally {
-  await supabase.from('feature_flags').delete().eq('key', `permission-test-${marker}`)
-  if (disposableUserId) await supabase.auth.admin.deleteUser(disposableUserId)
+  const { error: flagCleanupError } = await supabase.from('feature_flags').delete().eq('key', `permission-test-${marker}`)
+  if (flagCleanupError) throw flagCleanupError
+  if (disposableUserId) {
+    const { error: roleCleanupError } = await supabase.from('admin_roles').delete().eq('user_id', disposableUserId)
+    if (roleCleanupError) throw roleCleanupError
+    // Retain the audit trail while releasing its foreign key to this test identity.
+    const { error: auditCleanupError } = await supabase.from('audit_logs').update({ actor_id: null }).eq('actor_id', disposableUserId)
+    if (auditCleanupError) throw auditCleanupError
+    const { error: userCleanupError } = await supabase.auth.admin.deleteUser(disposableUserId)
+    if (userCleanupError) throw userCleanupError
+  }
 }
 
 console.log(`verify:permissions passed — ${expectedRoles.length + 1} roles, ${mappings.length} mappings, service-role wildcard and AAL1 denial verified`)

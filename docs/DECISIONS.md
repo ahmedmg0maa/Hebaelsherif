@@ -896,3 +896,10 @@
 - Load .env.local for launch commands, prevent Vite's dotenv-to-.dev.vars copy, and fail configured builds if actual server secret values appear anywhere in dist. Worker credentials remain runtime bindings.
 - Allow the explicit booking callback destination and make Auth/customer/Admin responses and redirects private/no-store. Preserve the existing cream/teal/gold artwork, motion, managed content and lockfile.
 - Keep free cost mode. Do not invent offerings, prices, policies or availability. The owner will supply approved operational content; technical deployment is distinct from opening public booking.
+
+## 2026-10-17 — Production routing, provenance and responsive hero
+
+- Resolve the observed old-site mismatch before changing design: GitHub/Vercel Production metadata identifies the old main deployment; new branch previews do not establish apex production. Publish the actual Git source/build metadata as a static well-known artifact on both hosts.
+- Use explicit apex/www zone routes when Custom Domains rejects externally managed DNS. Back up and remove only the obsolete conflicting staging wildcard; preserve DNS and unrelated routes. Keep runtime secrets out of build assets and Git.
+- Keep the intended desk photo and original brand assets. Reduce responsive title/copy spacing and photo height while retaining deliberate Arabic line chunks, cover cropping, palette, ornament and automatic motion. Check real viewport dimensions and stable screenshots; the sidebar width is not desktop acceptance. Confirm separately in full-screen Chrome.
+- Preserve disposable-test audit records with null actor references when cleaning their Auth identities. Check cleanup errors rather than silently leaving a support account. Final live identity counts must match the preflight baseline.
