@@ -145,7 +145,14 @@
     "test:design-v3": "playwright test --config playwright.design.config.ts",
     "verify:auth-callback": "node scripts/verify-auth-callback.mjs",
     "verify:admin-foundation-local": "node scripts/verify-revision-recovery-local.mjs && node scripts/verify-home-draft-local.mjs && node scripts/verify-upload-limits.mjs && node scripts/generate-upload-limits-migration.mjs --check && node scripts/verify-admin-pagination-local.mjs && node scripts/verify-admin-choices-local.mjs",
-    "verify:admin-foundation-postgres": "node scripts/verify-admin-foundation-postgres.mjs"
+    "verify:admin-foundation-postgres": "node scripts/verify-admin-foundation-postgres.mjs",
+    "verify:admin-acceptance-runner": "node scripts/verify-admin-acceptance-runner.mjs",
+    "verify:admin-action-http": "node scripts/verify-admin-action-http.mjs",
+    "verify:admin-acceptance-build": "node scripts/verify-admin-acceptance-build.mjs",
+    "admin:acceptance:setup": "node scripts/setup-admin-acceptance.mjs",
+    "admin:acceptance:check": "node scripts/check-admin-acceptance-environment.mjs",
+    "admin:acceptance:plan": "node scripts/prepare-admin-acceptance-schema.mjs",
+    "admin:acceptance:run": "node scripts/run-admin-acceptance.mjs"
   },
   "dependencies": {
     "@sentry/browser": "10.55.0",

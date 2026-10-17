@@ -1,5 +1,11 @@
 # Testing and quality gates
 
+## Integrated acceptance preparation — 2026-10-17
+
+Read `ADMIN_ACCEPTANCE_RUNNER_AR.md`. `verify:admin-acceptance-runner` tests guards/planning/empty-schema classification/transport helpers with explicit unit replies; it is not provider acceptance. After an isolated Next build, `verify:admin-action-http` starts the actual framework with no environment files and proves real manifest/Flight decoding and unconfigured-login/Admin denial. Real Auth/MFA/PostgREST/preview/Storage acceptance requires the separate ignored acceptance environment and `run-admin-acceptance.mjs`; every blocked/not-run result stays distinct. Production is refused and remains held. Component-only editor evidence is in `admin-editor-ux-evidence/README.md`.
+
+`verify:admin-acceptance-build` tests the runner's actual allowlisted mirror, complete frozen dependency install, Next build and staging gate without configuring any provider. It proves the harness can start; it does not pass remote Auth or Storage tests. `node scripts/verify-admin-acceptance-runner.mjs --postgres` additionally compares13 critical function bodies on the explicitly configured loopback test database.
+
 ## Admin workflows — 2026-10-17
 
 `tests/sql/connected-booking-request-smoke.sql` always rolls back and covers the actual priced-request RPC, price snapshot/no financial order, ownership, idempotency/conflicting retry, one pending request, disabled mode, expiry, governed Admin confirmation and customer cancellation. Test on a restored database first. `verify-phase8-workflows-local.mjs` also exercises the actual action's request/package/free mode choice and both customer/Admin invalidation. Neither test is a browser acceptance claim.

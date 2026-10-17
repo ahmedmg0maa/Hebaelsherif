@@ -1,0 +1,191 @@
+{
+  "id": "7c7c8969-7e5d-4888-a14f-8106d8cc1fe3",
+  "startedAt": "2026-10-17T18:31:24.864Z",
+  "stages": [
+    {
+      "id": "configuration",
+      "status": "blocked",
+      "code": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    }
+  ],
+  "cases": [
+    {
+      "id": "auth_owner",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_admin",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_operations",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_finance",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_content",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_marketing",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_support",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_editor",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_analyst",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_auditor",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_customer",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "auth_outsider",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "role_permissions_postgrest",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "saved_choices_old_names",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "save_reload_postgrest",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "restore_stale_and_concurrent",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "restore_atomic_failure",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "home_initialize_compare_edit",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "private_preview_access_and_expiry",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "paged_lists_literal_last_page",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "real_all_bucket_upload_boundaries",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "real_protected_upload_boundaries_retry",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "real_upload_missing_bytes_retry",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "entitled_customer_and_denial",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    },
+    {
+      "id": "logout_session_revocation",
+      "status": "not_run",
+      "reason": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+    }
+  ],
+  "productionChanged": false,
+  "browserAcceptance": "NOT_RUN",
+  "workerParity": "NOT_RUN",
+  "status": "blocked",
+  "failure": "ISOLATED_PUBLIC_CONFIG_REQUIRED",
+  "environment": {
+    "stages": [
+      {
+        "phase": "configuration",
+        "status": "needs_input",
+        "next": "أكملي القيم المحلية الناقصة.",
+        "code": "ISOLATED_PUBLIC_CONFIG_REQUIRED"
+      },
+      {
+        "phase": "auth_connection_public_key",
+        "status": "not_run",
+        "next": "يتوقف على إعداد اتصال الاختبار أولًا."
+      },
+      {
+        "phase": "server_key_authorization",
+        "status": "not_run",
+        "next": "يتوقف على إعداد اتصال الاختبار أولًا."
+      },
+      {
+        "phase": "postgrest_connection",
+        "status": "not_run",
+        "next": "يتوقف على إعداد اتصال الاختبار أولًا."
+      },
+      {
+        "phase": "storage_connection",
+        "status": "not_run",
+        "next": "يتوقف على إعداد اتصال الاختبار أولًا."
+      },
+      {
+        "phase": "schema",
+        "status": "not_run",
+        "next": "يتوقف على إعداد اتصال الاختبار أولًا."
+      },
+      {
+        "phase": "integrated_acceptance",
+        "status": "not_run",
+        "next": "يتوقف على إعداد اتصال الاختبار أولًا."
+      }
+    ],
+    "missing": [
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY أو NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "SUPABASE_SECRET_KEY أو SUPABASE_SERVICE_ROLE_KEY"
+    ],
+    "acceptance": "NOT_RUN",
+    "productionChanged": false
+  },
+  "finishedAt": "2026-10-17T18:31:24.91Z"
+}
