@@ -4,6 +4,8 @@ Latest user explicitly requests persisted choice labels/archived references, Ent
 
 Only production Supabase is currently accessible; Docker and WSL are unavailable. User chose to provide a separate test-project connection locally. Use docs/admin-acceptance.env.example → ignored .env.admin-acceptance.local; scripts/check-admin-acceptance-environment.mjs refuses the production reference and external mail/scan side effects. No production settings, schema, content or deployment changed. Integrated acceptance remains BLOCKED until the real test connection is available; do not count component/SQL fixtures as provider success. Continue independent navigation/language work in separate commits.
 
+Independent UX slice: existing30 routes regrouped into daily/sessions/content/site/customers/sales/advanced, preserving the same permission map, URLs and badges. Search help is shorter with optional keyboard/length details; misleading global “new offer/article” links removed because they opened lists rather than creation. Resource/Page SEO labels use plain Arabic. Existing12 actual-code workflow/permission-navigation checks and targeted lint pass. Responsive navigation and full builds pending this slice's browser checkpoint. This is not completion of booking/course workspace redesign.
+
 ---
 
 # Admin foundation phase one — reviewable implementation, production held (2026-10-17)

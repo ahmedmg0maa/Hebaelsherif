@@ -5,58 +5,48 @@ export type AdminBadges = Partial<Record<'payments' | 'orders' | 'bookings' | 'r
 
 function sections(badges: AdminBadges): SidebarSection[] {
   return [
-    {
-      items: [{ href: '/admin/overview', label: 'نظرة عامة' }],
-    },
-    {
-      title: 'العمليات',
-      items: [
-        { href: '/admin/payments', label: 'موافقات الدفع', badge: badges.payments },
-        { href: '/admin/orders', label: 'الطلبات', badge: badges.orders },
-        { href: '/admin/bookings', label: 'الحجوزات', badge: badges.bookings },
-        { href: '/admin/memberships', label: 'الباقات والاشتراكات' },
-        { href: '/admin/users', label: 'العملاء' },
-        { href: '/admin/inbox', label: 'الرسائل والقائمة البريدية', badge: badges.messages },
-      ],
-    },
-    {
-      title: 'المحتوى',
-      items: [
-        { href: '/admin/products', label: 'المنتجات' },
-        { href: '/admin/services', label: 'الخدمات والسياسات' },
-        { href: '/admin/courses', label: 'الدورات' },
-        { href: '/admin/books', label: 'الكتب' },
-        { href: '/admin/workshops', label: 'ورش العمل' },
-        { href: '/admin/articles', label: 'المقالات' },
-        { href: '/admin/pages', label: 'الصفحات' },
-        { href: '/admin/revisions', label: 'مراجعات المحتوى' },
-        { href: '/admin/media', label: 'الوسائط' },
-        { href: '/admin/reviews', label: 'التقييمات', badge: badges.reviews },
-        { href: '/admin/press', label: 'الظهور الإعلامي' },
-        { href: '/admin/resources', label: 'مكتبة الموارد' },
-        { href: '/admin/assessments', label: 'الاختبار الإرشادي' },
-      ],
-    },
-    {
-      title: 'التسويق',
-      items: [
-        { href: '/admin/offers', label: 'العروض' },
-        { href: '/admin/coupons', label: 'الكوبونات' },
-        { href: '/admin/reports', label: 'التقارير' },
-      ],
-    },
-    {
-      title: 'النظام',
-      items: [
-        { href: '/admin/roles', label: 'الأدوار والصلاحيات' },
-        { href: '/admin/login-history', label: 'أرشيف تسجيل الدخول' },
-        { href: '/admin/audit-logs', label: 'سجل التدقيق' },
-        { href: '/admin/security', label: 'الأمان' },
-        { href: '/admin/settings', label: 'التحكم الكامل والإعدادات' },
-        { href: '/admin/delivery', label: 'الملفات المحمية' },
-        { href: '/admin/system', label: 'حالة النظام' },
-      ],
-    },
+    {title:'يومي',items:[{href:'/admin/overview',label:'ملخص الإدارة'}]},
+    {title:'الجلسات',items:[
+      {href:'/admin/bookings',label:'الحجوزات والمواعيد',badge:badges.bookings},
+      {href:'/admin/services',label:'الجلسات وسياساتها'},
+    ]},
+    {title:'المحتوى',items:[
+      {href:'/admin/courses',label:'الكورسات'},
+      {href:'/admin/books',label:'الكتب'},
+      {href:'/admin/workshops',label:'ورش العمل'},
+      {href:'/admin/articles',label:'المقالات'},
+      {href:'/admin/resources',label:'مكتبة الموارد'},
+      {href:'/admin/media',label:'الصور والوسائط'},
+      {href:'/admin/products',label:'كل المنتجات'},
+    ]},
+    {title:'الموقع',items:[
+      {href:'/admin/pages',label:'الرئيسية والصفحات'},
+      {href:'/admin/assessments',label:'الاختبار الإرشادي'},
+      {href:'/admin/press',label:'الظهور الإعلامي'},
+    ]},
+    {title:'العميلات',items:[
+      {href:'/admin/users',label:'حسابات العميلات'},
+      {href:'/admin/inbox',label:'الرسائل والقائمة البريدية',badge:badges.messages},
+      {href:'/admin/reviews',label:'التقييمات',badge:badges.reviews},
+    ]},
+    {title:'المبيعات',items:[
+      {href:'/admin/orders',label:'الطلبات',badge:badges.orders},
+      {href:'/admin/payments',label:'مراجعة الدفعات',badge:badges.payments},
+      {href:'/admin/memberships',label:'الباقات والاشتراكات'},
+      {href:'/admin/offers',label:'العروض'},
+      {href:'/admin/coupons',label:'الكوبونات'},
+      {href:'/admin/reports',label:'التقارير'},
+    ]},
+    {title:'الإدارة المتقدمة',items:[
+      {href:'/admin/roles',label:'الفريق والصلاحيات'},
+      {href:'/admin/settings',label:'إعدادات الموقع والقوائم'},
+      {href:'/admin/security',label:'الأمان'},
+      {href:'/admin/login-history',label:'سجل الدخول'},
+      {href:'/admin/audit-logs',label:'سجل التغييرات'},
+      {href:'/admin/revisions',label:'استعادة المحتوى'},
+      {href:'/admin/delivery',label:'الملفات المحمية'},
+      {href:'/admin/system',label:'حالة النظام'},
+    ]},
   ]
 }
 

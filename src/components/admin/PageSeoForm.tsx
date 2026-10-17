@@ -29,8 +29,8 @@ export function PageSeoForm({
       }}
       className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[1fr_2fr_auto]"
     >
-      <FormField label="عنوان SEO" name="seo_title" maxLength={70} defaultValue={seoTitle} />
-      <FormField label="وصف SEO" name="seo_description" maxLength={180} defaultValue={seoDescription} />
+      <FormField label="عنوان نتائج البحث" name="seo_title" maxLength={70} defaultValue={seoTitle} />
+      <FormField label="وصف نتائج البحث" name="seo_description" maxLength={180} defaultValue={seoDescription} />
       <div className="flex items-end gap-2 pb-0.5">
         <Button type="submit" size="sm" variant="secondary" disabled={busy}>
           حفظ

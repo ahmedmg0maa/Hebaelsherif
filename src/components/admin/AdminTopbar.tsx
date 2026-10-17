@@ -116,7 +116,8 @@ export function AdminTopbar({permissions}:{permissions:readonly Permission[]}) {
           placeholder={canSearchCustomers?'قسم، اسم عميلة أو بريدها…':'ابحثي عن قسم في الإدارة…'}
           className="min-h-12 w-full rounded-xl border border-line bg-surface-raised py-2.5 ps-11 pe-4 text-sm text-ink shadow-card transition-colors placeholder:text-taupe/60 focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/20"
         />
-        <p id="admin-search-help" className="mt-1 text-sm leading-6 text-text-soft">ابحثي دون تعديل البيانات. مثال: الحجوزات · اختياري · من حرفين إلى 120 حرفًا. لا يُحفظ البحث على الجهاز.</p>
+        <p id="admin-search-help" className="mt-1 text-sm leading-6 text-text-soft">مثال: الحجوزات. البحث لا يغيّر البيانات ولا يُحفظ على الجهاز.</p>
+        <details className="mt-1 text-sm text-text-soft"><summary className="min-h-11 cursor-pointer content-center">مساعدة البحث</summary><p className="pb-2 leading-6">اكتبي حرفين على الأقل، وحتى 120 حرفًا. تظهر الأقسام والسجلات التي يسمح دورك بقراءتها. يمكنك فتح النتائج بلوحة المفاتيح باستخدام Tab ثم Enter، وإغلاقها باستخدام Escape.</p></details>
         {open && q.trim().length >= 2 && (
           <div id="admin-search-results" role="region" aria-label="نتائج البحث" className="absolute inset-x-0 top-full z-30 mt-2 max-h-[65dvh] overflow-y-auto rounded-2xl border border-line bg-surface-raised shadow-card-hover">
             {matchingCommands.length>0&&<div className="border-b border-line p-2"><p className="px-3 py-2 text-xs font-bold text-taupe">أقسام الإدارة</p><ul>{matchingCommands.map(item=><li key={item.href}><Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-12 items-center justify-between gap-4 rounded-lg px-3 py-2 text-sm font-semibold text-deep-teal hover:bg-ivory"><span>{item.label}</span><span className="text-xs font-normal text-taupe">{item.group}</span></Link></li>)}</ul></div>}
@@ -155,19 +156,6 @@ export function AdminTopbar({permissions}:{permissions:readonly Permission[]}) {
 
       {searchError && !open && <p role="alert" className="text-sm text-burgundy">{searchError}</p>}
       <div className="flex gap-2">
-        {[
-          { href: '/admin/payments', label: 'المدفوعات' },
-          { href: '/admin/offers', label: 'عرض جديد' },
-          { href: '/admin/articles', label: 'مقال جديد' },
-        ].filter(l=>commands.some(item=>item.href===l.href)).map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="hidden min-h-12 items-center rounded-xl border border-line bg-surface-raised px-4 py-2 text-sm font-semibold text-deep-teal shadow-card transition-all hover:-translate-y-0.5 hover:border-antique-gold sm:inline-flex"
-          >
-            {l.label}
-          </Link>
-        ))}
         <button type="button" onClick={() => void logout()} disabled={loggingOut} className="min-h-12 rounded-xl border border-burgundy/30 bg-surface-raised px-4 py-2 text-sm font-semibold text-burgundy transition-colors hover:bg-burgundy/8 disabled:opacity-60">
           {loggingOut ? 'جارٍ الخروج…' : 'خروج آمن'}
         </button>
