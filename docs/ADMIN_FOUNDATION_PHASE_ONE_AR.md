@@ -1,5 +1,7 @@
 # تسليم المرحلة الأولى — أساس إدارة الموقع
 
+تحديث: [تقرير التصحيحات والقبول](ADMIN_PHASE_ONE_ACCEPTANCE_AR.md) يستكمل هذا التسليم. أُصلحت أسماء الاختيارات وEnter وأعطال لوحة مفاتيح القائمة. الإنتاج دون تغيير؛ القبول عبر Auth/PostgREST/Storage والمعاينة الخاصة غير مكتمل لغياب اتصال المشروع الاختباري المحلي. راجعي التقرير الجديد لخطة تطبيق 108–112 والتراجع والعوائق الدقيقة.
+
 التاريخ: 17 أكتوبر 2026. الجذر: `D:/New life/Heba/web/Hebaelsherif-GitHub`.
 الفرع: `admin-foundation-phase-one`، من `c56372482eff9845863a98fe06721a48c20f24c8` على `prepare-cream-motion`.
 المستودع: https://github.com/ahmedmg0maa/Hebaelsherif

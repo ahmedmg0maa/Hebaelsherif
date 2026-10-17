@@ -1,0 +1,15 @@
+{
+  "scope": "component regression; injected permission and SQL adapter, not integrated acceptance",
+  "id": 1,
+  "writes": 1,
+  "title": "نموذج مكتمل وصالح للحفظ",
+  "selection": [
+    "bada9626-a5e3-460b-bf18-2edabd56b5c6",
+    "400acb6a-204a-433f-8610-88012c21c61e",
+    "5177361f-adb6-44bd-9d87-fb6f8ef5e5fd"
+  ],
+  "searchReads": 3,
+  "nameReads": 4,
+  "saveRequests": 1,
+  "retryScope": "Provider read-error and retry UI separately exercised in earlier component run; this record confirms the final save/reload/search."
+}
