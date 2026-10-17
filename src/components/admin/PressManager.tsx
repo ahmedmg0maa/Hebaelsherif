@@ -1,4 +1,5 @@
 'use client'
+import {AdminChoicePicker} from './AdminChoicePicker'
 import {AdminTextarea} from './AdminField'
 import {AdminField,AdminSelect} from './AdminField'
 
@@ -33,7 +34,7 @@ function PressFields({ row, media }: { row?: AdminPressRow; media: MediaOption[]
       <AdminSelect label="تصنيف المصدر" name="source_classification" defaultValue={row?.source_classification ?? 'independent_editorial'}>{PRESS_CLASSIFICATIONS.map((kind) => <option key={kind} value={kind}>{PRESS_CLASSIFICATION_LABELS[kind]}</option>)}</AdminSelect>
       <AdminField className="grid gap-1 text-sm font-semibold text-deep-teal md:col-span-2" label="الرابط الأصلي HTTPS" name="original_url" type="url" pattern="https://.*" dir="ltr" defaultValue={row?.original_url ?? ''} required />
       <AdminField label="تاريخ الظهور" name="published_on" type="date" defaultValue={row?.published_on ?? ''} required />
-      <AdminSelect label="صورة من المكتبة" name="image_media_id" defaultValue={row?.image_media_id ?? ''}><option value="">دون صورة</option>{media.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</AdminSelect>
+      <AdminChoicePicker kind="media" name="image_media_id" label="صورة من المكتبة — اختياري" defaultValue={row?.image_media_id??''} initialLabel={media.find(asset=>asset.id===row?.image_media_id)?.title}/>
       <AdminTextarea className="grid gap-1 text-sm font-semibold text-deep-teal md:col-span-2" label="مقتطف محدود — لا تنسخي مقالًا كاملًا" name="excerpt" rows={4} maxLength={500} defaultValue={row?.excerpt ?? ''} />
       <AdminSelect label="الحالة" name="status" defaultValue={row?.status ?? 'draft'}>{PRESS_STATUSES.map((status) => <option key={status} value={status}>{statusLabels[status]}</option>)}</AdminSelect>
       <AdminField label="موعد النشر بتوقيت القاهرة" name="publish_at" type="datetime-local" defaultValue={(row?.publish_at ? formatCairoLocalDateTime(row.publish_at) : '') ?? ''} />

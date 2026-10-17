@@ -3,14 +3,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { DEFAULT_HOME_CONTENT, type PathwaysContent } from '@/lib/home/sections'
 import { cn } from '@/lib/cn'
+import { HOME_PRESENTATION } from '@/lib/home/presentation'
 
-const images: Record<string, string> = {
-  '/booking': '/brand/catalog-still-life.webp',
-  '/services': '/brand/catalog-still-life.webp',
-  '/books': '/brand/books-reading-v2.webp',
-  '/courses': '/images/learning/learning-desk.webp',
-  '/workshops': '/brand/catalog-still-life.webp',
-}
+const images = HOME_PRESENTATION.portalImages
 
 export function ServiceCards({ content = DEFAULT_HOME_CONTENT.pathways as PathwaysContent, media = {} }: { content?: PathwaysContent; media?: Record<string, ResolvedHomeMedia> }) {
   return (

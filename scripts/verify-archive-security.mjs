@@ -13,6 +13,9 @@ try {
   assert.equal(forbiddenArchivePath('test-results/results.json'), 'test/private artifact path')
   assert.equal(forbiddenArchivePath('database.dump'), 'database dump/backup')
   assert.equal(forbiddenArchivePath('.env.example'), null)
+  assert.equal(forbiddenArchivePath('docs/admin-current-state-evidence/ui-current.json'),'test/private artifact path')
+  assert.equal(forbiddenArchivePath('docs/admin-foundation-phase-one-evidence/home-compare-390.jpg'),'test/private artifact path')
+  assert.equal(forbiddenArchivePath('DOCS/ADMIN-FOUNDATION-PHASE-ONE-EVIDENCE/state.json'),'test/private artifact path')
 
   const inner = join(root, 'inner')
   const outer = join(root, 'outer')
@@ -33,6 +36,12 @@ try {
   execFileSync('tar', ['-czf', outerArchive, '-C', outer, '.'])
   const secretFailures = inspectArchive(outerArchive, 'fixture/outer.tgz')
   assert(secretFailures.some((failure) => failure.includes('nested.tgz!config.txt') && failure.includes('Supabase secret key')))
+  if(process.platform==='win32'){
+    const nestedZip=join(outer,'nested.zip')
+    execFileSync('tar',['--format','zip','-cf',nestedZip,'-C',inner,'.'])
+    execFileSync('tar',['-czf',outerArchive,'-C',outer,'.'])
+    assert(inspectArchive(outerArchive,'fixture/outer.tgz').some(failure=>failure.includes('nested.zip!config.txt')&&failure.includes('Supabase secret key')),'Windows ZIP inspection must recurse and reject the same secrets as TGZ')
+  }
 } finally {
   rmSync(root, { recursive: true, force: true })
 }

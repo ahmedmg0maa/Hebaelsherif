@@ -9,7 +9,7 @@ const check=async(name,fn)=>{await fn();passed++;console.log(`PASS ${name}`)}
 function load(file,imports={}) {
  const path=resolve(file),out={exports:{}}
  const js=ts.transpileModule(readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText
- new Function('require','module','exports',js)(name=>{if(name in imports)return imports[name];if(name==='@/lib/booking/cairo-time')return load('src/lib/booking/cairo-time.ts',imports);if(name==='@/lib/time/cairo-periods')return load('src/lib/time/cairo-periods.ts',imports);if(name.startsWith('.'))return load(resolve(dirname(path),name+(name.endsWith('.ts')?'':'.ts')),imports);return require(name)},out,out.exports)
+ new Function('require','module','exports',js)(name=>{if(name in imports)return imports[name];if(name==='@/lib/uploads/limits.mjs')return require('../src/lib/uploads/limits.mjs');if(name==='@/lib/booking/cairo-time')return load('src/lib/booking/cairo-time.ts',imports);if(name==='@/lib/time/cairo-periods')return load('src/lib/time/cairo-periods.ts',imports);if(name.startsWith('.'))return load(resolve(dirname(path),name+(name.endsWith('.ts')?'':'.ts')),imports);return require(name)},out,out.exports)
  return out.exports
 }
 const state=load('src/lib/customer-order-state.ts'),nav=load('src/lib/admin-navigation.ts')

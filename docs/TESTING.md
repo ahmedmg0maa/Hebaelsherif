@@ -289,3 +289,12 @@ See MASTER_V2_PHASES_9_11_AR.md for the content lifecycle matrix and mandatory S
 
 ## 2026-10-12 corrective review checks
 `pnpm verify:review` runs actual readiness/payment normalization, exact overview-count and incomplete aggregate behavior, and the real LearnClient browser harness. Install ordinary Playwright Chromium first; HEBA_TEST_CHROMIUM_PATH is an optional test-runner executable override, not a deployment setting. Replies/frames are injected: these tests do not accept live RLS, persistence, delivery, email or payment. Re-run this bounded gate when editing these workflows, alongside the appropriate existing source/build gates. Detailed scope: docs/REVIEW_VALIDATION_2026-10-12.json.
+
+
+## Admin foundation stage one — 2026-10-17
+
+Run `corepack pnpm verify:admin-foundation-local` for actual action/source/renderer, limits, paging and choice contracts. `corepack pnpm verify:admin-foundation-postgres` runs five real PostgreSQL suites after reviewed108–112 are applied to a disposable database. It refuses any PGHOST except loopback and any PGDATABASE without `heba_test_`; it never loads .env.local. Configure PGHOST/PGPORT/PGUSER/PGDATABASE and optional HEBA_TEST_PSQL locally. Preserve the original restore; compare actual baseline bodies before migrating a clone, because its history may lag previous local drills.
+
+`scripts/apply-admin-foundation-test-migrations.mjs` is only for an explicitly configured isolated clone and fails on an unverified baseline. It does not create a database, repair old migrations or touch a provider. For a clone of the legacy rehearsal whose105 scheduler differs, review that difference separately; do not weaken the comparison or replay103–107 automatically.
+
+For UI review run `node scripts/preview-admin-foundation.mjs` in an interactive terminal (`tty`), using the same disposable configuration and no existing Home. It listens only on127.0.0.1:3168, checks Host/Origin and uses actual restore/Home actions and SQL. It injects a known permission/source fixture, and choices use synthetic data with an in-memory saved choice. Stop with `stop` then Enter to remove its identified SQL fixtures. It is not a replacement for integrated Auth/PostgREST/Storage acceptance. See the Arabic handoff and sanitized images/JSON for exact proof and limits.

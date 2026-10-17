@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { adminList } from '@/lib/data/cms'
+import { adminPagedList,type AdminPageQuery } from '@/lib/data/admin-pagination'
+import { AdminListTools } from '@/components/admin/AdminListTools'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Badge } from '@/components/ui/Badge'
@@ -17,18 +18,18 @@ function tone(action: string): 'success' | 'danger' | 'pending' | 'cobalt' {
   return 'cobalt'
 }
 
-export default async function AdminAuditLogsPage() {
-  const logs = await adminList<Row>('audit_logs', 'id, actor_id, action, entity_type, entity_id, created_at', {
-    orderBy: 'created_at',
-    limit: 200,
-  })
+export default async function AdminAuditLogsPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams
+  const result=await adminPagedList<Row>('audit_logs','id,actor_id,action,entity_type,entity_id,created_at',query,{searchColumn:'action',statusColumn:'entity_type',statuses:['page','page_section','article','course','book','service','order','payment','media_asset','subscription']})
+  const logs=result.rows
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <header>
         <h1 className="text-3xl font-bold text-deep-teal">سجل التدقيق</h1>
-        <p className="mt-1 text-text-soft">آخر ٢٠٠ حدث — كل عملية حساسة على المنصة تترك أثرًا هنا.</p>
+        <p className="mt-1 text-text-soft">سجل العمليات محفوظ؛ تصفحي الأحداث القديمة أو ابحثي بنوع الإجراء.</p>
       </header>
+      <AdminListTools result={result} query={query} label="سجل العمليات" searchLabel="بحث بنوع الإجراء" example="page.saved لعمليات حفظ الصفحات" statuses={[{value:'page',label:'صفحة'},{value:'page_section',label:'قسم صفحة'},{value:'article',label:'مقال'},{value:'course',label:'كورس'},{value:'book',label:'كتاب'},{value:'service',label:'خدمة'},{value:'order',label:'طلب'},{value:'payment',label:'دفعة'},{value:'media_asset',label:'وسائط'},{value:'subscription',label:'اشتراك'}]}/>
 
       {logs.length === 0 ? (
         <EmptyState title="السجل فارغ" description="تُسجَّل هنا الموافقات والرفض والمنح وكل تغييرات الإدارة تلقائيًا." />

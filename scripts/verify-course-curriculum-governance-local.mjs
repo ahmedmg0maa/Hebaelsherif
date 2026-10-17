@@ -29,7 +29,7 @@ assert(!forms.includes('video_path'), 'Admin lesson creation must not accept a r
 assert(forms.includes('maxLength={180}') && forms.includes('max={1440}'), 'lesson creation must expose server title/duration bounds')
 const feedback = readFileSync('src/components/admin/ActionFeedback.tsx', 'utf8')
 assert(editors.includes('window.confirm') && editors.includes('ActionFeedback') && feedback.includes("role={feedback.ok ? 'status' : 'alert'}"), 'destructive controls need confirmation and accessible durable feedback')
-for (const error of ['admin_curriculum_course_read_failed','admin_curriculum_modules_read_failed','admin_curriculum_lessons_read_failed']) assert(page.includes(error), `configured read failure must not become not-found: ${error}`)
-assert(page.includes(".limit(100)") && page.includes(".limit(1000)"), 'Admin curriculum reads must be bounded')
+for (const error of ['admin_curriculum_course_read_failed']) assert(page.includes(error), `configured read failure must not become not-found: ${error}`)
+assert(page.includes('adminRelatedRows') && readFileSync('src/lib/data/admin-pagination.ts','utf8').includes("ADMIN_RELATED_READ_TOO_LARGE"), 'Admin curriculum must read every related page or fail explicitly; no silent module/lesson cutoff')
 
 console.log('verify:course-curriculum-governance-local passed — atomic curriculum writes, history guards, bounded reads and truthful Admin controls verified locally')

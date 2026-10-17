@@ -927,3 +927,18 @@
 
 The owner explicitly requested public, integrated operation and authorized initial editable content. A service can now opt into reviewable appointment requests while retaining its real EGP price and existing payment_required classification. A request is pending, creates no financial order/payment, carries a price/currency snapshot, holds the shared calendar, and expires after 24 hours if unreviewed. Existing governed Admin confirmation/cancellation and booking mail snapshots remain authoritative; no staff MFA policy is relaxed. Free course/book checkout remains an actual entitlement-granting zero-total order and no longer depends on configured payout accounts. Initial learning content and original artwork are persisted through the same audited catalog/media/curriculum/article governance as later Admin edits. Do not invent bank details, testimonials, workshop dates or paid subscriptions to populate the public site.
 
+
+## 2026-10-17 — Admin foundation review branch
+
+- Treat the user's explicit stage-one development order as current scope; deliver before any production application. Preserve the pre-existing review documentation.
+- Add monotonic row_version triggers to all three restorable CMS entities so legacy editors also invalidate a pending restore. Execute restore/checkpoint/audit in a service-only RPC under a row lock; fresh owner-password/staff-MFA assurance remains on the server action. Do not compensate a failed audit with an unchecked second write.
+- Initialize Home only on an explicit operator action from fail-closed reads of current public inputs. Save one immutable baseline and a draft, preserve already-existing managed content, keep live catalog/profile references, and provide comparison/private preview without automatic publication. Static art paths are shared with the current renderer.
+
+
+## 2026-10-17 — Stage-one upload and directory contracts
+
+Use a shared immutable byte-limit object for browser/server/delivery validation; generate additive110 SQL and fail its drift check. Preserve stricter bucket caps and previously finalized delivery retries, revoke direct execution of renamed pre-limit internals, and never delete existing objects as a limit migration.
+
+Use bound search values and static server-owned columns/status rules with exact totals and stable bounded ranges. Joined directories execute as invoker. Customer directory/history remain service-only RPCs with explicit users.view, customer scope and PII-free access audit. Old customer history gets a paginated route; the existing latest-record overview remains explicitly a summary. Choice search retains selection on errors/pages and private media replacements expose only identifiers/labels within the original bucket/type/visibility.
+
+The Home comparison reads the actual public professional line/verified credentials, not unused template trust prose, and carries public image/crop references. Live catalog prices/rights remain in their authoritative source. Initializing a draft never publishes, never overwrites existing Home content and never substitutes a fallback for provider read failure. Integrated preview/Auth/PostgREST/Storage acceptance remains separate from isolated SQL/component evidence.

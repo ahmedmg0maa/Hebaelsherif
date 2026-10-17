@@ -1,5 +1,6 @@
 'use client'
 
+import {AdminChoicePicker} from './AdminChoicePicker'
 import { useState } from 'react'
 import { formatCairoLocalDateTime } from '@/lib/booking/cairo-time'
 import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
@@ -29,7 +30,7 @@ function TargetsEditor({ initial = [], products }: { initial?: Target[]; product
     <input type="hidden" name="targets" value={JSON.stringify(rows.map(row => row.target))} />
     {rows.map(({ id, target }, index) => <div key={id} className="grid gap-3 rounded-xl border border-line p-3 sm:grid-cols-2">
       <FormSelect name={`target-type-${id}`} label={`نوع المنتج — شرط ${index + 1}`} options={types} value={target.product_type ?? ''} onChange={event => update(id, 'product_type', event.target.value)} />
-      <FormSelect name={`target-product-${id}`} label="منتج محدد" value={target.product_id ?? ''} onChange={event => update(id, 'product_id', event.target.value)} options={[{ value: '', label: 'أي منتج' }, ...products.map(product => ({ value: product.id, label: product.title })), ...(target.product_id && !products.some(p => p.id === target.product_id) ? [{ value: target.product_id, label: 'المنتج المرتبط سابقًا' }] : [])]} />
+      <AdminChoicePicker kind="product" name={`target-product-${id}`} label="منتج محدد — اختياري" value={target.product_id??''} initialLabel={products.find(product=>product.id===target.product_id)?.title} onChange={value=>update(id,'product_id',value)}/>
       {target.category && <p className="text-sm text-text-soft">وصف التصنيف المحفوظ: {target.category}. يُحدد التطبيق باختيار المنتج أو نوعه.</p>}
       <Button variant="ghost" type="button" onClick={() => setRows(rows.filter(row => row.id !== id))}>إزالة الشرط {index + 1}</Button>
     </div>)}

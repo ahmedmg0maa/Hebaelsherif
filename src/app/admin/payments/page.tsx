@@ -1,5 +1,7 @@
 ﻿import type { Metadata } from 'next'
-import { getApprovalQueue } from '@/lib/data/admin'
+import { adminPaymentPage } from '@/lib/data/admin-commerce-pages'
+import type { AdminPageQuery } from '@/lib/data/admin-pagination'
+import { AdminListTools } from '@/components/admin/AdminListTools'
 import { formatPrice } from '@/lib/format'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -16,13 +18,14 @@ const methodLabels: Record<string, string> = {
   bank_transfer: 'تحويل بنكي',
 }
 
-export default async function AdminPaymentsPage() {
-  const [queue, approvePermission, rejectPermission] = await Promise.all([
-    getApprovalQueue(),
+export default async function AdminPaymentsPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams
+  const [result, approvePermission, rejectPermission] = await Promise.all([
+    adminPaymentPage(query),
     requirePermission('payments.approve'),
     requirePermission('payments.reject'),
   ])
-  const pendingTotal = queue.reduce((s, a) => s + a.amount, 0)
+  const queue=result.rows, pendingTotal = queue.reduce((s, a) => s + a.amount, 0)
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -35,7 +38,7 @@ export default async function AdminPaymentsPage() {
         </div>
         {queue.length > 0 && (
           <div className="rounded-2xl border border-antique-gold/40 bg-surface-raised px-5 py-3 text-center shadow-card">
-            <p className="text-xs font-semibold text-taupe">بانتظار المراجعة</p>
+            <p className="text-xs font-semibold text-taupe">مجموع الدفعات المعروضة في هذه الصفحة</p>
             <p className="tnum text-xl font-bold text-deep-teal">
               {queue.length.toLocaleString('ar-EG')} · {formatPrice(pendingTotal)}
             </p>
@@ -43,9 +46,11 @@ export default async function AdminPaymentsPage() {
         )}
       </header>
 
+      <AdminListTools result={result} query={query} label="الدفعات" searchLabel="بحث بالعميلة أو المنتج أو رقم الطلب" example="اسم العميلة أو رقم طلب محفوظ" statuses={[{value:'pending',label:'بانتظار المراجعة'},{value:'approved',label:'معتمدة'},{value:'rejected',label:'مرفوضة'}]}/>
+
       {queue.length === 0 ? (
         <EmptyState
-          title="لا مدفوعات بانتظار المراجعة"
+          title="لا دفعات مطابقة لهذه التصفية"
           description="حين ترفع عميلة إيصال تحويل يظهر هنا فورًا مع كل تفاصيل الطلب."
         />
       ) : (
@@ -74,7 +79,7 @@ export default async function AdminPaymentsPage() {
                 <TD className="font-bold">{formatPrice(a.amount)}</TD>
                 <TD>{dateFmt.format(new Date(a.createdAt))}</TD>
                 <TD>
-                  <ApprovalActions paymentId={a.paymentId} hasProof={a.proofPresent} canApprove={Boolean(approvePermission)} canReject={Boolean(rejectPermission)} />
+                  {a.status==='pending'?<ApprovalActions paymentId={a.paymentId} hasProof={a.proofPresent} canApprove={Boolean(approvePermission)} canReject={Boolean(rejectPermission)} />:<p className="text-sm">{a.status==='approved'?'اعتمدت سابقًا':'رفضت سابقًا'} — قرار محفوظ</p>}
                 </TD>
               </TR>
             ))}

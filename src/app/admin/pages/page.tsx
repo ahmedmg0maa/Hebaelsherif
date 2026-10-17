@@ -1,7 +1,9 @@
 import { LearningTemplateButton } from '@/components/admin/LearningTemplateButton'
+import { HomeDraftControl } from '@/components/admin/HomeDraftControl'
 import { getHomeArticleOptions } from '@/lib/data/home'
 import type { Metadata } from 'next'
-import { adminList } from '@/lib/data/cms'
+import { adminPagedList,type AdminPageQuery } from '@/lib/data/admin-pagination'
+import { AdminListTools } from '@/components/admin/AdminListTools'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -30,9 +32,11 @@ type Row = {
 }
 type NavRow={id:string;menu:string;label:string;href:string;sort:number;is_visible:boolean}
 
-export default async function AdminPagesPage() {
-  const [pages, homeCopy, media, articles] = await Promise.all([
-    adminList<Row>('pages', 'id, slug, title, seo_title, seo_description, is_published, status, publish_at, canonical_url, og_image_url, legal_review_status, legal_version, effective_at, page_sections(id,name,kind,sort,is_visible,content)', {
+export default async function AdminPagesPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams
+  const [result, homeCopy, media, articles] = await Promise.all([
+    adminPagedList<Row>('pages', 'id, slug, title, seo_title, seo_description, is_published, status, publish_at, canonical_url, og_image_url, legal_review_status, legal_version, effective_at, page_sections(id,name,kind,sort,is_visible,content)',query, {
+      searchColumn:'title',statuses:['draft','scheduled','published','archived'],
       orderBy: 'slug',
       ascending: true,
     }),
@@ -40,17 +44,21 @@ export default async function AdminPagesPage() {
     getPublicMediaOptions(200, true),
     getHomeArticleOptions(),
   ])
-  const navigation=await adminList<NavRow>('navigation_items','id,menu,label,href,sort,is_visible',{orderBy:'sort',ascending:true,limit:200})
+  const pages=result.rows
+  const navigationResult=await adminPagedList<NavRow>('navigation_items','id,menu,label,href,sort,is_visible',query,{prefix:'navigation_',searchColumn:'label',orderBy:'sort',ascending:true,statusFilters:{visible:{column:'is_visible',value:true},hidden:{column:'is_visible',value:false}}})
+  const navigation=navigationResult.rows
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <LearningTemplateButton />
+      <HomeDraftControl />
+      <details className="rounded-xl border border-line p-4"><summary className="cursor-pointer font-bold text-deep-teal">قالب بديل — يغيّر المحتوى عند تطبيقه</summary><LearningTemplateButton /></details>
       <header>
         <h1 className="text-3xl font-bold text-deep-teal">الصفحات</h1>
         <p className="mt-1 text-text-soft">عناوين SEO والوصف لكل صفحة، مع التحكم في النشر.</p>
       </header>
 
       <CmsPageCreator />
+      <AdminListTools result={result} query={query} label="الصفحات" statuses={[{value:'draft',label:'مسودة'},{value:'scheduled',label:'مجدولة'},{value:'published',label:'منشورة'},{value:'archived',label:'مؤرشفة'}]}/>
 
       {pages.length === 0 ? (
         <EmptyState
@@ -77,7 +85,7 @@ export default async function AdminPagesPage() {
           ))}
         </div>
       )}
-      <section className="space-y-4"><header><h2 className="text-2xl font-bold text-deep-teal">القوائم والرأس والتذييل</h2><p className="text-sm text-text-soft">أضيفي الروابط ورتبيها وانشريها دون تعديل الكود.</p></header>{navigation.map(item=><NavigationEditor key={item.id} item={item}/>)}<NavigationEditor/></section>
+      <section className="space-y-4"><header><h2 className="text-2xl font-bold text-deep-teal">القوائم والرأس والتذييل</h2><p className="text-sm text-text-soft">أضيفي الروابط ورتبيها وانشريها دون تعديل الكود.</p></header><AdminListTools result={navigationResult} query={query} label="روابط القوائم" searchLabel="بحث باسم الرابط" statuses={[{value:"visible",label:"ظاهر"},{value:"hidden",label:"مخفي"}]}/>{navigation.map(item=><NavigationEditor key={item.id} item={item}/>)}<NavigationEditor/></section>
     </div>
   )
 }

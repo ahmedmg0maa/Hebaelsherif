@@ -15,7 +15,9 @@ const excludedRoots = new Set([
   '.git', '.next', 'node_modules', '.pnpm-store', 'release', 'coverage',
   'playwright-report', 'test-results', 'reports', 'exports', '.launch-backups', '.launch-tools', '.namecheap-standalone', 'dist', '.vinext', '.wrangler',
 ])
-const excludedNames = new Set(['.DS_Store', 'tsconfig.tsbuildinfo', 'debug.log'])
+// Preserve the tracked legacy non-runtime artifact in Git, but its private-use
+// quote filename is not portable and is not application payload.
+const excludedNames = new Set(['.DS_Store', 'tsconfig.tsbuildinfo', 'debug.log', 'herif-GitHub\uf022'])
 
 function excluded(relativePath, isDirectory) {
   const normalized = relativePath.replaceAll('\\', '/')
@@ -26,7 +28,7 @@ function excluded(relativePath, isDirectory) {
   if (normalized === 'RELEASE_MANIFEST.json') return true
   if (excludedRoots.has(top) || excludedNames.has(name)) return true
   // Historical screenshot/video QA stays in the working source, not releases.
-  if (normalized === 'docs/evidence' || normalized.startsWith('docs/evidence/')) return true
+  if (/^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence)(?:\/|$)/i.test(normalized)) return true
   if (normalized === 'supabase/.temp' || normalized.startsWith('supabase/.temp/')) return true
   if (name === '.env.example') return false
   if (name === '.env' || name?.startsWith('.env.')) return true
@@ -81,7 +83,7 @@ const fileIntegrity = files.map((file) => {
 })
 const forbidden = files.filter((file) => /(^|\/)\.env(?:\..+)?$/.test(file) && file !== '.env.example'
   || file.startsWith('supabase/.temp/')
-  || file.startsWith('docs/evidence/')
+  || /^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence)(?:\/|$)/i.test(file)
   || /^(?:\.next|node_modules|\.pnpm-store|playwright-report|test-results|reports|exports)(?:\/|$)/.test(file)
   || file === 'debug.log')
 if (forbidden.length) throw new Error(`Forbidden release paths: ${forbidden.join(', ')}`)
@@ -118,7 +120,8 @@ execFileSync('tar', ['-czf', archive, '-C', stageRoot, '--null', '-T', archiveFi
 const archiveFailures = inspectArchive(archive, 'release/hebaelsherif-source.tgz')
 if (archiveFailures.length) throw new Error(`Unsafe release archive:\n${archiveFailures.join('\n')}`)
 if (existsSync(zipArchive)) rmSync(zipArchive)
-execFileSync('zip', ['-q', zipArchive, '-@'], { cwd: stageRoot, input: `${archiveFiles.join('\n')}\n`, stdio: ['pipe', 'inherit', 'inherit'] })
+if(process.platform==='win32')execFileSync('tar',['--format','zip','-cf',zipArchive,'-C',stageRoot,'--null','-T',archiveFileList],{stdio:'inherit'})
+else execFileSync('zip', ['-q', zipArchive, '-@'], { cwd: stageRoot, input: `${archiveFiles.join('\n')}\n`, stdio: ['pipe', 'inherit', 'inherit'] })
 const zipFailures = inspectArchive(zipArchive, `release/${RELEASE_ZIP_NAME}`)
 if (zipFailures.length) throw new Error(`Unsafe ZIP release archive:\n${zipFailures.join('\n')}`)
 console.log(`package:release passed — ${files.length} payload files plus manifest, safe TGZ and ZIP; no local secrets or build/test artifacts`)

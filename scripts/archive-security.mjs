@@ -33,6 +33,7 @@ export function isDumpName(file) {
 
 export function forbiddenArchivePath(file) {
   const normalized = normalizeEntry(file)
+  if (/^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence)(?:\/|$)/i.test(normalized)) return 'test/private artifact path'
   const lower = normalized.toLowerCase()
   const parts = lower.split('/').filter(Boolean)
   const name = parts.at(-1) ?? ''
@@ -97,7 +98,7 @@ export function inspectArchive(archivePath, displayPath = archivePath, state = {
 
   let entries
   try {
-    const zip = isZipArchive(absoluteArchive)
+    const zip = isZipArchive(absoluteArchive) && process.platform !== 'win32'
     entries = execFileSync(zip ? 'unzip' : 'tar', zip ? ['-Z1', absoluteArchive] : ['-tf', absoluteArchive], { encoding: 'utf8', timeout: 30_000, maxBuffer: 20_000_000 })
       .split(/\r?\n/).map(normalizeEntry).filter(Boolean)
   } catch {
@@ -114,7 +115,7 @@ export function inspectArchive(archivePath, displayPath = archivePath, state = {
   const extractionRoot = mkdtempSync(join(tmpdir(), 'heba-archive-audit-'))
   try {
     try {
-      const zip = isZipArchive(absoluteArchive)
+      const zip = isZipArchive(absoluteArchive) && process.platform !== 'win32'
       execFileSync(zip ? 'unzip' : 'tar', zip ? ['-qq', absoluteArchive, '-d', extractionRoot] : ['-xf', absoluteArchive, '-C', extractionRoot], { timeout: 60_000, maxBuffer: 20_000_000 })
     } catch {
       return [`${displayPath}: archive extraction failed`]

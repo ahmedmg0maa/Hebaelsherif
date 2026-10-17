@@ -32,8 +32,8 @@
     "/auth/admin",
     "/auth/register",
     "/auth/reset-password",
-    "/auth/update-password"
-    ,"/preview/[type]/[id]",
+    "/auth/update-password",
+    "/preview/[type]/[id]",
     "/unsubscribe/[token]"
   ],
   "customer": [
@@ -79,7 +79,11 @@
     "/admin/roles",
     "/admin/audit-logs",
     "/admin/security",
-    "/admin/system"
+    "/admin/system",
+    "/admin/pages/home/compare",
+    "/admin/users/[id]/history"
   ],
-  "checkout": ["/checkout/[productType]/[slug]"]
+  "checkout": [
+    "/checkout/[productType]/[slug]"
+  ]
 }

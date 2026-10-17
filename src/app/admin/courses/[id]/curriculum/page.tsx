@@ -1,3 +1,4 @@
+import {adminRelatedRows} from '@/lib/data/admin-pagination'
 import {LessonContentEditor} from '@/components/admin/LessonContentEditor'
 import type { Metadata } from 'next'
 import { sha256 } from '@/lib/delivery/security'
@@ -45,14 +46,10 @@ export default async function CurriculumBuilderPage({ params }: Props) {
     .maybeSingle()
   if (courseError) throw new Error('admin_curriculum_course_read_failed')
   if (!course) notFound()
-  const { data: modulesData, error: modulesError } = await supabase.from('course_modules').select('id,title,sort').eq('course_id', id).order('sort').limit(100)
-  if (modulesError) throw new Error('admin_curriculum_modules_read_failed')
-  const modules = modulesData ?? []
-  const moduleIds = modules.map((module) => module.id)
-  const lessonsResult = moduleIds.length
-    ? await supabase.from('course_lessons').select('id,module_id,title,description,duration_seconds,sort,is_preview,video_path,lesson_resources(id,title,kind,archived_at)').in('module_id', moduleIds).order('sort').limit(1000)
-    : { data: [], error: null }
-  if (lessonsResult.error) throw new Error('admin_curriculum_lessons_read_failed')
+  const modules=await adminRelatedRows<{id:string;title:string;sort:number}>('course_modules','id,title,sort','course_id',[id],'sort')
+  const moduleIds=modules.map(module=>module.id)
+  type Lesson={id:string;module_id:string;title:string;description:string;duration_seconds:number;sort:number;is_preview:boolean;video_path:string|null;lesson_resources:{id:string;title:string;kind:string;archived_at:string|null}[]}
+  const lessonsResult={data:await adminRelatedRows<Lesson>('course_lessons','id,module_id,title,description,duration_seconds,sort,is_preview,video_path,lesson_resources(id,title,kind,archived_at)','module_id',moduleIds,'sort')}
   const lessonsByModule = new Map<string, typeof lessonsResult.data>()
   for (const lesson of lessonsResult.data ?? []) lessonsByModule.set(lesson.module_id, [...(lessonsByModule.get(lesson.module_id) ?? []), lesson])
 

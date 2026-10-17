@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getServiceClient } from '@/lib/supabase/server'
 import { requirePermission } from '@/lib/auth/permissions'
@@ -67,7 +68,8 @@ export default async function Customer360Page({ params }: Props) {
         <p className="text-sm font-bold text-antique-gold">ملف العميلة 360° — وصول مسجّل</p>
         <h1 className="text-3xl font-bold text-deep-teal">{data.profile.fullName || 'عميلة'}</h1>
         <p dir="ltr" className="text-text-soft">{data.profile.email} · {data.profile.phone || '—'}</p>
-        <p className="mt-1 text-xs text-text-soft">انضمت {fmt.format(new Date(data.profile.createdAt))} · تعرض القوائم أحدث ١٠٠ سجل، والإشعارات أحدث ٢٠.</p>
+        <p className="mt-1 text-xs text-text-soft">انضمت {fmt.format(new Date(data.profile.createdAt))} · هذه خلاصة أحدث ١٠٠ سجل، والإشعارات أحدث ٢٠. تصفحي السجل الكامل للوصول إلى الأقدم.</p>
+        <Link href={`/admin/users/${id}/history`} className="inline-flex min-h-12 items-center font-bold text-deep-teal underline">تصفح السجلات الكاملة والأقدم</Link>
         <div className="mt-3 flex flex-wrap gap-2">
           {data.tags.map((tag) => canManage
             ? <CustomerTagControl key={tag.id} userId={id} tagId={tag.id} label={tag.tag} />

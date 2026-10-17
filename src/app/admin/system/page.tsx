@@ -1,5 +1,7 @@
+import {adminPagedList,type AdminPageQuery} from '@/lib/data/admin-pagination'
+import {AdminListTools} from '@/components/admin/AdminListTools'
 import type { Metadata } from 'next'
-import { adminListResult, getContentReadiness, getFeatureFlagSnapshot, launchLevelForStatus, type ContentReadinessItem, type ContentReadinessStatus, type LaunchReadinessLevel } from '@/lib/data/cms'
+import { getContentReadiness, getFeatureFlagSnapshot, launchLevelForStatus, type ContentReadinessItem, type ContentReadinessStatus, type LaunchReadinessLevel } from '@/lib/data/cms'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -50,10 +52,11 @@ const integrationLabel: Record<IntegrationStatus, string> = {
   configured: 'مهيأ فقط', incomplete: 'تهيئة ناقصة', unconfigured: 'غير مهيأ', 'not-applicable': 'غير مطلوب',
 }
 
-export default async function AdminSystemPage() {
+export default async function AdminSystemPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams
   const bookingPromise = getBookingExperience()
   const [eventResult, flagSnapshot, contentReadiness, bookingExperience] = await Promise.all([
-    adminListResult<EventRow>('system_events', 'id, level, source, message, created_at', { orderBy: 'created_at', limit: 50 }),
+    adminPagedList<EventRow>('system_events','id,level,source,message,created_at',query,{searchColumn:'source',statusColumn:'level',statuses:['info','warning','error','critical']}),
     getFeatureFlagSnapshot(),
     bookingPromise.then(experience => getContentReadiness(experience)),
     bookingPromise,
@@ -142,8 +145,9 @@ export default async function AdminSystemPage() {
 
       <Card className="p-8">
         <CardTitle className="mb-4">أحداث النظام</CardTitle>
-        {eventResult.state !== 'ready' ? (
-          <p className="rounded-xl bg-antique-gold/10 px-4 py-3 text-sm leading-relaxed text-text-soft" role="status">{eventResult.state === 'unconfigured' ? 'لم تُهيأ قاعدة مصدر أحداث النظام؛ لا يمكن اعتبار السجل فارغًا.' : 'تعذّرت قراءة أحداث النظام؛ لم تُفسّر النتيجة على أنها غياب للأخطاء.'}</p>
+        <AdminListTools result={eventResult} query={query} label="أحداث النظام" searchLabel="بحث بمصدر الحدث" statuses={[{value:'info',label:'معلومة'},{value:'warning',label:'تنبيه'},{value:'error',label:'خطأ'},{value:'critical',label:'خطأ حرج'}]}/>
+        {!eventResult.configured ? (
+          <p className="rounded-xl bg-antique-gold/10 px-4 py-3 text-sm leading-relaxed text-text-soft" role="status">{!eventResult.configured ? 'لم تُهيأ قاعدة مصدر أحداث النظام؛ لا يمكن اعتبار السجل فارغًا.' : 'تعذّرت قراءة أحداث النظام؛ لم تُفسّر النتيجة على أنها غياب للأخطاء.'}</p>
         ) : events.length === 0 ? (
           <EmptyState
             className="border-0 bg-transparent"

@@ -10,7 +10,6 @@ const PAGE_SIZE = 24
 const dateFmt = new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' })
 
 type Row = { id: string; bucket: string; path: string; title: string; alt: string; tags: string[]; kind: string; mime_type: string | null; visibility: string; size_bytes: number | null; created_at: string; caption: string; credit: string; rights_status: string; rights_reference: string; folder: string; focal_x: number; focal_y: number; processing_status: string; archived_at: string | null; replaced_by: string | null; media_usages: { id: string }[] }
-type ReplacementRow = { id: string; title: string; bucket: string; kind: string; visibility: string }
 type Props = { searchParams: Promise<{ q?: string; bucket?: string; kind?: string; lifecycle?: string; page?: string }> }
 
 function fmtSize(bytes: number | null) {
@@ -34,11 +33,9 @@ export default async function AdminMediaPage({ searchParams }: Props) {
   if (kind) query = query.eq('kind', kind)
   if (lifecycle === 'active') query = query.is('archived_at', null)
   if (lifecycle === 'archived') query = query.not('archived_at', 'is', null)
-  const { data, count, error } = await query.order('created_at', { ascending: false }).range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
-  const { data: replacementData, error: replacementError } = await supabase.from('media_assets').select('id, title, bucket, kind, visibility').is('archived_at', null).order('title').limit(200)
-  if (error || replacementError) throw new Error('ADMIN_MEDIA_READ_UNAVAILABLE')
+  const { data, count, error } = await query.order('created_at', { ascending: false }).order('id',{ascending:false}).range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
+  if (error || count===null || !Array.isArray(data)) throw new Error('ADMIN_MEDIA_READ_UNAVAILABLE')
   const assets = (data ?? []) as Row[]
-  const replacementAssets = (replacementData ?? []) as ReplacementRow[]
   const total = count ?? 0
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const href = (nextPage: number) => `/admin/media?${new URLSearchParams({ ...(q ? { q } : {}), ...(bucket ? { bucket } : {}), ...(kind ? { kind } : {}), lifecycle, page: String(nextPage) })}`
@@ -57,14 +54,13 @@ export default async function AdminMediaPage({ searchParams }: Props) {
     {assets.length === 0 ? <EmptyState title="لا وسائط مطابقة" description="ارفعي أصلًا جديدًا أو غيّري البحث والفلاتر." /> : <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{assets.map((asset) => {
       const publicUrl = !asset.archived_at && asset.visibility === 'public' ? supabase.storage.from(asset.bucket).getPublicUrl(asset.path).data.publicUrl : null
       const usageCount = asset.media_usages?.length ?? 0
-      const replacements = replacementAssets.filter((candidate) => candidate.id !== asset.id && candidate.bucket === asset.bucket && candidate.kind === asset.kind && candidate.visibility === asset.visibility).map(({ id, title }) => ({ id, title }))
       return <article key={asset.id} className="overflow-hidden rounded-2xl border border-line bg-surface-raised shadow-card">
         <div className="flex aspect-[4/3] items-center justify-center bg-sand/15 bg-cover" role={asset.kind === 'image' && publicUrl ? 'img' : undefined} aria-label={asset.alt || asset.title} style={{ backgroundImage: asset.kind === 'image' && publicUrl ? `url(${publicUrl})` : undefined, backgroundPosition: `${asset.focal_x}% ${asset.focal_y}%` }}><span className="rounded-full bg-deep-teal/85 px-3 py-1 text-xs font-bold text-white">{asset.kind}</span></div>
         <div className="space-y-3 p-4"><div><h2 className="truncate font-bold text-deep-teal">{asset.title}</h2><p className="truncate text-xs text-text-soft" dir="ltr">{asset.path}</p></div>
           <div className="flex flex-wrap gap-1">{asset.archived_at && <span className="rounded-full bg-burgundy/10 px-2 py-1 text-[11px] font-bold text-burgundy">مؤرشف</span>}{asset.tags.map((tag) => <span key={tag} className="rounded-full bg-aqua/10 px-2 py-1 text-[11px] text-deep-teal">{tag}</span>)}</div>
           <dl className="grid grid-cols-2 gap-1 text-xs text-text-soft"><div><dt className="sr-only">الحجم</dt><dd>{fmtSize(asset.size_bytes)}</dd></div><div><dt className="sr-only">التاريخ</dt><dd>{dateFmt.format(new Date(asset.created_at))}</dd></div><div><dt className="sr-only">الظهور</dt><dd>{asset.visibility === 'public' ? 'عام' : 'خاص'}</dd></div><div><dt className="sr-only">الاستخدام</dt><dd>{usageCount.toLocaleString('ar-EG')} استخدام</dd></div><div><dt className="sr-only">المجلد</dt><dd dir="ltr">{asset.folder}</dd></div><div><dt className="sr-only">الحقوق</dt><dd>{asset.rights_status === 'unverified' ? 'حقوق غير موثقة' : 'حقوق موثقة'}</dd></div></dl>
           {!asset.archived_at && <MediaMetadata id={asset.id} title={asset.title} alt={asset.alt} tags={asset.tags} caption={asset.caption} credit={asset.credit} rightsStatus={asset.rights_status} rightsReference={asset.rights_reference} folder={asset.folder} focalX={asset.focal_x} focalY={asset.focal_y} />}
-          <div className="space-y-2">{publicUrl && <CopyMediaUrl url={publicUrl} />}<MediaLifecycle id={asset.id} archivedAt={asset.archived_at} replacedBy={asset.replaced_by} usageCount={usageCount} replacements={replacements} /></div>
+          <div className="space-y-2">{publicUrl && <CopyMediaUrl url={publicUrl} />}<MediaLifecycle id={asset.id} archivedAt={asset.archived_at} replacedBy={asset.replaced_by} usageCount={usageCount} /></div>
         </div>
       </article>
     })}</div>}

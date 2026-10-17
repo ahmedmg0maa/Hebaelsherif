@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
-import {AdminField,AdminSelect,AdminTextarea} from './AdminField'
+import {AdminChoicePicker} from './AdminChoicePicker'
+import {AdminField,AdminTextarea} from './AdminField'
 
 import { HomeMediaFields } from './HomeMediaFields'
 import type { MediaOption } from '@/lib/data/cms'
@@ -53,7 +54,7 @@ function SectionFields({ kind, content, assets, articles }: { kind: HomeSectionK
   const value = normalizeHomeContent(kind, content)
   if (kind === 'hero') {
     const data = normalizeHomeCopy(value)
-    return <><p className="text-sm leading-loose text-text-soft">المصدر الوحيد لنص الواجهة. زر البداية إلى صفحة الخدمات والمسارات، وزر الحجز إلى المواعيد. وصف الصورة يوضح أنها تعبيرية وليست صورة المالكة.</p><div className="grid gap-3 md:grid-cols-2">{HERO_FIELDS.map(([key, label, name, max]) => <Field key={key} label={label} name={name} value={data[key]} max={max} area={key === 'lead'} />)}</div></>
+    return <><p className="text-sm leading-loose text-text-soft">هذه الحقول تضبط العنوان والوصف ونص الأزرار. زر البداية يفتح «ابدئي من هنا»، وزر الحجز يفتح المواعيد. السطر التعريفي يأتي من تعريف هبة في الإعدادات.</p><div className="grid gap-3 md:grid-cols-2"><input type="hidden" name="eyebrow" value={data.eyebrow}/>{HERO_FIELDS.filter(([key])=>key!=='eyebrow').map(([key, label, name, max]) => <Field key={key} label={label} name={name} value={data[key]} max={max} area={key === 'lead'} />)}</div></>
   }
   if (kind === 'manifesto' || kind === 'quote') {
     const data = value as NarrativeContent
@@ -76,7 +77,7 @@ function SectionFields({ kind, content, assets, articles }: { kind: HomeSectionK
   if (kind === 'articles' || kind === 'resources') {
     const data = value as ArticlesContent
     return <div className="grid gap-3 md:grid-cols-2"><Field label="السطر التعريفي" name="eyebrow" value={data.eyebrow} /><Field label="العنوان" name="heading" value={data.heading} /><Field label="الوصف" name="lead" value={data.lead} /><Field label={kind === 'resources' ? 'زر كل الموارد' : 'زر كل المقالات'} name="cta_label" value={data.ctaLabel} />
-      {kind === 'articles' && <fieldset className="grid gap-3 md:col-span-2"><legend className="mb-2 font-bold text-deep-teal">المقالات المميزة بالترتيب</legend><p className="text-sm leading-loose text-text-soft">اتركي الاختيارات فارغة لعرض أحدث ثلاثة مقالات منشورة. تظهر البطاقات بالترتيب المحدد داخل تبويب المقالات.</p>{[0, 1, 2].map(index => <AdminSelect key={index} label={`المقال ${index + 1}`} name={`article_slug_${index}`} defaultValue={data.selectedSlugs?.[index] ?? ''}><option value="">بدون اختيار</option>{data.selectedSlugs?.[index] && !articles.some(article => article.slug === data.selectedSlugs?.[index]) && <option value={data.selectedSlugs[index]}>الاختيار السابق لم يعد منشورًا؛ اختاري بديلًا</option>}{articles.map(article => <option key={article.slug} value={article.slug}>{article.title}</option>)}</AdminSelect>)}</fieldset>}
+      {kind === 'articles' && <fieldset className="grid gap-3 md:col-span-2"><legend className="mb-2 font-bold text-deep-teal">المقالات المميزة بالترتيب</legend><p className="text-sm leading-loose text-text-soft">اتركي الاختيارات فارغة لعرض أحدث ثلاثة مقالات منشورة. تظهر البطاقات بالترتيب المحدد داخل تبويب المقالات.</p>{[0, 1, 2].map(index => <AdminChoicePicker key={index} kind="article" name={`article_slug_${index}`} label={`المقال ${index+1} — اختياري`} defaultValue={data.selectedSlugs?.[index]??''} initialLabel={articles.find(article=>article.slug===data.selectedSlugs?.[index])?.title}/>)}</fieldset>}
     </div>
   }
   if (kind === 'testimonials') {

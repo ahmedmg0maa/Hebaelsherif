@@ -1,8 +1,9 @@
+import {adminRelatedRows} from '@/lib/data/admin-pagination'
 import type { Metadata } from 'next'
 import { adminCatalogPage,type CatalogQuery } from '@/lib/data/admin-catalog'
 import { CatalogListTools,CatalogPagination } from '@/components/admin/CatalogListTools'
 import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
-import { adminList, getPublicMediaOptions } from '@/lib/data/cms'
+import { getPublicMediaOptions } from '@/lib/data/cms'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -45,7 +46,7 @@ export default async function AdminWorkshopsPage({searchParams}:{searchParams:Pr
     await searchParams,
   )
   const workshops=listing.rows
-  const profileRows=await adminList<{id:string;full_name:string;email:string}>('profiles','id,full_name,email',{limit:1000})
+  const profileRows=await adminRelatedRows<{id:string;full_name:string;email:string}>('profiles','id,full_name,email','id',[...new Set(workshops.flatMap(workshop=>workshop.workshop_registrations.map(row=>row.user_id)))])
   const profiles=new Map(profileRows.map(profile=>[profile.id,profile]))
 
   return (

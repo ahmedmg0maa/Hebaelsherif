@@ -1,7 +1,7 @@
+import {adminRelatedRows} from '@/lib/data/admin-pagination'
 import { OperationControl } from '@/components/admin/OperationControls'
 import { OPERATION_CONTROLS, isOperationControl } from '@/lib/admin/operation-controls'
 import type { Metadata } from 'next'
-import { adminList } from '@/lib/data/cms'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SettingEditor, FlagToggle } from '@/components/admin/AdminControls'
@@ -19,8 +19,8 @@ type FlagRow = { key: string; is_enabled: boolean; description: string }
 
 export default async function AdminSettingsPage() {
   const [settings, flags] = await Promise.all([
-    adminList<SettingRow>('site_settings', 'key, value, is_public', { orderBy: 'key', ascending: true }),
-    adminList<FlagRow>('feature_flags', 'key, is_enabled, description', { orderBy: 'key', ascending: true }),
+    adminRelatedRows<SettingRow>('site_settings','key,value,is_public',null,[],'key','key'),
+    adminRelatedRows<FlagRow>('feature_flags','key,is_enabled,description',null,[],'key','key'),
   ])
   const ownerProfile = normalizeOwnerProfile(settings.find(setting => setting.key === 'owner_profile')?.value)
   const startHereRow = settings.find((setting) => setting.key === 'start_here_experience')

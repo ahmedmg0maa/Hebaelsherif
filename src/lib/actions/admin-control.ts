@@ -8,6 +8,7 @@ import { catalogEditorPayload, type CatalogKind } from '@/lib/catalog/editor'
 import { catalogMutationError, revalidateCatalogMutation } from '@/lib/catalog/mutation'
 import { commerceEditorPayload, commerceMutationError, type CommerceEditorKind } from '@/lib/admin/commerce-editor'
 import { catalogPublicationReadiness } from '@/lib/catalog/publication-readiness'
+import {uploadSizeAllowed,uploadLimitLabel} from '@/lib/uploads/limits.mjs'
 
 export type AdminActionResult = { ok: true; id?: string } | { ok: false; error: string }
 
@@ -339,8 +340,7 @@ function validateMediaUpload(input: MediaUploadInput): ValidatedMediaUpload | { 
   const allowed = ['public-media','course-videos','course-resources','protected-books','workshop-recordings']
   if (!allowed.includes(bucket)) return { error: 'المخزن غير مسموح.' }
   if (!input.name.trim() || !Number.isFinite(input.size) || input.size <= 0) return { error: 'اختاري ملفًا.' }
-  const limits: Record<string, number> = { 'public-media': 10, 'course-videos': 50, 'course-resources': 50, 'protected-books': 50, 'workshop-recordings': 50 }
-  if (input.size > limits[bucket] * 1024 * 1024) return { error: `الحد الأقصى لهذا المخزن ${limits[bucket]} ميجابايت.` }
+  if (!uploadSizeAllowed(bucket,input.size)) return { error: `اختاري ملفًا غير فارغ لا يتجاوز ${uploadLimitLabel(bucket)}.` }
   const allowedMime: Record<string, RegExp> = {
     'public-media': /^(image\/(jpeg|png|webp|gif|svg\+xml)|application\/pdf)$/,
     'course-videos': /^video\/(mp4|webm|quicktime)$/,

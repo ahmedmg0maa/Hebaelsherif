@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { adminList } from '@/lib/data/cms'
+import {adminPagedList,adminRelatedRows,type AdminPageQuery} from '@/lib/data/admin-pagination'
+import {AdminListTools} from '@/components/admin/AdminListTools'
 import { CONTACT_PURPOSE_LABELS, type ContactPurpose } from '@/lib/contact/intake'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -29,21 +30,23 @@ function purposeLabel(message: Message) {
   return CONTACT_PURPOSE_LABELS[message.purpose as ContactPurpose] ?? message.subject ?? 'استفسار عام'
 }
 
-export default async function AdminInboxPage() {
-  const [messages, subscribers, roles, outbox] = await Promise.all([
-    adminList<Message>(
+export default async function AdminInboxPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams
+  const [messageResult,subscriberResult,roles,outboxResult] = await Promise.all([
+    adminPagedList<Message>(
       'contact_messages',
       'id,name,email,phone,subject,purpose,message,status,priority,assigned_to,is_spam,privacy_consent_at,created_at,contact_message_notes(id,note,created_at)',
-      { orderBy: 'created_at', limit: 300 },
+      query,{prefix:'message_',searchColumn:'subject',statuses:['new','read','replied','archived']},
     ),
-    adminList<Subscriber>('newsletter_subscribers', 'id,email,status,consent_at,consent_version,source,created_at', { orderBy: 'created_at', limit: 500 }),
-    adminList<{ user_id: string; role: string }>('admin_roles', 'user_id,role', { limit: 100 }),
-    adminList<{ id: string; to_email: string; subject: string; status: string; created_at: string; last_error: string | null; attempts: number; next_attempt_at: string | null }>(
+    adminPagedList<Subscriber>('newsletter_subscribers', 'id,email,status,consent_at,consent_version,source,created_at',query,{prefix:'subscriber_',searchColumn:'email',statuses:['subscribed','unsubscribed']}),
+    adminRelatedRows<{user_id:string;role:string}>('admin_roles','user_id,role',null,[],'user_id','role'),
+    adminPagedList<{ id: string; to_email: string; subject: string; status: string; created_at: string; last_error: string | null; attempts: number; next_attempt_at: string | null }>(
       'email_outbox',
       'id,to_email,subject,status,created_at,last_error,attempts,next_attempt_at',
-      { orderBy: 'created_at', limit: 100 },
+      query,{prefix:'outbox_',searchColumn:'subject',statuses:['queued','sending','sent','failed','disabled','cancelled']},
     ),
   ])
+  const messages=messageResult.rows,subscribers=subscriberResult.rows,outbox=outboxResult.rows
   const admins = roles.map((role) => ({ id: role.user_id, label: role.role }))
   const date = new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
 
@@ -57,6 +60,7 @@ export default async function AdminInboxPage() {
 
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-deep-teal">رسائل التواصل</h2>
+        <AdminListTools result={messageResult} query={query} label="رسائل التواصل" searchLabel="بحث بعنوان الرسالة" statuses={[{value:"new",label:"جديدة"},{value:"read",label:"مقروءة"},{value:"replied",label:"تم الرد"},{value:"archived",label:"مؤرشفة"}]}/>
         {!messages.length ? <EmptyState title="لا رسائل" description="تظهر رسائل نموذج التواصل المحكوم هنا." /> : (
           <div className="space-y-4">
             {messages.map((message) => (
@@ -97,7 +101,7 @@ export default async function AdminInboxPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardTitle>المشتركات</CardTitle>
+          <CardTitle>المشتركات</CardTitle><AdminListTools result={subscriberResult} query={query} label="المشتركات" searchLabel="بحث بالبريد" statuses={[{value:"subscribed",label:"مشتركة"},{value:"unsubscribed",label:"ألغت الاشتراك"}]}/>
           <p className="mt-2 text-xs leading-loose text-text-soft">لا يمكن للإدارة إعادة تفعيل بريد بلا موافقة؛ الاشتراك يعود فقط من النموذج العام. السجلات القديمة بلا دليل موافقة ليست مؤهلة للإرسال.</p>
           <div className="mt-4 space-y-3">
             {subscribers.map((subscriber) => (
@@ -109,7 +113,7 @@ export default async function AdminInboxPage() {
           </div>
         </Card>
         <Card>
-          <CardTitle>صندوق البريد الصادر</CardTitle>
+          <CardTitle>صندوق البريد الصادر</CardTitle><AdminListTools result={outboxResult} query={query} label="البريد الصادر" searchLabel="بحث بعنوان الرسالة" statuses={[{value:"queued",label:"بانتظار الإرسال"},{value:"sending",label:"قيد الإرسال"},{value:"sent",label:"أُرسلت"},{value:"failed",label:"فشل الإرسال"},{value:"disabled",label:"الإرسال متوقف"},{value:"cancelled",label:"ملغاة"}]}/>
           <p className="mt-1 text-xs leading-relaxed text-text-soft">الحالة disabled تعني أن الرسالة محفوظة ولم تغادر المنصة. الإرسال يستخدم claim ذريًا ومفتاح idempotency ثابتًا لكل رسالة، ولا يعرض خطأ المزود الخام.</p>
           <div className="mt-4 space-y-3">
             {outbox.map((row) => (

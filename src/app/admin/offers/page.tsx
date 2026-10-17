@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { adminList } from '@/lib/data/cms'
-import { getAdminOffers } from '@/lib/data/admin'
+import {adminOfferPage} from '@/lib/data/admin-marketing-pages'
+import type {AdminPageQuery} from '@/lib/data/admin-pagination'
+import {AdminListTools} from '@/components/admin/AdminListTools'
 import { formatPrice, isPast } from '@/lib/format'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
@@ -28,8 +29,8 @@ const targetLabels: Record<string, string> = {
   session: 'الجلسات',
 }
 
-export default async function AdminOffersPage() {
-  const [offers, products] = await Promise.all([getAdminOffers(), adminList<{ id: string; title: string }>('products', 'id,title', { orderBy: 'title', ascending: true, limit: 1000 })])
+export default async function AdminOffersPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams,result=await adminOfferPage(query),offers=result.rows,products: {id:string;title:string}[]=[]
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -45,6 +46,7 @@ export default async function AdminOffersPage() {
         <OfferForm products={products} />
       </Card>
 
+      <AdminListTools result={result} query={query} label="العروض" searchLabel="بحث باسم العرض" statuses={[{value:"active",label:"مفعّل"},{value:"inactive",label:"موقوف"}]}/>
       {offers.length === 0 ? (
         <EmptyState title="لا عروض بعد" description="أطلقي أول حملة من النموذج أعلاه — بعدّاد تنازلي وشارة تظهر على المنتجات." />
       ) : (

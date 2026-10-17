@@ -1,5 +1,6 @@
 'use client'
 
+import {AdminChoicePicker} from './AdminChoicePicker'
 import { useState } from 'react'
 import { beginMediaUpload, finalizeMediaUpload, manageMediaLifecycle, updateMediaMetadata } from '@/lib/actions/admin-control'
 import { Button } from '@/components/ui/Button'
@@ -7,6 +8,7 @@ import {uploadProtectedFile} from '@/lib/delivery/direct-upload'
 import {useAdminAction} from './useAdminAction'
 import {ActionFeedback} from './ActionFeedback'
 import {AdminField,AdminSelect} from './AdminField'
+import {uploadSizeAllowed,uploadLimitLabel} from '@/lib/uploads/limits.mjs'
 
 
 export function MediaUpload() {
@@ -26,7 +28,7 @@ export function MediaUpload() {
     const file=form.get('file')
     if(!(file instanceof File)||!file.size)return {ok:false,error:'اختاري ملفًا غير فارغ.'}
     const bucket=String(form.get('bucket')??'')
-    if(file.size>(bucket==='public-media'?10485760:50000000))return {ok:false,error:'حجم الملف أكبر من الحد الموضح؛ اضغطيه قبل الرفع.'}
+    if(!uploadSizeAllowed(bucket,file.size))return {ok:false,error:`حجم الملف أكبر من الحد المسموح (${uploadLimitLabel(bucket)})؛ لم يبدأ النقل.`}
     const input={bucket,name:file.name,type:file.type,size:file.size,title:String(form.get('title')??''),alt:String(form.get('alt')??''),tags:String(form.get('tags')??''),caption:String(form.get('caption')??''),credit:String(form.get('credit')??''),rightsStatus:String(form.get('rights_status')??''),rightsReference:String(form.get('rights_reference')??''),folder:String(form.get('folder')??''),focalX:Number(form.get('focal_x')??50),focalY:Number(form.get('focal_y')??50)}
     const started=await beginMediaUpload(input)
     if(!started.ok)return started
@@ -35,7 +37,7 @@ export function MediaUpload() {
    },'اكتمل النقل وسُجّل الملف مرة واحدة في المكتبة.')
    if(ok)element.reset()
   }}>
-    <p className="text-sm leading-7 text-text-soft">وسائط عامة: صور JPG وPNG وWebP وGIF وSVG أو PDF حتى 10 ميجابايت. الملفات الخاصة حتى 50 ميجابايت بحسب النوع. لربط فيديو أو كتاب بالعميلات استخدمي أدوات الرفع داخل الكورس أو الكتاب. الرفع هنا يُضيف إلى المكتبة فقط.</p>
+    <p className="text-sm leading-7 text-text-soft">وسائط عامة: صور JPG وPNG وWebP وGIF وSVG أو PDF حتى {uploadLimitLabel('public-media')}. الملفات الخاصة حتى {uploadLimitLabel('protected-books')} بحسب النوع. لربط فيديو أو كتاب بالعميلات استخدمي أدوات الرفع داخل الكورس أو الكتاب. الرفع هنا يُضيف إلى المكتبة فقط.</p>
     <fieldset disabled={busy||Boolean(pending)} className="grid gap-4 md:grid-cols-2">
     <AdminField label="الملف" name="file" type="file" required />
     <AdminSelect label="المخزن" name="bucket" required options={[{"value": "public-media", "label": "وسائط عامة"}, {"value": "course-videos", "label": "فيديو الدورات"}, {"value": "course-resources", "label": "موارد الدورات"}, {"value": "protected-books", "label": "الكتب المحمية"}, {"value": "workshop-recordings", "label": "تسجيلات الورش"}]}/>
@@ -82,16 +84,14 @@ export function CopyMediaUrl({ url }: { url: string }) {
   return <Button size="sm" variant="ghost" type="button" onClick={async () => { await navigator.clipboard.writeText(url); setCopied(true) }}>{copied ? 'نُسخ' : 'نسخ الرابط'}</Button>
 }
 
-type MediaReplacementOption = { id: string; title: string }
-
-export function MediaLifecycle({ id, archivedAt, replacedBy, usageCount = 0, replacements }: { id: string; archivedAt: string | null; replacedBy: string | null; usageCount?: number; replacements: MediaReplacementOption[] }) {
+export function MediaLifecycle({ id, archivedAt, replacedBy, usageCount = 0 }: { id: string; archivedAt: string | null; replacedBy: string | null; usageCount?: number }) {
   const {busy,feedback,run:perform}=useAdminAction()
   const run=(action:'archive'|'restore'|'replace',replacementId?:string)=>perform(()=>manageMediaLifecycle(id,action,replacementId),action==='archive'?'نُقل الأصل إلى الأرشيف ويمكن استعادته.':action==='restore'?'استُعيد الأصل إلى المكتبة النشطة.':'نُقلت الاستخدامات وأُرشف الأصل القديم.')
   if (archivedAt) return <div className="space-y-2">{replacedBy ? <p className="text-xs font-semibold text-text-soft">مؤرشف بعد استبدال آمن؛ الأصل البديل هو المرجع التشغيلي.</p> : <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => run('restore')}>استعادة</Button>}<ActionFeedback feedback={feedback}/></div>
   return <div className="space-y-2">
     <p className="text-xs text-text-soft">{usageCount > 0 ? `مستخدم في ${usageCount.toLocaleString('ar-EG')} موضع؛ يلزم الاستبدال قبل الأرشفة.` : 'الأرشفة قابلة للاستعادة ولا تحذف ملف التخزين.'}</p>
     <div className="flex flex-wrap gap-2"><Button type="button" size="sm" variant="burgundy" disabled={busy} onClick={() => run('archive')}>أرشفة</Button></div>
-    {replacements.length > 0 && <form className="flex flex-wrap gap-2" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); void run('replace', String(form.get('replacement_id') ?? '')) }}><AdminSelect label="الأصل البديل" name="replacement_id" required hint="اختاري ملفًا متوافقًا لنقل الاستخدامات إليه ثم أرشفة الملف الحالي. لا تُحذف ملفات التخزين تلقائيًا." example="الصورة الجديدة التي تحل محل الغلاف الحالي"><option value="">اختاري أصلًا بديلًا متوافقًا</option>{replacements.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</AdminSelect><Button type="submit" size="sm" variant="secondary" disabled={busy}>استبدال ونقل الاستخدام</Button></form>}
+    <form className="space-y-3" onSubmit={(event)=>{event.preventDefault();const form=new FormData(event.currentTarget);void run('replace',String(form.get('replacement_id')??''))}}><AdminChoicePicker kind="media-replacement" sourceId={id} name="replacement_id" label="الأصل البديل المتوافق" required/><p className="text-sm text-text-soft">البحث يقتصر على نفس نوع الملف ومخزنه وخصوصيته؛ نقل الاستخدامات والأرشفة يتمان عند تأكيد الاستبدال.</p><Button type="submit" size="sm" variant="secondary" disabled={busy}>استبدال ونقل الاستخدام</Button></form>
     <ActionFeedback feedback={feedback}/>
   </div>
 }

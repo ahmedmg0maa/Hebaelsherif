@@ -19,8 +19,8 @@ assert.ok(cms.includes('const disabledFlags') && !cms.includes('const defaultFla
 assert.ok(cms.includes('getFeatureFlagSnapshot') && cms.includes("state: 'unconfigured', flags: disabledFlags") && cms.includes("state: 'unavailable', flags: disabledFlags"), 'feature flag state and fail-closed values are required')
 
 for (const token of [
-  'adminListResult<EventRow>', 'getFeatureFlagSnapshot()', 'getIntegrationReadiness()',
-  "eventResult.state !== 'ready'", 'لم تُفسّر النتيجة على أنها غياب للأخطاء',
+  'adminPagedList<EventRow>', 'getFeatureFlagSnapshot()', 'getIntegrationReadiness()',
+  '!eventResult.configured', 'لم تُفسّر النتيجة على أنها غياب للأخطاء',
   'كل الميزات الاختيارية معطلة fail-closed', 'وجود أسماء الإعدادات',
 ]) assert.ok(system.includes(token), `System Center truthful state missing: ${token}`)
 assert.ok(!system.includes('الهدوء خبر جيد'), 'unavailable system events must not be described as healthy silence')

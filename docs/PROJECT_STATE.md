@@ -1,3 +1,27 @@
+# Admin foundation phase one — reviewable implementation, production held (2026-10-17)
+
+User explicitly ordered implementation, then stage-one review before production. Branch `admin-foundation-phase-one` starts at `c563724`; production and `prepare-cream-motion` remain at that source. Preserve the previous read-only review/evidence and approved plan. Read `docs/ADMIN_FOUNDATION_PHASE_ONE_AR.md` for scope, executable evidence, remaining acceptance, migrations and rollback. This is not completion of the whole Admin plan.
+
+Implemented additive 108–112: atomic restore with ordinary-writer version triggers and stale conflict; explicit matching Home draft/baseline/comparison with actual public profile source and image/crop references; one byte contract/UI/server/generated SQL for uploads; paginated server lists and search/choice controls; complete scoped customer history. No production migration/Worker deploy/Home initialization or business-rule change occurred. Free mode and booking/entitlement/Storage protection remain unchanged.
+
+Actual PostgreSQL tests on fresh `localhost:55432/heba_test_admin_phase1_final_20261017` pass committed reload, checkpoint/update/audit fault rollback, two independent concurrent restores and ordinary editing, page/article/section identity and draft behavior, Home initialization/idempotency, upload byte boundaries, 620 customers and 620 notes with oldest-page/closed-request/scope/RLS/audit checks. Original restore retained. Its history stopped102 despite earlier103–107 definition drills; verified critical bodies and refreshed only cloned105 scheduler, never blindly replayed historical migrations.
+
+Actual-component local browser harness proved restore conflict then committed restore reload and Home six-section draft reload; the harness injects permission/source fixtures rather than a production Auth session and uses synthetic choice data. Actual comparison read tested at390/768/1024/1440 with images and no horizontal overflow. Private preview token acceptance and all new screens in an integrated Worker/Auth/PostgREST/Storage environment remain required before production. See the handoff for non-passing optional initial test attempts; never claim a blanket `check:deploy` pass.
+
+Next: finish final checks/commits and stage-one handoff, then integrated acceptance and the remaining navigation/field guidance, booking, course/file workspace and other approved stages. No commercial decision blocks independent work. Production application stays held until stage-one review; do not treat prior password-login success or a build as new-feature acceptance.
+
+---
+
+# Read-only Admin handover review — 2026-10-17
+
+Latest user scope is evidence and documentation only, not further implementation or deployment. Read `docs/ADMIN_CURRENT_STATE_REVIEW_AR.md` and its sanitized `docs/admin-current-state-evidence/` before planning the next development slice. This review left application code, migrations, dependencies and production business data unchanged; the report/evidence and this checkpoint remain local documentation changes without a new push or deploy.
+
+Current local HEAD, remote prepare-cream-motion and both public release manifests match c56372482eff9845863a98fe06721a48c20f24c8. Cloudflare deployment ff7ef68a-54f8-4dcd-af90-90b31529d186 at 09:24:48 UTC sends 100% to Worker version 98a3a5b5-11d2-4e45-9f5a-b453f8134bd5. Fresh read-only production inventory confirms history 000–107 and 14 critical function bodies matching latest local definitions, including owner readiness096. Current data includes one cancelled booking, one converted hold, zero active holds and booking-mail sent2/superseded1; do not reuse the older zero-booking baseline or clean up human activity as QA fixtures.
+
+Human sign-in produced a current owner session; all30 navigation areas and current course curriculum rendered, specific editor dialogs opened without submission, and actual overview reload retained access. Six local actual-code regression scripts passed. Sixteen fresh sanitized screenshots accompany the report. Current home CMS is uninitialized (pages0/sections0), while four intended products/two sessions/two articles are public. Financial intake/policies and multi-role/MFA/destructive workflow acceptance remain distinct from verified free learning and priced requests. The report identifies the non-atomic revision-restore risk, bounded Admin lists, upload-limit mismatch and concrete UX copy gaps without modifying them. No current-session logout, email, fixture creation, business save or database mutation test was performed for this read-only review.
+
+---
+
 # Published client integration — 2026-10-17
 
 The owner explicitly requested a usable connected public site and authorized initial editable content. The old empty release 41e42e8 is superseded. Production history is 107. Two approved sessions, one actual free course, one actual protected PDF workbook and two articles are published and editable through Admin. No bank details, payments, testimonials or workshop dates were invented.

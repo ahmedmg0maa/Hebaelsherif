@@ -37,7 +37,7 @@ for (const forbidden of ["from('user_notes').insert", "from('user_tags').upsert"
   assert.ok(!actionSlice.includes(forbidden), `split Customer 360 write remains: ${forbidden}`)
 }
 
-assert.ok(directory.includes("requirePermission('users.view'") && directory.includes(".rpc('search_admin_users'") && directory.includes('ADMIN_CUSTOMER_DIRECTORY_READ_UNAVAILABLE'), 'directory must be permissioned, injection-safe and fail closed')
+assert.ok(directory.includes("requirePermission('users.view'") && directory.includes('adminCustomerPage<Row>') && read('src/lib/data/admin-customer-pages.ts').includes('ADMIN_CUSTOMER_DIRECTORY_READ_UNAVAILABLE'), 'directory must be permissioned, injection-safe and fail closed')
 assert.ok(!directory.includes('.or(') && !directory.includes('catch {') && !directory.includes('return []'), 'directory must not build a PostgREST OR expression or hide read errors')
 assert.ok(customer.includes(".rpc('get_admin_customer_360'") && customer.includes('ADMIN_CUSTOMER_READ_UNAVAILABLE') && customer.includes('data.profile.createdAt'), 'Customer 360 must use its bounded permissioned read contract')
 assert.ok(customer.includes('أحدث ١٠٠ سجل') && customer.includes('<EmptyState') && customer.includes('CustomerNoteControl') && customer.includes('CustomerTagControl'), 'Customer 360 must expose truthful bounds, empty states and real lifecycle controls')

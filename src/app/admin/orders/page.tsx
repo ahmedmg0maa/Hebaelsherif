@@ -1,6 +1,8 @@
 ﻿import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getAdminOrders } from '@/lib/data/admin'
+import { adminOrderPage } from '@/lib/data/admin-commerce-pages'
+import type { AdminPageQuery } from '@/lib/data/admin-pagination'
+import { AdminListTools } from '@/components/admin/AdminListTools'
 import { formatPrice } from '@/lib/format'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
 import { Badge } from '@/components/ui/Badge'
@@ -34,16 +36,16 @@ const badgeTones: Record<string, 'success' | 'pending' | 'sand' | 'danger' | 'co
   refunded: 'danger',
 }
 
-type Props = { searchParams: Promise<{ status?: string }> }
+type Props = { searchParams: Promise<AdminPageQuery> }
 
 export default async function AdminOrdersPage({ searchParams }: Props) {
-  const { status } = await searchParams
-  const [orders, updatePermission, refundPermission] = await Promise.all([
-    getAdminOrders(status || undefined),
+  const query = await searchParams
+  const [result, updatePermission, refundPermission] = await Promise.all([
+    adminOrderPage(query),
     requirePermission('orders.update'),
     requirePermission('orders.refund'),
   ])
-  const active = status ?? ''
+  const orders=result.rows, active=result.status==='all'?'':result.status
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -51,6 +53,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         <h1 className="text-3xl font-bold text-deep-teal">الطلبات</h1>
         <p className="mt-1 text-text-soft">دورة حياة كل طلب — من الإنشاء حتى الدفع أو الإلغاء أو الاسترداد.</p>
       </header>
+
+      <AdminListTools result={result} query={query} label="الطلبات" searchLabel="بحث بالعميلة أو المنتج أو رقم الطلب" example="اسم العميلة أو جزء من عنوان الكورس" statuses={statuses.filter(s=>s.key).map(s=>({value:s.key,label:s.label}))}/>
 
       <nav className="flex flex-wrap gap-2" aria-label="تصفية حسب الحالة">
         {statuses.map((s) => (

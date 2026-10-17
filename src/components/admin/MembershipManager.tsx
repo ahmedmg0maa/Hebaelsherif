@@ -1,4 +1,5 @@
 'use client'
+import {AdminChoicePicker,BundleChildrenPicker} from './AdminChoicePicker'
 import {AdminField,AdminSelect,AdminTextarea} from './AdminField'
 
 import { useState } from 'react'
@@ -31,7 +32,7 @@ export type PlanAdmin = {
   product_id: string | null
 }
 
-function PlanForm({ plan, services, packageProducts }: { plan?: PlanAdmin; services: { id: string; title: string }[]; packageProducts: { id: string; title: string }[] }) {
+function PlanForm({ plan, packageProducts }: { plan?: PlanAdmin; services: { id: string; title: string }[]; packageProducts: { id: string; title: string }[] }) {
   const { busy, feedback, run } = useAdminAction()
   const prefix = `plan-${plan?.id ?? 'new'}`
   return <form className="grid gap-4 md:grid-cols-2" onSubmit={async (event) => {
@@ -49,21 +50,14 @@ function PlanForm({ plan, services, packageProducts }: { plan?: PlanAdmin; servi
       ['sort','الترتيب','number',plan?.sort ?? 0],
     ].map(([name,label,type,value])=><AdminField key={String(name)} id={`${prefix}-${name}`} name={String(name)} label={String(label)} type={String(type)} defaultValue={value} min={type==='number'?(['duration_days','max_subscribers'].includes(String(name))?1:0):undefined} max={type==='number'?(name==='price'?99999999.99:name==='duration_days'?3650:name==='max_subscribers'?1000000:100000):undefined} step={name==='price'?'0.01':undefined} required={['title','slug','price','currency','duration_days'].includes(String(name))} dir={['slug','currency'].includes(String(name))?'ltr':'rtl'}/>)}
     <AdminSelect label="دورية الباقة" name="billing_interval" defaultValue={plan?.billing_interval??'month'} required hint="وصف مدة الباقة للعميلة. اختيار دوري لا ينشئ خصمًا بنكيًا تلقائيًا؛ التجديد بحسب آلية الموقع الحالية." example="شهري لباقة شهر واحد"><option value="month">شهري</option><option value="quarter">ربع سنوي</option><option value="year">سنوي</option><option value="one_time">مرة واحدة</option></AdminSelect>
-    <AdminSelect label="منتج الشراء المرتبط" name="product_id" defaultValue={plan?.product_id??''} hint="عند دفع هذا المنتج تُفعّل الباقة تلقائيًا. دون منتج تكون الإتاحة إدارية فقط." example="منتج الباقة المعتمد في قسم المنتجات"><option value="">تفعيل إداري فقط</option>{packageProducts.map(product=><option key={product.id} value={product.id}>{product.title}</option>)}</AdminSelect>
+    <AdminChoicePicker kind="package" name="product_id" label="منتج شراء الباقة — اختياري" defaultValue={plan?.product_id??''} initialLabel={packageProducts.find(product=>product.id===plan?.product_id)?.title}/>
+    <p className="text-sm text-text-soft">المنتج المرتبط يفعّل الباقة عند الدفع. دون اختيار تكون الإتاحة إدارية فقط. مثال: منتج الحزمة المعتمد.</p>
     <AdminField label="تبدأ في — القاهرة" name="starts_at" type="datetime-local" defaultValue={(plan?.starts_at?formatCairoLocalDateTime(plan.starts_at):'')??''} dir="ltr"/>
     <AdminField label="تنتهي في — القاهرة" name="ends_at" type="datetime-local" defaultValue={(plan?.ends_at?formatCairoLocalDateTime(plan.ends_at):'')??''} dir="ltr"/>
     <AdminTextarea label="وصف الباقة" name="description" defaultValue={plan?.description} maxLength={30000} rows={4} className="md:col-span-2"/>
     <AdminTextarea label="المزايا — ميزة في كل سطر" name="features" defaultValue={plan?.features.join('\n')} maxLength={10000} rows={5} className="md:col-span-2" hint="اكتبي المزايا المعتمدة فقط. تظهر كقائمة في تفاصيل الباقة." example="متابعة التقدم ثم أوراق تطبيق في سطر آخر" limits="حتى 50 ميزة؛ كل ميزة حتى 300 حرف"/>
     <p className="text-sm leading-loose text-text-soft md:col-span-2">تعديل المدة والجلسات والخدمات يطبّق على الاشتراكات الجديدة. الاشتراكات القائمة تحتفظ بالحقوق المسجلة لها. أوقفي نشر منتج الشراء المرتبط قبل تعديل الباقة.</p>
-    <fieldset className="space-y-3 rounded-xl border border-line bg-ivory/50 p-4 md:col-span-2">
-      <legend className="px-2 text-sm font-bold text-deep-teal">الخدمات التي يمكن حجزها برصيد هذه الباقة</legend>
-      {services.length === 0 ? <p className="text-sm text-text-soft">أضيفي خدمة نشطة أولًا، ثم اربطيها بالباقة.</p> : <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((service) => <label key={service.id} className="flex min-h-12 items-center gap-2 rounded-lg border border-line bg-surface-raised px-3 text-sm text-ink">
-          <input type="checkbox" name="eligible_service_ids" value={service.id} defaultChecked={plan?.eligibleServiceIds.includes(service.id)} className="accent-deep-teal" />
-          {service.title}
-        </label>)}
-      </div>}
-    </fieldset>
+    <BundleChildrenPicker initial={plan?.eligibleServiceIds??[]} kind="service" name="eligible_service_ids" label="الخدمات التي يمكن حجزها برصيد الباقة"/>
     <div className="flex flex-wrap gap-4 md:col-span-2">
       <label className="flex items-center gap-2 text-sm font-bold text-deep-teal"><input type="checkbox" name="is_active" defaultChecked={plan?.is_active ?? true} className="accent-deep-teal" /> مفعّلة للبيع</label>
       <label className="flex items-center gap-2 text-sm font-bold text-deep-teal"><input type="checkbox" name="is_published" defaultChecked={plan?.is_published} className="accent-deep-teal" /> منشورة للزوار</label>
@@ -127,21 +121,22 @@ export function SubscriptionCreditControl({ id, balance, included }: { id: strin
   </div>
 }
 
-export function SubscriptionCreate({ plans, customers }: { plans: { id: string; title: string }[]; customers: { id: string; name: string; email: string }[] }) {
+export function SubscriptionCreate() {
   const { busy, feedback, run } = useAdminAction()
+  const [formVersion,setFormVersion]=useState(0)
   return <form className="space-y-5 rounded-2xl border border-line bg-surface-raised p-6" aria-busy={busy} onSubmit={async event => {
     event.preventDefault()
     const form = event.currentTarget, data = new FormData(form)
-    if (await run(() => createSubscription(data), 'تم إنشاء الاشتراك بالحالة المختارة.')) form.reset()
+    if (await run(() => createSubscription(data), 'تم إنشاء الاشتراك بالحالة المختارة.')) {form.reset();setFormVersion(version=>version+1)}
   }}>
-    <fieldset disabled={busy} className="grid gap-5 md:grid-cols-2">
+    <fieldset key={formVersion} disabled={busy} className="grid gap-5 md:grid-cols-2">
       <legend className="mb-5 font-heading text-2xl text-deep-teal">إضافة اشتراك يدوي</legend>
-      <AdminSelect  label={`العميلة`} name="user_id" hint="الحساب الذي سيحصل على حقوق هذه الباقة. راجعي الاسم والبريد قبل الحفظ." example="اختاري صاحبة الاشتراك المقصودة" required><option value="">اختاري العميلة</option>{customers.map(customer => <option key={customer.id} value={customer.id}>{customer.name} — {customer.email}</option>)}</AdminSelect>
-      <AdminSelect  label={`الباقة`} name="plan_id" hint="الباقة المعتمدة التي تحدد المدة ورصيد الجلسات والخدمات لهذا الاشتراك." example="الباقة المتفق عليها مع العميلة" required><option value="">اختاري الباقة</option>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.title}</option>)}</AdminSelect>
+      <AdminChoicePicker kind="customer" name="user_id" label="صاحبة الاشتراك" required/>
+      <AdminChoicePicker kind="plan" name="plan_id" label="الباقة المعتمدة" required/>
       <AdminSelect  label={`الحالة`} name="status" required hint="التفعيل يتيح حقوق الباقة للعميلة. الانتظار يُنشئ سجلًا دون تفعيل الحقوق، ولا ينشئ دفعًا تلقائيًا." example="بانتظار التفعيل حتى اعتماد الاستحقاق"><option value="active">نشط</option><option value="pending">بانتظار التفعيل</option></AdminSelect>
       <AdminField  label={`ملاحظات داخلية`} name="admin_notes" maxLength={4000}/>
     </fieldset>
     <ActionFeedback feedback={feedback} />
-    <Button type="submit" disabled={busy || !plans.length || !customers.length}>{busy ? 'جاري الإنشاء…' : 'إنشاء الاشتراك'}</Button>
+    <Button type="submit" disabled={busy}>{busy ? 'جاري الإنشاء…' : 'إنشاء الاشتراك'}</Button>
   </form>
 }

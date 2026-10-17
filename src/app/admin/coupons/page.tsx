@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
-import { getAdminCoupons } from '@/lib/data/admin'
+import {adminCouponPage} from '@/lib/data/admin-marketing-pages'
+import type {AdminPageQuery} from '@/lib/data/admin-pagination'
+import {AdminListTools} from '@/components/admin/AdminListTools'
 import { formatPrice } from '@/lib/format'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
@@ -11,8 +13,8 @@ export const metadata: Metadata = { title: 'الكوبونات — الإدار�
 
 const dateFmt = new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' })
 
-export default async function AdminCouponsPage() {
-  const coupons = await getAdminCoupons()
+export default async function AdminCouponsPage({searchParams}:{searchParams:Promise<AdminPageQuery>}) {
+  const query=await searchParams,result=await adminCouponPage(query),coupons=result.rows
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -26,6 +28,7 @@ export default async function AdminCouponsPage() {
         <CouponForm />
       </Card>
 
+      <AdminListTools result={result} query={query} label="الكوبونات" searchLabel="بحث بكود الخصم" statuses={[{value:"active",label:"مفعّل"},{value:"inactive",label:"موقوف"}]}/>
       {coupons.length === 0 ? (
         <EmptyState title="لا كوبونات بعد" description="أنشئي أول كود خصم من النموذج أعلاه — يعمل فورًا في صفحة الدفع." />
       ) : (

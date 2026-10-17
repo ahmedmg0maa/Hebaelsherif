@@ -31,7 +31,7 @@ for (const action of ['saveNavigationItem', 'deleteNavigationItem']) {
 assert.match(actions, /Number\.isInteger\(sort\)[\s\S]*sort < 0[\s\S]*sort > 1000/, 'Server Action must mirror order bounds without coercion')
 assert(manager.includes('window.confirm') && manager.includes('<ActionFeedback feedback={feedback}') && readFileSync('src/components/admin/ActionFeedback.tsx','utf8').includes("role={feedback.ok ? 'status' : 'alert'}"), 'Admin controls need destructive confirmation and accessible feedback')
 assert(manager.includes('maxLength={80}') && manager.includes('maxLength={180}') && manager.includes('max="1000"'), 'Admin inputs must mirror navigation bounds')
-assert.match(adminPage, /adminList<NavRow>\('navigation_items'[\s\S]*limit:200/, 'Admin must reload the bounded persisted rows')
+assert.match(adminPage, /adminPagedList<NavRow>\('navigation_items'[\s\S]*prefix:'navigation_'/, 'Admin must reload persisted navigation through exact-count server pagination')
 assert.match(publicData, /getPublicNavigation[\s\S]*from\('navigation_items'\)[\s\S]*eq\('is_visible',true\)/, 'public chrome must consume governed visible navigation')
 
 console.log('verify:navigation-governance-local passed — bounded permissioned atomic navigation mutation/audit and truthful Admin/public consumers verified locally')

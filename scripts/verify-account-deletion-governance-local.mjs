@@ -64,7 +64,7 @@ for (const token of ['AccountDeletionRequestControl', 'الإرسال لا يح�
   assert.ok(customer.includes(token), `customer deletion UI missing truthful state: ${token}`)
 assert.ok(!settings.includes('خلال ٧ أيام') && !settings.includes('راسلينا'), 'settings must not retain the false contact-only deletion promise')
 
-assert.ok(adminPage.includes("rpc('list_admin_account_deletion_requests'") && adminPage.includes('AccountDeletionQueue') && adminPage.includes('لا يُسجل الاكتمال إلا بعد غيابها فعليًا'), 'Admin users page must consume and describe the governed request queue truthfully')
+assert.ok(adminPage.includes("adminCustomerPage<AccountDeletionQueueRow>") && read('src/lib/data/admin-customer-pages.ts').includes("rpc('admin_customer_directory_page'") && adminPage.includes('AccountDeletionQueue') && adminPage.includes('لا يُسجل الاكتمال إلا بعد غيابها فعليًا'), 'Admin users page must consume and describe the governed request queue truthfully')
 for (const token of ['اعتماد للتنفيذ — MFA حديث', 'completeAccountDeletionRequest', 'maxLength={1000}', 'role={feedback[row.id].ok ? \'status\' : \'alert\'}'])
   assert.ok(adminQueue.includes(token), `Admin deletion queue missing operational truth/control: ${token}`)
 

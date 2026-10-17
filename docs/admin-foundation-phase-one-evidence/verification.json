@@ -1,0 +1,369 @@
+{
+  "date": "2026-10-17",
+  "branch": "admin-foundation-phase-one",
+  "baseCommit": "c56372482eff9845863a98fe06721a48c20f24c8",
+  "productionChanged": false,
+  "productionMigrationsApplied": false,
+  "productionSourceCommit": "c56372482eff9845863a98fe06721a48c20f24c8",
+  "githubAccountVerified": "ahmedmg0maa",
+  "repositoryPushPermissionVerified": true,
+  "checks": {
+    "isolatedTypecheck": "passed",
+    "eslint": "passed_without_warnings",
+    "isolatedNextBuild": "passed",
+    "isolatedCloudflareBuild": "passed",
+    "adminFoundationLocal": "passed",
+    "postgresSuites": 5,
+    "postgresSuitesStatus": "passed",
+    "dependencyAudit": "passed_with_existing_verified_local_mitigation",
+    "fullCheckDeploy": "not_claimed_browser_acceptance_incomplete",
+    "releasePackaging": "passed_tgz_and_zip_windows",
+    "recursiveWindowsZipSecurity": "passed"
+  },
+  "requiredLocalCommands": [
+    {
+      "name": "verify:booking-permissions-local",
+      "passed": true
+    },
+    {
+      "name": "verify:booking-staging-contract",
+      "passed": true
+    },
+    {
+      "name": "verify:booking-local",
+      "passed": true
+    },
+    {
+      "name": "verify:report-export-local",
+      "passed": true
+    },
+    {
+      "name": "verify:fresh-admin-assurance",
+      "passed": true
+    },
+    {
+      "name": "verify:booking-staging-contract-fixtures",
+      "passed": true
+    },
+    {
+      "name": "verify:navigation-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:home-cms-local",
+      "passed": true
+    },
+    {
+      "name": "verify:article-lifecycle-local",
+      "passed": true
+    },
+    {
+      "name": "verify:cms-page-lifecycle-local",
+      "passed": true
+    },
+    {
+      "name": "verify:settings-flags-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:public-search-local",
+      "passed": true
+    },
+    {
+      "name": "verify:start-here-cms-local",
+      "passed": true
+    },
+    {
+      "name": "verify:preview-experience-local",
+      "passed": true
+    },
+    {
+      "name": "verify:guided-assessment-local",
+      "passed": true
+    },
+    {
+      "name": "verify:program-catalog-local",
+      "passed": true
+    },
+    {
+      "name": "verify:master-v2-local",
+      "passed": true
+    },
+    {
+      "name": "verify:catalog-publication-local",
+      "passed": true
+    },
+    {
+      "name": "verify:media-lifecycle-local",
+      "passed": true
+    },
+    {
+      "name": "verify:newsletter-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:admin-security-center-local",
+      "passed": true
+    },
+    {
+      "name": "verify:admin-read-integrity-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-360-local",
+      "passed": true
+    },
+    {
+      "name": "verify:resend-outbox-local",
+      "passed": true
+    },
+    {
+      "name": "verify:admin-notifications-local",
+      "passed": true
+    },
+    {
+      "name": "verify:admin-role-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:sentry-monitoring-local",
+      "passed": true
+    },
+    {
+      "name": "verify:booking-admin-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:commerce-admin-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:checkout-upload-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-learning-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-protected-delivery-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-dashboard-read-integrity-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-account-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-password-lifecycle-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-booking-self-service-local",
+      "passed": true
+    },
+    {
+      "name": "verify:customer-registration-bootstrap-local",
+      "passed": true
+    },
+    {
+      "name": "verify:account-deletion-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:admin-operations-ux-local",
+      "passed": true
+    },
+    {
+      "name": "verify:testimonial-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:contact-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:press-governance-local",
+      "passed": true
+    },
+    {
+      "name": "verify:resource-hub-local",
+      "passed": true
+    },
+    {
+      "name": "verify:recovery-runner-local",
+      "passed": true
+    },
+    {
+      "name": "verify:final-hardening-local",
+      "passed": true
+    },
+    {
+      "name": "verify:revision-recovery-local",
+      "passed": true
+    },
+    {
+      "name": "verify:master-v2-continuation-local",
+      "passed": true
+    },
+    {
+      "name": "verify:delivery-local",
+      "passed": true
+    },
+    {
+      "name": "verify:archive-security",
+      "passed": true
+    },
+    {
+      "name": "verify:catalog-atomic-local",
+      "passed": true
+    },
+    {
+      "name": "verify:commerce-administration-local",
+      "passed": true
+    },
+    {
+      "name": "verify:master-v2-admin-workflows-local",
+      "passed": true
+    },
+    {
+      "name": "verify:phase7-workflows-local",
+      "passed": true
+    },
+    {
+      "name": "verify:phase8-workflows-local",
+      "passed": true
+    },
+    {
+      "name": "verify:phases9-11-workflows-local",
+      "passed": true
+    },
+    {
+      "name": "verify:auth-callback",
+      "passed": true
+    }
+  ],
+  "audits": [
+    {
+      "name": "audit:cms-local",
+      "passed": true
+    },
+    {
+      "name": "audit:remediation-local",
+      "passed": true
+    },
+    {
+      "name": "audit:routes",
+      "passed": true
+    },
+    {
+      "name": "audit:ux",
+      "passed": true
+    },
+    {
+      "name": "audit:colors",
+      "passed": true
+    },
+    {
+      "name": "audit:security",
+      "passed": true
+    },
+    {
+      "name": "audit:admin",
+      "passed": true
+    },
+    {
+      "name": "audit:media",
+      "passed": true
+    },
+    {
+      "name": "audit:commerce",
+      "passed": true
+    },
+    {
+      "name": "audit:catalog",
+      "passed": true
+    },
+    {
+      "name": "audit:booking",
+      "passed": true
+    },
+    {
+      "name": "audit:db",
+      "passed": true
+    },
+    {
+      "name": "audit:launch",
+      "passed": true
+    }
+  ],
+  "postgres": {
+    "database": "loopback/heba_test_admin_phase1_final_20261017",
+    "originalRestoreUnchanged": true,
+    "migrations": [
+      108,
+      109,
+      110,
+      111,
+      112
+    ],
+    "restoreFailuresInjected": [
+      "checkpoint",
+      "entity_update",
+      "audit"
+    ],
+    "realConcurrentConnections": 2,
+    "persistedReloadVerified": true,
+    "customerFixtures": 620,
+    "noteFixtures": 620,
+    "ordinaryCustomerRlsVerified": true,
+    "dataPreservationEvidence": "data-preservation.json",
+    "rowValuesExported": false
+  },
+  "browser": {
+    "surface": "in-app browser, local review harness",
+    "actualComponentsAndRestoreHomeActions": true,
+    "actualRestoreAndHomeRpc": true,
+    "authPermissionFixture": true,
+    "homeSourceSnapshotFixture": true,
+    "choiceProviderFixture": true,
+    "choiceSavedInTestServerMemoryOnly": true,
+    "restoreConflictDidNotWrite": true,
+    "restoreReload": {
+      "version": 3,
+      "revisionCount": 2,
+      "restoreAuditCount": 1
+    },
+    "homeReload": {
+      "status": "draft",
+      "sections": 6
+    },
+    "widths": [
+      390,
+      768,
+      1024,
+      1440
+    ],
+    "responsiveEvidence": "responsive.json",
+    "integratedWorkerAuthPostgrestStorageAcceptance": false,
+    "productionOwnerLoginRetested": false,
+    "physicalDevicesOrStandaloneChrome": false,
+    "privatePreviewTokenAcceptance": false
+  },
+  "notPassedInitialOptionalRuns": [
+    "PGlite SQL runners: separate runtime path not configured",
+    "learning/review browser: runtime did not remain stable",
+    "launch browser: production build absent during initial attempt",
+    "free Worker browser: notes tab timeout"
+  ],
+  "pending": [
+    "Integrated new-screen browser acceptance after migrations",
+    "Private preview token/expiry/authorization acceptance",
+    "Real Storage transfer at byte boundaries",
+    "Remaining approved Admin UX, booking, course and other development stages"
+  ],
+  "resolvedInitialPackagingFailure": "Excluded preserved non-runtime legacy filename from source payload; native Windows ZIP creation/inspection; evidence excluded from app archives"
+}

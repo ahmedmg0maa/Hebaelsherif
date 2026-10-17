@@ -27,7 +27,7 @@ assert.ok(!action.includes("action: 'notification.sent'") && !action.includes('m
 assert.ok(action.includes('p_request_id: input.requestId') && control.includes('crypto.randomUUID()'), 'Admin send must carry a stable idempotency identity')
 assert.ok(control.includes('maxLength={120}') && control.includes('maxLength={1000}') && control.includes('ActionFeedback') && read('src/components/admin/ActionFeedback.tsx').includes("feedback.ok ? 'status' : 'alert'"), 'Admin control must expose bounds and accessible feedback')
 for (const page of [directory, customer]) {
-  assert.ok(page.includes("permission_name: 'notifications.send'"), 'notification controls must be gated by the real permission')
+  assert.ok(/permission_name:\s*['"]notifications\.send['"]/.test(page), 'notification controls must be gated by the real permission')
   assert.ok(page.includes('canNotify') && page.includes('<NotifyUser'), 'permissioned pages must render the control only when allowed')
 }
 

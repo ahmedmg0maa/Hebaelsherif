@@ -1,3 +1,4 @@
+import {getUploadLimit} from '../uploads/limits.mjs'
 const PDF = { mimes: ['application/pdf'], signature: 'pdf' }
 const ZIP = { mimes: ['application/zip', 'application/x-zip-compressed'], signature: 'zip' }
 const MP4 = { mimes: ['video/mp4'], signature: 'mp4' }
@@ -8,11 +9,11 @@ const WAV = { mimes: ['audio/wav', 'audio/x-wav'], signature: 'wav' }
 const M4A = { mimes: ['audio/mp4', 'audio/x-m4a'], signature: 'mp4' }
 
 export const uploadRules = {
-  book: { bucket: 'protected-books', max: 50 * 1000 * 1000, extensions: { pdf: PDF, epub: { mimes: ['application/epub+zip'], signature: 'zip' } } },
-  'lesson-video': { bucket: 'course-videos', max: 50 * 1000 * 1000, extensions: { mp4: MP4, webm: WEBM, mov: MOV } },
-  'lesson-resource': { bucket: 'course-resources', max: 50 * 1000 * 1000, extensions: { pdf: PDF, zip: ZIP, mp3: MP3, wav: WAV, m4a: M4A } },
-  'workshop-resource': { bucket: 'course-resources', max: 50 * 1000 * 1000, extensions: { pdf: PDF, zip: ZIP, mp3: MP3, wav: WAV, m4a: M4A } },
-  'workshop-recording': { bucket: 'workshop-recordings', max: 50 * 1000 * 1000, extensions: { mp4: MP4, webm: WEBM, mov: MOV } },
+  book: { bucket: 'protected-books', max: getUploadLimit('protected-books'), extensions: { pdf: PDF, epub: { mimes: ['application/epub+zip'], signature: 'zip' } } },
+  'lesson-video': { bucket: 'course-videos', max: getUploadLimit('course-videos'), extensions: { mp4: MP4, webm: WEBM, mov: MOV } },
+  'lesson-resource': { bucket: 'course-resources', max: getUploadLimit('course-resources'), extensions: { pdf: PDF, zip: ZIP, mp3: MP3, wav: WAV, m4a: M4A } },
+  'workshop-resource': { bucket: 'course-resources', max: getUploadLimit('course-resources'), extensions: { pdf: PDF, zip: ZIP, mp3: MP3, wav: WAV, m4a: M4A } },
+  'workshop-recording': { bucket: 'workshop-recordings', max: getUploadLimit('workshop-recordings'), extensions: { mp4: MP4, webm: WEBM, mov: MOV } },
 }
 
 export function getUploadRule(kind) {
