@@ -903,3 +903,9 @@
 - Use explicit apex/www zone routes when Custom Domains rejects externally managed DNS. Back up and remove only the obsolete conflicting staging wildcard; preserve DNS and unrelated routes. Keep runtime secrets out of build assets and Git.
 - Keep the intended desk photo and original brand assets. Reduce responsive title/copy spacing and photo height while retaining deliberate Arabic line chunks, cover cropping, palette, ornament and automatic motion. Check real viewport dimensions and stable screenshots; the sidebar width is not desktop acceptance. Confirm separately in full-screen Chrome.
 - Preserve disposable-test audit records with null actor references when cleaning their Auth identities. Check cleanup errors rather than silently leaving a support account. Final live identity counts must match the preflight baseline.
+
+## 2026-10-17 — Local owner password test input
+
+- Load the security module from the running PowerShell host's PSHOME, not an inherited module search path. Keep existing Windows DPAPI ciphertext compatibility across console/dialog producers and the actual Node reader.
+- Keep decrypted input in a captured local pipe and memory only. Do not include it in argv, environment, plaintext files, console output, process exception logs or Git. Remove ciphertext by default after reading and clear captured byte buffers.
+- Distinguish input transport, actual Supabase password authentication and application session acceptance. A confirmed/enrolled owner account or successful encryption round-trip certifies neither login nor session creation. Retain staff MFA, throttling and permissions while diagnosing rejected credentials.
