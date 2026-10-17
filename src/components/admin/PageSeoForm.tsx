@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { updatePageSeo } from '@/lib/actions/cms'
 import { AdminField as FormField } from '@/components/admin/AdminField'
+import { useAdminAction } from './useAdminAction'
+import { ActionFeedback } from './ActionFeedback'
 import { Button } from '@/components/ui/Button'
 
 export function PageSeoForm({
@@ -14,29 +15,28 @@ export function PageSeoForm({
   seoTitle: string
   seoDescription: string
 }) {
-  const [busy, setBusy] = useState(false)
-  const [msg, setMsg] = useState<string | null>(null)
+  const { busy, feedback, run } = useAdminAction()
 
   return (
     <form
       onSubmit={async (e) => {
         e.preventDefault()
-        setBusy(true)
-        setMsg(null)
-        const res = await updatePageSeo(pageId, new FormData(e.currentTarget))
-        setMsg(res.ok ? 'حُفظ ✓' : res.error)
-        setBusy(false)
+        const data = new FormData(e.currentTarget)
+        await run(() => updatePageSeo(pageId, data), 'حُفظ عنوان نتائج البحث ووصفها.')
       }}
-      className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[1fr_2fr_auto]"
+      aria-busy={busy}
+      className="space-y-3 border-t border-line pt-4"
     >
-      <FormField label="عنوان نتائج البحث" name="seo_title" maxLength={70} defaultValue={seoTitle} />
-      <FormField label="وصف نتائج البحث" name="seo_description" maxLength={180} defaultValue={seoDescription} />
+      <fieldset disabled={busy} className="grid gap-3 disabled:opacity-60 sm:grid-cols-[1fr_2fr_auto]">
+      <FormField label="عنوان نتائج البحث" name="seo_title" hint="عنوان مختصر يساعد على فهم الصفحة في محركات البحث. تركه فارغًا يستخدم عنوان الصفحة." example="جلسات هبة الشريف" maxLength={70} defaultValue={seoTitle} />
+      <FormField label="وصف نتائج البحث" name="seo_description" hint="ملخص واضح لمحتوى الصفحة؛ قد تختار محركات البحث نصًا آخر من محتواها." example="تعرّفي على الجلسات المتاحة وطريقة اختيار موعد مناسب." maxLength={180} defaultValue={seoDescription} />
       <div className="flex items-end gap-2 pb-0.5">
         <Button type="submit" size="sm" variant="secondary" disabled={busy}>
-          حفظ
+          {busy ? 'جارٍ الحفظ…' : 'حفظ وصف البحث'}
         </Button>
-        {msg && <span role={msg === 'حُفظ ✓' ? 'status' : 'alert'} aria-live="polite" className="pb-2 text-xs text-taupe">{msg}</span>}
       </div>
+      </fieldset>
+      <ActionFeedback feedback={feedback} />
     </form>
   )
 }

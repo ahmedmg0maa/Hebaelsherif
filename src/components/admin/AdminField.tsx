@@ -109,8 +109,9 @@ function help(name: string, label: string, required?: boolean, hint?: string, ex
  const base=name.replace(/_\d+$/,'')
  const semantic=/^media_.*_x$/.test(name)?'focal_x':/^media_.*_y$/.test(name)?'focal_y':/^media_.*_alt$/.test(name)?'alt':base.includes('href')?'cta_href':base.includes('cta')?'cta_label':base.includes('title')?'title':base.includes('text')?'body':base
  const entry=guidance[aliases[name]??name]??guidance[semantic]
+ const exampleText=example ?? entry?.example ?? label
  return <><span className="block">{hint ?? entry?.description ?? `اكتبي ${label} كما تريدين حفظه وعرضه في هذا القسم.`}</span>
-   <span className="mt-1 block">مثال توضيحي: {example ?? entry?.example ?? label}.</span>
+   <span className="mt-1 block">مثال توضيحي: {exampleText}{/[.!?؟…]$/u.test(exampleText)?'':'.'}</span>
    <span className="mt-1 block font-semibold">{required ? 'مطلوب' : 'اختياري'}{limits ? ` · ${limits}` : ''}</span></>
 }
 type Extra = { example?: string; limits?: string }
