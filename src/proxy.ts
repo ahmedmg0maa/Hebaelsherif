@@ -56,8 +56,13 @@ function stagingChallenge(nonce: string) {
   })
 }
 
-function applyResponseHeaders(response: NextResponse, nonce: string) {
+function applyResponseHeaders(response: NextResponse, nonce: string, privateResponse = false) {
   Object.entries(securityHeaders(nonce)).forEach(([key, value]) => response.headers.set(key, value))
+  if (privateResponse) {
+    response.headers.set('Cache-Control', 'private, no-store')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  }
   if (isStaging()) Object.entries(stagingHeaders).forEach(([key, value]) => response.headers.set(key, value))
   return response
 }
@@ -75,7 +80,7 @@ export default async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone()
     url.pathname = path.startsWith('/admin') ? '/auth/admin' : '/auth/login'
     url.searchParams.set('redirect', path)
-    return applyResponseHeaders(NextResponse.redirect(url), nonce)
+    return applyResponseHeaders(NextResponse.redirect(url), nonce, true)
   }
 
   // A staging deployment must be unreachable to the general public. Missing
@@ -83,7 +88,7 @@ export default async function proxy(request: NextRequest) {
   // an unprotected preview. cPanel stores these values outside the repository.
   if (isStaging() && !stagingAccessAllowed(request)) return stagingChallenge(nonce)
 
-  let response = applyResponseHeaders(NextResponse.next({ request: { headers: requestHeaders } }), nonce)
+  let response = applyResponseHeaders(NextResponse.next({ request: { headers: requestHeaders } }), nonce, needsAuth || path.startsWith('/auth'))
 
   // Public routes do not need a Supabase session refresh. Avoid spending a
   // shared-hosting request on a remote Auth lookup for every anonymous page.
@@ -106,7 +111,7 @@ export default async function proxy(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          response = applyResponseHeaders(NextResponse.next({ request: { headers: requestHeaders } }), nonce)
+          response = applyResponseHeaders(NextResponse.next({ request: { headers: requestHeaders } }), nonce, true)
           cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
         },
       },
@@ -140,7 +145,7 @@ export default async function proxy(request: NextRequest) {
       url.pathname = '/auth/admin'
       url.searchParams.set('reauth', '1')
       url.searchParams.set('redirect', path)
-      return applyResponseHeaders(NextResponse.redirect(url), nonce)
+      return applyResponseHeaders(NextResponse.redirect(url), nonce, true)
     }
     let role = null
     try {
@@ -158,7 +163,7 @@ export default async function proxy(request: NextRequest) {
       const url = request.nextUrl.clone()
       url.pathname = '/auth/admin'
       url.search = '?error=role'
-      return applyResponseHeaders(NextResponse.redirect(url), nonce)
+      return applyResponseHeaders(NextResponse.redirect(url), nonce, true)
     }
   }
 

@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { getServerClient } from '@/lib/supabase/server'
 import { hasSupabasePublicConfig } from '@/lib/supabase/public-key'
 
-const allowedDestinations = new Set(['/dashboard', '/auth/update-password', '/auth/login'])
+const allowedDestinations = new Set(['/dashboard', '/booking', '/auth/update-password', '/auth/login'])
 
 function destination(value: string | null) {
   return value && allowedDestinations.has(value) ? value : '/auth/login'

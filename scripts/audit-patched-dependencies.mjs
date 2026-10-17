@@ -3,7 +3,11 @@
 import { spawnSync } from 'node:child_process'
 import { verifyBracesGuard } from './verify-braces-guard.mjs'
 
-const result=spawnSync('corepack',['pnpm','audit','--prod','--json'],{encoding:'utf8',maxBuffer:10_000_000})
+// pnpm's JS entry works on Windows too; spawning the corepack .cmd shim as
+// an executable fails there. Keep the invoking, pinned package manager.
+const cli=process.env.npm_execpath
+if(!cli)throw Error('Run this audit through corepack pnpm audit:dependencies.')
+const result=spawnSync(process.execPath,[cli,'audit','--prod','--json'],{encoding:'utf8',maxBuffer:10_000_000})
 if(result.error)throw result.error
 let report
 try{report=JSON.parse(result.stdout)}catch{throw Error('Dependency registry audit did not return valid JSON; audit is unverified.')}

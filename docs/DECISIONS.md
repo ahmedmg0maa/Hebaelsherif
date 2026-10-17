@@ -888,3 +888,11 @@
 - Bound pointer work to one hero and one animation frame, disable it on coarse/reduced-motion devices, and cancel frames/listeners on scroll, exit and unmount. Slow background light and finite transitions use transform/opacity without changing document layout.
 - Deliver an auditable built-in Node/Git patch with exact-input checks, external backups and undo. Do not require another project ZIP, overwrite unrelated edits or insert authentication credentials into instructions.
 - The connected remote main uses a materially different legacy schema. Source transfer is not database migration approval; review history and compatibility before real Admin/booking acceptance or schema changes.
+
+## 2026-10-17 — Connected production reconciliation and launch
+
+- Reconcile only reviewed missing 044–102 migrations after a real logical dump, isolated full restore/count verification, restored-data upgrade and live rollback rehearsal. Record manually applied 096 without replaying its DDL; restore its readiness definition after 056 in the same commit transaction.
+- Keep owner password entry narrowly enrolled and session-bound; staff retain MFA. Use disposable identities and rollback-only fixtures for integration tests; hide the temporary persisted email fixture offering before its transaction commits.
+- Load .env.local for launch commands, prevent Vite's dotenv-to-.dev.vars copy, and fail configured builds if actual server secret values appear anywhere in dist. Worker credentials remain runtime bindings.
+- Allow the explicit booking callback destination and make Auth/customer/Admin responses and redirects private/no-store. Preserve the existing cream/teal/gold artwork, motion, managed content and lockfile.
+- Keep free cost mode. Do not invent offerings, prices, policies or availability. The owner will supply approved operational content; technical deployment is distinct from opening public booking.

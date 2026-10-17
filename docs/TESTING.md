@@ -4,7 +4,9 @@
 
 `corepack pnpm verify:motion-v3` runs 16 isolated actual-component handler, observer-fallback, artwork and contrast groups without a browser or provider credentials. It is not DOM-rendering or device acceptance. `corepack pnpm test:design-v3` is the separate cross-engine design suite; it requires an already-running review URL and available Playwright browser runtimes, and never starts a server itself. Simulated iPhone/Android/tablet projects do not certify physical hardware.
 
-Current environment has no approved browser-control capability. The Sites local-only workflow therefore skips browser QA; do not run the browser-containing `check:deploy` aggregate or improvise a preview server here. Use the appropriate source checks, ESLint/TypeScript, isolated builds, release packaging and archive audits. Record the omitted browser gate explicitly in `CREAM_MOTION_VALIDATION_2026-10-13.json` and perform it on the controlled review machine before claiming visual acceptance.
+The 2026-10-13 review environment had no approved browser control, so its historical validation does not establish browser acceptance. The connected 2026-10-17 launch has browser control and explicitly tests the deployed Worker at phone, tablet and desktop widths; evidence is recorded in `LAUNCH_EXECUTION_2026-10-17.md`. Use available approved browser tools and keep source contracts, simulated viewport checks and physical-device acceptance distinct.
+
+`corepack pnpm verify:auth-callback` executes the actual callback and proxy with isolated provider replies. It covers the booking confirmation return path, permitted dashboard/recovery destinations, external/Admin redirect denial, exchange failure and private/no-store Auth/account/Admin responses. `build:launch` additionally compares the actual configured server credentials against every generated `dist` file; credential values are never printed. `tests/sql/connected-launch-smoke.sql` exercises disposable booking fixtures and always ends in ROLLBACK; it sends no email.
 
 ## Fast checks during implementation
 

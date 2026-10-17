@@ -1,3 +1,8 @@
+# Connected launch checkpoint — 2026-10-17
+
+User-authorized production work continues in this checkout on prepare-cream-motion. Full backup/restore and live rollback rehearsal passed; missing migrations committed atomically and history is now 000–102, with 096 recorded without replay and correct owner readiness retained. Auth production URLs/Resend SMTP are configured; launch/admin read checks pass. Configured Workers build/dry-run, type-check, ESLint, source audits, actual responsive practice/navigation and disposable customer session/Admin denial passed. Live booking integration passed; a hidden disposable booking was shown in the browser and its email sent by the real Worker cron. User confirmed direct test email in the inbox and will supply approved public service/availability data. Pending: production-domain cutover, final host checks, owner password input/session test, fixture cleanup and final evidence/push. Preserve free mode and all existing owner/content data. Details: docs/LAUNCH_EXECUTION_2026-10-17.md.
+
+---
 # Current handoff — 2026-10-16 — Reference-led ornament and automatic motion
 
 User is applying changes from VS Code in D:/New life/Heba/4/Hebaelsherif-GitHub on prepare-cream-motion. Preserve that existing GitHub repository and its history. The source ZIP was already copied over a clean clone; do not ask for another full download or restart the old phase queue.

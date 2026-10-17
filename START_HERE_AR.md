@@ -39,10 +39,10 @@ Free لا يعني سعة غير محدودة أو ضمان بقاء المشر�
 
 ```bash
 corepack pnpm install --frozen-lockfile
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-على Windows يمكن نسخ `.env.example` إلى `.env` من مستكشف الملفات. لا تحتاجين تثبيت كل مكتبة يدويًا.
+على Windows يمكن نسخ `.env.example` إلى `.env.local` من مستكشف الملفات. أوامر الإطلاق والإدارة تقرأ هذا الملف المحلي المستثنى من Git. لا تحتاجين تثبيت كل مكتبة يدويًا.
 
 3. املئي المتغيرات العامة لعنوان Supabase ومفتاحه العام، ومفتاح الخادم السري، وبريد المالكة، ومفتاح Resend والمرسل الموثق. أبقي `NEXT_PUBLIC_SITE_URL=https://hebaelsherif.com`، و`HEBA_DEPLOYMENT_ENV=production`، و`HEBA_COST_MODE=free` و`SEED_DEMO=false`. اتركي مفاتيح Stream وPreview فارغة.
 4. قارني سجل ترحيلات قاعدة البيانات القائمة، وطبقي **الناقص فقط وبترتيبه حتى 102** على Staging أولًا. لا تعيدي تشغيل 000 أو التاريخ كله على الإنتاج. آخر إضافات هذه النسخة هي `102_free_launch_operations.sql`؛ النسخة السابقة أضافت 096–101 وقد تكون أيضًا غير مطبقة على حسابك. الحالة القديمة في المحادثات لا تثبت ما طُبق اليوم.
