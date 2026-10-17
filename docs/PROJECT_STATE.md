@@ -8,6 +8,8 @@ Independent UX slice: existing30 routes regrouped into daily/sessions/content/si
 
 Actual browser found two navigation keyboard defects: native search Escape cleared the search before dismissing the modal, and Shift+Tab from the first link focused BODY. Fixed explicit dismissal and focus-boundary wrapping, verified both Tab directions remain inside the dialog and one Escape restores focus to “فتح القائمة”. Sidebar search now normalizes Arabic hamza/diacritics and has a connected purpose/example hint. Test used actual Sidebar/AdminShell with fixture permissions, not real role authentication. Next provider-free Preview build passed before this small Sidebar follow-up; final lint/type/build and acceptance handoff remain underway.
 
+Saved-name resolution additionally verifies exact provider counts per bounded ID batch: incomplete reads fail explicitly instead of labelling unseen rows as deleted. Actual-action tests pass missing/archived/hidden/inactive/old selections, permission denial, malformed IDs, provider failure and incomplete responses. The refreshed final component browser run proves valid form + two Enter searches = zero save requests/SQL form writes, then one deliberate save persists across reload with the same three IDs. Choice fixture can render the actual AdminShell for responsive navigation checks; its injected identity remains explicitly outside integrated acceptance.
+
 ---
 
 # Admin foundation phase one — reviewable implementation, production held (2026-10-17)

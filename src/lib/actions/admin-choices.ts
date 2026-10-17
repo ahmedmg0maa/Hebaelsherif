@@ -26,8 +26,8 @@ export async function resolveAdminChoices(kind:ChoiceKind,ids:string[]){
    const columns=media?'id,title,archived_at':article?'slug,title,status,is_published':service?'id,title,is_active,products!inner(archived_at,is_published)':plan?'id,title,is_active,archived_at':'id,title,type,is_published,archived_at'
    const db=await getServerClient()
    for(let start=0;start<unique.length;start+=100){
-    const {data,error}=await db.from(table).select(columns).in(article?'slug':'id',unique.slice(start,start+100)).limit(100)
-    if(error||!Array.isArray(data))throw Error('SAVED_CHOICES_READ_UNAVAILABLE')
+    const {data,error,count}=await db.from(table).select(columns,{count:'exact'}).in(article?'slug':'id',unique.slice(start,start+100)).limit(100)
+    if(error||!Array.isArray(data)||!Number.isSafeInteger(count)||data.length!==count)throw Error('SAVED_CHOICES_READ_UNAVAILABLE')
     // Dynamic columns are server constants above. No URL/path/private content is returned.
     for(const value of data){
      const row=value as unknown as {id:string;slug:string;title:string;type?:string;archived_at?:string|null;is_published?:boolean;is_active?:boolean;status?:string;products?:{archived_at:string|null;is_published:boolean}|{archived_at:string|null;is_published:boolean}[]}

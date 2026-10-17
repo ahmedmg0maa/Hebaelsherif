@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {sourceLoader} from './lib/load-source.mjs'
-let allowed=true,fault=false,requested='',calls=[],exactCalls=[]
+let allowed=true,fault=false,incomplete=false,requested='',calls=[],exactCalls=[]
 const savedId=n=>`10000000-0000-4000-8000-${String(n).padStart(12,'0')}`
 const savedRows=[{id:savedId(1),title:'كورس قديم خارج صفحة البحث',is_published:true},{id:savedId(2),title:'كتاب مؤرشف محفوظ',archived_at:'2026-10-01'},{id:savedId(3),title:'جلسة غير منشورة',is_published:false},{id:savedId(4),title:'خدمة متوقفة',is_active:false,products:{archived_at:null,is_published:true}}]
 const row={id:'choice-id',title:'اختيار تجريبي',slug:'test-article',type:'course',kind:'image',alt:'وصف تجريبي',bucket:'public-media',path:'test/cover.webp',full_name:'عميلة اختبار',email:'fixture@example.invalid'}
@@ -20,7 +20,7 @@ const load=sourceLoader({
     eq:()=>({single:async()=>({data:{bucket:'protected-books',kind:'document',visibility:'private'},error:null})}),
     in:(column,ids)=>({limit:async limit=>{
      exactCalls.push({table,columns,column,ids,limit})
-     return fault?{data:null,error:{message:'provider secret'}}:{data:table==='articles'?[{slug:ids[0],title:'مقال قديم',status:'draft',is_published:false}]:savedRows.filter(row=>ids.includes(row.id)),error:null}
+     return fault?{data:null,error:{message:'provider secret'}}:{data:table==='articles'?[{slug:ids[0],title:'مقال قديم',status:'draft',is_published:false}]:savedRows.filter(row=>ids.includes(row.id)),error:null,count:incomplete?999:table==='articles'?1:savedRows.filter(row=>ids.includes(row.id)).length}
     }}),
    })}),
   }),
@@ -51,4 +51,5 @@ const before=exactCalls.length;allowed=false;assert.equal((await resolveAdminCho
 for(const [kind,bad] of [['product',['not-a-uuid']],['article',['../bad']],['product',Array(201).fill(savedId(1))],['customer',[savedId(1),savedId(2)]]])assert.equal((await resolveAdminChoices(kind,bad)).ok,false)
 assert.equal(exactCalls.length,before)
 fault=true;const unavailable=await resolveAdminChoices('product',ids);assert.equal(unavailable.ok,false);assert(!unavailable.error.includes('provider'));assert(!unavailable.error.includes('secret'))
+fault=false;incomplete=true;assert.equal((await resolveAdminChoices('product',ids)).ok,false)
 console.log('PASS exact-ID hydration: old/archived/hidden/inactive/missing references; bounded batches; scoped audited customer lookup; permission/input/provider failures preserve IDs')
