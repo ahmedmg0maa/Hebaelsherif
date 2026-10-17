@@ -24,6 +24,14 @@ try {
  }}]})
  server=createServer((request,response)=>{response.setHeader('Content-Type',request.url==='/bundle.js'?'text/javascript':'text/html; charset=utf-8');response.end(request.url==='/bundle.js'?readFileSync(join(directory,'bundle.js')):request.url.startsWith('/frame')?'<!doctype html><html><body>Local frame fixture</body></html>':'<!doctype html><html lang="ar" dir="rtl"><body><div id="app"></div><script src="/bundle.js"></script></body></html>')})
  await new Promise(done=>server.listen(0,'127.0.0.1',done))
+ if(process.argv.includes('--serve')){
+  // Same deliberately injected component fixture, exposed to the approved browser.
+  // Control states are visible buttons; no hidden state injection is needed by QA.
+  server.removeAllListeners('request')
+  server.on('request',(request,response)=>{response.setHeader('Cache-Control','no-store');response.setHeader('Content-Type',request.url==='/bundle.js'?'text/javascript':'text/html;charset=utf-8');response.end(request.url==='/bundle.js'?readFileSync(join(directory,'bundle.js')):request.url.startsWith('/frame')?'<!doctype html><html><body>Local video fixture</body></html>':`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><aside><h1>فحص مكوّن التعلّم فقط — ليس قبول المزود</h1><p>ردود محلية مصطنعة؛ لا مصادقة أو Storage أو حق وصول حقيقي في هذا الفحص.</p><button onclick="window.deferVideo=false;window.resolveVideo?.()">إكمال رد الفيديو التجريبي</button><button onclick="window.learningMode='note-error'">تفعيل فشل الملاحظة التجريبي</button><button onclick="window.learningMode='video-error'">تفعيل فشل الفيديو التجريبي</button><button onclick="window.learningMode='ok'">إتاحة الرد المحلي مجددًا</button></aside><div id="app"></div><script src="/bundle.js"></script></body></html>` )})
+  console.log('Learning component fixture: http://127.0.0.1:'+server.address().port+' (stop + Enter to close; not provider acceptance)')
+  process.stdin.setEncoding('utf8');await new Promise(done=>{process.stdin.on('data',text=>{if(text.trim()==='stop')done()});process.once('SIGINT',done);process.once('SIGTERM',done)});process.stdin.removeAllListeners('data');process.stdin.pause()
+ }else{
  browser=await chromium.launch({executablePath:process.env.HEBA_TEST_CHROMIUM_PATH,args:['--no-sandbox','--disable-dev-shm-usage','--no-zygote','--single-process']})
  const results=[]
  for(const width of [1440,390]) {
@@ -70,4 +78,5 @@ try {
   results.push({width,admissionRequestsSerialized:true,draftsPerLesson:true,duplicateSubmitBlocked:true,failedMutationsRecover:true,keyboardTabs:true,popupFallback:true})
  }
  console.log(JSON.stringify({status:'passed',results,scope:'Actual React component; injected local Server Actions and frame. Not real protected video, database persistence or entitlement acceptance.'}))
+ }
 } finally {await browser?.close();await new Promise(done=>server?server.close(done):done());rmSync(directory,{recursive:true,force:true})}

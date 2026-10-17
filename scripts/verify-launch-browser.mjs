@@ -22,7 +22,12 @@ try{
   console.log('width',width,await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(e=>(e.getBoundingClientRect().right>innerWidth+1||e.getBoundingClientRect().left < -1)&&e.getBoundingClientRect().width>0).slice(0,8).map(e=>({tag:e.tagName,cls:e.className,width:e.getBoundingClientRect().width}))))
   assert.equal(await page.locator('h1').count(),1)
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`overflow width=${width} url=${page.url()}`)
-  await page.getByRole('tab',{name:'ملاحظاتك'}).click();await page.getByRole('heading',{name:'مساحة لأفكارك'}).waitFor()
+  // The current Home uses the real three-stage practice, replacing the old notes tour.
+  await page.getByRole('tab',{name:'جرّبي التطبيق',exact:true}).click()
+  await page.getByLabel('ما الأمر الواحد الذي يشغلكِ؟').fill('تنظيم وقت القراءة')
+  await page.getByLabel('ما أول خطوة صغيرة تستطيعين تجربتها؟').fill('عشر دقائق غدًا')
+  await page.getByRole('button',{name:'راجعي خطوتكِ',exact:false}).click()
+  await page.getByRole('heading',{name:'هل تبدو الخطوة محددة وممكنة؟',exact:true}).waitFor()
   await page.evaluate(()=>scrollTo(0,0))
   await page.screenshot({path:`reports/launch/home-${width}.png`,fullPage:true})
   await page.goto('http://127.0.0.1:3105/auth/admin',{waitUntil:'networkidle'})

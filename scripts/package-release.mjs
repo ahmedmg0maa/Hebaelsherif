@@ -28,7 +28,7 @@ function excluded(relativePath, isDirectory) {
   if (normalized === 'RELEASE_MANIFEST.json') return true
   if (excludedRoots.has(top) || excludedNames.has(name)) return true
   // Historical screenshot/video QA stays in the working source, not releases.
-  if (/^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence)(?:\/|$)/i.test(normalized)) return true
+  if (/^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence|admin-choice-acceptance-evidence)(?:\/|$)/i.test(normalized)) return true
   if (normalized === 'supabase/.temp' || normalized.startsWith('supabase/.temp/')) return true
   if (name === '.env.example') return false
   if (name === '.env' || name?.startsWith('.env.')) return true
@@ -83,7 +83,7 @@ const fileIntegrity = files.map((file) => {
 })
 const forbidden = files.filter((file) => /(^|\/)\.env(?:\..+)?$/.test(file) && file !== '.env.example'
   || file.startsWith('supabase/.temp/')
-  || /^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence)(?:\/|$)/i.test(file)
+  || /^docs\/(?:evidence|admin-current-state-evidence|admin-foundation-phase-one-evidence|admin-choice-acceptance-evidence)(?:\/|$)/i.test(file)
   || /^(?:\.next|node_modules|\.pnpm-store|playwright-report|test-results|reports|exports)(?:\/|$)/.test(file)
   || file === 'debug.log')
 if (forbidden.length) throw new Error(`Forbidden release paths: ${forbidden.join(', ')}`)
