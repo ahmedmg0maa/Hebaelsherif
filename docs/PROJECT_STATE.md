@@ -6,6 +6,8 @@ Only production Supabase is currently accessible; Docker and WSL are unavailable
 
 Independent UX slice: existing30 routes regrouped into daily/sessions/content/site/customers/sales/advanced, preserving the same permission map, URLs and badges. Search help is shorter with optional keyboard/length details; misleading global “new offer/article” links removed because they opened lists rather than creation. Resource/Page SEO labels use plain Arabic. Existing12 actual-code workflow/permission-navigation checks and targeted lint pass. Responsive navigation and full builds pending this slice's browser checkpoint. This is not completion of booking/course workspace redesign.
 
+Actual browser found two navigation keyboard defects: native search Escape cleared the search before dismissing the modal, and Shift+Tab from the first link focused BODY. Fixed explicit dismissal and focus-boundary wrapping, verified both Tab directions remain inside the dialog and one Escape restores focus to “فتح القائمة”. Sidebar search now normalizes Arabic hamza/diacritics and has a connected purpose/example hint. Test used actual Sidebar/AdminShell with fixture permissions, not real role authentication. Next provider-free Preview build passed before this small Sidebar follow-up; final lint/type/build and acceptance handoff remain underway.
+
 ---
 
 # Admin foundation phase one — reviewable implementation, production held (2026-10-17)

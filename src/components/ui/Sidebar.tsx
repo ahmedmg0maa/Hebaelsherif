@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/cn'
+import { normalizeNavigationQuery } from '@/lib/admin-navigation'
 
 export type SidebarItem = {
   href: string
@@ -51,10 +52,11 @@ function SidebarGlyph({ href }: { href: string }) {
 function Nav({ sections, onNavigate }: { sections: SidebarSection[]; onNavigate?: () => void }) {
   const pathname = usePathname()
   const [query, setQuery] = useState('')
-  const filtered = sections.map(section => ({ ...section, items: section.items.filter(item => !query.trim() || item.label.includes(query.trim())) })).filter(section => section.items.length)
+  const searchId=useId(),normalized=normalizeNavigationQuery(query)
+  const filtered = sections.map(section => ({ ...section, items: section.items.filter(item => !normalized || normalizeNavigationQuery(item.label).includes(normalized)) })).filter(section => section.items.length)
   return (
     <nav aria-label="أقسام مساحة العمل" className="flex-1 space-y-6 px-3 py-6">
-      {sections.reduce((sum, section) => sum + section.items.length, 0) > 12 && <label className="grid gap-2 px-2 text-sm text-on-dark/80">الوصول إلى قسم<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="اسم القسم…" className="min-h-12 w-full rounded-xl border border-on-dark/25 bg-on-dark/10 px-3 text-base text-on-dark placeholder:text-on-dark/60" /></label>}
+      {sections.reduce((sum, section) => sum + section.items.length, 0) > 12 && <div className="grid gap-2 px-2 text-sm text-on-dark/80"><label htmlFor={searchId}>الوصول إلى قسم</label><input id={searchId} type="search" value={query} onChange={event => setQuery(event.target.value)} aria-describedby={`${searchId}-help`} placeholder="اسم القسم…" className="min-h-12 w-full rounded-xl border border-on-dark/25 bg-on-dark/10 px-3 text-base text-on-dark placeholder:text-on-dark/60" /><p id={`${searchId}-help`} className="text-xs leading-6">لتصفية الأقسام فقط. مثال: الحجوزات. لا يتغير أي سجل.</p></div>}
       {!filtered.length && <p role="status" className="px-3 text-sm text-on-dark/80">لا يوجد قسم بهذا الاسم.</p>}
       {filtered.map((section, i) => (
         <div key={section.title ?? i}>
@@ -102,6 +104,14 @@ export function Sidebar({ brand, sections, footer, className }: SidebarProps) {
   const [open, setOpen] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null), trigger = useRef<HTMLButtonElement>(null)
   const id = useId()
+  function onDialogKeyDown(event:React.KeyboardEvent<HTMLDialogElement>){
+    if(event.key==='Escape'){event.preventDefault();setOpen(false);return}
+    if(event.key!=='Tab')return
+    const elements=Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(element=>element.getClientRects().length>0)
+    const first=elements[0],last=elements.at(-1)
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}
+  }
   useEffect(() => {
     if (!open) return
     const element = dialog.current
@@ -121,7 +131,7 @@ export function Sidebar({ brand, sections, footer, className }: SidebarProps) {
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M4 7h16M4 12h16M4 17h16" /></svg>
       </button>
     </div>
-    <dialog ref={dialog} id={id} aria-label="قائمة التنقل" onCancel={() => setOpen(false)} onClose={() => setOpen(false)} className="fixed inset-y-0 start-0 end-auto m-0 h-dvh max-h-none w-80 max-w-[90vw] border-0 bg-deep-teal p-0 text-on-dark shadow-sidebar backdrop:bg-ink/55">
+    <dialog ref={dialog} id={id} aria-label="قائمة التنقل" onKeyDown={onDialogKeyDown} onCancel={() => setOpen(false)} onClose={() => setOpen(false)} className="fixed inset-y-0 start-0 end-auto m-0 h-dvh max-h-none w-80 max-w-[90vw] border-0 bg-deep-teal p-0 text-on-dark shadow-sidebar backdrop:bg-ink/55">
       <div className="flex min-h-full flex-col">
         <div className="flex items-center justify-between gap-3 border-b border-on-dark/15 px-5 py-4">{brand}<button type="button" onClick={() => setOpen(false)} aria-label="إغلاق القائمة" className="h-12 w-12 shrink-0 rounded-full border border-on-dark/30 text-xl">×</button></div>
         <Nav sections={sections} onNavigate={() => setOpen(false)} />
