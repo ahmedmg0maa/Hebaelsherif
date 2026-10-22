@@ -1,0 +1,5 @@
+import { ProductCard } from '@/components/catalog/ProductCard'
+import type { PublicProgram } from '@/lib/data/programs'
+
+const labels: Record<PublicProgram['type'], string> = { bundle: 'حزمة', vip: 'برنامج VIP', free_resource: 'مورد مجاني' }
+export function ProgramCard({ program }: { program: PublicProgram }) { const meta=program.type==='bundle'?[`${program.children.length.toLocaleString('ar-EG')} عناصر منشورة`]:program.type==='vip'&&program.plan?[`${program.plan.durationDays.toLocaleString('ar-EG')} يومًا`,`${program.plan.sessionsIncluded.toLocaleString('ar-EG')} جلسات مشمولة`]:program.resource?[`مرتبط بمورد منشور`]:[];return <ProductCard href={`/programs/${program.slug}`} title={program.title} subtitle={program.subtitle} description={program.description} price={program.price} compareAtPrice={program.compareAtPrice} badge={{label:labels[program.type],tone:program.type==='free_resource'?'teal':program.type==='vip'?'burgundy':'gold'}} meta={meta} coverKind="program" coverUrl={program.coverUrl} ctaLabel="شاهدي التفاصيل"/> }

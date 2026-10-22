@@ -1,28 +1,20 @@
 import type { MetadataRoute } from 'next'
 
-import { buildAbsoluteUrl } from '@/lib/runtime/site-url'
+const site = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export default function robots(): MetadataRoute.Robots {
+  if (process.env.HEBA_DEPLOYMENT_ENV === 'staging') {
+    return { rules: [{ userAgent: '*', disallow: '/' }] }
+  }
+
   return {
     rules: [
       {
         userAgent: '*',
-        allow: [
-          '/',
-          '/start-here',
-          '/services',
-          '/programs',
-          '/books',
-          '/booking',
-          '/articles',
-          '/faq',
-          '/about',
-          '/contact',
-          '/trust-safety',
-        ],
-        disallow: ['/admin', '/dashboard', '/api', '/auth/reset-password'],
+        allow: '/',
+        disallow: ['/dashboard', '/admin', '/checkout', '/auth'],
       },
     ],
-    sitemap: buildAbsoluteUrl('/sitemap.xml'),
+    sitemap: `${site}/sitemap.xml`,
   }
 }

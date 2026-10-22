@@ -1,0 +1,13 @@
+{
+  "productionProjectRef": "zfbwpubsnuijybxjuidc",
+  "projectRef": "isolated-staging-example",
+  "environment": "staging",
+  "containsCustomerData": false,
+  "containsCredentials": false,
+  "recovery": { "verified": true, "restoreDrillAt": "2026-08-25T00:00:00Z" },
+  "migrationIds": ["000", "043"],
+  "tables": [],
+  "rls": {},
+  "functionGrants": {},
+  "policies": {}
+}

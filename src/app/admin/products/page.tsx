@@ -1,30 +1,83 @@
-export const dynamic = 'force-dynamic'
+import type { Metadata } from 'next'
+import { adminList, getPublicMediaOptions } from '@/lib/data/cms'
+import { formatPrice } from '@/lib/format'
+import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
+import { Badge } from '@/components/ui/Badge'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Button } from '@/components/ui/Button'
+import { ProductComposition, ProductCreatePanel, ProductEditPanel, ProgramPublishControl } from '@/components/admin/ProductManager'
 
-import { AdminPageHeader, AdminPanel, EmptyState, MetricCard } from '@/components/admin/OperationsUI'
+export const metadata: Metadata = { title: 'المنتجات — الإدارة' }
 
-const metrics = [{ label: 'الأنواع', value: 'Book / Course / Workshop / Session', hint: 'V8 OS' },{ label: 'الدفع', value: 'Checkout موحد', hint: 'V8 OS' },{ label: 'الوصول', value: 'Content Access محمي', hint: 'V8 OS' }]
-const actions = ['إنشاء product record لكل عنصر قابل للبيع','ربط السعر والعرض والكوبون بنفس النظام','منع فتح المحتوى إلا بعد payment approved أو grant يدوي']
+type Row = { id: string; title: string; type: string; slug: string; subtitle: string | null; description: string; price: number; compare_at_price: number | null; currency: string; cover_url: string | null; archived_at:string|null; is_published: boolean; sort: number }
+type VariantRow = { id: string; product_id: string; name: string; price: number; is_active: boolean }
+type BundleRow = { bundle_product_id: string; child_product_id: string }
 
-export default function AdminProductsPage() {
+const typeLabels: Record<string, string> = {
+  course: 'دورة',
+  book: 'كتاب',
+  workshop: 'ورشة',
+  session: 'جلسة',
+  bundle: 'حزمة',
+  vip: 'VIP',
+  free_resource: 'مورد مجاني',
+}
+const programTypes = new Set(['bundle', 'vip', 'free_resource'])
+const specialistRoutes: Record<string, string> = { course: '/admin/courses', book: '/admin/books', workshop: '/admin/workshops', session: '/admin/services' }
+
+export default async function AdminProductsPage() {
+  const media = await getPublicMediaOptions()
+  const [products, variants, bundleRows] = await Promise.all([
+    adminList<Row>('products', 'id, title, type, slug, subtitle, description, price, compare_at_price, currency, cover_url, archived_at, is_published, sort', { orderBy: 'sort', ascending: true }),
+    adminList<VariantRow>('product_variants', 'id, product_id, name, price, is_active', { orderBy: 'name', ascending: true, limit: 500 }),
+    adminList<BundleRow>('product_bundles', 'bundle_product_id, child_product_id', { limit: 500 }),
+  ])
+
   return (
-    <div className="space-y-8">
-      <AdminPageHeader title="كتالوج المنتجات الموحد" description="كل الكتب والكورسات والورش والجلسات والباقات يجب أن تُدار من طبقة Product واحدة حتى لا يتكرر منطق الدفع والوصول." />
-      <div className="grid gap-4 md:grid-cols-3">
-        {metrics.map((metric) => <MetricCard key={metric.label} label={metric.label} value={metric.value} hint={metric.hint} tone="gold" />)}
-      </div>
-      <AdminPanel title="خطة التشغيل" description="هذه الصفحة جزء من Admin OS V8؛ تعرض ما يجب إدارته وتمنع وجود أقسام غير مفهومة أو فارغة.">
-        <div className="grid gap-4 md:grid-cols-3">
-          {actions.map((action, index) => (
-            <article key={action} className="rounded-2xl border border-sand bg-cream/70 p-5">
-              <span className="latin-numerals flex h-9 w-9 items-center justify-center rounded-full bg-petrol text-sm font-black text-ivory">{index + 1}</span>
-              <p className="mt-4 text-sm font-black leading-7 text-charcoal">{action}</p>
-            </article>
-          ))}
-        </div>
-      </AdminPanel>
-      <AdminPanel title="حالة الربط" description="لا يتم عرض بيانات وهمية؛ عند ربط Supabase ستظهر البيانات التشغيلية في الجداول والتقارير.">
-        <EmptyState title="جاهز للربط التشغيلي" description="البنية والواجهة جاهزتان. المرحلة التالية تربط الجداول والـ RPCs الخاصة بهذا القسم ضمن دورة التنفيذ المحددة." />
-      </AdminPanel>
+    <div className="mx-auto max-w-5xl space-y-8">
+      <header>
+        <h1 className="text-3xl font-bold text-deep-teal">المنتجات</h1>
+        <p className="mt-1 text-text-soft">الحزم وVIP والموارد المجانية تُدار هنا وتظهر في «البرامج» فقط بعد فحص التكوين والتسليم. العناصر المتخصصة تُنشر من شاشتها الأصلية.</p>
+      </header>
+
+      <ProductCreatePanel media={media} />
+
+      {products.length === 0 ? (
+        <EmptyState
+          title="لا منتجات بعد"
+          description="أضيفي الحزمة أو البرنامج من النموذج أعلاه، والدورات والكتب من أقسامها."
+        />
+      ) : (
+        <Table>
+          <THead>
+            <tr>
+              <TH>المنتج</TH>
+              <TH>النوع</TH>
+              <TH>السعر</TH>
+              <TH>الحالة</TH>
+              <TH>الإجراء</TH>
+            </tr>
+          </THead>
+          <TBody>
+            {products.map((p) => (
+              <TR key={p.id}>
+                <TD>
+                  <p className="font-semibold text-deep-teal">{p.title}</p>
+                  <p className="text-xs text-taupe" dir="ltr">/{p.slug}</p>
+                </TD>
+                <TD>{typeLabels[p.type] ?? p.type}</TD>
+                <TD className="font-bold">{formatPrice(Number(p.price),p.currency)}</TD>
+                <TD>
+                  <Badge tone={p.is_published ? 'success' : 'sand'}>{p.archived_at?'مؤرشف':p.is_published?'منشور':'مسودة'}</Badge>
+                </TD>
+                <TD>
+                  {programTypes.has(p.type) ? <div className="flex flex-wrap items-start gap-2"><ProgramPublishControl productId={p.id} published={p.is_published} /><ProductEditPanel media={media} item={{ id:p.id,type:p.type,title:p.title,slug:p.slug,subtitle:p.subtitle,description:p.description,price:Number(p.price),compareAtPrice:p.compare_at_price,currency:p.currency,coverUrl:p.cover_url,isPublished:p.is_published,sort:p.sort }}/><ProductComposition productId={p.id} productType={p.type} variants={variants.filter((variant) => variant.product_id === p.id).map((variant) => ({ id: variant.id, name: variant.name, price: Number(variant.price), isActive: variant.is_active }))} options={products.filter((item) => item.id !== p.id && ['course','book','workshop','session'].includes(item.type)).map((item) => ({ id: item.id, title: item.title, type: item.type }))} selectedChildren={bundleRows.filter((row) => row.bundle_product_id === p.id).map((row) => row.child_product_id)} /></div> : <Button href={specialistRoutes[p.type] ?? '/admin/overview'} size="sm" variant="secondary">إدارة ونشر من المصدر</Button>}
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      )}
     </div>
   )
 }

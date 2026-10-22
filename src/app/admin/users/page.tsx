@@ -1,285 +1,114 @@
-'use client'
+﻿import type { Metadata } from 'next'
+import { getServiceClient } from '@/lib/supabase/server'
+import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { NotifyUser } from '@/components/admin/NotifyUser'
+import { AccountDeletionQueue, type AccountDeletionQueueRow } from '@/components/admin/AccountDeletionQueue'
+import { requirePermission } from '@/lib/auth/permissions'
+import { isAccountDeletionStatus } from '@/lib/account-deletion/status'
+import Link from 'next/link'
 
+export const metadata: Metadata = { title: 'العملاء — الإدارة' }
 
-export const dynamic = 'force-dynamic'
+type Row = { id: string; full_name: string; email: string; phone: string | null; created_at: string }
 
-import { useEffect, useMemo, useState } from 'react'
-import { collection, getDocs } from '@/lib/supabase/data-client-compat'
-import { db } from '@/lib/supabase/client-compat'
-import type { Booking, Order, User } from '@/types'
-import { formatArabicDateTime, formatEGP, formatNumber } from '@/lib/utils/formatters'
-import { getAmount, isPaidOrder, toMillis } from '@/lib/admin/operations'
-import {
-  AdminActionButton,
-  AdminPageHeader,
-  AdminPanel,
-  EmptyState,
-  Field,
-  inputClass,
-  MetricCard,
-  ToneBadge,
-} from '@/components/admin/OperationsUI'
-import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-import { useAuth } from '@/hooks/useAuth'
-import { runAdminAction } from '@/lib/admin/client'
+const dateFmt = new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })
 
-interface UserItem extends User {
-  disabled?: boolean
-  lastLoginAt?: unknown
-  displayName?: string
-  photoURL?: string
-}
+type Props = { searchParams: Promise<{ q?: string }> }
 
-function mapDocs<T>(snapshot: Awaited<ReturnType<typeof getDocs>>) {
-  return snapshot.docs.map((docItem) => ({
-    id: docItem.id,
-    ...(docItem.data() as Record<string, unknown>),
-  })) as T[]
-}
-
-export default function AdminUsersPage() {
-  const { sessionUser } = useAuth()
-  const [users, setUsers] = useState<UserItem[]>([])
-  const [orders, setOrders] = useState<Order[]>([])
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [savingId, setSavingId] = useState('')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
-
-  async function load() {
-    setLoading(true)
-    try {
-      const [usersSnap, ordersSnap, bookingsSnap] = await Promise.all([
-        getDocs(collection(db, 'users')),
-        getDocs(collection(db, 'orders')),
-        getDocs(collection(db, 'bookings')),
-      ])
-      setUsers(
-        mapDocs<UserItem>(usersSnap).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)),
-      )
-      setOrders(mapDocs<Order>(ordersSnap))
-      setBookings(mapDocs<Booking>(bookingsSnap))
-    } catch (loadError) {
-      console.error('Users load error:', loadError)
-      setError('تعذر تحميل العملاء.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  async function setRole(user: UserItem, role: 'user' | 'admin') {
-    if (!window.confirm(`تغيير دور ${user.email} إلى ${role === 'admin' ? 'أدمن' : 'مستخدم'}؟`))
-      return
-    setSavingId(user.uid)
-    setMessage('')
-    setError('')
-    try {
-      await runAdminAction(sessionUser, {
-        action: 'user_role_changed',
-        targetType: 'users',
-        targetId: user.uid,
-        values: { role },
-      })
-      setUsers((current) =>
-        current.map((item) => (item.uid === user.uid ? { ...item, role } : item)),
-      )
-      setMessage('تم تحديث دور المستخدم عبر API آمن.')
-    } catch (roleError) {
-      console.error('Role update error:', roleError)
-      setError(
-        roleError instanceof Error ? roleError.message : 'تعذر تحديث الدور. تأكد من الصلاحيات.',
-      )
-    } finally {
-      setSavingId('')
-    }
-  }
-
-  const userMetrics = useMemo(() => {
-    const byUser = users.map((user) => {
-      const userOrders = orders.filter((order) => order.userId === user.uid)
-      const userBookings = bookings.filter((booking) => booking.userId === user.uid)
-      const paidTotal = userOrders
-        .filter(isPaidOrder)
-        .reduce((sum, order) => sum + getAmount(order), 0)
-      return { user, orders: userOrders, bookings: userBookings, paidTotal }
-    })
-    return byUser
-  }, [bookings, orders, users])
-
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    return userMetrics.filter(({ user, orders: userOrders, bookings: userBookings, paidTotal }) => {
-      const matchesSearch =
-        !query ||
-        [user.name, user.displayName, user.email, user.phone, user.uid]
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase()
-          .includes(query)
-      const matchesFilter =
-        filter === 'all' ||
-        (filter === 'admins' && user.role === 'admin') ||
-        (filter === 'paid' && paidTotal > 0) ||
-        (filter === 'booked' && userBookings.length > 0) ||
-        (filter === 'orders' && userOrders.length > 0)
-      return matchesSearch && matchesFilter
-    })
-  }, [filter, search, userMetrics])
-
-  const stats = useMemo(
-    () => ({
-      total: users.length,
-      admins: users.filter((user) => user.role === 'admin').length,
-      paid: userMetrics.filter((item) => item.paidTotal > 0).length,
-      booked: userMetrics.filter((item) => item.bookings.length > 0).length,
-      revenue: userMetrics.reduce((sum, item) => sum + item.paidTotal, 0),
-    }),
-    [userMetrics, users],
-  )
-
-  if (loading) return <PremiumSkeleton className="h-[32rem]" />
+export default async function AdminUsersPage({ searchParams }: Props) {
+  const { q } = await searchParams
+  const admin = await requirePermission('users.view', { redirectOnFailure: true })
+  if (!admin?.userId) throw new Error('ADMIN_CUSTOMER_DIRECTORY_ACCESS_UNAVAILABLE')
+  const query = q?.trim() ?? ''
+  if (query.length > 100 || /[\u0000-\u001f\u007f]/.test(query)) throw new Error('ADMIN_CUSTOMER_SEARCH_INVALID')
+  const service = getServiceClient()
+  const [{ data, error }, sendPermission, managePermission, deletionResponse] = await Promise.all([
+    service.rpc('search_admin_users', { p_actor_id: admin.userId, p_query: query }),
+    service.rpc('has_permission', { permission_name: 'notifications.send', uid: admin.userId }),
+    service.rpc('has_permission', { permission_name: 'users.manage', uid: admin.userId }),
+    service.rpc('list_admin_account_deletion_requests', { p_actor_id: admin.userId }),
+  ])
+  if (error || deletionResponse.error) throw new Error('ADMIN_CUSTOMER_DIRECTORY_READ_UNAVAILABLE')
+  const users = (Array.isArray(data) ? data : []) as Row[]
+  const canNotify = !sendPermission.error && sendPermission.data === true
+  const canManage = !managePermission.error && managePermission.data === true
+  const deletionRequests = (Array.isArray(deletionResponse.data) ? deletionResponse.data : [])
+    .filter((row): row is AccountDeletionQueueRow => Boolean(
+      row && typeof row === 'object' && typeof row.id === 'string'
+      && (typeof row.customer_id === 'string' || row.customer_id === null)
+      && typeof row.full_name === 'string' && typeof row.email === 'string'
+      && isAccountDeletionStatus(row.status) && typeof row.requested_at === 'string',
+    ))
 
   return (
-    <div className="space-y-8">
-      <AdminPageHeader
-        title="العملاء والمستخدمون"
-        description="فهم العملاء من زاوية الطلبات والحجوزات والإيرادات، مع تحكم حذر في أدوار المستخدمين."
-      />
-
-      {message ? (
-        <div className="rounded-2xl border border-olive/25 bg-olive/10 p-4 text-sm font-black text-olive dark:text-ivory">
-          {message}
+    <div className="mx-auto max-w-5xl space-y-8">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-deep-teal">العملاء</h1>
+          <p className="mt-1 text-text-soft">
+            {q ? `نتائج البحث عن «${q}»` : `أحدث ٢٠٠ حساب${canNotify ? ' — ويمكنك مراسلة أي عميلة بإشعار مباشر.' : '.'}`}
+          </p>
         </div>
-      ) : null}
-      {error ? (
-        <div className="rounded-2xl border border-burgundy/25 bg-burgundy/10 p-4 text-sm font-black text-burgundy dark:text-ivory">
-          {error}
+        <form className="flex gap-2">
+          <label htmlFor="q" className="sr-only">
+            بحث
+          </label>
+          <input
+            id="q"
+            name="q"
+            defaultValue={q ?? ''}
+            placeholder="الاسم أو البريد…"
+            maxLength={100}
+            className="w-56 rounded-full border border-line bg-surface-raised px-4 py-2 text-sm shadow-card focus:border-deep-teal focus:outline-2 focus:outline-deep-teal/20"
+          />
+          <button type="submit" className="rounded-full bg-deep-teal px-5 py-2 text-sm font-semibold text-on-dark">
+            بحث
+          </button>
+        </form>
+      </header>
+
+      <section className="space-y-4" aria-labelledby="account-deletion-queue-title">
+        <div>
+          <h2 id="account-deletion-queue-title" className="text-2xl font-bold text-deep-teal">طلبات حذف الحساب</h2>
+          <p className="mt-1 text-sm text-text-soft">مراجعة تشغيلية بحد أقصى ٢٠٠ طلب نشط. «معتمد» لا يعني أن الهوية حُذفت؛ لا يُسجل الاكتمال إلا بعد غيابها فعليًا.</p>
         </div>
-      ) : null}
+        <AccountDeletionQueue rows={deletionRequests} canManage={canManage} />
+      </section>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <MetricCard label="كل العملاء" value={formatNumber(stats.total)} tone="muted" />
-        <MetricCard label="Admins" value={formatNumber(stats.admins)} tone="gold" />
-        <MetricCard label="دفعوا" value={formatNumber(stats.paid)} tone="success" />
-        <MetricCard label="لديهم حجوزات" value={formatNumber(stats.booked)} tone="petrol" />
-        <MetricCard label="إجمالي مدفوع" value={formatEGP(stats.revenue)} tone="gold" />
-      </div>
-
-      <AdminPanel title="فلترة العملاء" description="ابحث عن عميلة وشاهد طلباتها وحجوزاتها بسرعة.">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Field label="النوع">
-            <select
-              className={inputClass}
-              value={filter}
-              onChange={(event) => setFilter(event.target.value)}
-            >
-              <option value="all">كل العملاء</option>
-              <option value="admins">Admins</option>
-              <option value="paid">عملاء دفعوا</option>
-              <option value="booked">لديهم حجوزات</option>
-              <option value="orders">لديهم طلبات</option>
-            </select>
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="بحث">
-              <input
-                className={inputClass}
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="اسم، بريد، هاتف..."
-              />
-            </Field>
-          </div>
-        </div>
-      </AdminPanel>
-
-      <AdminPanel
-        title="قائمة العملاء"
-        description="البيانات المعروضة محسوبة من الطلبات والحجوزات الحقيقية."
-      >
-        {filtered.length === 0 ? (
-          <EmptyState title="لا توجد نتائج" description="غير الفلتر أو البحث لعرض العملاء." />
-        ) : (
-          <div className="grid gap-4 xl:grid-cols-2">
-            {filtered.map(({ user, orders: userOrders, bookings: userBookings, paidTotal }) => (
-              <article
-                key={user.uid}
-                className="rounded-[1.75rem] border border-sand bg-cream/80 p-5 shadow-soft dark:border-gold/25 dark:bg-white/10"
-              >
-                <div className="mb-4 flex flex-wrap items-center gap-3">
-                  <h3 className="text-lg font-black text-charcoal dark:text-ivory">
-                    {user.name || user.displayName || user.email}
-                  </h3>
-                  <ToneBadge tone={user.role === 'admin' ? 'gold' : 'muted'}>
-                    {user.role === 'admin' ? 'Admin' : 'User'}
-                  </ToneBadge>
-                  {paidTotal > 0 ? <ToneBadge tone="success">عميل دافع</ToneBadge> : null}
-                  {userBookings.length > 0 ? <ToneBadge tone="petrol">حجز جلسة</ToneBadge> : null}
-                </div>
-                <div className="grid gap-3 text-sm font-bold text-warm-gray dark:text-cream md:grid-cols-2">
-                  <p>
-                    البريد: <span className="text-charcoal dark:text-ivory">{user.email}</span>
-                  </p>
-                  <p>
-                    الهاتف:{' '}
-                    <span className="text-charcoal dark:text-ivory">
-                      {user.phone || 'غير متوفر'}
-                    </span>
-                  </p>
-                  <p>
-                    الطلبات:{' '}
-                    <span className="text-charcoal dark:text-ivory">
-                      {formatNumber(userOrders.length)}
-                    </span>
-                  </p>
-                  <p>
-                    الحجوزات:{' '}
-                    <span className="text-charcoal dark:text-ivory">
-                      {formatNumber(userBookings.length)}
-                    </span>
-                  </p>
-                  <p>
-                    إجمالي المدفوع:{' '}
-                    <span className="text-charcoal dark:text-ivory">{formatEGP(paidTotal)}</span>
-                  </p>
-                  <p>
-                    التسجيل:{' '}
-                    <span className="text-charcoal dark:text-ivory">
-                      {formatArabicDateTime(user.createdAt)}
-                    </span>
-                  </p>
-                </div>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {user.role === 'admin' ? (
-                    <AdminActionButton
-                      disabled={savingId === user.uid}
-                      tone="warning"
-                      onClick={() => setRole(user, 'user')}
-                    >
-                      إزالة Admin
-                    </AdminActionButton>
-                  ) : (
-                    <AdminActionButton
-                      disabled={savingId === user.uid}
-                      tone="gold"
-                      onClick={() => setRole(user, 'admin')}
-                    >
-                      تعيين Admin
-                    </AdminActionButton>
-                  )}
-                </div>
-              </article>
+      {users.length === 0 ? (
+        <EmptyState
+          title={q ? 'لا نتائج لهذا البحث' : 'لا حسابات بعد'}
+          description={q ? 'جرّبي جزءًا من الاسم أو البريد الإلكتروني.' : 'تظهر العميلات هنا فور تسجيلهن في المنصة.'}
+        />
+      ) : (
+        <Table>
+          <THead>
+            <tr>
+              <TH>الاسم</TH>
+              <TH>البريد</TH>
+              <TH>الهاتف</TH>
+              <TH>انضمت</TH>
+              <TH>تواصل</TH>
+            </tr>
+          </THead>
+          <TBody>
+            {users.map((u) => (
+              <TR key={u.id}>
+                <TD className="font-semibold text-deep-teal"><Link href={`/admin/users/${u.id}`} className="underline-offset-4 hover:underline">{u.full_name || '—'}</Link></TD>
+                <TD>
+                  <span dir="ltr">{u.email}</span>
+                </TD>
+                <TD>{u.phone ? <span dir="ltr">{u.phone}</span> : '—'}</TD>
+                <TD>{dateFmt.format(new Date(u.created_at))}</TD>
+                <TD>
+                  {canNotify ? <NotifyUser userId={u.id} userName={u.full_name || u.email} /> : '—'}
+                </TD>
+              </TR>
             ))}
-          </div>
-        )}
-      </AdminPanel>
+          </TBody>
+        </Table>
+      )}
     </div>
   )
 }

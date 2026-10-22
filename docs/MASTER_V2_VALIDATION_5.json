@@ -1,0 +1,418 @@
+{
+  "checkpoint": 5,
+  "date": "2026-09-17",
+  "baseCommit": "d6ab052",
+  "localChecks": {
+    "passed": 64,
+    "total": 64,
+    "results": [
+      {
+        "name": "verify:archive-security",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:delivery-local",
+        "exitCode": 0,
+        "seconds": 0.32
+      },
+      {
+        "name": "verify:booking-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:booking-permissions-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:booking-staging-contract",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:booking-staging-contract-fixtures",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "verify:fresh-admin-assurance",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:report-export-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:home-cms-local",
+        "exitCode": 0,
+        "seconds": 0.24
+      },
+      {
+        "name": "verify:navigation-governance-local",
+        "exitCode": 0,
+        "seconds": 0.14
+      },
+      {
+        "name": "verify:cms-page-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.19
+      },
+      {
+        "name": "verify:article-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:settings-flags-governance-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:public-search-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:start-here-cms-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:guided-assessment-local",
+        "exitCode": 0,
+        "seconds": 0.17
+      },
+      {
+        "name": "verify:master-v2-local",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "verify:master-v2-continuation-local",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:master-v2-admin-workflows-local",
+        "exitCode": 0,
+        "seconds": 0.5
+      },
+      {
+        "name": "verify:preview-experience-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:catalog-publication-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:program-catalog-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:media-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:newsletter-governance-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:admin-security-center-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:final-hardening-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:admin-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:resend-outbox-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:customer-360-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:sentry-monitoring-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:admin-notifications-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:admin-role-governance-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:booking-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:commerce-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:checkout-upload-governance-local",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "verify:customer-learning-governance-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:customer-protected-delivery-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:customer-dashboard-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:customer-account-governance-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:customer-password-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:customer-booking-self-service-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:customer-registration-bootstrap-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:account-deletion-governance-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:revision-recovery-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:admin-operations-ux-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:contact-governance-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:testimonial-governance-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:press-governance-local",
+        "exitCode": 0,
+        "seconds": 0.17
+      },
+      {
+        "name": "verify:resource-hub-local",
+        "exitCode": 0,
+        "seconds": 0.17
+      },
+      {
+        "name": "verify:recovery-runner-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "audit:cms-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "audit:remediation-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "audit:routes",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "audit:ux",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "audit:colors",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:security",
+        "exitCode": 0,
+        "seconds": 1.36
+      },
+      {
+        "name": "audit:admin",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "audit:media",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "audit:commerce",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "audit:catalog",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "audit:booking",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "audit:db",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:launch",
+        "exitCode": 0,
+        "seconds": 0.2
+      },
+      {
+        "name": "verify:catalog-atomic-local",
+        "exitCode": 0,
+        "seconds": 0.78
+      }
+    ]
+  },
+  "typeCheck": {
+    "status": "passed",
+    "command": "corepack pnpm type-check",
+    "isolated": true
+  },
+  "lint": {
+    "status": "passed",
+    "errors": 0,
+    "warnings": 0,
+    "reviewedExceptions": "Three new Next navigation warnings retain intentional full document navigation after Admin session invalidation. Narrow line exceptions with rationale; behavior unchanged."
+  },
+  "nextBuild": {
+    "status": "passed",
+    "version": "16.3.3",
+    "isolated": true,
+    "staticPages": "8/8"
+  },
+  "workerBuild": {
+    "status": "passed",
+    "isolated": true,
+    "steps": "5/5"
+  },
+  "buildNotes": [
+    "Final source behavior compiled after dependency update. Only explanatory lint comments and documentation changed after those builds.",
+    "Toolchain emits Node url.parse deprecation and Worker proxy-environment warning; Worker route classification remains static/partial. No runtime warning is treated as browser acceptance."
+  ],
+  "dependencyAudit": {
+    "status": "passed",
+    "scope": "production",
+    "result": "No known vulnerabilities found",
+    "before": {
+      "critical": 2,
+      "high": 1,
+      "moderate": 1
+    },
+    "patched": {
+      "next": "16.3.3",
+      "eslint-config-next": "16.3.3",
+      "sharp": "0.35.4",
+      "baseline-browser-mapping": "2.11.0"
+    },
+    "lockfileUpdated": true,
+    "toolingNote": "ESLint 9.39.4 is marked deprecated by its publisher; no major ESLint migration was introduced in this slice."
+  },
+  "databaseLocal": {
+    "status": "passed",
+    "engine": "PGlite 0.5.8 PostgreSQL/WASM",
+    "groups": 23,
+    "migrationExecuted": "086_atomic_catalog_editor_local_only.sql",
+    "fixtures": "actual core table DDL and additive columns; synthetic permission/history fixtures",
+    "proved": [
+      "product/domain/media/revision/audit rollback on forced audit failure",
+      "all four specialized draft saves",
+      "publication readiness and parity",
+      "published edit permission denial",
+      "cover usage preservation",
+      "slug conflict denial",
+      "capacity and history/delivery deletion denial",
+      "anon/authenticated execute and direct-write revokes"
+    ],
+    "doesNotProve": [
+      "full Supabase migration chain",
+      "real Auth/AAL2/RLS identities",
+      "provider Storage",
+      "multiple-connection concurrency",
+      "request idempotency"
+    ]
+  },
+  "externalDatabase": {
+    "status": "not_executed",
+    "migration086Applied": false,
+    "existingPendingMigrationsApplied": false
+  },
+  "browser": {
+    "status": "not_executed",
+    "note": "Previous module ERR_BLOCKED_BY_CLIENT remains unresolved. No alternate browser path attempted. Modal/clipboard/mobile/dark/200% require real acceptance."
+  },
+  "deploy": {
+    "status": "not_attempted"
+  },
+  "limitations": [
+    "Programme product/variant, subscription-plan and marketing multi-statement writes remain a next slice.",
+    "Protected-delivery, roles, notifications/reviews editor matrix remains.",
+    "Original Master V2 image references required for exact visual sign-off.",
+    "Staging restore, RLS/Auth/provider and concurrency gates remain open.",
+    "No full check:deploy pass claimed because browser/external gates were not executed."
+  ]
+}

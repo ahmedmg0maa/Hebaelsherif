@@ -1,0 +1,8 @@
+import Link from 'next/link'
+import type { HomePressMention } from '@/lib/data/home'
+import type { PressContent } from '@/lib/home/sections'
+
+export function PressHighlights({ mentions, content }: { mentions: HomePressMention[]; content: PressContent }) {
+  if (!mentions.length) return null
+  return <section className="border-y border-line bg-surface-raised px-6 py-14 md:py-18"><div className="mx-auto max-w-6xl"><div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><p className="text-sm font-bold tracking-widest text-antique-gold">{content.eyebrow}</p><h2 className="mt-2 text-3xl font-bold text-deep-teal md:text-4xl">{content.heading}</h2><p className="mt-3 max-w-2xl leading-loose text-text-soft">{content.lead}</p></div><Link href="/press" className="font-bold text-burgundy underline decoration-antique-gold/50 underline-offset-4">{content.ctaLabel}</Link></div><div className="mt-9 divide-y divide-line border-y border-line">{mentions.map((mention) => <article key={mention.id} className="grid gap-3 py-6 md:grid-cols-[10rem_1fr_auto] md:items-center"><p className="text-sm font-bold text-antique-gold">{mention.outlet}</p><div><h3 className="text-xl font-bold text-deep-teal">{mention.title}</h3><time dateTime={mention.publishedOn} className="mt-1 block text-xs text-taupe">{new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium' }).format(new Date(`${mention.publishedOn}T12:00:00Z`))}</time></div><a href={mention.originalUrl} target="_blank" rel="noopener noreferrer" className="font-bold text-deep-teal underline underline-offset-4">المصدر الأصلي<span className="sr-only"> — يفتح في نافذة جديدة</span></a></article>)}</div></div></section>
+}

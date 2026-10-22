@@ -1,207 +1,109 @@
-'use client'
+import type { Metadata } from 'next'
+import { adminCatalogPage,type CatalogQuery } from '@/lib/data/admin-catalog'
+import { CatalogListTools,CatalogPagination } from '@/components/admin/CatalogListTools'
+import { AdminEditorDialog } from '@/components/admin/AdminEditorDialog'
+import { getPublicMediaOptions } from '@/lib/data/cms'
+import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/Table'
+import { Badge } from '@/components/ui/Badge'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { PublishToggle } from '@/components/admin/AdminControls'
+import { CatalogCreatePanel, CatalogEditPanel } from '@/components/admin/CatalogManager'
+import { ProtectedDeliveryUpload } from '@/components/admin/ProtectedDeliveryUpload'
+import { ProtectedDeliveryItems } from '@/components/admin/ProtectedDeliveryItems'
 
+export const metadata: Metadata = { title: 'الكتب — الإدارة' }
 
-export const dynamic = 'force-dynamic'
-
-import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
-import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from '@/lib/supabase/data-client-compat'
-import { db } from '@/lib/supabase/client-compat'
-import type { Book } from '@/types'
-import { formatArabicDateTime, formatEGP, formatNumber } from '@/lib/utils/formatters'
-import { getReadiness, hasPrivateContentLeak, isPublishedProduct, productStatusMeta, toMillis } from '@/lib/admin/operations'
-import { AdminActionButton, AdminPageHeader, AdminPanel, EmptyState, Field, inputClass, MetricCard, ProgressBar, StatusBadge, ToneBadge } from '@/components/admin/OperationsUI'
-import PremiumSkeleton from '@/components/ui/PremiumSkeleton'
-
-interface BookItem extends Book {
-  isPublished?: boolean
-  seoTitle?: string
-  seoDescription?: string
+type Row = {
+  id: string
+  title: string
+  slug: string
+  pages_count: number | null
+  is_published: boolean
+  book_files: { id: string; format: string; size_bytes: number | null; created_at: string; archived_at: string | null }[]
+  book_access: { id: string }[]
+  description: string
+  author: string
+  cover_url: string | null
+  products: { archived_at: string | null; price: number; compare_at_price: number | null; currency: string; subtitle: string | null; sort: number } | { archived_at: string | null; price: number; compare_at_price: number | null; currency: string; subtitle: string | null; sort: number }[]
 }
 
-function mapDocs<T>(snapshot: Awaited<ReturnType<typeof getDocs>>) {
-  return snapshot.docs.map((docItem) => ({ id: docItem.id, ...(docItem.data() as Record<string, unknown>) })) as T[]
-}
-
-export default function AdminBooksPage() {
-  const [books, setBooks] = useState<BookItem[]>([])
-  const [protectedItems, setProtectedItems] = useState<Array<Record<string, unknown>>>([])
-  const [loading, setLoading] = useState(true)
-  const [savingId, setSavingId] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [search, setSearch] = useState('')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
-
-  async function load() {
-    setLoading(true)
-    setError('')
-    try {
-      const [booksSnap, protectedSnap] = await Promise.all([
-        getDocs(collection(db, 'books')),
-        getDocs(collection(db, 'protected_content')),
-      ])
-      setBooks(mapDocs<BookItem>(booksSnap).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)))
-      setProtectedItems(mapDocs<Record<string, unknown>>(protectedSnap))
-    } catch (loadError) {
-      console.error('Admin books load error:', loadError)
-      setError('تعذر تحميل الكتب. راجع صلاحيات الأدمن واتصال Supabase.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => { load() }, [])
-
-  async function writeLog(action: string, book: BookItem, after: Record<string, unknown>) {
-    try {
-      await addDoc(collection(db, 'admin_logs'), {
-        action,
-        targetType: 'books',
-        targetId: book.id,
-        before: { status: book.status },
-        after,
-        message: `${action} - ${book.title || book.slug}`,
-        createdAt: serverTimestamp(),
-      })
-    } catch (logError) {
-      console.warn('Book log failed:', logError)
-    }
-  }
-
-  async function updateBook(book: BookItem, action: string, values: Record<string, unknown>, confirmMessage: string) {
-    if (!window.confirm(confirmMessage)) return
-    setSavingId(book.id)
-    setMessage('')
-    setError('')
-    try {
-      const nextValues = { ...values, updatedAt: serverTimestamp() }
-      await updateDoc(doc(db, 'books', book.id), nextValues)
-      await writeLog(action, book, nextValues)
-      setBooks((current) => current.map((item) => (item.id === book.id ? ({ ...item, ...values } as BookItem) : item)))
-      setMessage('تم تحديث الكتاب بنجاح.')
-    } catch (updateError) {
-      console.error('Book update error:', updateError)
-      setError('تعذر تحديث الكتاب. تأكد من الصلاحيات وحاول مرة أخرى.')
-    } finally {
-      setSavingId('')
-    }
-  }
-
-  function publishBook(book: BookItem) {
-    const readiness = getReadiness('book', book, protectedItems)
-    if (readiness.score < 100) {
-      const ok = window.confirm(`جاهزية النشر ${readiness.score}%. الناقص: ${readiness.missing.join('، ')}. هل تريد المتابعة رغم ذلك؟`)
-      if (!ok) return
-    }
-    updateBook(book, 'book_published', { status: 'published', isPublished: true, publishedAt: serverTimestamp() }, 'نشر هذا الكتاب؟')
-  }
-
-  const filteredBooks = useMemo(() => {
-    const queryText = search.trim().toLowerCase()
-    return books.filter((book) => {
-      const matchesStatus = statusFilter === 'all' || book.status === statusFilter
-      const haystack = [book.title, book.slug, book.description, book.category].filter(Boolean).join(' ').toLowerCase()
-      return matchesStatus && (!queryText || haystack.includes(queryText))
-    })
-  }, [books, search, statusFilter])
-
-  const stats = useMemo(() => ({
-    total: books.length,
-    published: books.filter(isPublishedProduct).length,
-    draft: books.filter((book) => book.status === 'draft').length,
-    comingSoon: books.filter((book) => book.status === 'coming_soon').length,
-    leaked: books.filter((book) => hasPrivateContentLeak(book as unknown as Record<string, unknown>)).length,
-    needsContent: books.filter((book) => isPublishedProduct(book) && getReadiness('book', book, protectedItems).missing.includes('محتوى محمي مربوط')).length,
-  }), [books, protectedItems])
-
-  if (loading) return <PremiumSkeleton className="h-[32rem]" />
+export default async function AdminBooksPage({searchParams}:{searchParams:Promise<CatalogQuery>}) {
+  const media = await getPublicMediaOptions()
+  const listing=await adminCatalogPage<Row>('books', 'id, title, slug, description, author, pages_count, cover_url, is_published, products!inner(archived_at,price, compare_at_price, currency, subtitle, sort), book_files(id,format,size_bytes,created_at,archived_at), book_access(id)',await searchParams)
+  const books=listing.rows
 
   return (
-    <div className="space-y-8">
-      <AdminPageHeader
-        title="محرك نشر الكتب"
-        description="إدارة الكتب كمنتجات حقيقية: مسودات، قريبًا، نشر آمن، جاهزية، وربط ملف محمي بدون روابط خاصة عامة."
-        actions={<Link href="/admin/books/new" className="rounded-full bg-gold px-5 py-3 text-xs font-black text-deepTeal shadow-soft">إضافة كتاب</Link>}
-      />
+    <div className="mx-auto max-w-5xl space-y-8">
+      <header>
+        <h1 className="text-3xl font-bold text-deep-teal">الكتب</h1>
+        <p className="mt-1 text-text-soft">إصدارات المكتبة الرقمية وملفاتها وعدد مالكاتها.</p>
+      </header>
 
-      {message ? <div className="rounded-2xl border border-olive/25 bg-olive/10 p-4 text-sm font-black text-olive dark:text-ivory">{message}</div> : null}
-      {error ? <div className="rounded-2xl border border-burgundy/25 bg-burgundy/10 p-4 text-sm font-black text-burgundy dark:text-ivory">{error}</div> : null}
+      <CatalogCreatePanel kind="book" media={media} />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-        <MetricCard label="كل الكتب" value={formatNumber(stats.total)} tone="muted" />
-        <MetricCard label="منشورة" value={formatNumber(stats.published)} tone="success" />
-        <MetricCard label="مسودات" value={formatNumber(stats.draft)} tone="muted" />
-        <MetricCard label="قريبًا" value={formatNumber(stats.comingSoon)} tone="gold" />
-        <MetricCard label="تحتاج محتوى محمي" value={formatNumber(stats.needsContent)} tone={stats.needsContent ? 'danger' : 'success'} />
-        <MetricCard label="روابط خاصة عامة" value={formatNumber(stats.leaked)} tone={stats.leaked ? 'danger' : 'success'} />
-      </div>
-
-      <AdminPanel title="فلترة الكتب" description="تابع حالة النشر والجاهزية قبل الظهور للزائرات.">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Field label="الحالة">
-            <select className={inputClass} value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-              <option value="all">كل الحالات</option>
-              <option value="draft">مسودة</option>
-              <option value="review">مراجعة</option>
-              <option value="coming_soon">قريبًا</option>
-              <option value="published">منشور</option>
-              <option value="hidden">مخفي</option>
-              <option value="archived">مؤرشف</option>
-            </select>
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="بحث">
-              <input className={inputClass} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="اسم الكتاب، slug، التصنيف..." />
-            </Field>
-          </div>
-        </div>
-      </AdminPanel>
-
-      <AdminPanel title="قائمة الكتب" description="كل كتاب له جاهزية نشر واضحة قبل أن يصبح ظاهرًا ومتاحًا للبيع.">
-        {filteredBooks.length === 0 ? (
-          <EmptyState title="لا توجد كتب مطابقة" description="أضيفي كتاب كمسودة، ثم راجعي جاهزيته واربطى المحتوى المحمي قبل النشر." action={<Link href="/admin/books/new" className="rounded-full bg-gold px-5 py-3 text-xs font-black text-deepTeal">إضافة كتاب</Link>} />
-        ) : (
-          <div className="grid gap-5 xl:grid-cols-2">
-            {filteredBooks.map((book) => {
-              const readiness = getReadiness('book', book, protectedItems)
-              const leaked = hasPrivateContentLeak(book as unknown as Record<string, unknown>)
-              return (
-                <article key={book.id} className="rounded-[1.75rem] border border-sand bg-cream/80 p-5 shadow-soft dark:border-gold/25 dark:bg-white/10">
-                  <div className="mb-4 flex flex-wrap items-center gap-3">
-                    <h3 className="text-xl font-black text-charcoal dark:text-ivory">{book.title || 'كتاب بدون عنوان'}</h3>
-                    <StatusBadge meta={productStatusMeta[String(book.status || 'draft')]} fallback={String(book.status || 'draft')} />
-                    {leaked ? <ToneBadge tone="danger">روابط خاصة عامة</ToneBadge> : <ToneBadge tone="success">لا روابط خاصة عامة</ToneBadge>}
+      <CatalogListTools {...listing}/>
+      {books.length === 0 ? (
+        <EmptyState title="لا كتب بعد" description="أضيفي كتابًا من النموذج أعلاه، أو عدّلي البحث والتصفية." />
+      ) : (
+        <Table>
+          <THead>
+            <tr>
+              <TH>الكتاب</TH>
+              <TH>الصفحات</TH>
+              <TH>الملفات</TH>
+              <TH>المالكات</TH>
+              <TH>الحالة</TH>
+              <TH>الإجراء</TH>
+            </tr>
+          </THead>
+          <TBody>
+            {books.map((b) => (
+              <TR key={b.id}>
+                <TD>
+                  <p className="font-semibold text-deep-teal">{b.title}</p>
+                  <p className="text-xs text-taupe" dir="ltr">/{b.slug}</p>
+                </TD>
+                <TD>{b.pages_count ? b.pages_count.toLocaleString('ar-EG') : '—'}</TD>
+                <TD>{(b.book_files ?? []).filter((file) => !file.archived_at).length.toLocaleString('ar-EG')}</TD>
+                <TD>{(b.book_access ?? []).length.toLocaleString('ar-EG')}</TD>
+                <TD>
+                  <Badge tone={(Array.isArray(b.products)?b.products[0]:b.products)?.archived_at?'sand':b.is_published ? 'success' : 'sand'}>{(Array.isArray(b.products)?b.products[0]:b.products)?.archived_at?'مؤرشف':b.is_published?'منشور':'مسودة'}</Badge>
+                </TD>
+                <TD>
+                  <div className="flex flex-wrap items-start gap-2">
+                    {!(Array.isArray(b.products)?b.products[0]:b.products)?.archived_at&&<PublishToggle table="books" id={b.id} published={b.is_published}/>}
+                    <CatalogEditPanel kind="book" media={media} item={(() => {
+                      const product = Array.isArray(b.products) ? b.products[0] : b.products
+                      return {
+                        id: b.id, title: b.title, slug: b.slug, description: b.description,
+                        author: b.author, pagesCount: b.pages_count, coverUrl: b.cover_url,
+                        price: Number(product?.price ?? 0), compareAtPrice: product?.compare_at_price,
+                        currency: product?.currency, subtitle: product?.subtitle, sort: product?.sort,
+                        isPublished: b.is_published, archivedAt: product?.archived_at,
+                      }
+                    })()} />
                   </div>
-                  <p className="line-clamp-2 text-sm font-bold leading-7 text-warm-gray dark:text-cream">{book.description || 'لا يوجد وصف بعد.'}</p>
-                  <div className="mt-4 grid gap-3 text-sm font-bold text-warm-gray dark:text-cream md:grid-cols-2">
-                    <p>السعر: <span className="text-charcoal dark:text-ivory">{book.price ? formatEGP(book.price) : 'غير محدد'}</span></p>
-                    <p>slug: <span className="text-charcoal dark:text-ivory">{book.slug || 'غير محدد'}</span></p>
-                    <p>آخر تحديث: <span className="text-charcoal dark:text-ivory">{formatArabicDateTime(book.updatedAt || book.createdAt)}</span></p>
-                    <p>الصفحات: <span className="text-charcoal dark:text-ivory">{book.pagesCount || 0}</span></p>
+                  <AdminEditorDialog title={`ملفات وتسليم: ${b.title}`} triggerLabel="الملفات والتسليم">
+                  <div className="mt-3 min-w-0"><ProtectedDeliveryUpload kind="book" entityId={b.id} label="رفع إصدار PDF أو EPUB" /></div>
+                  <div className="mt-2 min-w-0">
+                    <ProtectedDeliveryItems
+                      kind="book"
+                      entityId={b.id}
+                      items={(b.book_files ?? []).filter((file) => !file.archived_at).map((file) => ({
+                        id: file.id,
+                        title: `إصدار ${file.format.toUpperCase()}`,
+                        detail: file.size_bytes ? `${(file.size_bytes / 1024 / 1024).toLocaleString('ar-EG', { maximumFractionDigits: 1 })} م.ب` : undefined,
+                      }))}
+                    />
                   </div>
-                  <div className="mt-5 rounded-2xl border border-sand bg-ivory/80 p-4 dark:border-gold/25 dark:bg-deepTeal/60">
-                    <div className="mb-2 flex items-center justify-between text-xs font-black text-petrol dark:text-gold">
-                      <span>جاهزية النشر</span>
-                      <span>{readiness.score}%</span>
-                    </div>
-                    <ProgressBar value={readiness.score} />
-                    {readiness.missing.length ? <p className="mt-3 text-xs font-bold text-burgundy dark:text-gold">الناقص: {readiness.missing.join('، ')}</p> : <p className="mt-3 text-xs font-bold text-olive dark:text-ivory">جاهز تشغيليًا.</p>}
-                  </div>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    <Link href={`/admin/books/${book.id}`} className="rounded-full border border-gold/35 px-4 py-2 text-xs font-black text-petrol dark:text-gold">تعديل</Link>
-                    <AdminActionButton disabled={savingId === book.id} tone="success" onClick={() => publishBook(book)}>نشر</AdminActionButton>
-                    <AdminActionButton disabled={savingId === book.id} tone="gold" onClick={() => updateBook(book, 'book_coming_soon', { status: 'coming_soon', isPublished: false }, 'تحويل الكتاب إلى قريبًا؟')}>قريبًا</AdminActionButton>
-                    <AdminActionButton disabled={savingId === book.id} tone="muted" onClick={() => updateBook(book, 'book_hidden', { status: 'hidden', isPublished: false }, 'إخفاء الكتاب؟')}>إخفاء</AdminActionButton>
-                    <AdminActionButton disabled={savingId === book.id} tone="danger" onClick={() => updateBook(book, 'book_archived', { status: 'archived', isPublished: false }, 'أرشفة الكتاب؟')}>أرشفة</AdminActionButton>
-                    <Link href="/admin/content" className="rounded-full bg-petrol px-4 py-2 text-xs font-black text-ivory">ربط محتوى</Link>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-        )}
-      </AdminPanel>
+                  </AdminEditorDialog>
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      )}
+      <CatalogPagination {...listing}/>
     </div>
   )
 }

@@ -1,0 +1,465 @@
+{
+  "checkpoint": 7,
+  "date": "2026-09-17",
+  "baseCommit": "c221924",
+  "branch": "codex/master-v2-continuation",
+  "scope": "Agreed continuation slice: reviews, in-app notifications, protected uploads/removal, transactional failure and Admin feedback. Not original 0–18 completion.",
+  "localChecks": {
+    "passed": 66,
+    "total": 66,
+    "results": [
+      {
+        "name": "verify:archive-security",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:delivery-local",
+        "exitCode": 0,
+        "seconds": 0.25
+      },
+      {
+        "name": "verify:booking-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:booking-permissions-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:booking-staging-contract",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:booking-staging-contract-fixtures",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:fresh-admin-assurance",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:report-export-local",
+        "exitCode": 0,
+        "seconds": 0.05
+      },
+      {
+        "name": "verify:home-cms-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:navigation-governance-local",
+        "exitCode": 0,
+        "seconds": 0.05
+      },
+      {
+        "name": "verify:cms-page-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:article-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:settings-flags-governance-local",
+        "exitCode": 0,
+        "seconds": 0.05
+      },
+      {
+        "name": "verify:public-search-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:start-here-cms-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:guided-assessment-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:master-v2-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:master-v2-continuation-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:master-v2-admin-workflows-local",
+        "exitCode": 0,
+        "seconds": 0.41
+      },
+      {
+        "name": "verify:preview-experience-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:catalog-publication-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:program-catalog-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:media-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:newsletter-governance-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:admin-security-center-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:final-hardening-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:admin-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:resend-outbox-local",
+        "exitCode": 0,
+        "seconds": 0.18
+      },
+      {
+        "name": "verify:customer-360-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:sentry-monitoring-local",
+        "exitCode": 0,
+        "seconds": 0.24
+      },
+      {
+        "name": "verify:admin-notifications-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:admin-role-governance-local",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "verify:booking-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.18
+      },
+      {
+        "name": "verify:commerce-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:checkout-upload-governance-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:customer-learning-governance-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:customer-protected-delivery-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:customer-dashboard-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:customer-account-governance-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:customer-password-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:customer-booking-self-service-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:customer-registration-bootstrap-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:account-deletion-governance-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:revision-recovery-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:admin-operations-ux-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:contact-governance-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:testimonial-governance-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:press-governance-local",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "verify:resource-hub-local",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:recovery-runner-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:cms-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "audit:remediation-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:routes",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:ux",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:colors",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:security",
+        "exitCode": 0,
+        "seconds": 1.67
+      },
+      {
+        "name": "audit:admin",
+        "exitCode": 0,
+        "seconds": 0.11
+      },
+      {
+        "name": "audit:media",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "audit:commerce",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "audit:catalog",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:booking",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "audit:db",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:launch",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:catalog-atomic-local",
+        "exitCode": 0,
+        "seconds": 0.56
+      },
+      {
+        "name": "verify:commerce-administration-local",
+        "exitCode": 0,
+        "seconds": 0.43
+      },
+      {
+        "name": "verify:phase7-workflows-local",
+        "exitCode": 0,
+        "seconds": 0.73
+      }
+    ]
+  },
+  "workflowRuntime": {
+    "command": "corepack pnpm verify:phase7-workflows-local",
+    "passed": 12,
+    "cases": [
+      "ambiguous committed binding never deletes or rejects the object",
+      "same-intent recovery accepts prior committed result without rebinding",
+      "temporary Storage observation failure retains the issued object",
+      "finalized cancellation is refused without provider deletion",
+      "cancellation commits rejection authority before any later queue cleanup",
+      "permission and fractional size denied before creating an intent",
+      "upload path requires a literal extension separator before authority lookup",
+      "cleanup uses only claimed server path and independently validates hash",
+      "provider removal exception records a retryable failed job",
+      "archive stops at atomic queue creation, never removes Storage inline",
+      "notification action requires an actual receipt and classifies definite rejection",
+      "client workflows retain ambiguous attempts and accessible shared feedback"
+    ],
+    "mode": "Actual TypeScript server actions transpiled with dependency injection; no provider calls. Some UI assertions are source contracts, not browser execution."
+  },
+  "sqlRuntime": {
+    "command": "HEBA_TEST_PGLITE_PATH=<external PGlite dist/index.js> corepack pnpm verify:phase7-sql-local",
+    "passed": 26,
+    "engine": "PGlite 0.5.8, PostgreSQL/WASM, single connection",
+    "cases": [
+      "review moderation requires permission and expected version",
+      "reply survives reject and reapprove; publication must be explicit",
+      "stale review edit and audit failure leave all rows unchanged",
+      "archive restore and permanent delete enforce lifecycle",
+      "unverified review never publishes",
+      "notification retry is exactly one row and one audit",
+      "notification validation permission and history isolation",
+      "notification audit failure rolls back creation",
+      "book: real issuance, inspection binding and same-intent retry",
+      "lesson-video: real issuance, inspection binding and same-intent retry",
+      "lesson-resource: real issuance, inspection binding and same-intent retry",
+      "workshop-resource: real issuance, inspection binding and same-intent retry",
+      "workshop-recording: real issuance, inspection binding and same-intent retry",
+      "finalized intent cannot be rejected by a lost-response cancellation",
+      "rejection and cleanup job roll back when audit fails",
+      "video replacement queues old object and stale removal cannot delete replacement",
+      "archive rollback includes cleanup queue; retry creates durable job",
+      "shared path across lesson and workshop blocks physical cleanup",
+      "cleanup lease permission failure retry fencing and completion",
+      "lesson-video: archive uses the same durable queue",
+      "workshop-resource: archive uses the same durable queue",
+      "workshop-recording: archive uses the same durable queue",
+      "cleanup completion audit failure retains a recoverable lease",
+      "legacy archive preserved without automatic object deletion",
+      "expiry sweep queues abandoned intents with atomic audit",
+      "service-only operations and browser content grants stay narrow"
+    ],
+    "scope": "Actual 090/091 plus 059/072 and governed archive SQL over extracted core tables and synthetic permission/history dependencies. Fixture digest uses PostgreSQL built-in SHA-256. Not full migration chain/JWT/RLS/concurrent-session/Storage acceptance."
+  },
+  "typecheck": {
+    "command": "corepack pnpm type-check",
+    "exitCode": 0,
+    "isolatedFrozenLockfile": true
+  },
+  "lint": {
+    "command": "corepack pnpm lint",
+    "exitCode": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "builds": [
+    {
+      "command": "corepack pnpm build:isolated",
+      "exitCode": 0,
+      "staticPages": 8,
+      "adminDeliveryRouteIncluded": true
+    },
+    {
+      "command": "corepack pnpm build:cloudflare:isolated",
+      "exitCode": 0,
+      "output": "isolated dist/ Worker artifact; no deployment"
+    }
+  ],
+  "dependencyAudit": {
+    "command": "corepack pnpm audit:dependencies",
+    "exitCode": 0,
+    "result": "No known vulnerabilities found in production dependency audit"
+  },
+  "nonBlockingToolWarnings": [
+    "Node url.parse deprecation from package tooling.",
+    "Wrangler proxy environment warning.",
+    "Vinext static classification does not detect all dynamic APIs; not runtime evidence."
+  ],
+  "sourceSha256": {
+    "supabase/migrations/090_review_moderation_revisions_local_only.sql": "7ad883c49641abbf4e7316ae92bba5393bc5b7cb583fe5b74e63e1ba4a088fd4",
+    "supabase/migrations/091_protected_delivery_cleanup_queue_local_only.sql": "84301d78c564969c180d35e5a0ab0c4e39a138817e362b050e6eefd5305749c2",
+    "scripts/verify-phase7-sql-local.mjs": "202ddcecea901eec516dac8e466b1808c8aad1e7f815de0be1f4999df38ffec7",
+    "scripts/verify-phase7-workflows-local.mjs": "ef24fd660642d57f49a619244e79438fe06cf9c9c7d066aa7e1c6034eff6c2e9"
+  },
+  "providerActionsPerformed": false,
+  "deployed": false,
+  "liveMigrationsApplied": [],
+  "openAcceptance": [
+    "Full pending migration chain through 091 on restored isolated Staging, including archived/terminal record backfills.",
+    "Actual Supabase Auth/AAL2/permission denial and customer RLS/read receipts.",
+    "Concurrent review, notification, upload/replacement/archive/cleanup sessions.",
+    "Actual Storage/scanner failures, configured object size limits, signed-token TTL and late uploads before physical cleanup.",
+    "Current browser RTL/mobile/dark/dialog/focus/feedback and source-backed visual sign-off."
+  ],
+  "operationalLimits": [
+    "Cleanup is manual; not a scheduled job. Minimum 24-hour quarantine after upload-intent expiry, 10-minute claim lease, 5-minute retry delay.",
+    "Legacy unmanaged paths are retained. Unknown historical orphans cannot be reconstructed from hashes alone.",
+    "Draft/attempt retention is in the mounted page, not persistent across reload/session. After leaving, inspect notifications/bindings/cleanup history before a new attempt.",
+    "No full check:deploy claimed because it includes browser/provider acceptance."
+  ],
+  "packaging": {
+    "method": "corepack pnpm package:release",
+    "deliveryFilename": "HEBA_MASTER_V2_CHECKPOINT_7_2026-09-17.zip",
+    "integrity": "RELEASE_MANIFEST.json contains bytes and SHA-256 for every payload file, excluding itself; final archive checked against it before delivery.",
+    "excludes": "Secrets, Supabase temporary state, dependencies, build/test output, old archives and inherited release manifest."
+  },
+  "referenceVerification": [
+    {
+      "claim": "PostgreSQL repetition bounds are 0–255; old {0,1023} fails. The additive fix retains the independent length check.",
+      "url": "https://www.postgresql.org/docs/current/functions-matching.html#POSIX-SYNTAX-DETAILS",
+      "checkedOn": "2026-09-17"
+    }
+  ]
+}

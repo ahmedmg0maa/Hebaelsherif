@@ -1,0 +1,70 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnpm-store/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+/playwright-report/
+/test-results/
+/tmp/test-data/
+/reports/private/
+/exports/private/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/release/
+/.launch-backups/
+/.launch-tools/
+/.namecheap-standalone/
+/.claude/
+/debug.log
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# local Supabase CLI link metadata (may contain project details)
+/supabase/.temp/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+/dist/
+.vinext/
+.wrangler/
+
+# Never commit generated archives, database backups, or compressed SQL dumps.
+*.tgz
+*.zip
+*.backup
+*.dump
+*.sql.gz
+
+# Workspace-only agent instructions and historical prompts are not application source.
+/AGENTS.md
+/DO_NOT_ZIP_WORKSPACE.txt
+/HEBA*.md

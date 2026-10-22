@@ -1,15 +1,30 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getServerClient } from '@/lib/supabase/server'
+import { hasSupabasePublicConfig } from '@/lib/supabase/public-key'
+import { customerReturnPath } from '@/lib/auth/customer-return'
+
+const allowedDestinations = new Set(['/dashboard', '/booking', '/auth/update-password', '/auth/login'])
+
+function destination(value: string | null) {
+  return value && allowedDestinations.has(value) ? value : customerReturnPath(value, '/auth/login')
+}
+
+function privateRedirect(request: NextRequest, path: string) {
+  const response = NextResponse.redirect(new URL(path, request.url))
+  response.headers.set('Cache-Control', 'private, no-store')
+  response.headers.set('Pragma', 'no-cache')
+  response.headers.set('Referrer-Policy', 'no-referrer')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  return response
+}
 
 export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url)
-  const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') || '/dashboard'
+  const code = request.nextUrl.searchParams.get('code')
+  const next = destination(request.nextUrl.searchParams.get('next'))
+  if (!hasSupabasePublicConfig() || !code) return privateRedirect(request, '/auth/login?error=callback')
 
-  if (code) {
-    const supabase = await createSupabaseServerClient()
-    await supabase.auth.exchangeCodeForSession(code)
-  }
-
-  return NextResponse.redirect(new URL(next, requestUrl.origin))
+  const supabase = await getServerClient()
+  const { error } = await supabase.auth.exchangeCodeForSession(code)
+  if (error) return privateRedirect(request, '/auth/login?error=callback')
+  return privateRedirect(request, next)
 }
