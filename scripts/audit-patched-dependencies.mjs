@@ -17,4 +17,4 @@ const unmitigated=advisories.filter(item=>item.url!=='https://github.com/advisor
 if(unmitigated.length){console.error(JSON.stringify({status:'failed',unmitigated:unmitigated.map(item=>({module:item.module_name,severity:item.severity,url:item.url}))},null,2));process.exit(1)}
 const mitigation=verifyBracesGuard()
 if(result.status!==0 && !advisories.length)throw Error('Audit failed without a verified advisory result.')
-console.log(JSON.stringify({status:'passed-with-verified-local-mitigation',rawRegistryFindings:advisories.length,unmitigatedFindings:0,mitigation,note:'Standard pnpm audit still reports the upstream braces version. This is a local mitigation, not an official upstream release or a blanket vulnerability waiver.'},null,2))
+console.log(JSON.stringify({status:'passed-with-verified-local-mitigation',rawRegistryFindings:advisories.length,unmitigatedFindings:0,mitigation,note:advisories.length?'The registry reports the pinned upstream braces version. The installed local mitigation was verified.':'The registry returned no advisories. The installed local mitigation was verified separately.'},null,2))

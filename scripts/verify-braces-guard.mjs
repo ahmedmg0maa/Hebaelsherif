@@ -13,7 +13,8 @@ export function verifyBracesGuard() {
     assert(target, `Cannot resolve installed dependency ${name}`)
     path = realpathSync(target)
   }
-  const guard = readFileSync(join(dirname(path),'lib/heba-guards.js'))
+  // A Windows checkout can apply the same reviewed patch with CRLF.
+  const guard = readFileSync(join(dirname(path),'lib/heba-guards.js'), 'utf8').replaceAll('\r\n', '\n')
   assert.equal(createHash('sha256').update(guard).digest('hex'),'7b53d3a12fb9689a051672189a5b64f9cee0446244a255b46d39b588d09394d9','Installed mitigation differs from the reviewed guard.')
   const braces = require(join(dirname(path),'index.js'))
   assert.equal(braces.compile('a/{b,c}/d'),'a/(b|c)/d')
