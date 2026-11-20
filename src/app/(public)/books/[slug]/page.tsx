@@ -45,7 +45,7 @@ export default async function BookDetailPage({ params }: Props) {
             <Card className="mt-8 max-w-md">
               <p className="flex items-baseline gap-3">
                 {book.isPreviewExperience ? <span className="text-2xl font-bold text-deep-teal">اقرئي الفصول الآن</span> : <>
-                <span className="tnum text-3xl font-bold text-burgundy">{formatPrice(book.price)}</span>
+                <span className="tnum text-3xl font-bold text-burgundy">{book.price === 0 ? 'مجاني' : formatPrice(book.price)}</span>
                 {book.compareAtPrice && (
                   <span className="tnum text-lg text-taupe line-through">{formatPrice(book.compareAtPrice)}</span>
                 )}

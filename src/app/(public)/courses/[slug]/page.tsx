@@ -58,7 +58,7 @@ export default async function CourseDetailPage({ params }: Props) {
           <Card className="lg:sticky lg:top-24">
             <p className="flex items-baseline gap-3">
               {course.isPreviewExperience ? <span className="text-2xl font-bold text-deep-teal">متاحة للتجربة الآن</span> : <>
-              <span className="tnum text-3xl font-bold text-burgundy">{formatPrice(course.price)}</span>
+              <span className="tnum text-3xl font-bold text-burgundy">{course.price === 0 ? 'مجانية' : formatPrice(course.price)}</span>
               {course.compareAtPrice && (
                 <span className="tnum text-lg text-taupe line-through">{formatPrice(course.compareAtPrice)}</span>
               )}

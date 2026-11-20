@@ -106,7 +106,7 @@ export function ProductCard({
         )}
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
           <p className="flex items-baseline gap-2">
-            <span className="tnum text-lg font-bold text-burgundy">{priceLabel ?? formatPrice(price)}</span>
+            <span className="tnum text-lg font-bold text-burgundy">{priceLabel ?? (price === 0 ? 'مجاني' : formatPrice(price))}</span>
             {compareAtPrice && (
               <span className="tnum text-sm text-taupe line-through">{formatPrice(compareAtPrice)}</span>
             )}

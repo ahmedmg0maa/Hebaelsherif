@@ -20,7 +20,7 @@ export function MobileBuyBar({
       <div className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface-raised/95 backdrop-blur-md lg:hidden">
         <div className="mobile-buy-content flex items-center justify-between gap-3 px-4 py-3">
           <p className="min-w-0 flex flex-col">
-            <span className="tnum text-xl font-bold text-burgundy">{formatPrice(price)}</span>
+            <span className="tnum text-xl font-bold text-burgundy">{price === 0 ? 'مجاني' : formatPrice(price)}</span>
             {compareAtPrice && (
               <span className="tnum text-xs text-taupe line-through">{formatPrice(compareAtPrice)}</span>
             )}

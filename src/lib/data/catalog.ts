@@ -93,6 +93,12 @@ export type CatalogArticle = {
 
 const hasEnv = hasSupabasePublicConfig
 
+// Retire the original starter graphics in public views while honoring any new
+// cover set by the editor. Match the exact original objects, not a file pattern.
+function publicCover(coverUrl: string | null, starterFile: string, starterObject: string) {
+  return coverUrl === `/images/starter/${starterFile}` || coverUrl?.endsWith(`/public-media/admin/2026-10-17/${starterObject}`) ? null : coverUrl
+}
+
 // ——— Published catalog queries ———
 
 export async function listCourses(): Promise<CatalogCourse[]> {
@@ -129,7 +135,7 @@ export async function listCourses(): Promise<CatalogCourse[]> {
         lessonsCount: modules.reduce((n, m) => n + m.lessons.length, 0),
         rating: 5,
         ratingCount: 0,
-        coverUrl: c.cover_url,
+        coverUrl: publicCover(c.cover_url, 'learning.webp', 'f2183066-5f49-4e33-90a2-5f9c3f3b8102-learning.webp'),
         modules,
       }
     })
@@ -163,7 +169,7 @@ export async function listBooks(): Promise<CatalogBook[]> {
         price: Number(product?.price ?? 0),
         compareAtPrice: product?.compare_at_price ? Number(product.compare_at_price) : null,
         pagesCount: b.pages_count,
-        coverUrl: b.cover_url,
+        coverUrl: publicCover(b.cover_url, 'workbook.webp', 'f2183066-5f49-4e33-90a2-5f9c3f3b8103-workbook.webp'),
       }
     })
   } catch {
