@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
 
-const widths = [320, 360, 390, 430, 768, 1024, 1280, 1920]
+const widths = [320, 360, 390, 430, 768, 1024, 1280, 1440, 1920]
 async function noOverflow(page: Page) {
   await page.evaluate(() => document.fonts.ready)
   const dimensions = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }))
@@ -18,6 +18,7 @@ test.beforeEach(async ({ page }) => {
 
 test('shared public templates fit the phone, tablet and desktop width matrix', async ({ page }, info) => {
   test.skip(info.project.name !== 'adaptive-chromium', 'Additional width matrix is exercised on the adaptive desktop browser.')
+  test.setTimeout(120_000)
   for (const width of widths) {
     await page.setViewportSize({ width, height: 900 })
     for (const route of ['/', '/start-here', '/books']) await visit(page, route)
@@ -33,7 +34,7 @@ test('each simulated engine can read the shared catalog, task and auth surfaces'
   for (const route of ['/', '/services', '/start-here', '/books', '/search', '/contact', '/auth/admin']) await visit(page, route)
   await visit(page, '/')
   await expect(page.locator('.learning-hero-copy')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-  expect(await page.locator('.learning-hero-copy').evaluate(node => getComputedStyle(node).backgroundImage)).toContain('journey-light-v3.svg')
+  expect(await page.locator('.learning-hero-copy').evaluate(node => getComputedStyle(node, '::before').backgroundImage)).toContain('journey-light-v4.svg')
   await expect(page.locator('.learning-hero-copy').getByText('تعرّفي على هبة', { exact: true })).toHaveCount(0)
 })
 
@@ -77,7 +78,34 @@ test('motion is automatic without a page control and the top button is touch siz
   await page.evaluate(() => window.scrollTo(0, 1000))
   const top = page.getByRole('button', { name: 'العودة إلى بداية الصفحة' })
   await expect(top).toBeVisible()
-  const box = await top.boundingBox(); expect(box!.width).toBeGreaterThanOrEqual(44); expect(box!.height).toBeGreaterThanOrEqual(44)
+  // Read layout pixels before compositing. WebKit can serialize a translated
+  // 44px border box as 43.9998779px during the button's entrance.
+  const size = await top.evaluate(button => {
+    const style = getComputedStyle(button)
+    return [parseFloat(style.width), parseFloat(style.height)]
+  })
+  for (const dimension of size) expect(dimension).toBeGreaterThanOrEqual(44)
+  const box = await top.boundingBox()
+  expect(box).not.toBeNull()
+  for (const dimension of [box!.width, box!.height]) {
+    expect(dimension).toBeGreaterThanOrEqual(44 - 1 / 1024)
+  }
   await top.click()
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+})
+
+test('decorative motion pauses when offscreen and resumes on return', async ({ page }) => {
+  await visit(page, '/')
+  const hero = page.locator('.learning-hero')
+  const motif = hero.locator('.learning-hero-copy')
+  const playState = () => motif.evaluate(node => getComputedStyle(node, '::before').animationPlayState)
+  await expect.poll(playState).toBe('running')
+  const finalCall = page.locator('[aria-labelledby="home-final-cta-title"]')
+  await finalCall.scrollIntoViewIfNeeded()
+  await expect.poll(playState).toBe('paused')
+  await expect(finalCall).toHaveAttribute('data-ambient-motion', 'running')
+  await hero.scrollIntoViewIfNeeded()
+  await expect.poll(playState).toBe('running')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect.poll(() => motif.evaluate(node => getComputedStyle(node, '::before').animationName)).toBe('none')
 })

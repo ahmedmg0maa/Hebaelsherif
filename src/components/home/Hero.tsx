@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { AmbientMotion } from '@/components/motion/AmbientMotion'
 import { HeroLight } from '@/components/motion/HeroLight'
 import { Button } from '@/components/ui/Button'
 import type { HomeCopy } from '@/lib/data/cms'
@@ -6,7 +7,8 @@ import type { OwnerProfile } from '@/lib/owner/profile'
 import type { ResolvedHomeMedia } from '@/lib/home/media'
 
 export function Hero({copy,profile,media}:{copy:HomeCopy;profile?:OwnerProfile;media?:ResolvedHomeMedia}) {
- return <section className="learning-hero" aria-labelledby="home-hero-title">
+ return <section className="learning-hero" aria-labelledby="home-hero-title" data-ambient-motion="running">
+  <AmbientMotion />
   <HeroLight />
   <div className="learning-hero-copy journey-surface">
    <p className="hero-detail hero-detail-1 text-sm font-semibold leading-7 text-deep-teal">{copy.eyebrow}</p>

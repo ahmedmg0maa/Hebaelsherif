@@ -473,9 +473,9 @@ h1, h2, h3, h4, h5, h6 {
 .public-canvas :is(h1,h2,h3,h4) {overflow-wrap:break-word;}
 .hero-detail {animation:detail-enter var(--motion-expressive) var(--ease-expressive) both;}
 .hero-detail-1 {animation-delay:40ms}.hero-detail-2 {animation-delay:100ms}.hero-detail-3 {animation-delay:160ms}.hero-detail-4 {animation-delay:220ms}
-.learning-hero-photo > img {animation:photo-enter 900ms var(--ease-expressive) both;}
+.learning-hero-photo > img {animation:photo-enter 700ms var(--ease-expressive) both;}
 @keyframes detail-enter {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes photo-enter {from{opacity:.7;transform:scale(1.025)}to{opacity:1;transform:scale(1)}}
+@keyframes photo-enter {from{opacity:.9;transform:scale(1.015)}to{opacity:1;transform:scale(1)}}
 .button-interactive {position:relative;overflow:hidden;transition:background-color var(--motion-quick),border-color var(--motion-quick),box-shadow var(--motion-standard),transform var(--motion-quick) var(--ease-productive);}
 .button-interactive::after {content:'';position:absolute;inset:0;pointer-events:none;transform:translateX(140%);background:linear-gradient(105deg,transparent 35%,rgb(255 248 235 / .18) 50%,transparent 65%);}
 .button-interactive:active:not(:disabled) {transform:scale(.985);}
@@ -602,10 +602,12 @@ html.dark :focus-visible {outline-color:#8BD3C8}
  background:linear-gradient(125deg,transparent 18%,rgb(244 232 211 / .11) 48%,transparent 76%);
  animation:photo-light-breathe 9s ease-in-out infinite alternate;
 }
-.hero-detail {animation-duration:820ms}
-.hero-detail-1 {animation-delay:60ms}.hero-detail-2 {animation-delay:180ms}.hero-detail-3 {animation-delay:300ms}.hero-detail-4 {animation-delay:420ms}
-.reveal {transition-duration:820ms;transition-timing-function:var(--ease-expressive)}
-.reveal.reveal-pending {transform:translateY(20px)}
+.hero-detail {animation-name:hero-readable-enter;animation-duration:620ms}
+.hero-detail-1 {animation-delay:0ms}.hero-detail-2 {animation-delay:75ms}.hero-detail-3 {animation-delay:140ms}.hero-detail-4 {animation-delay:205ms}
+.hero-detail:focus-within {animation:none}
+.reveal {transition-duration:620ms;transition-timing-function:var(--ease-expressive)}
+.reveal.reveal-pending {transform:translateY(12px)}
+.reveal:focus-within {transition:none;opacity:1;transform:none}
 .hero-actions > .button-interactive:first-child::after,
 [aria-labelledby="home-final-cta-title"] .button-interactive:first-child::after {
  animation:calm-cta-light 8s var(--ease-productive) 1.6s infinite;
@@ -626,6 +628,7 @@ html.dark :focus-visible {outline-color:#8BD3C8}
 .tour-tabs button {transition-duration:260ms}
 .tour-panel-enter {animation-duration:440ms}
 @keyframes journey-breathe {from{transform:translate3d(-5px,5px,0);opacity:.68}to{transform:translate3d(5px,-5px,0);opacity:1}}
+@keyframes hero-readable-enter {from{opacity:.84;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes photo-light-breathe {from{opacity:.25;transform:translate3d(-3%,0,0)}to{opacity:.85;transform:translate3d(3%,0,0)}}
 @keyframes calm-cta-light {0%,76%{transform:translateX(140%)}92%,100%{transform:translateX(-140%)}}
 @media(hover:hover) and (pointer:fine) {
@@ -639,6 +642,9 @@ html.dark :focus-visible {outline-color:#8BD3C8}
  .learning-hero-photo::after {animation-duration:12s}
 }
 @media(hover:none),(pointer:coarse) {.hero-pointer-glow {display:none}}
+[data-ambient-motion="paused"] .learning-hero-copy::before,
+[data-ambient-motion="paused"] .learning-hero-photo::after,
+[data-ambient-motion="paused"] .button-interactive:first-child::after {animation-play-state:paused}
 @media(prefers-reduced-motion:reduce) {
  .hero-pointer-glow {display:none}
  .reveal.reveal-pending {opacity:1;transform:none}
