@@ -1,3 +1,7 @@
+# Homepage redesign in production (2026-11-26)
+
+Cloudflare serves the new file-backed homepage on the apex and www at `a2a6d91`. The 100% Worker version is `e9825f1f-7447-4212-9571-7e94b09a80c9`. Windows Worker build, dry-run and five live browser profiles passed. The mobile hero asset is 32,358 bytes and the on-domain mobile Lighthouse median is 82. See [release results and rollback](HOMEPAGE_PRODUCTION_2026-11-26_AR.md).
+
 # Homepage redesign review (2026-11-26)
 
 The design review branch starts from public release `389c5b9`. The homepage renders its copy, ten locally supplied images, fixed navigation, and the existing practice component from the checkout itself. Business routes keep their existing URLs. The homepage does not read the CMS or provider settings. See [design, QA and remaining editorial placeholders](HOMEPAGE_REDESIGN_REVIEW_AR.md). Production publication requires separate approval.
