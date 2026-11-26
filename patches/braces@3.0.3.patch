@@ -1,0 +1,103 @@
+diff --git a/lib/compile.js b/lib/compile.js
+index dce69beb90ece5c3b0ca234a949418f9f34eedbc..dadced9a72c1a4542c56383e197584dfb5165035 100644
+--- a/lib/compile.js
++++ b/lib/compile.js
+@@ -1,9 +1,11 @@
+ 'use strict';
++const { assertAst } = require('./heba-guards');
+ 
+ const fill = require('fill-range');
+ const utils = require('./utils');
+ 
+ const compile = (ast, options = {}) => {
++  assertAst(ast);
+   const walk = (node, parent = {}) => {
+     const invalidBlock = utils.isInvalidBrace(parent);
+     const invalidNode = node.invalid === true && options.escapeInvalid === true;
+diff --git a/lib/expand.js b/lib/expand.js
+index 35b2c41d6afdb8f0197959e26079f266e48370d3..53392bd584325e1a8f0215d1491c8b4eded48e5b 100644
+--- a/lib/expand.js
++++ b/lib/expand.js
+@@ -1,4 +1,5 @@
+ 'use strict';
++const { assertAst } = require('./heba-guards');
+ 
+ const fill = require('fill-range');
+ const stringify = require('./stringify');
+@@ -31,6 +32,7 @@ const append = (queue = '', stash = '', enclose = false) => {
+ };
+ 
+ const expand = (ast, options = {}) => {
++  assertAst(ast);
+   const rangeLimit = options.rangeLimit === undefined ? 1000 : options.rangeLimit;
+ 
+   const walk = (node, parent = {}) => {
+diff --git a/lib/heba-guards.js b/lib/heba-guards.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..46bf464ef0df3797fdb0ba585f96640a16cbfbe1
+--- /dev/null
++++ b/lib/heba-guards.js
+@@ -0,0 +1,30 @@
++'use strict';
++// Local mitigation for GHSA-vfj7-8cjw-p6xm. Limits cannot be disabled by options.
++const MAX_DEPTH = 64;
++const MAX_NODES = 16384;
++const fail = () => { throw new RangeError('BRACES_COMPLEXITY_LIMIT'); };
++exports.assertPattern = input => {
++  if (typeof input !== 'string') return; // Preserve upstream type validation.
++  const stack = [];
++  for (let i = 0; i < input.length; i++) {
++    if (input[i] === '\\') { i++; continue; }
++    if (input[i] === '{' || input[i] === '(') {
++      stack.push(input[i]);
++      if (stack.length > MAX_DEPTH) fail();
++    } else if ((input[i] === '}' && stack[stack.length - 1] === '{') || (input[i] === ')' && stack[stack.length - 1] === '(')) stack.pop();
++  }
++};
++exports.assertAst = ast => {
++  const stack = [{ node: ast, depth: 0 }], seen = new Set();
++  let visited = 0;
++  while (stack.length) {
++    const { node, depth } = stack.pop();
++    if (!node || typeof node !== 'object' || seen.has(node) || depth > MAX_DEPTH || ++visited > MAX_NODES) fail();
++    seen.add(node);
++    if (node.nodes) {
++      if (!Array.isArray(node.nodes) || node.nodes.length + visited > MAX_NODES) fail();
++      for (const child of node.nodes) stack.push({ node: child, depth: depth + 1 });
++    }
++  }
++};
++
+diff --git a/lib/parse.js b/lib/parse.js
+index 3a6988e629f52aee6609dc5ec290a5e9ff47cecb..887bb5fa658b9d8397ec044f1282c1458ecc2753 100644
+--- a/lib/parse.js
++++ b/lib/parse.js
+@@ -1,4 +1,5 @@
+ 'use strict';
++const { assertPattern } = require('./heba-guards');
+ 
+ const stringify = require('./stringify');
+ 
+@@ -29,6 +30,7 @@ const {
+  */
+ 
+ const parse = (input, options = {}) => {
++  assertPattern(input);
+   if (typeof input !== 'string') {
+     throw new TypeError('Expected a string');
+   }
+diff --git a/lib/stringify.js b/lib/stringify.js
+index 8bcf872c31894f81a8c64d9202fd607e4fd7ea2b..9d4263346391b485fb6027baaf10134ad964dd13 100644
+--- a/lib/stringify.js
++++ b/lib/stringify.js
+@@ -1,8 +1,10 @@
+ 'use strict';
++const { assertAst } = require('./heba-guards');
+ 
+ const utils = require('./utils');
+ 
+ module.exports = (ast, options = {}) => {
++  assertAst(ast);
+   const stringify = (node, parent = {}) => {
+     const invalidBlock = options.escapeInvalid && utils.isInvalidBrace(parent);
+     const invalidNode = node.invalid === true && options.escapeInvalid === true;

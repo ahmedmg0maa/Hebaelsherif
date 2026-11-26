@@ -1,96 +1,43 @@
 import Link from 'next/link'
-import type { ReactNode } from 'react'
-import { BRAND } from '@/constants/design'
+import { Card } from '@/components/ui/Card'
+import { BrandLogo } from '@/components/layout/BrandLogo'
+import { ThemeToggle } from '@/components/theme/ThemeToggle'
 
-interface AuthShellProps {
-  title: string
-  description: string
-  children: ReactNode
-  footerText: string
-  footerLinkText: string
-  footerLinkHref: string
-}
-
-export default function AuthShell({
+export function AuthShell({
   title,
-  description,
+  lead,
+  footer,
   children,
-  footerText,
-  footerLinkText,
-  footerLinkHref,
-}: AuthShellProps) {
+}: {
+  title: string
+  lead: string
+  footer?: React.ReactNode
+  children: React.ReactNode
+}) {
   return (
-    <main className="min-h-screen bg-cream">
-      <div className="container-premium grid min-h-screen items-center gap-10 py-10 lg:grid-cols-[0.9fr_1.1fr]">
-        <section className="hidden lg:block">
-          <Link href="/" className="inline-block">
-            <span className="block text-3xl font-black text-petrol">{BRAND.arName}</span>
-            <span className="mt-2 block text-sm font-semibold text-gold">{BRAND.tagline}</span>
-          </Link>
-
-          <div className="mt-12 rounded-[2rem] border border-sand bg-ivory/90 p-10 shadow-soft">
-            <p className="mb-4 text-sm font-bold tracking-[0.25em] text-gold">
-              مساحة خاصة وآمنة
-            </p>
-
-            <h1 className="text-4xl font-black leading-tight text-petrol">
-              دخولك للمنصة هو بداية رحلتك الهادئة
-            </h1>
-
-            <p className="mt-6 text-sm leading-8 text-warm-gray">
-              من هنا تستطيعين متابعة الكورسات، قراءة الكتب، إدارة الجلسات، ومراجعة طلباتك في تجربة
-              عربية فاخرة ومحمية.
-            </p>
-
-            <div className="mt-8 grid gap-3">
-              <div className="rounded-2xl border border-sand bg-cream p-4">
-                <strong className="block text-sm text-charcoal">محتوى محمي</strong>
-                <span className="mt-1 block text-xs leading-6 text-warm-gray">
-                  الوصول للكورسات والكتب يتم بعد تسجيل الدخول وتأكيد الطلب.
-                </span>
-              </div>
-
-              <div className="rounded-2xl border border-sand bg-cream p-4">
-                <strong className="block text-sm text-charcoal">رحلتك محفوظة</strong>
-                <span className="mt-1 block text-xs leading-6 text-warm-gray">
-                  تقدمك في الكورسات وجلساتك وطلباتك تظهر داخل لوحة المستخدم.
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-md">
-          <div className="mb-8 text-center lg:hidden">
-            <Link href="/" className="inline-block">
-              <span className="block text-2xl font-black text-petrol">{BRAND.arName}</span>
-              <span className="mt-1 block text-xs font-semibold text-gold">{BRAND.tagline}</span>
-            </Link>
-          </div>
-
-          <div className="rounded-[2rem] border border-sand bg-ivory/95 p-6 shadow-premium sm:p-8">
-            <div className="mb-7 text-center">
-              <h2 className="text-2xl font-black text-charcoal">{title}</h2>
-              <p className="mt-3 text-sm leading-7 text-warm-gray">{description}</p>
-            </div>
-
-            {children}
-
-            <p className="mt-7 text-center text-sm text-warm-gray">
-              {footerText}{' '}
-              <Link href={footerLinkHref} className="font-bold text-petrol hover:text-gold">
-                {footerLinkText}
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-6 text-center">
-            <Link href="/" className="text-xs font-bold text-warm-gray transition hover:text-petrol">
-              العودة للصفحة الرئيسية
-            </Link>
-          </div>
-        </section>
+    <main className="auth-canvas heritage-paper relative flex min-h-screen items-center justify-center overflow-hidden bg-ivory px-6 py-16">
+      <span className="pointer-events-none absolute start-8 top-8 h-20 w-20 border-s border-t border-antique-gold/25" />
+      <span className="pointer-events-none absolute end-8 bottom-8 h-20 w-20 border-e border-b border-antique-gold/25" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,color-mix(in_srgb,var(--color-antique-gold)_8%,transparent),transparent_34%)]" />
+      <div className="absolute end-5 top-5 flex gap-2"><ThemeToggle compact /></div>
+      <div className="relative w-full max-w-md">
+        <div className="mb-8 flex justify-center"><BrandLogo className="h-20 w-20 rounded-3xl" /></div>
+        <div className="mb-8 text-center">
+          <span className="mx-auto mb-4 block h-px w-16 bg-antique-gold" aria-hidden />
+          <h1 className="text-3xl font-bold text-deep-teal">{title}</h1>
+          <p className="mt-2 leading-relaxed text-text-soft">{lead}</p>
+        </div>
+        <Card className="border-antique-gold/30 p-8">{children}</Card>
+        {footer && <p className="mt-6 text-center text-sm text-text-soft">{footer}</p>}
       </div>
     </main>
+  )
+}
+
+export function AuthLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="font-semibold text-burgundy underline-offset-4 hover:underline">
+      {children}
+    </Link>
   )
 }

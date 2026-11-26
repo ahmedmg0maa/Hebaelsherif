@@ -1,0 +1,113 @@
+{
+  "release": "HEBA_REVIEWED_2026-10-12",
+  "recordedAt": "2026-10-12T12:11:15.528774+00:00",
+  "input": {
+    "libraryVersion": 10,
+    "archive": "HEBA_FREE_LAUNCH_2026-10-12.zip",
+    "sha256": "791bc5b17ec32fe52e8a965df955d6c489d1ae71301e3f6c0cd35893bd1d44b3"
+  },
+  "verdict": "Corrective source and detailed review delivered. Not a declaration that the live website is fully ready for paid intake.",
+  "checks": {
+    "fullLocalGate": {
+      "status": "passed",
+      "publicBrowserPassed": 74,
+      "publicBrowserTotal": 74,
+      "scope": "check:deploy after public design/learning/payment/readiness changes; before final overview-count and privileged-runtime-reader followups. These followups then received targeted behavior/contracts and final type/lint/build validation."
+    },
+    "readinessBehavior": {
+      "status": "passed",
+      "scope": "Actual normalization/getContentReadiness with injected provider reads: valid/invalid settings, errors, no slots, missing runtime/calendar, unconfigured, unauthorized elevated RPC read denied."
+    },
+    "learningBehavior": {
+      "status": "passed",
+      "widths": [
+        1440,
+        390
+      ],
+      "scope": "Actual LearnClient with injected actions/frame: serialize admissions, lesson drafts, repeat submit guard, exception recovery, durable deletion feedback, keyboard tabs, popup null and throwing-policy fallback. No real protected media or persistent provider writes."
+    },
+    "overviewBehavior": {
+      "status": "passed",
+      "scope": "Exact-count replies above 20, genuine zero versus unavailable, and financial aggregate completeness guard. Injected provider reads, not provider history/RLS or real currency-account acceptance."
+    },
+    "publicRoutes": {
+      "status": "passed",
+      "routeWidthCases": 16,
+      "widths": [
+        1440,
+        390
+      ],
+      "routes": [
+        "/",
+        "/about",
+        "/services",
+        "/courses",
+        "/books",
+        "/booking",
+        "/auth/admin",
+        "/privacy"
+      ],
+      "scope": "Final public visual source, no horizontal document overflow or page JS exceptions; not comprehensive accessibility."
+    },
+    "finalNextSmoke": {
+      "status": "passed",
+      "widths": [
+        1440,
+        390
+      ],
+      "scope": "Actual provider-free home/tour, owner password UI, central guard redirect and complete simulated booking; no live signup/payment/storage."
+    },
+    "finalBuilds": {
+      "next": "passed",
+      "cloudflare": "passed",
+      "typeCheck": "passed",
+      "eslint": "passed",
+      "wranglerDryRun": "passed; no deployment",
+      "workerUploadGzipKiB": 773.81
+    },
+    "vinextCheck": {
+      "status": "passed",
+      "knownSupportedChecks": 17,
+      "partial": 0,
+      "issues": 0,
+      "scope": "Static configuration/structure scan only; not full workload compatibility or Free CPU acceptance."
+    },
+    "dependencyAudit": {
+      "status": "passed-with-verified-local-mitigation",
+      "rawRegistryFindings": 1,
+      "unmitigatedFindings": 0,
+      "advisory": "GHSA-vfj7-8cjw-p6xm",
+      "scope": "Existing pinned braces native pnpm guard retained; not an upstream fixed version."
+    },
+    "releaseIntegrity": {
+      "status": "verified separately after packaging",
+      "scope": "Manifest lengths/hashes and source/archive security checks."
+    }
+  },
+  "livePublicInspection": {
+    "bookingUrl": "https://hebaelsherif.com/booking",
+    "navigationToContactFields": "passed",
+    "remainingIntakeField": "سؤال أو ملاحظة قبل الجلسة",
+    "socialLinks": "shown as inactive",
+    "scope": "Read public site and navigate only through service/date/time/contact step. Did not fill fields, create account, submit booking or send email. Deployed version/database not identified."
+  },
+  "notPerformed": [
+    "No live provider login, migration, owner enrollment, purchase, receipt upload or email delivery",
+    "No real protected-media playback, persistent course notes or entitlement denial acceptance",
+    "No complete Supabase history/RLS/backup restore or multi-connection calendar race",
+    "No production deployment, DNS or billing/subscription change",
+    "No deployed Free CPU/load/Core Web Vitals or comprehensive WCAG certification"
+  ],
+  "openItems": [
+    "Deployed source/CMS identity and live publication of corrected booking",
+    "Brand biography, authorized imagery, final business data/policies and real courses/books",
+    "Existing service account connection and owner/SMTP/payment/booking/delivery acceptance",
+    "Protected long-video strategy within finite free storage and traffic",
+    "Scalable database financial aggregation/multiple currencies; incomplete samples now hidden"
+  ],
+  "migrationsAdded": [],
+  "migrationsChanged": [],
+  "officialSourcesReviewedThisTurn": 10,
+  "previousSourceCatalogRetained": 28,
+  "report": "docs/HEBA_DETAILED_REVIEW_AR_2026-10-12.md"
+}

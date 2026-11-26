@@ -1,77 +1,70 @@
-# Heba ElSherif — V7 Global Premium Platform
+# Cream and motion refinement — 2026-10-13
 
-منصة عربية فاخرة لهبة الشريف: كتب رقمية، كورسات (مغلقة بخاصية تفعيل حتى الجاهزية)، حجز جلسات فردية، ورش عمل بمقاعد محدودة، مدفوعات يدوية موثقة، لوحة عميلة كاملة، ونظام تشغيل إداري مُدقق بالصلاحيات والسجلات — مبنية بـ Next.js وSupabase وجاهزة للنشر على Vercel.
+راجعي [تقرير التصميم والحركة](HEBA_CREAM_MOTION_REVIEW_2026-10-13_AR.md) أولًا. طريقة الفتح والإدارة في START_REVIEWED_AR.md. هذا التسليم يطوّر الخلفية والتفاعل وتجربة النموذج العملي، ولا يحدّث الدومين المنشور تلقائيًا.
 
-## Tech Stack
+---
 
-- Next.js 16 (App Router) + React 19 + TypeScript
-- Tailwind CSS (RTL-first premium design system)
-- Supabase: Auth + Postgres (RLS) + Storage
-- Zod • pnpm 10.13.1 • Node 24.x • Vercel
+# Latest refinement — 2026-10-13
 
-## V7 Highlights
+ابدئي بـ [دليل فتح النسخة ودخول الإدارة](START_REVIEWED_AR.md)، ثم [مراجعة جميع الصفحات من منظور الزائرة](HEBA_CUSTOMER_REVIEW_2026-10-13_AR.md). دليل التشغيل الكامل السابق في START_HERE_AR.md ما زال يخص إعداد الخدمات والنشر؛ هذا التسليم لا يغيّر الموقع المنشور تلقائيًا.
 
-- نظام ورش كامل: نشر، مقاعد وقائمة انتظار بقفل قاعدة بيانات، تأكيد حضور، روابط بث محمية بالـ RLS.
-- عروض وحملات بعداد تنازلي تُدار من الأدمن وتظهر وتنتهي تلقائيًا.
-- إدارة كوبونات حقيقية (نطاق، حدود استخدام، صلاحية) — غير مقروءة للعامة.
-- أساس LMS كامل في قاعدة البيانات: وحدات، دروس، اشتراكات، تقدم، شهادات.
-- أعلام خصائص من `site_settings`: الكورسات/الورش لا تظهر إلا عند التفعيل.
-- حجز الجلسات محمي من التعارض بقفل استشاري + قيد GiST (لا حجز مزدوج).
-- حماية دور المالك: لا يُمنح أو يُعدل إلا من مالك.
-- سلسلة فحوص نشر من 10 خطوات: `pnpm run check:deploy`.
+---
 
-## Quick Start
+# منصة هبة الشريف — Heba ElSherif Platform
+
+**نسخة التشغيل المجاني 12 أكتوبر 2026:** ابدئي من [START_HERE_AR.md](START_HERE_AR.md) للإعداد والنشر والإدارة. هذه التعليمات تتقدم على تعليمات المراحل القديمة أدناه.
+
+
+Premium Arabic-first learning platform: public site, customer dashboard, LMS course player, protected digital content, unified checkout with manual payment-proof review, and a full Admin OS.
+
+## Stack
+
+- **Next.js 16** (App Router, RTL root) · **TypeScript** strict · **Tailwind CSS v4** (CSS-first `@theme`)
+- **Supabase** — Postgres + RLS, Auth (SSR cookies), Storage (signed URLs for all protected content)
+- **pnpm 10.13.1** (pinned via Corepack) · Node **24** · Cloudflare Workers-ready
+
+## Quick start
 
 ```bash
-corepack enable
+corepack enable && corepack prepare pnpm@10.13.1 --activate
 pnpm install --frozen-lockfile
-cp .env.example .env.local   # fill Supabase keys
-pnpm run dev
+cp .env.example .env   # fill from your Supabase project
+
 ```
 
-## Verification
+Without Supabase credentials the site runs in **demo mode**: public pages show editorial fallback content, dashboards show empty states, and ordering is disabled with a clear message.
 
-```bash
-pnpm run check:deploy
-# type-check → lint → build → audit:ux → audit:routes → audit:security
-# → audit:admin → audit:v6 → audit:v7 → audit:launch
-```
+## Environment
 
-## Documentation
+See [.env.example](.env.example). `SUPABASE_SERVICE_ROLE_KEY` is server-only — it must never be prefixed with `NEXT_PUBLIC_`.
 
-| Topic | File |
-| --- | --- |
-| Deploy (Vercel + GitHub) | `VERCEL_DEPLOYMENT.md`, `DEPLOYMENT.md` |
-| Supabase setup + migrations | `SUPABASE_SETUP.md`, `SUPABASE_MIGRATIONS.md` |
-| Architecture / schema / admin | `docs/V7_ARCHITECTURE.md`, `docs/V7_DATABASE_SCHEMA.md`, `docs/V7_ADMIN_OS.md` |
-| Incident ledger + guards | `docs/V7_INCIDENTS_AND_FIXES.md` |
-| Admin & customer guides | `ADMIN_GUIDE.md`, `CUSTOMER_GUIDE.md` |
-| Delivery reports | `V7_IMPLEMENTATION_REPORT.md`, `V7_FINAL_DELIVERY_REPORT.md` |
+## Database
 
-## Rules that keep production safe
+Ordered SQL migrations live in `supabase/migrations/` (001 → 010: helpers, users/auth, commerce, LMS, books, booking, workshops, CMS, reports, storage). Setup steps: [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md). Demo seed: `SEED_DEMO=true DATABASE_URL=... pnpm db:seed` (guarded — refuses production).
 
-- pnpm فقط — لا `package-lock.json` ولا `npm install` على Vercel.
-- لا أسرار في المتصفح — مفتاح service-role للخادم فقط.
-- كل إجراء إداري مؤثر يُسجل في سجل التدقيق.
-- لا محتوى وهمي أو Placeholder في الواجهة العامة (يفشل الفحص تلقائيًا).
+## Scripts
 
-## V8 status
+| Command | Purpose |
+|---|---|
+| `pnpm dev` / `pnpm build` / `pnpm start` | Next.js lifecycle |
+| `pnpm type-check` / `pnpm lint` | TS + ESLint |
+| `pnpm audit:routes` | every route in `scripts/expected-routes.json` exists |
+| `pnpm audit:ux` | no placeholders / TODO / lorem / weak coming-soon |
+| `pnpm audit:colors` | brand tokens only — no generic Tailwind palette |
+| `pnpm audit:security` | no service key in client code, no tracked .env, no package-lock |
+| `pnpm audit:admin` | admin tree has a role gate |
+| `pnpm audit:db` | migration naming/order sanity |
+| `pnpm audit:launch` | required files present |
+| `pnpm check:deploy` | type-check + lint + build + all audits (phase gate) |
 
-Current completed version: `8.0.0`.
+## Project docs
 
-V8 completes the structured V7.x roadmap into a global premium platform foundation:
+- [docs/MASTER_PLAN.md](docs/MASTER_PLAN.md) — full product spec (do not edit)
+- [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) — single source of truth for progress
+- [docs/DECISIONS.md](docs/DECISIONS.md) — technical decision log
+- [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) — open items with severity
+- [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) — backend setup
 
-- unified commerce model
-- checkout intent flow
-- LMS stable dashboard/course player foundation
-- admin OS expanded routes
-- V8 Supabase migration
-- V8 readiness audit
+## Deployment (Cloudflare Workers)
 
-Run:
-
-```bash
-pnpm run check:deploy
-```
-
-Then apply Supabase migrations on staging before production.
+The final hosting path is GitHub Free → Cloudflare Workers Free through vinext; Cloudflare provides DNS/CDN while Supabase remains the database, Auth and Storage provider. Namecheap is the registrar only. Set variables only in Cloudflare Worker/Build Secrets, never in the repository. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [docs/CLOUDFLARE_DEPLOYMENT.md](docs/CLOUDFLARE_DEPLOYMENT.md), and the gated [launch closure](docs/PRODUCTION_LAUNCH_CLOSURE_2026-08-26.md).

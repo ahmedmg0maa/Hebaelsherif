@@ -1,0 +1,10 @@
+
+import {AdminField,AdminSelect} from './AdminField'
+import Link from 'next/link'
+export function CatalogListTools({q,status,total,configured,scheduled=false}:{q:string;status:string;total:number;configured:boolean;scheduled?:boolean}) {
+  return <section aria-label="بحث وتصفية الكتالوج" className="space-y-3"><form method="get" className="flex flex-wrap items-end gap-3 rounded-2xl border border-line bg-surface-raised p-4"><AdminField label="بحث بالعنوان" name="q" type="search" maxLength={120} defaultValue={q} placeholder="اكتبي عنوانًا أو جزءًا منه"/><AdminSelect label="الحالة" name="status" defaultValue={status}><option value="all">كل الحالات</option><option value="published">منشور</option><option value="draft">مسودة</option><option value="archived">مؤرشف</option>{scheduled&&<option value="scheduled">مجدول</option>}</AdminSelect><button className="min-h-12 rounded-xl bg-deep-teal px-6 font-semibold text-on-dark">تطبيق</button><Link href="?" className="min-h-12 content-center px-3 text-sm text-text-soft">مسح التصفية</Link></form><p role="status" className="text-sm text-text-soft">{configured?`${total.toLocaleString('ar-EG')} نتيجة مطابقة`:'مصدر البيانات غير مهيأ؛ هذه ليست قائمة فارغة مؤكدة.'}</p></section>
+}
+export function CatalogPagination({q,status,total,page}:{q:string;status:string;total:number;page:number}) {
+  const pages=Math.max(1,Math.ceil(total/20)),href=(value:number)=>`?${new URLSearchParams({q,status,page:String(value)})}`
+  return <nav aria-label="صفحات الكتالوج" className="flex flex-wrap items-center justify-between gap-4 text-sm text-text-soft"><p>صفحة {page.toLocaleString('ar-EG')} من {pages.toLocaleString('ar-EG')}</p><div className="flex gap-3">{page>1&&<Link href={href(page-1)} className="min-h-12 content-center rounded-xl border border-line px-5">السابق</Link>}{page<pages&&<Link href={href(page+1)} className="min-h-12 content-center rounded-xl border border-line px-5">التالي</Link>}{page>pages&&<Link href={href(1)} className="min-h-12 content-center">أول صفحة</Link>}</div></nav>
+}

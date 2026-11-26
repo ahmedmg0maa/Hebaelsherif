@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+
+const migration = readFileSync('supabase/migrations/073_atomic_course_curriculum_governance_local_only.sql', 'utf8')
+const actions = readFileSync('src/lib/actions/cms.ts', 'utf8')
+const forms = readFileSync('src/components/admin/CurriculumForms.tsx', 'utf8')
+const editors = readFileSync('src/components/admin/CurriculumItemEditors.tsx', 'utf8')
+const page = readFileSync('src/app/admin/courses/[id]/curriculum/page.tsx', 'utf8')
+
+assert.match(migration, /revoke insert, update, delete on table public\.course_modules from anon, authenticated;/, 'browser module mutation must be revoked')
+assert.match(migration, /revoke insert, update, delete on table public\.course_lessons from anon, authenticated;/, 'browser lesson mutation must be revoked')
+const fn = migration.slice(migration.indexOf('create or replace function public.manage_course_curriculum'), migration.indexOf('revoke all on function public.manage_course_curriculum'))
+assert.match(fn, /not public\.has_permission\('learning\.manage', p_actor_id\)/, 'the curriculum transaction must recheck learning.manage')
+assert.match(fn, /for update;[\s\S]*pg_advisory_xact_lock/, 'the course and curriculum scope must be locked')
+for (const action of ['module_create','module_update','module_delete','lesson_create','lesson_update','lesson_delete']) assert(fn.includes(`'${action}'`), `${action} must be governed`)
+assert.match(fn, /video_path\)\s*values \([\s\S]*, null\)/, 'lesson creation must never accept a raw video path')
+assert.match(fn, /v_lesson\.video_path is not null[\s\S]*lesson_resources[\s\S]*lesson_progress[\s\S]*course_notes/, 'lesson deletion must preserve protected delivery and customer history')
+assert.match(fn, /insert into public\.audit_logs[\s\S]*return v_id;/, 'the curriculum mutation and metadata-only audit must commit together')
+assert(!/jsonb_build_object\([\s\S]*'title'/.test(fn.slice(fn.indexOf('insert into public.audit_logs'))), 'curriculum audit must not duplicate content titles')
+assert(migration.includes('revoke all on function public.manage_course_curriculum(uuid,text,uuid,uuid,uuid,text,integer,integer,boolean) from public, anon, authenticated;'), 'curriculum RPC must revoke browser execution')
+assert(migration.includes('grant execute on function public.manage_course_curriculum(uuid,text,uuid,uuid,uuid,text,integer,integer,boolean) to service_role;'), 'curriculum RPC must be service-only')
+
+const curriculumStart = actions.indexOf('export async function addModule')
+const curriculumEnd = actions.indexOf('export async function updatePageSeo')
+const curriculumActions = actions.slice(curriculumStart, curriculumEnd)
+assert.equal((curriculumActions.match(/rpc\('manage_course_curriculum'/g) ?? []).length, 6, 'all six curriculum actions must use the governed RPC')
+assert(!/from\('(course_modules|course_lessons|audit_logs)'\)\.(?:insert|update|delete)/.test(curriculumActions), 'curriculum Server Actions must not retain split writes')
+assert(!forms.includes('video_path'), 'Admin lesson creation must not accept a raw Storage path')
+assert(forms.includes('maxLength={180}') && forms.includes('max={1440}'), 'lesson creation must expose server title/duration bounds')
+const feedback = readFileSync('src/components/admin/ActionFeedback.tsx', 'utf8')
+assert(editors.includes('window.confirm') && editors.includes('ActionFeedback') && feedback.includes("role={feedback.ok ? 'status' : 'alert'}"), 'destructive controls need confirmation and accessible durable feedback')
+for (const error of ['admin_curriculum_course_read_failed','admin_curriculum_modules_read_failed','admin_curriculum_lessons_read_failed']) assert(page.includes(error), `configured read failure must not become not-found: ${error}`)
+assert(page.includes(".limit(100)") && page.includes(".limit(1000)"), 'Admin curriculum reads must be bounded')
+
+console.log('verify:course-curriculum-governance-local passed — atomic curriculum writes, history guards, bounded reads and truthful Admin controls verified locally')

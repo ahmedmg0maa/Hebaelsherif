@@ -1,82 +1,117 @@
-import fs from 'node:fs'
-import path from 'node:path'
+import { RELEASE_ZIP_NAME } from './release-info.mjs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { join } from 'node:path'
+import { walk, read, report } from './lib.mjs'
+import { inspectArchive, isArchiveName } from './archive-security.mjs'
 
-const root = process.cwd()
-const errors = []
+const failures = []
+const forbiddenTracked = [
+  /(^|\/)\.env(?:\..+)?$/,
+  /(^|\/)supabase\/\.temp(?:\/|$)/,
+  /(^|\/)\.pnpm-store(?:\/|$)/,
+  /(^|\/)debug\.log$/,
+  /(^|\/)(?:reports|exports)\/private(?:\/|$)/,
+  /\.pem$/i,
+]
+const secretPatterns = [
+  { name: 'Supabase secret key', regex: /sb_secret_[A-Za-z0-9_-]{20,}/ },
+  { name: 'service-role JWT', regex: /eyJ[A-Za-z0-9_-]{20,}\.eyJ[A-Za-z0-9_-]*c2VydmljZV9yb2xl[A-Za-z0-9_-]*\.[A-Za-z0-9_-]{20,}/ },
+  { name: 'private key', regex: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/ },
+]
+const textExtensions = new Set(['.js', '.mjs', '.cjs', '.ts', '.tsx', '.json', '.md', '.sql', '.yml', '.yaml', '.toml', '.txt', '.example'])
 
-function read(file) {
-  return fs.readFileSync(path.join(root, file), 'utf8')
+function isTextCandidate(file) {
+  const dot = file.lastIndexOf('.')
+  return dot === -1 || textExtensions.has(file.slice(dot).toLowerCase())
 }
 
-function walk(dir, files = []) {
-  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', '.next', '.git'].includes(item.name)) continue
-    const full = path.join(dir, item.name)
-    if (item.isDirectory()) walk(full, files)
-    else files.push(full)
-  }
-  return files
-}
-
-// 1. Package manager discipline
-if (fs.existsSync(path.join(root, 'package-lock.json'))) errors.push('package-lock.json must not exist (pnpm only).')
-if (!fs.existsSync(path.join(root, 'pnpm-lock.yaml'))) errors.push('pnpm-lock.yaml is required.')
-
-// 2. Vercel config: pnpm + frozen lockfile + security headers
-const vercel = JSON.parse(read('vercel.json'))
-const installCommand = String(vercel.installCommand || '')
-if (!installCommand.includes('pnpm install')) errors.push('vercel.json installCommand must use pnpm.')
-if (/(^|[^p])npm (install|ci)/.test(installCommand)) errors.push('vercel.json installCommand must not use npm.')
-if (!installCommand.includes('--frozen-lockfile')) errors.push('vercel.json should install with --frozen-lockfile.')
-
-const headerBlock = JSON.stringify(vercel.headers || [])
-for (const header of ['Content-Security-Policy', 'X-Frame-Options', 'X-Content-Type-Options', 'Referrer-Policy', 'Permissions-Policy']) {
-  if (!headerBlock.includes(header)) errors.push(`Security header missing from vercel.json: ${header}`)
-}
-
-// 3. Source scan: no Firebase, no service-role exposure, no ignoreBuildErrors
-const sourceFiles = walk(path.join(root, 'src')).filter((file) => /\.(ts|tsx)$/.test(file))
-for (const file of sourceFiles) {
-  const rel = path.relative(root, file).split(path.sep).join('/')
-  const text = fs.readFileSync(file, 'utf8')
-  if (/from ['"]firebase/.test(text) || /FIREBASE_/.test(text)) errors.push(`Firebase reference in ${rel}`)
-  if (/NEXT_PUBLIC[A-Z_]*SERVICE_ROLE/.test(text)) errors.push(`Service-role key exposed via NEXT_PUBLIC in ${rel}`)
-}
-const nextConfig = read('next.config.mjs')
-if (nextConfig.includes('ignoreBuildErrors')) errors.push('ignoreBuildErrors must not be used in next.config.')
-
-// 4. Admin seeding must be secret-gated
-const seedAdmin = read('src/app/api/admin/seed-admin/route.ts')
-if (!seedAdmin.includes('ADMIN_SETUP_SECRET')) errors.push('seed-admin route must be gated by ADMIN_SETUP_SECRET.')
-
-// 5. Owner-role escalation protection
-const roleRoute = read('src/app/api/admin/users/[id]/role/route.ts')
-if (!roleRoute.includes("role === 'owner'")) errors.push('Owner-role protection missing in users/[id]/role route.')
-const actionsRoute = read('src/app/api/admin/actions/route.ts')
-if (!actionsRoute.includes('OWNER_ROLE_PROTECTED')) errors.push('Owner-role protection missing in admin actions route.')
-
-// 6. Migration safety: known incident patterns must not return
-const migrationsDir = path.join(root, 'supabase', 'migrations')
-const migrations = fs.readdirSync(migrationsDir).filter((file) => file.endsWith('.sql'))
-let rlsSql = ''
-for (const file of migrations) {
-  const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8')
-  rlsSql += sql
-  if (/generated always as \(tstzrange/i.test(sql)) errors.push(`Non-immutable generated tstzrange column in ${file} (V6 incident #1).`)
-}
-if (!/create trigger trg_bookings_slot_range/i.test(rlsSql)) errors.push('Trigger-based slot_range is missing from migrations.')
-
-// 7. RLS enabled on sensitive tables
-for (const table of ['coupons', 'payment_proofs', 'bookings', 'orders', 'content_access', 'book_files', 'audit_logs', 'offers', 'workshops', 'workshop_registrations', 'workshop_access_links', 'course_enrollments', 'lesson_progress', 'refunds', 'book_download_logs']) {
-  if (!rlsSql.includes(`alter table public.${table} enable row level security`)) {
-    errors.push(`RLS not enabled for sensitive table: ${table}`)
+function scanSecretLikeValues(file, source) {
+  if (file === '.env.example') return
+  for (const pattern of secretPatterns) {
+    if (pattern.regex.test(source)) failures.push(`${file}: contains a ${pattern.name}`)
   }
 }
 
-if (errors.length) {
-  console.error('Security audit failed:')
-  for (const error of errors) console.error(`- ${error}`)
-  process.exit(1)
+// Client bundles must never reference the service-role credential.
+for (const file of walk('src', ['.tsx', '.ts'])) {
+  const source = read(file)
+  if (/NEXT_PUBLIC_SUPABASE_SERVICE_ROLE/.test(source)) failures.push(`${file}: service role key exposed as NEXT_PUBLIC`)
+  if (/(SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY)/.test(source) && /['\"]use client['\"]/.test(source)) {
+    failures.push(`${file}: service role key referenced in a client component`)
+  }
+  if (/eyJ[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{20,}/.test(source)) {
+    failures.push(`${file}: hardcoded JWT-like value`)
+  }
 }
 
-console.log(`Security audit passed: ${sourceFiles.length} source files, ${migrations.length} migrations, headers and RLS checks verified.`)
+let tracked = []
+try {
+  tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split(/\r?\n/).filter(Boolean)
+} catch {
+  // Delivered source archives intentionally contain no .git directory. Scan the
+  // release-relevant tree instead of weakening or skipping the audit.
+  tracked = ['src','scripts','supabase','docs','tests'].flatMap((root) => walk(root))
+  tracked.push(...['package.json','pnpm-lock.yaml','.env.example','.gitignore','README.md','AGENTS.md','DO_NOT_ZIP_WORKSPACE.txt'].filter(existsSync))
+  // Archives have no Git index, so explicitly include local-only root names
+  // that a naive copy operation might otherwise hide from this audit.
+  tracked.push(...readdirSync('.').filter((name) => name === '.env' || (name.startsWith('.env.') && name !== '.env.example')))
+  if (existsSync('supabase/.temp')) tracked.push(...walk('supabase/.temp'))
+}
+
+for (const file of tracked) {
+  const normalized = file.replaceAll('\\', '/')
+  if (normalized !== '.env.example' && forbiddenTracked.some((pattern) => pattern.test(normalized))) {
+    failures.push(`git tracks sensitive/local-only path: ${normalized}`)
+  }
+  if (normalized === 'package-lock.json') failures.push('package-lock.json is tracked — pnpm only')
+  if (!existsSync(file) || !isTextCandidate(normalized) || statSync(file).size > 2_000_000) continue
+  scanSecretLikeValues(normalized, readFileSync(file, 'utf8'))
+}
+
+for (const file of [...walk('src', ['.ts','.tsx']), ...walk('scripts', ['.mjs','.js'])]) {
+  const normalized = file.replaceAll('\\','/')
+  if (normalized.endsWith('src/lib/supabase/public-key.ts') || normalized.endsWith('scripts/public-config.mjs')) continue
+  if (/NEXT_PUBLIC_SUPABASE_(?:ANON|PUBLISHABLE)_KEY/.test(readFileSync(file,'utf8'))) {
+    failures.push(`${normalized}: bypasses the unified Supabase public-config helper`)
+  }
+}
+
+if (!existsSync('.env.example')) failures.push('.env.example missing')
+if (!existsSync('.gitignore')) failures.push('.gitignore missing')
+else {
+  const ignore = readFileSync('.gitignore', 'utf8')
+  if (!/supabase\/\.temp/.test(ignore)) failures.push('.gitignore must exclude supabase/.temp')
+  if (!/^\/release\/$/m.test(ignore)) failures.push('.gitignore must exclude release output')
+  if (!/^\/\.pnpm-store\/$/m.test(ignore)) failures.push('.gitignore must exclude .pnpm-store')
+  if (!/^\/debug\.log$/m.test(ignore)) failures.push('.gitignore must exclude debug.log')
+}
+
+// If a release package has been generated, verify both its manifest and staging tree.
+const manifestPath = 'release/manifest.json'
+if (existsSync(manifestPath)) {
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+    for (const file of manifest.files ?? []) {
+      const normalized = String(file).replaceAll('\\', '/')
+      if (normalized !== '.env.example' && forbiddenTracked.some((pattern) => pattern.test(normalized))) {
+        failures.push(`release contains forbidden path: ${normalized}`)
+      }
+      if (isArchiveName(normalized)) {
+        const stagedArchive = join('release', 'source', normalized)
+        if (!existsSync(stagedArchive)) failures.push(`release manifest archive is missing from staging: ${normalized}`)
+        else failures.push(...inspectArchive(stagedArchive, `release/source/${normalized}`))
+      }
+    }
+    const releaseArchive = 'release/hebaelsherif-source.tgz'
+    if (!existsSync(releaseArchive)) failures.push('release archive is missing')
+    else failures.push(...inspectArchive(releaseArchive, releaseArchive))
+    const releaseZip = `release/${RELEASE_ZIP_NAME}`
+    if (!existsSync(releaseZip)) failures.push('release ZIP is missing')
+    else failures.push(...inspectArchive(releaseZip, releaseZip))
+  } catch {
+    failures.push('release/manifest.json is invalid')
+  }
+}
+
+report('audit:security', [...new Set(failures)])

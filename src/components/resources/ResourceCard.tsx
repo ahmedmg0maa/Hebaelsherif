@@ -1,0 +1,5 @@
+import Link from'next/link'
+import{Badge}from'@/components/ui/Badge'
+import{RESOURCE_KIND_LABELS}from'@/lib/resources/governance'
+import type{PublicResource}from'@/lib/data/resources'
+export function ResourceCard({resource}: {resource:PublicResource}){return<article className="flex h-full flex-col border-b border-line py-7"><div className="flex flex-wrap gap-2"><Badge tone="gold">{RESOURCE_KIND_LABELS[resource.kind]}</Badge><Badge tone="sand">{resource.topic}</Badge>{resource.durationMinutes>0&&<Badge tone="teal">{resource.durationMinutes.toLocaleString('ar-EG')} دقيقة</Badge>}</div><h2 className="mt-4 text-2xl font-bold leading-snug text-deep-teal"><Link href={`/resources/${resource.slug}`} className="focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-deep-teal">{resource.title}</Link></h2><p className="mt-3 line-clamp-3 flex-1 leading-loose text-text-soft">{resource.excerpt}</p><Link href={`/resources/${resource.slug}`} className="mt-5 w-fit font-bold text-burgundy underline decoration-antique-gold/50 underline-offset-4">افتحي المورد</Link></article>}

@@ -1,120 +1,77 @@
-import type { Metadata, Viewport } from 'next'
-import type { ReactNode } from 'react'
+import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
+import "./globals.css";
+import { MotionPreferenceController } from "@/components/motion/MotionToggle";
 
-import GlobalExperience from '@/components/experience/GlobalExperience'
-import ConversionEvents from '@/components/marketing/ConversionEvents'
-import StructuredData, {
-  buildOrganizationSchema,
-  buildWebsiteSchema,
-} from '@/components/seo/StructuredData'
-import { cleanOptionalEnvValue, getSafeSiteUrl } from '@/lib/runtime/site-url'
+// A nonce-bearing HTML shell must be rendered per request in both adapters.
+export const dynamic = 'force-dynamic';
 
-import './globals.css'
-
-
-export const dynamic = 'force-dynamic'
-
-const appUrl = getSafeSiteUrl()
-const googleVerification = cleanOptionalEnvValue(
-  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-)
+// Mobile-first viewport: notch-safe rendering + branded status bar on Android/iOS.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#EDE1CB" },
+    { media: "(prefers-color-scheme: dark)", color: "#0E3440" },
+  ],
+};
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
-    default: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
-    template: '%s — هبة الشريف',
+    default: "هبة الشريف — منصة التعلّم والتطوير",
+    template: "%s | هبة الشريف",
   },
   description:
-    'منصة عربية فاخرة لهبة الشريف تجمع بين الجلسات الفردية، المسارات التعليمية، الكتب الرقمية، وتجربة وعي هادئة تعيدك إلى ذاتك.',
-  metadataBase: new URL(appUrl),
-  applicationName: 'هبة الشريف',
-  authors: [{ name: 'Heba ElSherif' }],
-  creator: 'Heba ElSherif',
-  publisher: 'Heba ElSherif',
-  keywords: [
-    'هبة الشريف',
-    'رحلة وعي',
-    'وعي ذاتي',
-    'وعي عاطفي',
-    'جلسات فردية',
-    'كوتشنج',
-    'كتب رقمية',
-    'مسارات تعليمية',
-  ],
-  verification: googleVerification ? { google: googleVerification } : undefined,
+    "منصة هبة الشريف: دورات، كتب، ورش عمل، وجلسات فردية لرحلة تطوّر واعية.",
   openGraph: {
-    title: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
-    description:
-      'جلسات فردية، مسارات تعليمية، كتب رقمية، ومحتوى عربي هادئ يساعدك على فهم ذاتك بخطوات أوضح.',
-    url: appUrl,
-    siteName: 'هبة الشريف',
-    locale: 'ar_EG',
-    type: 'website',
-    images: [
-      {
-        url: '/images/brand/og-brand.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
-      },
-    ],
+    type: "website",
+    locale: "ar_EG",
+    siteName: "هبة الشريف",
+    title: "هبة الشريف — منصة التعلّم والتطوير",
+    description: "دورات، كتب، ورش عمل، وجلسات فردية لرحلة تطوّر واعية.",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'هبة الشريف — رحلة وعي تعيدك إلى ذاتك',
-    description:
-      'جلسات فردية، مسارات تعليمية، وكتب رقمية في تجربة عربية فاخرة وهادئة.',
-    images: ['/images/brand/og-brand.jpg'],
+    card: "summary_large_image",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  manifest: '/site.webmanifest',
   icons: {
-    icon: [
-      { url: '/favicon.ico', type: 'image/x-icon' },
-      { url: '/favicon.png', type: 'image/png' },
-    ],
-    apple: '/apple-icon.png',
+    icon: "/brand/main-logo.png",
+    apple: "/brand/main-logo.png",
   },
-}
+  appleWebApp: {
+    capable: true,
+    title: "هبة الشريف",
+    statusBarStyle: "default",
+  },
+};
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#F7F2EA' },
-    { media: '(prefers-color-scheme: dark)', color: '#0E3440' },
-  ],
-}
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
-  children: ReactNode
+  children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <body className="font-arabic bg-cream text-charcoal antialiased">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[999] focus:rounded-full focus:bg-petrol focus:px-5 focus:py-3 focus:text-sm focus:font-black focus:text-ivory"
-        >
-          تخطي إلى المحتوى
-        </a>
-
-        <StructuredData
-          data={[buildWebsiteSchema(appUrl), buildOrganizationSchema(appUrl)]}
+    <html
+      lang="ar"
+      dir="rtl"
+      suppressHydrationWarning
+      className="h-full antialiased"
+    >
+      <head>
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            // A first visit is deliberately light. The device preference must
+            // not silently turn the whole brand experience dark; only an
+            // explicit choice made with the theme control is persisted.
+            __html: `(function(){try{var d=localStorage.getItem('heba-theme')==='dark';document.documentElement.classList.toggle('dark',d);document.documentElement.style.colorScheme=d?'dark':'light';document.documentElement.dataset.motion='system'}catch(e){document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light'}})()`,
+          }}
         />
-
-        <ConversionEvents />
-
-        {children}
-
-        <GlobalExperience />
-      </body>
+      </head>
+      <body className="flex min-h-full flex-col"><MotionPreferenceController />{children}</body>
     </html>
-  )
+  );
 }

@@ -1,0 +1,358 @@
+{
+  "release": "HEBA_CREAM_MOTION_2026-10-13",
+  "recorded_at": "2026-10-13T14:44:04.109622+00:00",
+  "scope": "Local source refinement; no deployment, real authentication, provider writes or hardware acceptance.",
+  "baseline": {
+    "archive_sha256": "1c5d8bf80272da7959b29371ebb2beef98c3e382b70deeb54013506a620e78bf",
+    "payload_files": 787,
+    "changed_existing_files": [
+      "README.md",
+      "START_REVIEWED_AR.md",
+      "docs/DECISIONS.md",
+      "docs/PROJECT_STATE.md",
+      "docs/TESTING.md",
+      "package.json",
+      "scripts/audit-ux.mjs",
+      "scripts/package-release.mjs",
+      "scripts/release-info.mjs",
+      "src/app/global-error.tsx",
+      "src/app/globals.css",
+      "src/app/layout.tsx",
+      "src/app/preview-admin/page.tsx",
+      "src/components/auth/AuthShell.tsx",
+      "src/components/catalog/MobileBuyBar.tsx",
+      "src/components/catalog/StartHereQuiz.tsx",
+      "src/components/experience/PreviewBookReader.tsx",
+      "src/components/home/Hero.tsx",
+      "src/components/home/LearningTour.tsx",
+      "src/components/home/NarrativeSection.tsx",
+      "src/components/home/ReadingShelf.tsx",
+      "src/components/home/ServiceCards.tsx",
+      "src/components/home/Testimonials.tsx",
+      "src/components/home/TrustStrip.tsx",
+      "src/components/layout/AdminShell.tsx",
+      "src/components/layout/DashboardShell.tsx",
+      "src/components/layout/PublicFrame.tsx",
+      "src/components/layout/PublicHeader.tsx",
+      "src/components/theme/ThemeToggle.tsx",
+      "src/components/ui/Button.tsx",
+      "src/components/ui/Card.tsx",
+      "src/components/ui/Reveal.tsx",
+      "src/lib/home/sections.ts",
+      "src/styles/tokens.ts"
+    ],
+    "removed_payload_files": []
+  },
+  "preserved": {
+    "verified_unchanged_files": 120,
+    "dependency_lockfile_unchanged": true,
+    "all_existing_migrations_unchanged": true,
+    "existing_raster_images_and_fonts_unchanged": true,
+    "original_logo_sha256": "70812b043e04d8b1cba154b07f0eebc0a8b385b59f9dfaf7237b7fbd9f475e05"
+  },
+  "route_inventory": {
+    "page_templates": 84,
+    "route_handlers": 9,
+    "inventory_is_not_rendered_page_acceptance": true
+  },
+  "build_and_static_checks": [
+    {
+      "command": "corepack pnpm build:isolated",
+      "passed": true,
+      "exit_code": 0,
+      "notes": "Final application source including safe-area changes. No real provider configuration supplied."
+    },
+    {
+      "command": "corepack pnpm build:cloudflare:isolated",
+      "passed": true,
+      "exit_code": 0,
+      "notes": "Final Workers build prepared. vinext classification warnings are not runtime acceptance."
+    },
+    {
+      "command": "corepack pnpm exec tsc --noEmit",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "command": "corepack pnpm lint",
+      "passed": true,
+      "exit_code": 0,
+      "notes": "Application source passed; complete ESLint also rerun after correcting the UX scanner and packaging inventory."
+    }
+  ],
+  "executed_local_checks": [
+    {
+      "script": "verify-motion-v3",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 7.75,
+      "output": "PASS Owner-authored heading and secondary destination are retained\nPASS Three uniquely labelled keyboard tabs control one matching panel\nPASS Blank practice has two labelled inputs and cannot complete\nPASS Actual input handlers enable completion only after both choices\nPASS Review shows the actual in-page draft without invented account data\nPASS Returning to practice preserves both answers\nPASS End moves to review and announces the matching active tab\nPASS Explicit clearing resets both answers and the enabled state\nPASS RTL horizontal next key selects the second tab\nPASS Above-fold and missing-observer content never becomes hidden\nPASS Below-fold observer uses a zero threshold so tall sections can enter\nPASS Broken/unresponsive observers fail open to readable content\nPASS Keyboard focus and manual reduced motion immediately reveal content\nPASS Body text remains readable even where the 5% path crosses the cream canvas\nPASS Two native path assets use one 5% group with real filled geometry\nPASS Motion policy and local-only practice are explicit\nverify:motion-v3 passed — 16 isolated component/contrast/fallback groups. Not browser or hardware acceptance."
+    },
+    {
+      "script": "verify-customer-polish",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.57,
+      "output": "verify:customer-polish passed — key fallback, scoring ties/weights, admin prerequisites and cream-surface text contrast"
+    },
+    {
+      "script": "verify-home-cms-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.3,
+      "output": "verify:home-cms-local passed — fixed registry, Arabic forms, persistence/permission/audit/public consumer and visual preview contracts verified"
+    },
+    {
+      "script": "verify-cms-page-sections-governance-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.5,
+      "output": "verify:cms-page-sections-governance-local passed — permissioned atomic revision/mutation/audit, published-home guard and truthful Admin controls verified locally"
+    },
+    {
+      "script": "verify-master-v2-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 2.22,
+      "output": "verify:master-v2-local passed — 27 scoring combinations, tie rules, copy validation, article metadata, CMS source contracts. Not database/browser execution."
+    },
+    {
+      "script": "verify-guided-assessment-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.48,
+      "output": "verify:guided-assessment-local passed — versioning, atomic publication, structured Admin mapping, safe targets and ephemeral answers verified"
+    },
+    {
+      "script": "verify-start-here-cms-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.31,
+      "output": "verify:start-here-cms-local passed — structured page shell, safe links, audit and versioned-assessment handoff verified"
+    },
+    {
+      "script": "verify-navigation-governance-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.33,
+      "output": "verify:navigation-governance-local passed — bounded permissioned atomic navigation mutation/audit and truthful Admin/public consumers verified locally"
+    },
+    {
+      "script": "verify-testimonial-governance-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.36,
+      "output": "verify:testimonial-governance-local passed — paid-source verification, separate consent, atomic moderation, PII-safe audit and public/Admin consumers verified"
+    },
+    {
+      "script": "verify-customer-protected-delivery-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.25,
+      "output": "verify:customer-protected-delivery-local passed — entitlement RPC, mint limits, HTTPS-only links, short signatures and minimized admission evidence verified"
+    },
+    {
+      "script": "verify-preview-experience-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.22,
+      "output": "PASS Preview fixtures require the explicit preview deployment environment.\nPASS Preview fixtures fail closed when Supabase public configuration exists.\nPASS The course fixture is limited to the guarded provider-free path.\nPASS The book fixture is limited to the guarded provider-free path.\nPASS The booking UI has an explicit Preview runtime branch.\nPASS Preview proof completion exits before the real upload adapter.\nPASS The completion receipt explicitly denies real persistence.\nPASS The file step explicitly says that the selected image is not uploaded.\nPASS Wrangler defines a separate public Preview Worker.\nPASS The Preview Worker activates only the non-secret Preview environment flag.\nPASS public/images/experience/course-clarity-journey.webp exists and remains below 500 KB (245162 bytes).\nPASS public/images/experience/book-listen-inward.webp exists and remains below 500 KB (125906 bytes).\nPASS public/images/experience/journey-landscape.webp exists and remains below 500 KB (176574 bytes).\nPreview experience contract passed (13/13)."
+    },
+    {
+      "script": "verify-readiness-behavior",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.71,
+      "output": "PASS actual payment normalization and readiness: healthy, empty slots, invalid settings, failed reads, missing revision/calendar and unconfigured states. Database replies injected; no provider access."
+    },
+    {
+      "script": "audit-colors",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.68,
+      "output": "✅ audit:colors: passed"
+    },
+    {
+      "script": "verify-archive-security",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.02,
+      "output": "verify:archive-security passed — nested forbidden paths and secret content are rejected"
+    },
+    {
+      "script": "audit-routes",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.36,
+      "output": "✅ audit:routes: passed"
+    },
+    {
+      "script": "audit-ux",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.54,
+      "output": "audit:ux passed after fixing the existing scanner to accept the legitimate CSS ::placeholder selector, as its own comment already requires.",
+      "initial_result": {
+        "passed": false,
+        "exit_code": 1,
+        "output": "❌ audit:ux: 1 failure(s)\n   - src/app/globals.css: forbidden marker \"placeholder\""
+      }
+    },
+    {
+      "script": "audit-admin",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 5.1,
+      "output": "✅ audit:admin: passed"
+    },
+    {
+      "script": "audit-media",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.08,
+      "output": "✅ audit:media: passed"
+    },
+    {
+      "script": "audit-commerce",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 3.81,
+      "output": "✅ audit:commerce: passed"
+    },
+    {
+      "script": "audit-catalog",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 3.79,
+      "output": "✅ audit:catalog: passed"
+    },
+    {
+      "script": "audit-booking",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.01,
+      "output": "✅ audit:booking: passed"
+    },
+    {
+      "script": "audit-db",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 2.65,
+      "output": "✅ audit:db: passed"
+    },
+    {
+      "script": "audit-launch",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.86,
+      "output": "✅ audit:launch: passed"
+    },
+    {
+      "script": "audit-cms-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.57,
+      "output": "audit:cms-local passed — fixed section registry, server validation, safe links, revisions, permissions"
+    },
+    {
+      "script": "audit-remediation-local",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.41,
+      "output": "audit:remediation-local passed — staging contract, draft legal indexing guard, and mobile resilience regressions are present"
+    },
+    {
+      "script": "audit-security",
+      "passed": true,
+      "exit_code": 0,
+      "output": "audit:security passed after safe source ZIP and TGZ assembly; no git repository available, filesystem fallback used."
+    }
+  ],
+  "motion_component_groups": 16,
+  "method_limit": "Actual component handlers and observer logic are executed with isolated React hook/DOM adapters; they are not tests in a rendered browser.",
+  "contrast": {
+    "text": "#635F58",
+    "base_cream": "#EDE1CB",
+    "raised_cream": "#F4E8D3",
+    "ratio_base": 4.91,
+    "ratio_raised": 5.24,
+    "ratio_over_5percent_teal_base": 4.6,
+    "ratio_over_5percent_teal_raised": 4.88,
+    "limitation": "Calculated colors only. No whole-page WCAG conformance claim."
+  },
+  "artwork": {
+    "files": [
+      "public/brand/journey-light-v3.svg",
+      "public/brand/journey-dark-v3.svg"
+    ],
+    "native_svg": true,
+    "group_opacity": 0.05,
+    "local_raster_inspected": true,
+    "raster_is_not_page_screenshot": true
+  },
+  "privacy": {
+    "practice_answers": "React memory only; no network, account persistence, localStorage or sessionStorage. Reload clears the mounted draft.",
+    "motion_preference": "Only system/reduced is stored in heba-motion; no answers.",
+    "cms_custom_text_and_destinations_preserved": true
+  },
+  "browser_acceptance": {
+    "executed": false,
+    "reason": "Sites managed Linux rule requires skipping browser QA when control-browser is unavailable; no server or browser installed/started for this task.",
+    "skill": "skill://plugin_connector_1p_689987207de08191979cf68eca2941c6/sites/SKILL.md",
+    "suite": "tests/design/motion-v3.spec.ts",
+    "config": "playwright.design.config.ts",
+    "command": "corepack pnpm test:design-v3",
+    "projects": [
+      "adaptive-chromium",
+      "iphone-webkit-simulation",
+      "android-chromium-simulation",
+      "tablet-webkit-simulation"
+    ],
+    "planned_widths_css_pixels": [
+      320,
+      360,
+      390,
+      430,
+      768,
+      1024,
+      1280,
+      1920
+    ],
+    "simulation_is_not_physical_device_certification": true
+  },
+  "not_executed": [
+    "Browser-containing check:deploy aggregate",
+    "Browser rendering, screenshots, actual iPhone/Android/tablet/desktop acceptance",
+    "Real owner login, roles/RLS/Storage/SMTP/booking/payment acceptance",
+    "Deployment or DNS changes",
+    "Registry dependency audit in this UI-only slice; dependency lockfile is unchanged"
+  ],
+  "research_sources": [
+    "https://www.carbondesignsystem.com/building-blocks/foundations/motion/overview",
+    "https://developer.apple.com/design/tips/",
+    "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html",
+    "https://web.dev/articles/animations-guide",
+    "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+    "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion",
+    "https://www.w3.org/WAI/WCAG22/Understanding/reflow.html"
+  ],
+  "release_archive_checks": {
+    "status": "passed on assembled source candidate; mandatory archive gate repeated by final package:release after including this ledger",
+    "command": "corepack pnpm package:release",
+    "security_audit_passed": true,
+    "nested_archive_security_verifier_passed": true,
+    "zip_and_tgz_exact_inventory_and_all_payload_sizes_sha256_verified": true,
+    "payload_files": 777,
+    "manifest_excludes_itself": true,
+    "initial_security_scan": "After release ID changed, audit-security correctly reported the not-yet-built new ZIP as missing. No secret finding.",
+    "initial_packaging_attempt": "Recursive tar reported changing directory metadata. Packaging now uses only the already-hashed inventory, then verifies both formats.",
+    "final_archive_sha256_location": "Not embedded inside the archive because that would be self-referential; final fingerprint is checked at delivery.",
+    "historical_visual_evidence_excluded": 19,
+    "historical_visual_evidence_preserved_in_working_source": true
+  },
+  "remaining_acceptance": [
+    "Review actual Arabic content in light/dark on real phones and tablets, including keyboard and landscape.",
+    "Run the prepared design suite on a controlled review machine.",
+    "Check live owner credentials/configuration and one full customer journey before production acceptance."
+  ]
+}

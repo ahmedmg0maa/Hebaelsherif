@@ -1,0 +1,454 @@
+{
+  "checkpoint": 8,
+  "date": "2026-09-17",
+  "originalPlanPhaseCount": 19,
+  "phaseRange": "0–18",
+  "baseCommit": "21437d6ac1422169c00a727e3d8c0d94496f9f2b",
+  "branch": "codex/master-v2-continuation",
+  "baseArchive": {
+    "filename": "HEBA_MASTER_V2_CHECKPOINT_7_2026-09-17.zip",
+    "sha256": "afc654fe47625bf02dcba47e895daa77545e89755bc2ee8929b543ed3fe10277",
+    "verifiedPayloadFiles": 698
+  },
+  "scope": "Customer journey integration: booking holds, checkout/proof recovery, paid/package booking confirmation, cancellation/refund, subscription and entitlement consistency. Checkpoint number is not original phase acceptance.",
+  "localChecks": {
+    "passed": 67,
+    "total": 67,
+    "results": [
+      {
+        "name": "verify:archive-security",
+        "exitCode": 0,
+        "seconds": 0.79
+      },
+      {
+        "name": "verify:delivery-local",
+        "exitCode": 0,
+        "seconds": 1.26
+      },
+      {
+        "name": "verify:booking-local",
+        "exitCode": 0,
+        "seconds": 0.36
+      },
+      {
+        "name": "verify:booking-permissions-local",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "verify:booking-staging-contract",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "verify:booking-staging-contract-fixtures",
+        "exitCode": 0,
+        "seconds": 0.79
+      },
+      {
+        "name": "verify:fresh-admin-assurance",
+        "exitCode": 0,
+        "seconds": 0.45
+      },
+      {
+        "name": "verify:report-export-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "verify:home-cms-local",
+        "exitCode": 0,
+        "seconds": 0.76
+      },
+      {
+        "name": "verify:navigation-governance-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "verify:cms-page-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.73
+      },
+      {
+        "name": "verify:article-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "verify:settings-flags-governance-local",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "verify:public-search-local",
+        "exitCode": 0,
+        "seconds": 0.38
+      },
+      {
+        "name": "verify:start-here-cms-local",
+        "exitCode": 0,
+        "seconds": 0.3
+      },
+      {
+        "name": "verify:guided-assessment-local",
+        "exitCode": 0,
+        "seconds": 0.54
+      },
+      {
+        "name": "verify:master-v2-local",
+        "exitCode": 0,
+        "seconds": 0.58
+      },
+      {
+        "name": "verify:master-v2-continuation-local",
+        "exitCode": 0,
+        "seconds": 0.58
+      },
+      {
+        "name": "verify:master-v2-admin-workflows-local",
+        "exitCode": 0,
+        "seconds": 1.39
+      },
+      {
+        "name": "verify:preview-experience-local",
+        "exitCode": 0,
+        "seconds": 0.41
+      },
+      {
+        "name": "verify:catalog-publication-local",
+        "exitCode": 0,
+        "seconds": 0.38
+      },
+      {
+        "name": "verify:program-catalog-local",
+        "exitCode": 0,
+        "seconds": 0.3
+      },
+      {
+        "name": "verify:media-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.3
+      },
+      {
+        "name": "verify:newsletter-governance-local",
+        "exitCode": 0,
+        "seconds": 0.27
+      },
+      {
+        "name": "verify:admin-security-center-local",
+        "exitCode": 0,
+        "seconds": 0.3
+      },
+      {
+        "name": "verify:final-hardening-local",
+        "exitCode": 0,
+        "seconds": 0.35
+      },
+      {
+        "name": "verify:admin-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.32
+      },
+      {
+        "name": "verify:resend-outbox-local",
+        "exitCode": 0,
+        "seconds": 0.27
+      },
+      {
+        "name": "verify:customer-360-local",
+        "exitCode": 0,
+        "seconds": 0.39
+      },
+      {
+        "name": "verify:sentry-monitoring-local",
+        "exitCode": 0,
+        "seconds": 0.52
+      },
+      {
+        "name": "verify:admin-notifications-local",
+        "exitCode": 0,
+        "seconds": 0.32
+      },
+      {
+        "name": "verify:admin-role-governance-local",
+        "exitCode": 0,
+        "seconds": 0.31
+      },
+      {
+        "name": "verify:booking-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "verify:commerce-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "verify:checkout-upload-governance-local",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "verify:customer-learning-governance-local",
+        "exitCode": 0,
+        "seconds": 0.39
+      },
+      {
+        "name": "verify:customer-protected-delivery-local",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "verify:customer-dashboard-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.28
+      },
+      {
+        "name": "verify:customer-account-governance-local",
+        "exitCode": 0,
+        "seconds": 0.43
+      },
+      {
+        "name": "verify:customer-password-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.46
+      },
+      {
+        "name": "verify:customer-booking-self-service-local",
+        "exitCode": 0,
+        "seconds": 0.58
+      },
+      {
+        "name": "verify:customer-registration-bootstrap-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "verify:account-deletion-governance-local",
+        "exitCode": 0,
+        "seconds": 0.37
+      },
+      {
+        "name": "verify:revision-recovery-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "verify:admin-operations-ux-local",
+        "exitCode": 0,
+        "seconds": 0.32
+      },
+      {
+        "name": "verify:contact-governance-local",
+        "exitCode": 0,
+        "seconds": 0.48
+      },
+      {
+        "name": "verify:testimonial-governance-local",
+        "exitCode": 0,
+        "seconds": 0.53
+      },
+      {
+        "name": "verify:press-governance-local",
+        "exitCode": 0,
+        "seconds": 0.59
+      },
+      {
+        "name": "verify:resource-hub-local",
+        "exitCode": 0,
+        "seconds": 0.71
+      },
+      {
+        "name": "verify:recovery-runner-local",
+        "exitCode": 0,
+        "seconds": 0.37
+      },
+      {
+        "name": "audit:cms-local",
+        "exitCode": 0,
+        "seconds": 0.34
+      },
+      {
+        "name": "audit:remediation-local",
+        "exitCode": 0,
+        "seconds": 0.36
+      },
+      {
+        "name": "audit:routes",
+        "exitCode": 0,
+        "seconds": 0.35
+      },
+      {
+        "name": "audit:ux",
+        "exitCode": 0,
+        "seconds": 0.4
+      },
+      {
+        "name": "audit:colors",
+        "exitCode": 0,
+        "seconds": 0.45
+      },
+      {
+        "name": "audit:security",
+        "exitCode": 0,
+        "seconds": 0.49
+      },
+      {
+        "name": "audit:admin",
+        "exitCode": 0,
+        "seconds": 0.48
+      },
+      {
+        "name": "audit:media",
+        "exitCode": 0,
+        "seconds": 0.35
+      },
+      {
+        "name": "audit:commerce",
+        "exitCode": 0,
+        "seconds": 0.35
+      },
+      {
+        "name": "audit:catalog",
+        "exitCode": 0,
+        "seconds": 0.41
+      },
+      {
+        "name": "audit:booking",
+        "exitCode": 0,
+        "seconds": 0.33
+      },
+      {
+        "name": "audit:db",
+        "exitCode": 0,
+        "seconds": 0.32
+      },
+      {
+        "name": "audit:launch",
+        "exitCode": 0,
+        "seconds": 0.37
+      },
+      {
+        "name": "verify:catalog-atomic-local",
+        "exitCode": 0,
+        "seconds": 1.44
+      },
+      {
+        "name": "verify:commerce-administration-local",
+        "exitCode": 0,
+        "seconds": 1.53
+      },
+      {
+        "name": "verify:phase7-workflows-local",
+        "exitCode": 0,
+        "seconds": 1.58
+      },
+      {
+        "name": "verify:phase8-workflows-local",
+        "exitCode": 0,
+        "seconds": 2.19
+      }
+    ]
+  },
+  "workflowRuntime": {
+    "command": "corepack pnpm verify:phase8-workflows-local",
+    "exitCode": 0,
+    "groups": 13,
+    "method": "Actual TypeScript actions, uploader controller and Cairo helpers with injected external responses; file hashes use Web Crypto; no provider/browser claim."
+  },
+  "sqlRuntime": {
+    "command": "HEBA_TEST_PGLITE_PATH=/absolute/path/to/@electric-sql/pglite/dist/index.js corepack pnpm verify:phase8-sql-local",
+    "exitCode": 0,
+    "groups": 18,
+    "engine": "PGlite 0.5.8",
+    "scope": "Full new 092–093 with extracted actual legacy schema/functions, 063 proof/checkout and 062 governed review/refund contracts. Synthetic permission/identity context; single connection. Not full migration rehearsal or real Auth/RLS/Storage/concurrency."
+  },
+  "typecheck": {
+    "command": "corepack pnpm type-check",
+    "exitCode": 0
+  },
+  "lint": {
+    "command": "corepack pnpm lint",
+    "exitCode": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "builds": [
+    {
+      "command": "corepack pnpm build:isolated",
+      "exitCode": 0,
+      "output": "Next production build from isolated source copy without provider secrets"
+    },
+    {
+      "command": "corepack pnpm build:cloudflare:isolated",
+      "exitCode": 0,
+      "output": "Isolated Worker dist/; no deployment"
+    }
+  ],
+  "dependencyAudit": {
+    "command": "corepack pnpm audit --prod --audit-level=moderate",
+    "exitCode": 0,
+    "result": "No known vulnerabilities found"
+  },
+  "browser": {
+    "status": "blocked",
+    "setupCommand": "corepack pnpm exec playwright install chromium --only-shell",
+    "setupExitCode": 1,
+    "reason": "Repeated 30000ms download timeouts from cdn.playwright.dev for pinned Chromium headless shell 149.0.7827.55 / Playwright v1228. Browser suites were not run without the engine.",
+    "visualAcceptance": false,
+    "accessibilityAcceptance": false,
+    "performanceAcceptance": false
+  },
+  "nonBlockingToolWarnings": [
+    "Node url.parse deprecation from package tooling.",
+    "Cloudflare proxy environment notice.",
+    "Vinext static route classification warning; classification is not runtime evidence."
+  ],
+  "sourceSha256": {
+    "scripts/audit-booking.mjs": "2a82de4a05bbe41555ddd5ec47247efc0a7ab172b7303dca334b7919c49c2522",
+    "scripts/verify-checkout-upload-governance-local.mjs": "cbd08773a5244117faa0540e402d9e6696539968849b770861b44f42b5cadfb2",
+    "scripts/verify-phase8-sql-local.mjs": "c2a756073626c3a8db4653d2c4f4d00b8ff74f1a549d6bc565b1744bdcd30ed8",
+    "scripts/verify-phase8-workflows-local.mjs": "e1f2b7a463cf4206fd8f5f8c44584431b48429314a658499ee42b1e834cab1ec",
+    "src/components/admin/OrderActions.tsx": "9d1a08eb6bc579f5439f72611fdaeca7bea146d7ed7f1c72e8093e445f326156",
+    "src/components/booking/BookingWizard.tsx": "68224b7e8556874bab6b07bf316762ac5c694ca3647729cf677c1657de616baa",
+    "src/components/booking/CustomerBookingActions.tsx": "5038edf8438521b1309cc56dd56a0cc0513cf82f9f0c5071c6a0cb06d1c53f41",
+    "src/components/checkout/CheckoutClient.tsx": "eebd71286ae86c489e67b468cd024f928394e6b4610c506e7eb500b993d85971",
+    "src/components/dashboard/ResubmitProof.tsx": "ac737c260d9e78cc7a4f1a27446f6298c4bfc8a2a10ca2adee07c0119c584328",
+    "src/lib/actions/admin-control.ts": "ada0cbc4c2598cda9de05f3ad5cf0fb22a46f3487bde045008f03ef4372809c3",
+    "src/lib/actions/admin.ts": "fb12daa0481cf8c2cdf44893e9af8ee48708b54224d8fa942098661a8daffde5",
+    "src/lib/actions/booking-customer.ts": "e0cd60e61c71020ea104d91b97e3e0ea84ff3b37ef11556164356297089aebcd",
+    "src/lib/actions/booking.ts": "bb24d6f270e3ec8bb65b9a04546f38987727895f21670e6f9851fc6271b50ce9",
+    "src/lib/actions/checkout.ts": "c698582cf1c7634750b5ac961697dbe26b13b463524bef7d85fd6cade389af83",
+    "src/lib/booking/cairo-time.ts": "ef600119baf15e4cd61ce2359f2edf86ca7b4a06bdf6bf565bbb683267beb4fc",
+    "src/lib/data/booking.ts": "61a02fa6615c789173d1f3ef3f620095c3b196ae7598014b522a0bc09a0555be",
+    "src/lib/payment-proof-upload.ts": "e6312b55056a6f64518455923a43f6c112c266189a5ffef0b28255b47aba2bdd",
+    "supabase/migrations/092_customer_booking_receipts_local_only.sql": "0b9637e4afc1a4f0a4098b1a1d5fb4c2ca147ce4e0215a052c1507b4adc2cebc",
+    "supabase/migrations/093_customer_order_booking_consistency_local_only.sql": "4ddf81b84f6ff8f3392fad28110d6ac31a3a845fd97650ff364ea03c2cbe54ad"
+  },
+  "providerActionsPerformed": false,
+  "deployed": false,
+  "liveMigrationsApplied": [],
+  "openAcceptance": [
+    "Full existing migration chain through 093 on isolated restored Staging, recovery and legacy backfills.",
+    "Actual Supabase Auth, RLS, delegated permissions and fresh MFA.",
+    "Concurrent booking-hold/payment/cancellation/refund and bundle-edit/purchase operations across connections.",
+    "Actual Storage transfer, lost responses, signed-upload expiration and failed terminal cleanup/orphan reconciliation.",
+    "Current desktop/mobile RTL, dark theme, keyboard/screen reader, original Master V2 image comparison and Core Web Vitals.",
+    "Cross-tab/page-reload account recovery and real protected delivery after approval/refund."
+  ],
+  "operationalLimits": [
+    "A mounted page retains attempts. Reload/close uses account history and cannot recover a private File from memory.",
+    "No synthetic receipts for holds converted before 092. Historical coupon backfill reflects migration-time data only.",
+    "Public booking requires customerJourney=093; a partially migrated backend remains unavailable.",
+    "Payment proof cleanup remains limited to confirmed terminal unbound objects; failed cleanup requires provider reconciliation. Queue 091 is for learning content, not payment proofs.",
+    "Original 19-phase acceptance remains tracked individually. No full check:deploy or Production-ready claim."
+  ],
+  "packaging": {
+    "method": "corepack pnpm package:release",
+    "deliveryFilename": "HEBA_MASTER_V2_CHECKPOINT_8_2026-09-17.zip",
+    "integrity": "Generated manifest lists bytes/SHA-256 for each payload, excluding itself. Final ZIP is verified before delivery.",
+    "excludes": "Environment secrets, temporary Supabase state, dependencies, old archives, build/test output, inherited root manifest."
+  }
+}

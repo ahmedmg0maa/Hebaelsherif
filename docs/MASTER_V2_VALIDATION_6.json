@@ -1,0 +1,421 @@
+{
+  "checkpoint": 6,
+  "date": "2026-09-17",
+  "baseCommit": "0f93ec5",
+  "branch": "codex/master-v2-continuation",
+  "localChecks": {
+    "passed": 65,
+    "total": 65,
+    "results": [
+      {
+        "name": "verify:archive-security",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:delivery-local",
+        "exitCode": 0,
+        "seconds": 0.28
+      },
+      {
+        "name": "verify:booking-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:booking-permissions-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:booking-staging-contract",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:booking-staging-contract-fixtures",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "verify:fresh-admin-assurance",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:report-export-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:home-cms-local",
+        "exitCode": 0,
+        "seconds": 0.18
+      },
+      {
+        "name": "verify:navigation-governance-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:cms-page-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:article-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:settings-flags-governance-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:public-search-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:start-here-cms-local",
+        "exitCode": 0,
+        "seconds": 0.1
+      },
+      {
+        "name": "verify:guided-assessment-local",
+        "exitCode": 0,
+        "seconds": 0.14
+      },
+      {
+        "name": "verify:master-v2-local",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:master-v2-continuation-local",
+        "exitCode": 0,
+        "seconds": 0.16
+      },
+      {
+        "name": "verify:master-v2-admin-workflows-local",
+        "exitCode": 0,
+        "seconds": 0.43
+      },
+      {
+        "name": "verify:preview-experience-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:catalog-publication-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:program-catalog-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:media-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:newsletter-governance-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:admin-security-center-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:final-hardening-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:admin-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:resend-outbox-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:customer-360-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:sentry-monitoring-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:admin-notifications-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:admin-role-governance-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:booking-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:commerce-admin-governance-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:checkout-upload-governance-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:customer-learning-governance-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:customer-protected-delivery-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:customer-dashboard-read-integrity-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:customer-account-governance-local",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:customer-password-lifecycle-local",
+        "exitCode": 0,
+        "seconds": 0.09
+      },
+      {
+        "name": "verify:customer-booking-self-service-local",
+        "exitCode": 0,
+        "seconds": 0.12
+      },
+      {
+        "name": "verify:customer-registration-bootstrap-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:account-deletion-governance-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:revision-recovery-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "verify:admin-operations-ux-local",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "verify:contact-governance-local",
+        "exitCode": 0,
+        "seconds": 0.14
+      },
+      {
+        "name": "verify:testimonial-governance-local",
+        "exitCode": 0,
+        "seconds": 0.13
+      },
+      {
+        "name": "verify:press-governance-local",
+        "exitCode": 0,
+        "seconds": 0.15
+      },
+      {
+        "name": "verify:resource-hub-local",
+        "exitCode": 0,
+        "seconds": 0.14
+      },
+      {
+        "name": "verify:recovery-runner-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:cms-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:remediation-local",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:routes",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "audit:ux",
+        "exitCode": 0,
+        "seconds": 0.18
+      },
+      {
+        "name": "audit:colors",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:security",
+        "exitCode": 0,
+        "seconds": 1.21
+      },
+      {
+        "name": "audit:admin",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:media",
+        "exitCode": 0,
+        "seconds": 0.08
+      },
+      {
+        "name": "audit:commerce",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "audit:catalog",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "audit:booking",
+        "exitCode": 0,
+        "seconds": 0.06
+      },
+      {
+        "name": "audit:db",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "audit:launch",
+        "exitCode": 0,
+        "seconds": 0.07
+      },
+      {
+        "name": "verify:catalog-atomic-local",
+        "exitCode": 0,
+        "seconds": 0.41
+      },
+      {
+        "name": "verify:commerce-administration-local",
+        "exitCode": 0,
+        "seconds": 0.44
+      }
+    ]
+  },
+  "typeCheck": {
+    "status": "passed",
+    "command": "corepack pnpm type-check",
+    "scope": "isolated frozen-lock TypeScript"
+  },
+  "lint": {
+    "status": "passed",
+    "command": "corepack pnpm lint",
+    "warnings": 0
+  },
+  "builds": {
+    "next": {
+      "status": "passed",
+      "command": "corepack pnpm build:isolated",
+      "staticPages": 8
+    },
+    "cloudflare": {
+      "status": "passed",
+      "command": "corepack pnpm build:cloudflare:isolated"
+    }
+  },
+  "dependencyAudit": {
+    "status": "passed",
+    "scope": "production",
+    "result": "No known vulnerabilities found",
+    "command": "corepack pnpm audit:dependencies"
+  },
+  "databaseLocal": {
+    "status": "passed",
+    "engine": "PGlite 0.5.8 PostgreSQL/WASM",
+    "groups": 27,
+    "migrationsExecuted": [
+      "087_atomic_commerce_administration_local_only.sql",
+      "088_subscription_contract_preservation_local_only.sql",
+      "089_site_operation_controls_local_only.sql"
+    ],
+    "fixtures": "Actual core table DDL and selected ALTERs, synthetic permission/history dependencies. Exact 019 permission function body exercised at end. Quote product-readiness stub and package downstream-booking sentinel isolate those boundaries.",
+    "proved": [
+      "Five aggregate save/update flows and all-or-nothing audit/revision/media/target rollback",
+      "Invalid values, unauthorized actions, published edit denial and specialized delete bypass denial",
+      "Plan archive, explicit restore, unused deletion, exact counts and immutable subscription contract",
+      "Pending plan purchase protection, frozen service booking eligibility and service-history delete restriction",
+      "Multiple offer targets, restrictive target FK, quote capacity and single-connection reservation guard",
+      "Closed new order/booking/newsletter intake and reopening; newsletter unsubscribe remains possible and resubscribe is denied. Contact trigger compiled, not separately runtime-exercised.",
+      "Actual owner/effective delegated permission function and browser-role mutation grants"
+    ],
+    "doesNotProve": [
+      "Full Supabase migration chain or historical-data compatibility",
+      "Auth/AAL2/RLS identities or provider integrations",
+      "Concurrent connections, deadlines or race acceptance",
+      "Request idempotency",
+      "Browser behavior or visual fidelity"
+    ]
+  },
+  "externalDatabase": {
+    "status": "not_executed",
+    "migrations080Through089Applied": false,
+    "stagingRestoreAccepted": false
+  },
+  "browser": {
+    "status": "not_executed",
+    "note": "Previous ERR_BLOCKED_BY_CLIENT module gate remains unresolved; no new browser/device/focus/zoom/dark/RTL acceptance is claimed."
+  },
+  "deployment": {
+    "status": "not_attempted",
+    "pushedToExternalRepository": false,
+    "messagesSent": false
+  },
+  "warnings": [
+    "Node url.parse deprecation from tooling and Worker proxy-environment/static route-classification warnings remain.",
+    "Source code now requires 087–089 plus prior pending migrations. Do not deploy code alone against an older database.",
+    "Subscription eligibility backfill captures current scope at migration time, not reconstructed historical rights."
+  ],
+  "remaining": [
+    "Protected upload/removal, reviews and notification control/editor review and remaining split mutations",
+    "Staging restore, forward migrations, Auth/RLS, providers and real multi-session acceptance",
+    "Browser/mobile/keyboard/dark/accessibility acceptance and original approved Master V2 reference comparison"
+  ],
+  "fullCheckDeployPassClaimed": false,
+  "archive": {
+    "method": "corepack pnpm package:release",
+    "filename": "HEBA_MASTER_V2_CHECKPOINT_6_2026-09-17.zip",
+    "integrity": "Payload SHA-256 and file sizes in embedded RELEASE_MANIFEST.json; archive inspection excludes secrets, environments, dependencies, old archives and build output"
+  }
+}

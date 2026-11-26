@@ -1,0 +1,398 @@
+{
+  "checkpoint": 3,
+  "date": "2026-09-05",
+  "source": "HEBA_MASTER_V2_CHECKPOINT_2_2026-09-05.zip",
+  "localChecks": {
+    "passed": 62,
+    "total": 62,
+    "kind": "Source contracts and pure behavior; no provider/database execution",
+    "results": [
+      {
+        "name": "verify:archive-security",
+        "status": "passed",
+        "detail": "verify:archive-security passed — nested forbidden paths and secret content are rejected"
+      },
+      {
+        "name": "verify:delivery-local",
+        "status": "passed",
+        "detail": "verify:course-curriculum-governance-local passed — atomic curriculum writes, history guards, bounded reads and truthful Admin controls verified locally\nverify:protected-delivery-removal-local passed — history-preserving archive, customer denial, session revocation, safe Storage cleanup and Admin controls verified locally"
+      },
+      {
+        "name": "verify:booking-local",
+        "status": "passed",
+        "detail": "verify:booking-local passed — isolated admin → availability → customer → hold/expiry → booking/duplicate denial → cancellation/reschedule → Cairo DST contract with 045 hardening source present"
+      },
+      {
+        "name": "verify:booking-permissions-local",
+        "status": "passed",
+        "detail": "verify:booking-permissions-local passed — anon discovery only; authenticated hold paths; admin in-body permission checks; legacy/direct bypasses revoked"
+      },
+      {
+        "name": "verify:booking-staging-contract",
+        "status": "passed",
+        "detail": "verify:booking-staging-contract passed — source order 044 → 045 → 046 → 047 and the 045 booking privilege closure are ready for an authorized catalog check"
+      },
+      {
+        "name": "verify:booking-staging-contract-fixtures",
+        "status": "passed",
+        "detail": "verify:booking-staging-contract preflight passed — sanitized staging catalog matches the required booking migration contract\nverify:booking-staging-contract postflight passed — sanitized staging catalog matches the required booking migration contract"
+      },
+      {
+        "name": "verify:fresh-admin-assurance",
+        "status": "passed",
+        "detail": "verify:fresh-admin-assurance passed — fresh TOTP AMR is enforced for payment, refund, role, export, revision-restore and payment-setting mutations; reauth cannot auto-skip an existing AAL2 session"
+      },
+      {
+        "name": "verify:report-export-local",
+        "status": "passed",
+        "detail": "verify:report-export-local passed — POST/fresh-MFA/least-privilege/bounds/formula-neutralization/audit/no-store contracts verified"
+      },
+      {
+        "name": "verify:home-cms-local",
+        "status": "passed",
+        "detail": "verify:home-cms-local passed — fixed registry, Arabic forms, persistence/permission/audit/public consumer and visual preview contracts verified\nverify:cms-page-sections-governance-local passed — permissioned atomic revision/mutation/audit, published-home guard and truthful Admin controls verified locally"
+      },
+      {
+        "name": "verify:navigation-governance-local",
+        "status": "passed",
+        "detail": "verify:navigation-governance-local passed — bounded permissioned atomic navigation mutation/audit and truthful Admin/public consumers verified locally"
+      },
+      {
+        "name": "verify:cms-page-lifecycle-local",
+        "status": "passed",
+        "detail": "verify:cms-page-lifecycle-local passed — atomic page revision/publication/audit, Cairo scheduling and non-bypassable legal/home gates verified locally"
+      },
+      {
+        "name": "verify:article-lifecycle-local",
+        "status": "passed",
+        "detail": "verify:article-lifecycle-local passed — atomic content/media/revision/lifecycle/audit, rights-aware publication and history-preserving archive verified locally"
+      },
+      {
+        "name": "verify:settings-flags-governance-local",
+        "status": "passed",
+        "detail": "verify:settings-flags-governance-local passed — bounded secret-resistant existing-key setting revisions and atomic feature-flag audit verified locally"
+      },
+      {
+        "name": "verify:public-search-local",
+        "status": "passed",
+        "detail": "verify:public-search-local passed — Arabic normalization, published-only sources, bounded results, noindex and accessible search entry verified"
+      },
+      {
+        "name": "verify:start-here-cms-local",
+        "status": "passed",
+        "detail": "verify:start-here-cms-local passed — structured page shell, safe links, audit and versioned-assessment handoff verified"
+      },
+      {
+        "name": "verify:guided-assessment-local",
+        "status": "passed",
+        "detail": "verify:guided-assessment-local passed — versioning, atomic publication, structured Admin mapping, safe targets and ephemeral answers verified"
+      },
+      {
+        "name": "verify:master-v2-local",
+        "status": "passed",
+        "detail": "verify:master-v2-local passed — 27 scoring combinations, tie rules, copy validation, article metadata, CMS source contracts. Not database/browser execution."
+      },
+      {
+        "name": "verify:master-v2-continuation-local",
+        "status": "passed",
+        "detail": "Master V2 continuation: owner/media/article/report behavior and security source contracts passed. No database or browser execution claimed."
+      },
+      {
+        "name": "verify:preview-experience-local",
+        "status": "passed",
+        "detail": "PASS public/images/experience/journey-landscape.webp exists and remains below 500 KB (176574 bytes).\nPreview experience contract passed (13/13)."
+      },
+      {
+        "name": "verify:catalog-publication-local",
+        "status": "passed",
+        "detail": "verify:catalog-publication-local passed — domain/product publication parity, completeness/media-rights and unavailable checkout denial verified"
+      },
+      {
+        "name": "verify:program-catalog-local",
+        "status": "passed",
+        "detail": "verify:program-catalog-local passed — fail-closed bundle/VIP/free-resource publication, atomic composition, public discovery and checkout denial verified"
+      },
+      {
+        "name": "verify:media-lifecycle-local",
+        "status": "passed",
+        "detail": "verify:media-lifecycle-local passed — archive/restore/replace, atomic references/audit, rights and public-consumer denial verified"
+      },
+      {
+        "name": "verify:newsletter-governance-local",
+        "status": "passed",
+        "detail": "verify:newsletter-governance-local passed — explicit consent, throttled server intake, atomic Admin lifecycle and POST-confirmed unsubscribe verified"
+      },
+      {
+        "name": "verify:admin-security-center-local",
+        "status": "passed",
+        "detail": "verify:admin-security-center-local passed — live/local evidence is separated and session revocation is permission-checked, atomic and privacy-minimized"
+      },
+      {
+        "name": "verify:final-hardening-local",
+        "status": "passed",
+        "detail": "verify:final-hardening-local passed — DB grants, atomic preview, Admin login history/RBAC, nonce CSP, Cairo periods and image budget verified"
+      },
+      {
+        "name": "verify:admin-read-integrity-local",
+        "status": "passed",
+        "detail": "verify:admin-read-integrity-local passed — Admin reads, feature flags, integrations and error logging fail closed without exposing configuration values"
+      },
+      {
+        "name": "verify:resend-outbox-local",
+        "status": "passed",
+        "detail": "verify:resend-outbox-local passed — atomic settings/outbox state, bounded Worker fetch, idempotent Resend delivery and truthful Admin retry verified"
+      },
+      {
+        "name": "verify:customer-360-local",
+        "status": "passed",
+        "detail": "verify:customer-360-local passed — bounded PII reads, access audit, atomic note/tag lifecycle and truthful Admin states verified"
+      },
+      {
+        "name": "verify:sentry-monitoring-local",
+        "status": "passed",
+        "detail": "verify:sentry-monitoring-local passed — official Worker/browser SDK wiring, awaited capture, PII scrub and isolated-build secret shadowing verified"
+      },
+      {
+        "name": "verify:admin-notifications-local",
+        "status": "passed",
+        "detail": "verify:admin-notifications-local passed — atomic permission recheck, idempotency, allowlists, minimized audit and truthful Admin controls verified"
+      },
+      {
+        "name": "verify:admin-role-governance-local",
+        "status": "passed",
+        "detail": "verify:admin-role-governance-local passed — owner-only reads, atomic role/permission changes, self-change denial and race-safe last-owner protection verified"
+      },
+      {
+        "name": "verify:booking-admin-governance-local",
+        "status": "passed",
+        "detail": "verify:booking-admin-governance-local passed — explicit actors, atomic booking/availability evidence, state transitions, immutable customer notes and governed Admin UI verified"
+      },
+      {
+        "name": "verify:commerce-admin-governance-local",
+        "status": "passed",
+        "detail": "verify:commerce-admin-governance-local passed — permission-rechecked payment review, audited proof access, direct-write denial and evidence-backed refund lifecycle verified"
+      },
+      {
+        "name": "verify:checkout-upload-governance-local",
+        "status": "passed",
+        "detail": "verify:checkout-upload-governance-local passed — authoritative quotes, request idempotency, direct upload intents and server-observed image validation verified"
+      },
+      {
+        "name": "verify:customer-learning-governance-local",
+        "status": "passed",
+        "detail": "verify:customer-learning-governance-local passed — enrollment-bound atomic progress, private note lifecycle, fail-closed reads and truthful UI verified"
+      },
+      {
+        "name": "verify:customer-protected-delivery-local",
+        "status": "passed",
+        "detail": "verify:customer-protected-delivery-local passed — entitlement RPC, mint limits, HTTPS-only links, short signatures and minimized admission evidence verified"
+      },
+      {
+        "name": "verify:customer-dashboard-read-integrity-local",
+        "status": "passed",
+        "detail": "verify:customer-dashboard-read-integrity-local passed — configured failures, response bounds, safe links and truthful next action verified"
+      },
+      {
+        "name": "verify:customer-account-governance-local",
+        "status": "passed",
+        "detail": "verify:customer-account-governance-local passed — atomic profile/read-state writes, least privilege, minimized audit and truthful UI verified"
+      },
+      {
+        "name": "verify:customer-password-lifecycle-local",
+        "status": "passed",
+        "detail": "verify:customer-password-lifecycle-local passed — current-password proof, recovery-only AMR, SSR PKCE callback, rate-limited two-phase evidence and session closure verified"
+      },
+      {
+        "name": "verify:customer-booking-self-service-local",
+        "status": "passed",
+        "detail": "verify:customer-booking-self-service-local passed — explicit ownership, atomic cancellation/reschedule, Cairo DST conversion, minimized evidence and private RFC-aware ICS verified"
+      },
+      {
+        "name": "verify:customer-registration-bootstrap-local",
+        "status": "passed",
+        "detail": "verify:customer-registration-bootstrap-local passed — bounded profile bootstrap, minimized audit, least privilege and no signup-based Admin grant verified"
+      },
+      {
+        "name": "verify:account-deletion-governance-local",
+        "status": "passed",
+        "detail": "verify:account-deletion-governance-local passed — durable customer request/cancel, permissioned review, fresh-MFA approval/completion proof and truthful UI verified"
+      },
+      {
+        "name": "verify:revision-recovery-local",
+        "status": "passed",
+        "detail": "verify:revision-recovery-local passed — allowlisted draft/hidden restore, fresh MFA, checkpoint/audit rollback, snapshot privacy and preview sizes verified"
+      },
+      {
+        "name": "verify:admin-operations-ux-local",
+        "status": "passed",
+        "detail": "verify:admin-operations-ux-local passed — privacy-safe saved agenda views and server-authoritative catalog publication guidance verified"
+      },
+      {
+        "name": "verify:contact-governance-local",
+        "status": "passed",
+        "detail": "verify:contact-governance-local passed — server-only intake, atomic dual-scope throttling, consent, Admin permission/audit and PII-minimized contracts verified"
+      },
+      {
+        "name": "verify:testimonial-governance-local",
+        "status": "passed",
+        "detail": "verify:testimonial-governance-local passed — paid-source verification, separate consent, atomic moderation, PII-safe audit and public/Admin consumers verified"
+      },
+      {
+        "name": "verify:press-governance-local",
+        "status": "passed",
+        "detail": "verify:press-governance-local passed — sourced classification, HTTPS/date validation, rights-aware publish, atomic permission/audit/Admin and public consumers verified"
+      },
+      {
+        "name": "verify:resource-hub-local",
+        "status": "passed",
+        "detail": "verify:resource-hub-local passed — structured validation, accessible media, rights/published-related gates, atomic Admin CRUD, public/Home/search consumers verified"
+      },
+      {
+        "name": "verify:recovery-runner-local",
+        "status": "passed",
+        "detail": "verify:recovery-runner-local passed — Session pooler enforcement, isolated-target routing and hidden secret cleanup verified"
+      },
+      {
+        "name": "audit:cms-local",
+        "status": "passed",
+        "detail": "audit:cms-local passed — fixed section registry, server validation, safe links, revisions, permissions"
+      },
+      {
+        "name": "audit:remediation-local",
+        "status": "passed",
+        "detail": "audit:remediation-local passed — staging contract, draft legal indexing guard, and mobile resilience regressions are present"
+      },
+      {
+        "name": "audit:routes",
+        "status": "passed",
+        "detail": "✅ audit:routes: passed"
+      },
+      {
+        "name": "audit:ux",
+        "status": "passed",
+        "detail": "✅ audit:ux: passed"
+      },
+      {
+        "name": "audit:colors",
+        "status": "passed",
+        "detail": "✅ audit:colors: passed"
+      },
+      {
+        "name": "audit:security",
+        "status": "passed",
+        "detail": "✅ audit:security: passed"
+      },
+      {
+        "name": "audit:admin",
+        "status": "passed",
+        "detail": "✅ audit:admin: passed"
+      },
+      {
+        "name": "audit:media",
+        "status": "passed",
+        "detail": "✅ audit:media: passed"
+      },
+      {
+        "name": "audit:commerce",
+        "status": "passed",
+        "detail": "✅ audit:commerce: passed"
+      },
+      {
+        "name": "audit:catalog",
+        "status": "passed",
+        "detail": "✅ audit:catalog: passed"
+      },
+      {
+        "name": "audit:booking",
+        "status": "passed",
+        "detail": "✅ audit:booking: passed"
+      },
+      {
+        "name": "audit:db",
+        "status": "passed",
+        "detail": "✅ audit:db: passed"
+      },
+      {
+        "name": "audit:launch",
+        "status": "passed",
+        "detail": "✅ audit:launch: passed"
+      }
+    ]
+  },
+  "builds": {
+    "nextIsolated": {
+      "status": "passed",
+      "version": "16.2.11",
+      "staticGeneration": "8/8",
+      "routeGroups": [
+        "public",
+        "auth",
+        "admin",
+        "dashboard",
+        "checkout",
+        "preview",
+        "protected delivery"
+      ]
+    },
+    "cloudflareIsolated": {
+      "status": "passed",
+      "adapter": "vinext 1.0.0-beta.8",
+      "liveWorkerRequests": "not executed"
+    },
+    "typescript": {
+      "status": "passed",
+      "evidence": [
+        "tsc --noEmit",
+        "Next isolated build TypeScript gate"
+      ]
+    },
+    "eslint": {
+      "status": "passed",
+      "warnings": 0
+    },
+    "productionDependencies": {
+      "status": "passed",
+      "knownVulnerabilitiesReported": 0,
+      "browserslist": "4.28.8",
+      "releaseAgePolicy": "preserved and passed"
+    }
+  },
+  "browser": {
+    "status": "blocked",
+    "htmlRender": true,
+    "viewport": {
+      "width": 1353,
+      "documentScrollWidth": 1353
+    },
+    "quizSelectionChangedState": false,
+    "observedError": "ERR_BLOCKED_BY_CLIENT for main Vite RSC browser entry module",
+    "mobileDarkKeyboardEndToEnd": "not accepted",
+    "referenceMatch": "original three Master V2 reference images unavailable"
+  },
+  "playwright": {
+    "discovery": "passed",
+    "listedTests": 78,
+    "publicTests": 74,
+    "authenticatedTests": 4,
+    "executedTests": 0
+  },
+  "database": {
+    "execution": "not attempted",
+    "newMigrations": [
+      "083_owner_profile_governance_local_only.sql",
+      "084_home_media_binding_local_only.sql",
+      "085_home_featured_articles_local_only.sql"
+    ],
+    "prior082AndBackfill": "still local only",
+    "sqlRlsConcurrencyRollbackAcceptance": "requires isolated authorized Staging"
+  },
+  "deployment": {
+    "sourcePush": false,
+    "workerDeployment": false,
+    "dnsChanges": false,
+    "providerWrites": false,
+    "productionChanged": false
+  },
+  "completeProgram": false,
+  "checkDeployGate": "not passed end-to-end; browser and external gates open"
+}
