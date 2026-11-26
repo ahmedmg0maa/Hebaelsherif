@@ -87,7 +87,8 @@ test('homepage preserves the exercise and opens the existing booking flow', asyn
   await practice.getByRole('button', { name: /راجعي خطوتكِ/ }).click()
   await expect(practice.getByRole('tabpanel')).toContainText('اختيار مهمة واحدة')
   const booking = page.locator('.home-final a[href="/booking"]')
-  await booking.scrollIntoViewIfNeeded()
+  // Use a settled position. A touch during the smooth scroll cancels the scroll.
+  await booking.evaluate(link => link.scrollIntoView({ behavior: 'instant', block: 'center' }))
   await expect(page.locator('.home-final [data-home-reveal]')).not.toHaveAttribute('data-reveal-pending')
   if (info.project.use.hasTouch) await booking.tap()
   else await booking.click()
