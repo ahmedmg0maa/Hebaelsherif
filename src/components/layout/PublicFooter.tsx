@@ -37,7 +37,7 @@ const columns = [
   },
 ]
 
-export function PublicFooter({ items = [] }: { items?: PublicNavigationItem[] }) {
+export function PublicFooter({ items = [], homepageFacebook }: { items?: PublicNavigationItem[]; homepageFacebook?: string }) {
   const dynamicColumns = items.length ? [
     { title: 'اختاري تجربتك', links: items.filter((item) => item.menu === 'footer_platform') },
     { title: 'اكتشفي المنصة', links: items.filter((item) => item.menu === 'footer_about') },
@@ -62,6 +62,7 @@ export function PublicFooter({ items = [] }: { items?: PublicNavigationItem[] })
             مساحة عربية للتعلّم والتطوّر الواعي؛ تجمع بين المعرفة الهادئة، الأدوات العملية، وتجارب واضحة الحدود تساعدك على اختيار خطوتك التالية.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-sm">
+            {homepageFacebook && <a href={homepageFacebook} className="inline-flex min-h-12 items-center rounded-full border border-on-dark/18 px-4 py-2 text-on-dark hover:border-aqua hover:text-aqua">هبة الشريف على فيسبوك</a>}
             <Link prefetch={false} href="/search" className="inline-flex min-h-12 items-center rounded-full border border-on-dark/18 px-4 py-2 text-on-dark/78 transition hover:border-aqua hover:text-aqua">ابحثي في المنصة</Link>
             <a href="#main-content" className="inline-flex min-h-12 items-center rounded-full border border-on-dark/18 px-4 text-on-dark/80 hover:text-on-dark">العودة للأعلى ↑</a>
             <Link prefetch={false} href="/auth/login" className="inline-flex min-h-12 items-center rounded-full border border-on-dark/18 px-4 py-2 text-on-dark/78 transition hover:border-aqua hover:text-aqua">دخول الحساب</Link>
@@ -93,6 +94,7 @@ export function PublicFooter({ items = [] }: { items?: PublicNavigationItem[] })
       </div>
 
       <div className="relative border-t border-on-dark/12 bg-[#183D49]">
+        {homepageFacebook && <p className="px-5 pt-5 text-center text-sm text-on-dark">الصور في هذه الصفحة مولّدة بالذكاء الاصطناعي لأغراض التصميم.</p>}
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-5 text-center text-xs text-on-dark/55 sm:px-8 md:flex-row md:text-start">
           <p>© {new Date().getFullYear()} هبة الشريف. جميع الحقوق محفوظة.</p>
           <Link prefetch={false} href="/auth/admin" className="inline-flex min-h-11 items-center text-on-dark/80 underline underline-offset-4 hover:text-on-dark">دخول الإدارة</Link>

@@ -23,8 +23,8 @@ test('shared public templates fit the phone, tablet and desktop width matrix', a
     await page.setViewportSize({ width, height: 900 })
     for (const route of ['/', '/start-here', '/books']) await visit(page, route)
     await visit(page, '/')
-    const title = await page.locator('#home-hero-title').boundingBox()
-    const lead = await page.locator('#home-hero-title + p').boundingBox()
+    const title = await page.locator('#hero-title').boundingBox()
+    const lead = await page.locator('#hero-title + p').boundingBox()
     expect(title).not.toBeNull(); expect(lead).not.toBeNull()
     expect(title!.y + title!.height).toBeLessThanOrEqual(lead!.y + 1)
   }
@@ -33,9 +33,8 @@ test('shared public templates fit the phone, tablet and desktop width matrix', a
 test('each simulated engine can read the shared catalog, task and auth surfaces', async ({ page }) => {
   for (const route of ['/', '/services', '/start-here', '/books', '/search', '/contact', '/auth/admin']) await visit(page, route)
   await visit(page, '/')
-  await expect(page.locator('.learning-hero-copy')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-  expect(await page.locator('.learning-hero-copy').evaluate(node => getComputedStyle(node, '::before').backgroundImage)).toContain('journey-light-v4.svg')
-  await expect(page.locator('.learning-hero-copy').getByText('تعرّفي على هبة', { exact: true })).toHaveCount(0)
+  await expect(page.locator('.home-hero-photo img')).toHaveCSS('animation-name', 'none')
+  await expect(page.locator('.home-hero-copy').getByText('تعرّفي على هبة', { exact: true })).toHaveCount(0)
 })
 
 test('the sample preserves an actual draft, reviews it, edits and clears it', async ({ page }) => {
@@ -59,7 +58,7 @@ test('the sample preserves an actual draft, reviews it, edits and clears it', as
 test('OS reduced motion and keyboard tabs keep the sample readable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await visit(page, '/')
-  await expect(page.locator('#home-hero-title')).toHaveCSS('animation-name', 'none')
+  await expect(page.locator('.home-hero-line > span').first()).toHaveCSS('animation-name', 'none')
   const sample = page.locator('[data-learning-tour]')
   await sample.getByRole('tab', { name: /افهمي الفكرة/ }).focus()
   await page.keyboard.press('ArrowLeft')
@@ -94,18 +93,13 @@ test('motion is automatic without a page control and the top button is touch siz
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
 })
 
-test('decorative motion pauses when offscreen and resumes on return', async ({ page }) => {
+test('the solid header and progress line follow scrolling', async ({ page }) => {
   await visit(page, '/')
-  const hero = page.locator('.learning-hero')
-  const motif = hero.locator('.learning-hero-copy')
-  const playState = () => motif.evaluate(node => getComputedStyle(node, '::before').animationPlayState)
-  await expect.poll(playState).toBe('running')
-  const finalCall = page.locator('[aria-labelledby="home-final-cta-title"]')
-  await finalCall.scrollIntoViewIfNeeded()
-  await expect.poll(playState).toBe('paused')
-  await expect(finalCall).toHaveAttribute('data-ambient-motion', 'running')
-  await hero.scrollIntoViewIfNeeded()
-  await expect.poll(playState).toBe('running')
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await expect.poll(() => motif.evaluate(node => getComputedStyle(node, '::before').animationName)).toBe('none')
+  const header = page.locator('.home-header')
+  await expect(header).not.toHaveAttribute('data-solid')
+  await page.locator('#cta-title').scrollIntoViewIfNeeded()
+  await expect(header).toHaveAttribute('data-solid', '')
+  await expect.poll(() => header.evaluate(node => Number((node as HTMLElement).style.getPropertyValue('--home-scroll')))).toBeGreaterThan(0)
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+  await expect(header).not.toHaveAttribute('data-solid')
 })

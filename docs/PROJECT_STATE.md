@@ -1,3 +1,7 @@
+# Homepage redesign review (2026-11-26)
+
+The design review branch starts from public release `389c5b9`. The homepage renders its copy, ten locally supplied images, fixed navigation, and the existing practice component from the checkout itself. Business routes keep their existing URLs. The homepage does not read the CMS or provider settings. See [design, QA and remaining editorial placeholders](HOMEPAGE_REDESIGN_REVIEW_AR.md). Production publication requires separate approval.
+
 # Published client integration — 2026-10-17
 
 The owner explicitly requested a usable connected public site and authorized initial editable content. The old empty release 41e42e8 is superseded. Production history is 107. Two approved sessions, one actual free course, one actual protected PDF workbook and two articles are published and editable through Admin. No bank details, payments, testimonials or workshop dates were invented.

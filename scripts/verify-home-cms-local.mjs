@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 const read = (path) => readFileSync(path, 'utf8')
 const registry = read('src/lib/home/sections.ts')
 const actions = read('src/lib/actions/cms.ts')
-const publicPage = read('src/app/(public)/page.tsx')
+const publicPage = read('src/app/page.tsx')
 const preview = read('src/app/preview/[type]/[id]/page.tsx')
 const manager = read('src/components/admin/HomeSectionManager.tsx')
 const pageLifecycle = read('supabase/migrations/077_atomic_cms_page_lifecycle_local_only.sql')
@@ -12,8 +12,7 @@ const pageLifecycle = read('supabase/migrations/077_atomic_cms_page_lifecycle_lo
 for (const kind of ['hero','trust','pathways','guided_start','editorial_feature','offer','articles','resources','testimonials','press','newsletter','cta']) {
   assert.match(registry, new RegExp(`'${kind}'`), `home registry missing ${kind}`)
 }
-assert.match(publicPage, /getPublishedHomeSections\(\)/, 'public home must consume the governed section order')
-assert.match(publicPage, /HomeSectionRenderer/, 'public home must render the fixed registry')
+assert.doesNotMatch(publicPage, /getPublishedHomeSections|HomeSectionRenderer|@\/lib\/supabase/, 'the static homepage must render without a provider')
 for (const action of ['createHomeSection', 'saveHomeSection']) {
   const start = actions.indexOf(`export async function ${action}`)
   const next = actions.indexOf('\nexport async function ', start + 1)
@@ -29,4 +28,4 @@ assert.match(manager, /HomeSectionManager/, 'structured Arabic home editor missi
 assert.doesNotMatch(manager, /JSON\.stringify|name="content"/, 'owner home editor must not require raw JSON')
 assert.match(preview, /page\.slug === 'home'[\s\S]*HomeSectionRenderer/, 'home preview must render the real consumer')
 
-console.log('verify:home-cms-local passed — fixed registry, Arabic forms, persistence/permission/audit/public consumer and visual preview contracts verified')
+console.log('verify:home-cms-local passed — static homepage boundary and existing Admin persistence and preview contracts verified')

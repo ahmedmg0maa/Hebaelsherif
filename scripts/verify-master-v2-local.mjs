@@ -53,7 +53,7 @@ assert.ok(publicArticleCover('https://x.supabase.co/storage/v1/object/public/pub
 const read = (path) => readFileSync(path, 'utf8')
 const migration = read('supabase/migrations/082_master_v2_home_content_local_only.sql')
 for (const contract of ['master_v2_home_content_valid', 'home_section_kind_immutable', 'published_home_required_section', "'content.manage'", "'content.delete'", 'pg_advisory_xact_lock', 'insert into public.content_revisions', 'insert into public.audit_logs', 'to service_role', "'manifesto','quote'", 'between 3 and 4']) assert.ok(migration.includes(contract), contract)
-assert.ok(read('src/app/(public)/page.tsx').includes('getPublishedGuidedAssessment()'))
+assert.ok(read('src/app/page.tsx').includes('<LearningTour'))
 assert.ok(read('src/components/home/HomeSectionRenderer.tsx').includes('normalizeHomeCopy(section.content, copy)'))
 assert.ok(read('src/components/layout/PublicHeader.tsx').includes('dialog.showModal()'))
 assert.ok(!read('src/components/layout/PublicFooter.tsx').includes('BotanicalSpray'))

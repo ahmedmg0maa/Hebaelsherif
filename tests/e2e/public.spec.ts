@@ -40,15 +40,7 @@ test.describe('public experience', () => {
     // vinext streams the shell before its client module is interactive. Wait
     // for that module rather than treating the server-rendered button as live.
     await page.waitForTimeout(1_000)
-    const mobile = (page.viewportSize()?.width ?? 1280) < 1280
-    if (mobile) {
-      const menu = page.locator('[aria-controls="public-mobile-navigation"]')
-      await expect(menu).toBeEnabled()
-      await menu.click()
-      await expect(menu).toHaveAttribute('aria-expanded', 'true')
-    }
-    const toggle = page.getByRole('button', { name: 'تبديل الوضع الفاتح والداكن' })
-    const activeToggle = mobile ? toggle.last() : toggle.first()
+    const activeToggle = page.getByRole('button', { name: 'تبديل الوضع الفاتح والداكن' })
     await expect(activeToggle).toBeEnabled()
     await activeToggle.click()
     await expect(page.locator('html')).toHaveClass(/dark/)
@@ -60,7 +52,7 @@ test.describe('public experience', () => {
 
   test('mobile navigation traps focus and restores it on Escape', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    await visit(page, '/')
+    await visit(page, '/services')
     const trigger = page.getByRole('button', { name: 'فتح القائمة', exact: true })
     await expect(trigger).toBeEnabled()
     await trigger.click()
@@ -77,11 +69,11 @@ test.describe('public experience', () => {
 
   test('home learning tour changes panels using the keyboard', async ({ page }) => {
     await visit(page, '/')
-    const lessons=page.getByRole('tab', {name:'دروس المسار'})
+    const lessons=page.getByRole('tab', {name:'افهمي الفكرة'})
     await lessons.focus()
     await lessons.press('ArrowLeft')
-    await expect(page.getByRole('tab', {name:'ملاحظاتك'})).toBeFocused()
-    await expect(page.getByRole('heading', {name:'مساحة لأفكارك'})).toBeVisible()
+    await expect(page.getByRole('tab', {name:'جرّبي التطبيق'})).toBeFocused()
+    await expect(page.getByRole('tabpanel').getByRole('textbox').first()).toBeVisible()
     await page.keyboard.press('Home')
     await expect(lessons).toHaveAttribute('aria-selected','true')
   })
