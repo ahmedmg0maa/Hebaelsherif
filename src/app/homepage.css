@@ -189,9 +189,15 @@ html.dark .home-timeline [data-step-active]::before { background: var(--color-aq
   .home-course-card { min-block-size: 0; }
 }
 @media (max-width: 479px) {
+  .home-hero-photo img { object-position: center; }
   .home-hero .home-lead { min-block-size: 3lh; }
   .home-hero .home-actions { display: grid; grid-template-columns: minmax(0, 13rem); }
+  .home-hero :is(.home-kicker,.home-hero-credential,.button-interactive), .home-menu summary { font-weight: 400; }
+  .home-hero-line > span { animation-name: home-headline-in-mobile; animation-duration: 420ms; }
+  .home-hero-line:nth-child(2) > span { animation-delay: 45ms; }
+  .home-hero-line:nth-child(3) > span { animation-delay: 90ms; }
 }
+@keyframes home-headline-in-mobile { from { transform: translateY(.16em); opacity: .9; } }
 @media (prefers-reduced-motion: reduce) {
   .site-home :is(.home-hero-line > span,.home-scroll-cue span), .site-home .home-primary:hover::after { animation: none !important; }
   .site-home :is([data-reveal-pending],.home-mask > span,.home-course-card,.home-arrow,.button-interactive) { transform: none !important; }

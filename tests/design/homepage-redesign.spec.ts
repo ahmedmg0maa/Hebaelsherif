@@ -15,6 +15,10 @@ test('homepage fits phone, tablet and desktop using the existing Arabic brand', 
     await expect(page.locator('.home-hero a[href="/booking"]')).toBeInViewport()
     await expect(page.locator('video, audio, [autoplay]')).toHaveCount(0)
     await expect(page.locator('main picture')).toHaveCount(10)
+    const hero = page.locator('.home-hero-photo img')
+    await expect(hero).toHaveAttribute('fetchpriority', 'high')
+    await expect.poll(() => hero.evaluate((photo: HTMLImageElement) => new URL(photo.currentSrc).pathname))
+      .toBe(width === 390 ? '/images/home/hero-mobile.webp' : '/images/home/hero.webp')
     await expect(page.getByText('الصور في هذه الصفحة مولّدة بالذكاء الاصطناعي لأغراض التصميم.')).toBeVisible()
   }
 })

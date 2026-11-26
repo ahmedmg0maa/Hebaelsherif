@@ -30,12 +30,14 @@ function HomePhoto({ name, alt = '', className = '' }: {
 }) {
   const [width, height] = photos[name]
   const file = `/images/home/${name}`
+  const isHero = name === 'hero'
   return (
     <picture className={`home-photo ${className}`}>
+      {isHero && <source type="image/webp" media="(max-width: 479px)" srcSet={`${file}-mobile.webp`} />}
       <source type="image/webp" media="(max-width: 767px)" srcSet={`${file}-small.webp`} />
       <source type="image/webp" srcSet={`${file}.webp`} />
       <Image src={`${file}.jpg`} width={width} height={height} alt={alt} unoptimized
-        loading={name === 'hero' ? 'eager' : 'lazy'} fetchPriority={name === 'hero' ? 'high' : undefined} />
+        loading={isHero ? 'eager' : 'lazy'} fetchPriority={isHero ? 'high' : 'low'} />
     </picture>
   )
 }

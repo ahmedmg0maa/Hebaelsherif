@@ -5,6 +5,12 @@ import {validateLaunchConfig} from './launch-config.mjs'
 const problems=validateLaunchConfig(process.env)
 if(problems.length){console.error(problems.join('\n'));process.exit(1)}
 const env={...process.env,CLOUDFLARE_ENV:'',CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV:'false'}
+// Constrain Windows build concurrency and V8 heap so Rolldown can finish
+// minifying the Worker on workstations with limited available memory.
+if(process.platform==='win32'){
+ env.RAYON_NUM_THREADS ??= '1'
+ env.NODE_OPTIONS ??= '--max-old-space-size=1536'
+}
 // The Vite plugin otherwise copies .env.local secrets into dist/server/.dev.vars,
 // independently of the redacted process environment passed to the build.
 rmSync('dist/server/.dev.vars',{force:true})
